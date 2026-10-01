@@ -117,7 +117,6 @@ scripts and `npm run check`. `scripts/create-release-icon.ps1` can rebuild
 | `pixelody-wordmark.svg` | Wordmark alone, `currentColor` |
 | `pixelody-lockup.svg` / `-light.svg` | Mark + wordmark for dark / light grounds (transparent) |
 | `colors/` | App icon in each logo colour |
-| `explorations/` | Rounds 1–4: Pressing, six open directions, Sampled Disc variations with wordmark pairings, colour |
 
 Shipped copies generated from the same geometry: `build/icon.svg`/`.png`,
 `src/assets/brand/` (in-app mask and window icons), and in `android/app/src/main/res/`
