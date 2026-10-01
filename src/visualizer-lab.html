@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pixelody Visualizer Foundry</title>
+  <link rel="stylesheet" href="visualizer-lab.css">
+</head>
+<body>
+  <header class="lab-header">
+    <div class="lab-kicker"><span aria-hidden="true"></span> Pixelody instrument bench / visualizer foundation</div>
+    <div class="lab-heading">
+      <div>
+        <h1>Signal forms, before themes.</h1>
+        <p>Sixteen reusable audio-reactive pieces. This bench compares their motion grammar, signal process, cost, and spatial fit without assigning any piece to a theme.</p>
+      </div>
+      <div class="lab-count" aria-label="Sixteen visualizers"><strong>16</strong><span>independent<br>renderers</span></div>
+    </div>
+    <div class="lab-boundary"><b>BOUNDARY</b><span>Synthetic read-only signal frames</span><span>No playback graph ownership</span><span>No theme mapping</span><span>One shared animation clock</span></div>
+  </header>
+
+  <main>
+    <form class="lab-controls" aria-label="Visualizer specimen controls">
+      <label><span>Signal character</span><select id="signalPreset"><option value="balanced">Balanced program</option><option value="bass">Bass pressure</option><option value="percussive">Percussive transients</option><option value="ambient">Ambient field</option><option value="stereo">Wide stereo</option></select></label>
+      <label><span>Motion safety</span><select id="motionMode"><option value="full">Full motion</option><option value="reduced">Reduced / static</option><option value="off">Off / static</option></select></label>
+      <label><span>Frame budget</span><select id="performanceMode"><option value="full">Full</option><option value="conserve">Conserve</option></select></label>
+      <label><span>Specimen palette</span><select id="paletteMode"><option value="electric">Electric ink</option><option value="paper">Warm paper</option><option value="mono">Monochrome</option><option value="signal">Signal red</option></select></label>
+      <output id="labStatus" role="status">14 renderers active · full motion</output>
+    </form>
+
+    <section class="family-index" aria-label="Process families" id="familyIndex"></section>
+    <section class="visualizer-grid" id="visualizerGrid" aria-label="Audio visualizer specimens"></section>
+  </main>
+
+  <footer><span>VISUALIZER FOUNDATION V1</span><p>Canvas treatments are decorative and never communicate the only copy of playback state. Reduced motion and conserve behavior are part of the component contract.</p></footer>
+
+  <script src="audio-visualizers/signal-frame.js"></script>
+  <script src="audio-visualizers/renderers.js"></script>
+  <script src="audio-visualizers/runtime.js"></script>
+  <script src="visualizer-lab.js"></script>
+</body>
+</html>

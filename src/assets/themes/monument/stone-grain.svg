@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" role="img" aria-label="Original limestone surface grain">
+  <defs>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency=".06 .22" numOctaves="4" seed="19"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 .45 0 0 0 0 .43 0 0 0 0 .39 0 0 0 .24 0"/>
+    </filter>
+  </defs>
+  <rect width="220" height="220" fill="#e7e1d3"/>
+  <rect width="220" height="220" filter="url(#grain)" opacity=".5"/>
+  <g fill="none" stroke="#ffffff" stroke-width="1" opacity=".22">
+    <path d="M-12 42C24 32 58 50 96 38c34-10 70-4 136 14"/>
+    <path d="M-16 116c48-18 76 10 122-2 38-10 70-8 132 16"/>
+    <path d="M-8 176c34-8 62 10 104 0 42-10 74-4 132 12"/>
+  </g>
+</svg>

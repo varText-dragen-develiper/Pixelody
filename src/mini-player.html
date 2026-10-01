@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' file: data: blob:; media-src 'self' file: blob:; font-src 'self' data:; connect-src 'self' http://127.0.0.1:* http://localhost:*; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; child-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Pixelody Mini</title>
+  <link rel="stylesheet" href="mini-player.css">
+  <link rel="stylesheet" href="mini-precision.css">
+  <link rel="stylesheet" href="mini-public-icons.css">
+  <link rel="stylesheet" href="mini-studio-rebuild.css">
+  <link rel="stylesheet" href="mini-foreground.css" disabled>
+  <link rel="stylesheet" href="mini-canvas-theme-ports.css" disabled>
+  <link rel="stylesheet" href="mini-performance.css">
+  <link rel="stylesheet" href="mini-canvas-cartridge-quest.css" disabled>
+  <link rel="stylesheet" href="mini-canvas-obsession.css" disabled>
+  <link rel="stylesheet" href="mini-canvas-neon-burst.css" disabled>
+  <link rel="stylesheet" href="mini-canvas-lo-fi-cafe.css" disabled>
+  <link rel="stylesheet" href="mini-singularity-probe.css">
+</head>
+<body data-performance="balanced" data-visibility="visible">
+  <main class="mini-shell">
+    <div class="mini-glow"></div>
+    <div class="vv-mini-board" aria-hidden="true"><i></i><i></i><i></i><b></b><b></b></div>
+    <div class="vv-mini-bus" aria-hidden="true"><span>SOURCE</span><i></i><span>TRANSPORT</span><i></i><span>OUTPUT</span></div>
+    <div class="mini-drag-strip" aria-hidden="true"></div>
+    <div class="axis-mini-breakline" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="counterform-mini-choir" aria-hidden="true"><span class="cf-mini-prev" id="cfMiniPrevious">PREVIOUS / --</span><span class="cf-mini-current" id="cfMiniCurrent">CURRENT / NOTHING PLAYING</span><span class="cf-mini-next" id="cfMiniNext">NEXT / --</span></div>
+    <i class="mini-resize-grip mini-resize-nw" aria-hidden="true"></i><i class="mini-resize-grip mini-resize-ne" aria-hidden="true"></i><i class="mini-resize-grip mini-resize-sw" aria-hidden="true"></i><i class="mini-resize-grip mini-resize-se" aria-hidden="true"></i>
+    <div class="mini-art" id="miniArt" aria-hidden="true"><i class="signal-orbit-ring" aria-hidden="true"><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b></i><span class="axis-mini-mask" aria-hidden="true"><i></i><i></i></span></div>
+    <section class="mini-copy"><small id="miniQuality">PIXELODY</small><strong id="miniTitle">Nothing playing</strong><span id="miniArtist">Open a track in Pixelody</span><div class="mini-progress"><i id="miniProgress"></i></div><div class="mini-time"><span id="miniElapsed">0:00</span><span id="miniDuration">0:00</span></div><div class="mini-quest-stats" aria-label="Cartridge Quest listening stats"><span id="miniQuestXp">XP 0</span><span id="miniQuestRun">RUN 0:00</span><span id="miniQuestHi">HI 0:00</span><span id="miniQuestCombo">COMBO x1</span></div></section>
+    <section class="mini-controls"><button id="miniPrev" title="Previous"><span class="mini-transport-icon mini-previous"></span></button><button class="mini-play" id="miniPlay" title="Play"><i class="signal-orbit-ring" aria-hidden="true"><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b></i><span class="mini-transport-icon mini-play-icon" id="miniPlayIcon"></span></button><button id="miniNext" title="Next"><span class="mini-transport-icon mini-next"></span></button></section>
+    <div class="window-actions"><button id="restoreMain" title="Restore Pixelody"><span class="mini-public-icon mini-back-icon"></span></button><button id="closeMini" title="Close mini player"><span class="mini-public-icon mini-close-icon"></span></button></div>
+  </main>
+  <script src="ui-sounds.js"></script>
+  <script src="theme-prewarm.js"></script>
+  <script src="theme-runtime/glyph.js"></script>
+  <script src="mini-player.js"></script>
+</body>
+</html>

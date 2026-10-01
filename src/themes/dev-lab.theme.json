@@ -1,0 +1,13 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.dev-lab",
+  "name": "Dev Lab",
+  "author": "Pixelody",
+  "description": "Internal testing sandbox. A palette-only clone of Pixelody Studio (same layout, geometry, and typography) with a swapped accent pair and a small corner badge, so new mechanics can be built and verified without touching the real default theme's look.",
+  "palette": { "builtIn": "dev-lab" },
+  "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": "../assets/icons/" },
+  "hud": { "layout": "studio", "controls": "pixel", "corners": "pixel-cut" },
+  "typography": { "profile": "pixel", "font": "../assets/fonts/GeistPixel-Circle.woff2" },
+  "motion": { "profile": "signal", "intensity": "calm" }
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.meme-machine",
+  "name": "Meme Machine",
+  "author": "Pixelody",
+  "description": "A chatroom-chaos music bot with licensed reaction stickers, original meme-collage backdrops, message-like tracks, playful motion, and a readable dark social interface.",
+  "palette": { "primary": "#5865f2", "secondary": "#fee75c", "base": "#111214" },
+  "assets": { "backgroundTexture": "../assets/themes/meme-machine/chaos-cards.svg", "heroOverlay": "../assets/themes/meme-machine/crying.svg", "panelFrame": null, "iconSet": "../assets/themes/meme-machine/reaction-deck.svg" },
+  "hud": { "layout": "arcade", "controls": "minimal", "corners": "soft" },
+  "typography": { "profile": "display", "font": "../assets/themes/cosmic-cinema/SpaceGrotesk-Variable.ttf" },
+  "motion": { "profile": "pulse", "intensity": "expressive" }
+}

@@ -1,0 +1,82 @@
+body[data-theme="studio"] {
+  --bg: #0b0e14;
+  --surface: #171b24;
+  --line: #31384a;
+  --text: #f5f6fa;
+  --muted: #a7adba;
+  --gold: #91a7ff;
+  --green: #72d9cf;
+  background:
+    radial-gradient(circle at 18% 0, #5874cf35, transparent 42%),
+    linear-gradient(145deg, #121722, #090b10);
+  color: var(--text);
+  font-family: "Segoe UI Variable Text", "Segoe UI", sans-serif;
+}
+
+body[data-theme="studio"] .mini-shell {
+  background: #171b24ed;
+  border: 1px solid #dbe3ff1c;
+  border-radius: 17px;
+  box-shadow: 0 22px 60px #000b, inset 0 1px #ffffff0b;
+  backdrop-filter: blur(20px) saturate(115%);
+  clip-path: none;
+}
+
+body[data-theme="studio"] .mini-glow {
+  background: radial-gradient(circle, #8fa8ff26, transparent 68%);
+  opacity: 1;
+}
+
+body[data-theme="studio"] .mini-drag-strip {
+  background: transparent;
+  border: 0;
+}
+
+body[data-theme="studio"] .mini-art {
+  border: 1px solid #ffffff1b;
+  border-radius: 12px;
+  box-shadow: 0 10px 26px #0008;
+  clip-path: none;
+}
+
+body[data-theme="studio"] .mini-copy small { color: #73d9d2; letter-spacing: .14em; }
+body[data-theme="studio"] .mini-copy strong { font-weight: 650; letter-spacing: -.02em; }
+body[data-theme="studio"] .mini-copy span { color: var(--muted); }
+
+body[data-theme="studio"] .mini-progress {
+  background: #ffffff10;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+body[data-theme="studio"] .mini-progress i {
+  background: linear-gradient(90deg, #91a7ff, #73d9d2);
+  border-radius: inherit;
+  box-shadow: 0 0 12px #829af070;
+}
+
+body[data-theme="studio"] .mini-controls button,
+body[data-theme="studio"] .window-actions button {
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+}
+
+body[data-theme="studio"] .mini-controls button:hover,
+body[data-theme="studio"] .window-actions button:hover {
+  color: var(--text);
+  background: #ffffff09;
+  border-color: #dbe3ff1a;
+}
+
+body[data-theme="studio"] .mini-controls .mini-play {
+  color: #10141c;
+  background: linear-gradient(145deg, #edf0ff, #aebdff);
+  border: 0;
+  box-shadow: 0 8px 22px #526ac05c;
+}
+
+body[data-theme="studio"] :is(.mini-quest-stats, .counterform-mini-choir, .vv-mini-board, .vv-mini-bus, .axis-mini-breakline) {
+  display: none !important;
+}

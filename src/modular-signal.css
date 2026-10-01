@@ -1,0 +1,105 @@
+/* Modular Signal: original CSS interpretation of modular poster systems. */
+.modular-signal-preview{position:relative;overflow:hidden;background:#7660a8!important}.modular-signal-preview::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,transparent 0 28%,#17121f 28.5% 34%,transparent 34.5% 49%,#efcbd0 49.5% 60%,transparent 60.5%),linear-gradient(28deg,transparent 0 54%,#17121f 54.5% 58%,transparent 58.5%)}.modular-signal-preview i:nth-child(1){background:#17121f}.modular-signal-preview i:nth-child(2){background:#efcbd0}.modular-signal-preview i:nth-child(3){background:#caa5c8}.modular-signal-option small::after{content:' / SYSTEMS POSTER';color:#17121f}
+body[data-theme="modular-signal"]{--ms-ink:#17121f;--ms-blush:#efcbd0;--ms-paper:#f5dfe0;--ms-violet:#7660a8;--ms-deep:#5e4b8d;--ms-light-text:#f5dfe0;--ms-light-muted:#caa5c8;background:#7660a8;color:var(--ms-ink);letter-spacing:.015em;background-image:linear-gradient(132deg,transparent 0 37%,rgba(23,18,31,.9) 37.2% 38.4%,transparent 38.6%),linear-gradient(132deg,transparent 0 53%,rgba(239,203,208,.85) 53.2% 55.5%,transparent 55.7%),repeating-linear-gradient(90deg,transparent 0 78px,rgba(245,223,224,.07) 78px 79px)}
+body[data-theme="modular-signal"] :is(.library-rail,.main-stage,.inspector,.settings-drawer,.queue-drawer,.context-menu){border:2px solid var(--ms-ink);border-radius:0;background:rgba(245,223,224,.9);box-shadow:8px 8px 0 var(--ms-ink)}
+body[data-theme="modular-signal"] .main-stage{background:var(--ms-violet);box-shadow:none}.modular-signal-option{background:var(--ms-paper)}
+body[data-theme="modular-signal"] :is(.topbar,.player){background:var(--ms-ink);color:var(--ms-paper);border-color:var(--ms-ink);border-radius:0}.modular-signal-option b,body[data-theme="modular-signal"] :is(.rail-heading strong,.topbar strong,.player strong){letter-spacing:.09em;text-transform:uppercase}
+body[data-theme="modular-signal"] :is(.global-search,.create-button,.rail-import button,.filter,.chip,.subtle-action,.quiet-button,.open-systems,.settings-trigger,.queue-button,.sort-select,.preset,.panel select,.track-editor input){border:1px solid var(--ms-ink);border-radius:0;background:var(--ms-paper);color:var(--ms-ink)}
+body[data-theme="modular-signal"] :is(.chip.active,.filter.active,.rail-import button:first-child){background:var(--ms-ink);color:var(--ms-blush);box-shadow:inset 0 -3px var(--ms-blush)}
+body[data-theme="modular-signal"] .playlist-hero{position:relative;height:390px;border-bottom:2px solid var(--ms-ink);border-radius:0;background-color:var(--ms-violet);background-image:linear-gradient(135deg,transparent 0 37%,var(--ms-ink) 37.3% 44%,transparent 44.3%),linear-gradient(135deg,transparent 0 52%,var(--ms-blush) 52.3% 66%,transparent 66.3%),linear-gradient(180deg,rgba(118,96,168,.1),rgba(118,96,168,.85)),radial-gradient(ellipse 150% 55% at -15% 28%,rgba(239,203,208,.5),transparent 60%),radial-gradient(ellipse 130% 50% at 70% 82%,rgba(202,165,200,.4),transparent 62%);background-repeat:no-repeat}
+body[data-theme="modular-signal"] .playlist-hero::after{content:"MODULAR / SIGNAL";position:absolute;right:20px;top:22px;writing-mode:vertical-rl;font:700 10px Consolas,"Courier New",monospace;letter-spacing:.2em;color:var(--ms-paper);z-index:2}
+body[data-theme="modular-signal"] .playlist-hero::before{content:"";position:absolute;left:18px;top:18px;width:64px;height:34px;background-image:radial-gradient(var(--ms-ink) 1.2px,transparent 1.2px);background-size:8px 8px;opacity:.5;pointer-events:none;z-index:2}
+body[data-theme="modular-signal"] .rail-heading::after{content:"\2197";margin-left:6px;opacity:.55;font-weight:400}
+body[data-theme="modular-signal"] .collection-body h2::after,body[data-theme="modular-signal"] .setting-label strong::after{content:"\2197";margin-left:6px;opacity:.5;font-size:.85em}
+body[data-theme="modular-signal"] .playlist-item,body[data-theme="modular-signal"] .theme-option{position:relative}
+body[data-theme="modular-signal"] .playlist-item:hover::after,body[data-theme="modular-signal"] .theme-option:hover::after{content:"\2198";position:absolute;right:8px;bottom:6px;font:700 12px Consolas,"Courier New",monospace;color:var(--ms-ink);opacity:.7;pointer-events:none}
+body[data-theme="modular-signal"] .track-row>span:first-child{font-family:Consolas,"Courier New",monospace;font-variant-numeric:tabular-nums;letter-spacing:.08em;color:var(--ms-deep);position:relative}
+body[data-theme="modular-signal"] .track-row.playing>span:first-child,body[data-theme="modular-signal"] .track-row:not(.track-header):hover>span:first-child{color:var(--ms-ink)}
+body[data-theme="modular-signal"] .track-row.playing>span:first-child::before{content:"\2197 ";opacity:.8}
+body[data-theme="modular-signal"] .hero-shade{background:linear-gradient(0deg,rgba(23,18,31,.88),transparent 72%)}
+/* Readability pass: artwork remains visible, but the copy owns a protected
+   dark-to-violet field instead of fighting the image underneath it. */
+body[data-theme="modular-signal"] .hero-shade{background:linear-gradient(0deg,rgba(23,18,31,.98) 0%,rgba(23,18,31,.78) 30%,rgba(23,18,31,.18) 76%),linear-gradient(90deg,rgba(23,18,31,.86) 0%,rgba(23,18,31,.48) 42%,rgba(118,96,168,.08) 76%),linear-gradient(135deg,rgba(239,203,208,.14),transparent 38%)}
+body[data-theme="modular-signal"] .hero-content{z-index:2}
+body[data-theme="modular-signal"] :is(.playlist-cover,.metadata-art,.playlist-thumb,.track-editor-art){border:2px solid var(--ms-ink);border-radius:0;background:radial-gradient(circle at 50% 50%,transparent 0 31%,var(--ms-blush) 31.4% 100%),radial-gradient(circle at 50% 50%,var(--ms-ink) 0 19%,transparent 19.5%),repeating-conic-gradient(from 0deg at 50% 50%,var(--ms-ink) 0deg 1.6deg,transparent 1.6deg 5deg),linear-gradient(135deg,var(--ms-blush),var(--ms-paper));box-shadow:7px 7px 0 var(--ms-ink);color:var(--ms-ink)}
+body[data-theme="modular-signal"] .hero-copy :is(p,small),body[data-theme="modular-signal"] :is(.eyebrow,.quality-card small,.tuning-card small,.setting-label span,.technical-details,.metadata-grid small,.signal-path,.rail-tools){font-family:Consolas,"Courier New",monospace;letter-spacing:.13em;text-transform:uppercase}
+body[data-theme="modular-signal"] .hero-copy h1{font-family:"Arial Narrow","Franklin Gothic Condensed",Impact,sans-serif;text-transform:uppercase;letter-spacing:-.04em;color:var(--ms-paper);text-shadow:3px 3px 0 var(--ms-ink)}
+body[data-theme="modular-signal"] .collection-body{background:linear-gradient(135deg,var(--ms-blush) 0 10%,var(--ms-violet) 10.4% 100%);padding-top:22px}body[data-theme="modular-signal"] :is(.panel,.quality-card,.tuning-card,.theme-option,.playlist-item,.drop-zone,.track-editor,.profile-preview){border:1px solid var(--ms-ink);border-radius:0;box-shadow:5px 5px 0 var(--ms-ink)}
+body[data-theme="modular-signal"] .hero-play,body[data-theme="modular-signal"] .transport-buttons .play-button{border:2px solid var(--ms-ink);border-radius:50%;background:repeating-conic-gradient(from 0deg at 50% 50%,var(--ms-ink) 0deg 2deg,var(--ms-blush) 2deg 7deg);color:var(--ms-ink);box-shadow:4px 4px 0 var(--ms-ink);transition:transform .5s ease}
+body[data-theme="modular-signal"]:not([data-motion="off"]) .hero-play:hover,body[data-theme="modular-signal"]:not([data-motion="off"]) .transport-buttons .play-button:hover{transform:rotate(24deg)}
+body[data-theme="modular-signal"] .track-row{border-left:3px solid transparent;border-radius:0;color:var(--ms-ink)}body[data-theme="modular-signal"] .track-header{border-bottom-color:var(--ms-ink);color:var(--ms-deep)}body[data-theme="modular-signal"] .track-row:not(.track-header):hover{background:rgba(239,203,208,.42);transform:translateX(3px)}body[data-theme="modular-signal"] .track-row.playing{border-left-color:var(--ms-ink);background:var(--ms-blush)}body[data-theme="modular-signal"] .track-title strong,body[data-theme="modular-signal"] .format{color:var(--ms-ink)}body[data-theme="modular-signal"] .track-title span,body[data-theme="modular-signal"] .quality,body[data-theme="modular-signal"] .muted{color:var(--ms-deep)}
+/* Functional copy must not inherit decorative low-contrast ink. */
+body[data-theme="modular-signal"] .track-row:not(.track-header){color:var(--ms-ink);background:rgba(245,223,224,.16);border-bottom:1px solid rgba(23,18,31,.24)}
+body[data-theme="modular-signal"] .track-row:not(.track-header):hover{background:rgba(245,223,224,.56)}
+body[data-theme="modular-signal"] .track-row.playing{color:var(--ms-ink);background:var(--ms-blush);border-left-color:var(--ms-ink);border-bottom-color:var(--ms-ink)}
+body[data-theme="modular-signal"] .track-title strong,body[data-theme="modular-signal"] .format{color:var(--ms-ink);font-weight:800}
+body[data-theme="modular-signal"] .track-title span,body[data-theme="modular-signal"] .quality,body[data-theme="modular-signal"] .tuned,body[data-theme="modular-signal"] .track-row>span:first-child{color:var(--ms-deep)}
+body[data-theme="modular-signal"] .track-row.playing :is(.track-title strong,.track-title span,.quality,.tuned,.format,.track-row>span:first-child){color:var(--ms-ink)}
+body[data-theme="modular-signal"] .remove{color:var(--ms-ink)}
+body[data-theme="modular-signal"] .playlist-item.active{background:var(--ms-ink);color:var(--ms-paper);box-shadow:inset 5px 0 var(--ms-blush),5px 5px 0 var(--ms-ink)}
+body[data-theme="modular-signal"] .playlist-item.active :is(.playlist-copy strong,.playlist-copy span,.playlist-dots){color:var(--ms-paper)}
+body[data-theme="modular-signal"] .playlist-item.active .playlist-copy span{color:var(--ms-blush)}
+body[data-theme="modular-signal"] :is(.quality-card,.tuning-card){background:var(--ms-ink);color:var(--ms-light-text,#f5dfe0);border:1px solid var(--ms-ink);box-shadow:5px 5px 0 var(--ms-deep)}
+body[data-theme="modular-signal"] :is(.quality-card small,.tuning-card small,.signal-path,.tuning-help,.eq-control label){color:var(--ms-blush)}
+body[data-theme="modular-signal"] :is(.quality-card h3,.tuning-card h3){color:var(--ms-paper)}
+body[data-theme="modular-signal"] .quality-card p{color:var(--ms-light-muted,#caa5c8)}
+body[data-theme="modular-signal"] .signal-path{border-top-color:rgba(245,223,224,.24)}
+body[data-theme="modular-signal"] .signal-path b{color:var(--ms-paper)}
+body[data-theme="modular-signal"] .eq-control strong{color:var(--ms-paper)}
+body[data-theme="modular-signal"] .eq-visual{border-bottom:1px solid rgba(245,223,224,.24)}
+body[data-theme="modular-signal"] .tuning-help{border-top-color:rgba(245,223,224,.24)}
+body[data-theme="modular-signal"] .tuning-card :is(.preset,.text-button,.panel-title button){color:var(--ms-blush)}
+body[data-theme="modular-signal"] .tuning-card .preset.active{background:var(--ms-blush);color:var(--ms-ink);border-color:var(--ms-blush)}
+/* Final contrast contract for states that are intentionally ink-black. */
+body[data-theme="modular-signal"] :is(.quality-card,.tuning-card) :is(h3,p,small,label,strong,span,button){text-shadow:none}
+body[data-theme="modular-signal"] .quality-card h3,body[data-theme="modular-signal"] .tuning-card h3{color:var(--ms-light-text)!important}
+body[data-theme="modular-signal"] .quality-card p,body[data-theme="modular-signal"] .tuning-help{color:var(--ms-light-muted)!important}
+body[data-theme="modular-signal"] :is(.quality-card small,.tuning-card small,.signal-path,.eq-control label){color:var(--ms-blush)!important}
+body[data-theme="modular-signal"] :is(.signal-path b,.eq-control strong){color:var(--ms-light-text)!important}
+body[data-theme="modular-signal"] .tuning-card :is(.preset,.text-button,.panel-title button){color:var(--ms-blush)!important}
+body[data-theme="modular-signal"] .tuning-card .preset.active{color:var(--ms-ink)!important;background:var(--ms-blush)!important}
+body[data-theme="modular-signal"] .playlist-item.active :is(.playlist-copy strong,.playlist-copy span,.playlist-dots){color:var(--ms-light-text)!important}
+body[data-theme="modular-signal"] .playlist-item.active .playlist-copy span{color:var(--ms-blush)!important}
+body[data-theme="modular-signal"] #trackRows .track-row:not(.track-header) :is(.track-title strong,.track-title span,.format,.quality,.tuned,.remove){opacity:1;color:var(--ms-ink)!important}
+body[data-theme="modular-signal"] #trackRows .track-row:not(.track-header){background:rgba(245,223,224,.2)!important;color:var(--ms-ink)!important}
+body[data-theme="modular-signal"] #trackRows .track-row:not(.track-header):hover,body[data-theme="modular-signal"] #trackRows .track-row.playing{background:var(--ms-blush)!important}
+
+/* Poster-system build-out: the collection surface becomes a quiet drafting
+   field, while the working rows sit on a measured route grid. */
+body[data-theme="modular-signal"] .collection-body{position:relative;isolation:isolate;background-image:linear-gradient(135deg,rgba(239,203,208,.92) 0 9%,transparent 9.3% 100%),repeating-linear-gradient(90deg,transparent 0 72px,rgba(23,18,31,.08) 72px 73px),repeating-linear-gradient(0deg,transparent 0 72px,rgba(23,18,31,.07) 72px 73px),linear-gradient(135deg,var(--ms-blush) 0 10%,var(--ms-violet) 10.4% 100%);background-size:auto,auto,auto,auto}
+body[data-theme="modular-signal"] .collection-body::before{content:"ROUTE 01  /  LOCAL LIBRARY";position:absolute;top:9px;right:24px;color:rgba(23,18,31,.56);font:700 8px Consolas,"Courier New",monospace;letter-spacing:.16em;pointer-events:none;z-index:0}
+body[data-theme="modular-signal"] .collection-body>*{position:relative;z-index:1}
+body[data-theme="modular-signal"] .track-table{border-top:2px solid var(--ms-ink);border-bottom:2px solid var(--ms-ink);padding-top:4px}
+body[data-theme="modular-signal"] .track-header{background:rgba(245,223,224,.34);color:var(--ms-deep)!important;text-transform:uppercase;letter-spacing:.14em}
+body[data-theme="modular-signal"] .collection-actions{border-bottom:1px solid rgba(23,18,31,.36)}
+body[data-theme="modular-signal"] .collection-actions::after{content:"↗  SIGNAL PATH / ACTIVE";margin-left:auto;color:var(--ms-deep);font:700 8px Consolas,"Courier New",monospace;letter-spacing:.12em}
+body[data-theme="modular-signal"] .playlist-hero{background-position:center;background-blend-mode:normal,multiply,normal,screen,screen}
+body[data-theme="modular-signal"] .hero-copy>span,body[data-theme="modular-signal"] .hero-copy small{color:var(--ms-light-text)!important}
+body[data-theme="modular-signal"] .hero-copy p{color:var(--ms-blush)!important}
+body[data-theme="modular-signal"] .playlist-cover::after,body[data-theme="modular-signal"] .metadata-art::after{content:"01";position:absolute;right:8px;bottom:7px;color:var(--ms-ink);font:700 9px Consolas,"Courier New",monospace;letter-spacing:.14em}
+body[data-theme="modular-signal"] :is(.quality-card,.tuning-card)::before{content:"//";float:right;color:var(--ms-blush);font:700 11px Consolas,"Courier New",monospace;letter-spacing:.1em}
+body[data-theme="modular-signal"] .quality-card{background-image:linear-gradient(135deg,transparent 0 73%,rgba(239,203,208,.1) 73.3% 74%,transparent 74.3%),repeating-linear-gradient(90deg,transparent 0 42px,rgba(245,223,224,.035) 42px 43px)}
+body[data-theme="modular-signal"] .tuning-card{background-image:linear-gradient(25deg,transparent 0 34%,rgba(239,203,208,.12) 34.3% 35%,transparent 35.3%),linear-gradient(155deg,transparent 0 74%,rgba(118,96,168,.24) 74.3% 75%,transparent 75.3%)}
+
+/* Ink-surface contrast: black is structure, never camouflage. */
+body[data-theme="modular-signal"]{--ms-on-ink:#fff5f4;--ms-on-ink-muted:#e3c7dd;--ms-on-ink-accent:#ffdbe1}
+body[data-theme="modular-signal"] :is(.topbar,.player,.quality-card,.tuning-card,.playlist-item.active,.context-menu,.settings-drawer .panel,.queue-drawer .panel){color:var(--ms-on-ink)!important}
+body[data-theme="modular-signal"] :is(.topbar,.player,.quality-card,.tuning-card,.playlist-item.active,.context-menu,.settings-drawer .panel,.queue-drawer .panel) :is(h1,h2,h3,h4,strong,b,.panel-title,.track-title strong,.playing-info strong,.playlist-copy strong,.quality-card h3,.tuning-card h3){color:var(--ms-on-ink)!important}
+body[data-theme="modular-signal"] :is(.topbar,.player,.quality-card,.tuning-card,.playlist-item.active,.context-menu,.settings-drawer .panel,.queue-drawer .panel) :is(p,span,small,label,em,.track-title span,.playing-info span,.playlist-copy span,.quality,.tuned,.technical-details,.signal-path,.tuning-help,.eq-control label){color:var(--ms-on-ink-muted)!important}
+body[data-theme="modular-signal"] :is(.topbar,.player,.quality-card,.tuning-card,.playlist-item.active,.context-menu,.settings-drawer .panel,.queue-drawer .panel) :is(button,.icon-action,.text-button,.window-actions button,.transport-buttons button,.remove){color:var(--ms-on-ink-accent)!important}
+body[data-theme="modular-signal"] :is(.quality-card,.tuning-card) :is(.signal-path b,.eq-control strong,.format){color:var(--ms-on-ink)!important}
+body[data-theme="modular-signal"] .playlist-item.active .playlist-copy :is(strong,span){color:var(--ms-on-ink)!important}
+body[data-theme="modular-signal"] .playlist-item.active .playlist-copy span{color:var(--ms-on-ink-muted)!important}
+body[data-theme="modular-signal"] :is(.quality-card,.tuning-card) :is(.preset.active,.filter.active){background:var(--ms-on-ink-accent)!important;color:var(--ms-ink)!important}
+body[data-theme="modular-signal"] :is(.quality-card,.tuning-card) input::placeholder,body[data-theme="modular-signal"] .topbar input::placeholder{color:var(--ms-on-ink-muted)!important}
+
+/* The fallback letter is a catalog index, not part of the artwork. Keep the
+   single-character identity, but give it its own paper label so it never
+   disappears into the black record mark behind it. */
+body[data-theme="modular-signal"] .playlist-cover:not(.has-image){position:relative;place-items:initial}
+body[data-theme="modular-signal"] .playlist-cover:not(.has-image)>span{position:absolute;left:10px;bottom:10px;z-index:5;display:grid;place-items:center;width:38px;height:38px;padding:0;background:var(--ms-paper);color:var(--ms-ink)!important;border:2px solid var(--ms-ink);box-shadow:3px 3px 0 var(--ms-ink);clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,0 100%);font:700 22px/1 "Arial Narrow","Franklin Gothic Condensed",Impact,sans-serif;letter-spacing:0;text-shadow:none}
+body[data-theme="modular-signal"] .playlist-cover:not(.has-image)>span::after{content:"INDEX";position:absolute;left:5px;bottom:-12px;color:var(--ms-paper);font:700 6px/1 Consolas,"Courier New",monospace;letter-spacing:.14em;white-space:nowrap}
+body[data-theme="modular-signal"] .playlist-cover:not(.has-image)>span:hover{background:var(--ms-on-ink-accent);transform:translate(-1px,-1px)}
+body[data-theme="modular-signal"] :is(input[type="range"],.eq-control input){accent-color:var(--ms-ink)}
+@media(max-width:850px){body[data-theme="modular-signal"] :is(.library-rail,.main-stage,.inspector){box-shadow:4px 4px 0 var(--ms-ink)}body[data-theme="modular-signal"] .playlist-hero{height:330px}}
+body[data-theme="modular-signal"][data-motion="off"] *,body[data-theme="modular-signal"][data-performance="conserve"] *{animation:none!important;transition:none!important}

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Original poster pop sticker sheet">
+  <defs>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="5" cy="5" r="3" fill="#17151a" opacity=".26"/>
+    </pattern>
+    <pattern id="small-dots" width="16" height="16" patternUnits="userSpaceOnUse">
+      <circle cx="3" cy="3" r="2" fill="#fff2c2" opacity=".34"/>
+    </pattern>
+    <filter id="paperLift" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="10" dy="10" stdDeviation="0" flood-color="#17151a" flood-opacity="1"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="800" fill="#ff4f73"/>
+  <rect width="1200" height="800" fill="url(#dots)" opacity=".42"/>
+  <circle cx="982" cy="144" r="158" fill="#ffd02e" stroke="#17151a" stroke-width="12" filter="url(#paperLift)"/>
+  <rect x="86" y="98" width="300" height="204" rx="32" fill="#fff2c2" stroke="#17151a" stroke-width="12" filter="url(#paperLift)" transform="rotate(-3 236 200)"/>
+  <rect x="730" y="488" width="306" height="178" rx="32" fill="#35b7ff" stroke="#17151a" stroke-width="12" filter="url(#paperLift)" transform="rotate(3 883 577)"/>
+  <path d="M482 132 L604 180 L564 294 L436 288 L402 184 Z" fill="#18b06b" stroke="#17151a" stroke-width="12" filter="url(#paperLift)"/>
+  <path d="M206 468 C262 396 370 408 404 490 C430 554 374 638 278 650 C180 660 124 570 206 468Z" fill="#17151a"/>
+  <path d="M228 482 C274 424 354 434 378 496 C396 544 352 606 282 616 C208 624 166 558 228 482Z" fill="#fff2c2"/>
+  <circle cx="292" cy="522" r="42" fill="#ff4f73" stroke="#17151a" stroke-width="10"/>
+  <circle cx="292" cy="522" r="10" fill="#17151a"/>
+  <g stroke="#17151a" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M834 194 h82 l58-58 v246 l-58-58 h-82z" fill="#35b7ff"/>
+    <path d="M1004 222 C1036 246 1036 302 1004 326" fill="none"/>
+    <path d="M1046 186 C1116 244 1116 322 1046 382" fill="none"/>
+  </g>
+  <g fill="#fff2c2" stroke="#17151a" stroke-width="10" stroke-linejoin="round">
+    <path d="M588 492 l42 74 84 12-60 58 14 82-80-42-74 40 14-82-60-58 82-12z"/>
+    <path d="M126 374 l44 24 44-24-10 50 38 34-52 6-20 48-22-48-52-6 40-34z" fill="#ffd02e"/>
+  </g>
+  <g fill="#35b7ff" opacity=".9">
+    <rect x="454" y="386" width="120" height="28" rx="14" transform="rotate(-5 514 400)"/>
+    <rect x="498" y="426" width="210" height="28" rx="14" transform="rotate(-5 603 440)"/>
+    <rect x="122" y="708" width="220" height="30" rx="15" transform="rotate(4 232 723)"/>
+  </g>
+  <g fill="url(#small-dots)">
+    <rect x="86" y="98" width="300" height="204" rx="32" transform="rotate(-3 236 200)"/>
+    <rect x="730" y="488" width="306" height="178" rx="32" transform="rotate(3 883 577)"/>
+  </g>
+  <g fill="#17151a" opacity=".92">
+    <circle cx="500" cy="642" r="12"/>
+    <circle cx="536" cy="646" r="12"/>
+    <circle cx="572" cy="650" r="12"/>
+    <circle cx="1014" cy="616" r="10"/>
+    <circle cx="1050" cy="616" r="10"/>
+    <circle cx="1086" cy="616" r="10"/>
+  </g>
+</svg>

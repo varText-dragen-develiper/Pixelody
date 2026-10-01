@@ -1,0 +1,1275 @@
+/* Meme Machine: a music bot escaped from a chaotic group chat. */
+@font-face{font-family:"Meme Grotesk";src:url("assets/themes/cosmic-cinema/SpaceGrotesk-Variable.ttf") format("truetype");font-weight:300 700;font-display:swap}
+@font-face{font-family:"Meme Mono";src:url("assets/themes/cosmic-cinema/IBMPlexMono-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
+
+.meme-machine-preview{position:relative;overflow:hidden;background:#1e1f22!important}
+.meme-machine-preview::before{content:"";position:absolute;left:10%;top:13%;width:44%;height:70%;border-radius:12px;background:#313338 url("assets/themes/meme-machine/crying.svg") center/68% no-repeat;box-shadow:3px 3px 0 #5865f2}
+.meme-machine-preview::after{content:"";position:absolute;right:8%;top:22%;width:38%;height:20%;border-radius:8px;background:#5865f2;box-shadow:0 23px 0 #fee75c,0 46px 0 #23a55a}
+.meme-machine-preview i:nth-child(1){background:#5865f2}.meme-machine-preview i:nth-child(2){background:#fee75c}.meme-machine-preview i:nth-child(3){background:#23a55a}
+.meme-now-playing{display:none}
+
+body[data-theme="meme-machine"]{--meme-bg:#111214;--meme-rail:#1e1f22;--meme-panel:#2b2d31;--meme-panel-2:#313338;--meme-line:#3f4147;--meme-text:#f2f3f5;--meme-muted:#b5bac1;--meme-blurple:#5865f2;--meme-green:#23a55a;--meme-yellow:#fee75c;--meme-pink:#eb459e;--meme-cue-image:url("assets/themes/meme-machine/reaction-deck.svg");--meme-user-popcat:url("assets/themes/meme-machine/crying.svg");--meme-user-zazu:url("assets/themes/meme-machine/fire.svg");--meme-user-sans:url("assets/themes/meme-machine/skull.svg");--meme-user-toothless:url("assets/themes/meme-machine/moai.svg");--meme-user-skelly:url("assets/themes/meme-machine/chaos-cards.svg");margin:0;background:var(--meme-bg);color:var(--meme-text);font-family:"Meme Grotesk","Segoe UI",sans-serif}
+body[data-theme="meme-machine"]::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.045;background-image:url("assets/themes/meme-machine/skull.svg"),url("assets/themes/meme-machine/fire.svg"),url("assets/themes/meme-machine/moai.svg"),url("assets/themes/meme-machine/crying.svg");background-position:6% 16%,82% 12%,72% 78%,21% 86%;background-size:78px,64px,92px,74px;background-repeat:no-repeat;filter:grayscale(.35)}
+body[data-theme="meme-machine"]>:is(.topbar,.workspace,.player){position:relative;z-index:1}
+body[data-theme="meme-machine"] *{scrollbar-color:#5865f2 #1e1f22}
+body[data-theme="meme-machine"] button:focus-visible,body[data-theme="meme-machine"] input:focus-visible,body[data-theme="meme-machine"] select:focus-visible{outline:2px solid var(--meme-yellow);outline-offset:2px}
+body[data-theme="meme-machine"] :is(.hero-copy h1,.systems-view>h1,.settings-heading h2,.queue-heading h2,.track-editor-heading h2,.playlist-creator-heading h2){font-family:"Meme Grotesk",sans-serif;font-weight:700;letter-spacing:-.035em}
+body[data-theme="meme-machine"] :is(.hero-copy p,.hero-copy small,.rail-tools,.track-header,.format,.quality,.technical-details,.signal-path,.eq-control label,.eq-frequency,.timeline,.setting-label span){font-family:"Meme Mono",Consolas,monospace;letter-spacing:.035em}
+
+/* Chat header, not a product clone: original proportions and control language. */
+body[data-theme="meme-machine"] .topbar{height:62px;border:0;border-bottom:1px solid #111214;background:#2b2d31;box-shadow:0 2px 8px #0004}
+body[data-theme="meme-machine"] .profile-button{position:relative;border:3px solid #23a55a;border-radius:50%;background:#5865f2;color:#fff;box-shadow:0 0 0 3px #2b2d31;font-family:"Meme Grotesk",sans-serif}
+body[data-theme="meme-machine"] .profile-button::after{content:"";position:absolute;right:-1px;bottom:-1px;width:10px;height:10px;border:3px solid #2b2d31;border-radius:50%;background:#23a55a}
+body[data-theme="meme-machine"] .global-search{height:38px;width:min(580px,48vw);border:1px solid #111214;border-radius:8px;background:#1e1f22;box-shadow:inset 0 1px 2px #0005}
+body[data-theme="meme-machine"] .global-search input{color:#f2f3f5;font-size:11px}
+body[data-theme="meme-machine"] .global-search:focus-within{border-color:#5865f2;box-shadow:0 0 0 3px #5865f233}
+body[data-theme="meme-machine"] :is(.settings-trigger,.top-quality){clip-path:none;border:0;border-radius:8px;background:#1e1f22;color:#b5bac1}
+body[data-theme="meme-machine"] .settings-trigger{font-weight:650}
+body[data-theme="meme-machine"] .top-quality small{color:#23a55a}
+body[data-theme="meme-machine"] .status-dot{background:#23a55a;box-shadow:0 0 8px #23a55a99}
+
+/* Library becomes a set of mix channels. */
+body[data-theme="meme-machine"] .library-rail{padding:16px 10px 10px;border:0;border-right:1px solid #111214;border-radius:12px 0 0 12px;background:#1e1f22;box-shadow:none}
+body[data-theme="meme-machine"] .rail-heading{padding:4px 6px 15px;border-bottom:1px solid #3f4147}
+body[data-theme="meme-machine"] .rail-heading strong{font-size:15px;font-weight:700}
+body[data-theme="meme-machine"] .library-profile{border-radius:50%;background:#5865f2;color:#fff;box-shadow:0 0 0 2px #111214}
+body[data-theme="meme-machine"] .create-button{clip-path:none;border:0;border-radius:6px;background:#313338;color:#dbdee1;font-size:10px;font-weight:700}
+body[data-theme="meme-machine"] .create-button:hover{background:#5865f2;color:#fff}
+body[data-theme="meme-machine"] .library-filters{gap:4px;padding:12px 2px 8px}
+body[data-theme="meme-machine"] .library-filters .chip{flex:1;min-width:0;padding:7px 2px;clip-path:none;border:0;border-radius:6px;background:transparent;color:#949ba4;font-size:8px;font-weight:650}
+body[data-theme="meme-machine"] .library-filters .chip.active{background:#404249;color:#fff}
+body[data-theme="meme-machine"] .rail-tools{padding:8px;color:#80848e;font-size:7px}
+body[data-theme="meme-machine"] .playlist-item{position:relative;min-height:56px;grid-template-columns:38px 1fr 16px;gap:9px;padding:7px 8px;clip-path:none;border:0;border-radius:7px;background:transparent;color:#949ba4;transition:background .15s,color .15s,transform .15s}
+body[data-theme="meme-machine"] .playlist-item::before{content:"#";position:absolute;left:8px;top:50%;z-index:2;transform:translateY(-52%);color:#b5bac1;font-size:19px;font-weight:650;opacity:.72}
+body[data-theme="meme-machine"] .playlist-item:hover{transform:none;background:#35373c;color:#dbdee1}
+body[data-theme="meme-machine"] .playlist-item.active{background:#404249;color:#fff;box-shadow:inset 3px 0 #5865f2}
+body[data-theme="meme-machine"] .playlist-thumb{width:38px;height:38px;border:0;border-radius:50%;background:#313338;color:transparent;opacity:.22}
+body[data-theme="meme-machine"] .playlist-copy strong{color:inherit;font-size:11px;font-weight:620}
+body[data-theme="meme-machine"] .playlist-copy span{margin-top:3px;color:#80848e;font:7px "Meme Mono",monospace}
+body[data-theme="meme-machine"] .playlist-dots{color:#b5bac1}
+body[data-theme="meme-machine"] .rail-import{gap:5px;border-top:1px solid #3f4147}
+body[data-theme="meme-machine"] .rail-import button{min-height:38px;clip-path:none;border:0;border-radius:6px;background:#2b2d31;color:#b5bac1;font-size:8px;font-weight:650}
+body[data-theme="meme-machine"] .rail-import button:first-child{background:#5865f2;color:#fff}
+
+/* A pinned bot embed carries the playlist identity. */
+body[data-theme="meme-machine"] .main-stage{position:relative;border:0;border-radius:0;background:#313338;box-shadow:none}
+body[data-theme="meme-machine"] .playlist-hero{height:410px;isolation:isolate;overflow:hidden;border:0;border-bottom:1px solid #1e1f22;background-color:#313338;background-image:radial-gradient(circle at 80% 38%,#5865f240,transparent 34%),linear-gradient(135deg,#313338,#232428)}
+body[data-theme="meme-machine"] .playlist-hero::before{content:"";position:absolute;z-index:0;right:2%;top:22px;width:420px;height:340px;background:url("assets/themes/meme-machine/crying.svg") 52% 35%/190px no-repeat,url("assets/themes/meme-machine/skull.svg") 15% 74%/82px no-repeat,url("assets/themes/meme-machine/fire.svg") 85% 74%/92px no-repeat,url("assets/themes/meme-machine/moai.svg") 92% 8%/78px no-repeat;filter:drop-shadow(0 18px 18px #0005)}
+body[data-theme="meme-machine"] .playlist-hero::after{content:"3 reactions  •  pinned by Pixelody Bot";position:absolute;right:22px;bottom:17px;padding:6px 10px;border:1px solid #4e5058;border-radius:9px;background:#2b2d31;color:#b5bac1;font:8px "Meme Mono",monospace}
+body[data-theme="meme-machine"] .hero-shade{z-index:1;background:linear-gradient(90deg,#232428fa 0 37%,#232428c7 53%,transparent 78%),linear-gradient(0deg,#232428 0,transparent 52%)}
+body[data-theme="meme-machine"] .hero-content{z-index:2;left:32px;right:32px;bottom:34px;gap:24px}
+body[data-theme="meme-machine"] .playlist-cover{position:relative;width:158px;height:158px;overflow:visible;clip-path:none;border:5px solid #1e1f22;border-radius:20px;background:#5865f2 url("assets/themes/meme-machine/moai.svg") center/72% no-repeat;box-shadow:0 16px 36px #0006,8px 8px 0 #fee75c;color:transparent}
+body[data-theme="meme-machine"] .playlist-cover::after{content:"LIVE";position:absolute;right:-10px;bottom:-10px;padding:5px 8px;border:3px solid #1e1f22;border-radius:8px;background:#f23f42;color:#fff;font:700 8px "Meme Grotesk",sans-serif;letter-spacing:.08em}
+body[data-theme="meme-machine"] .playlist-cover:not(.has-image) span{display:none}
+body[data-theme="meme-machine"] .hero-copy{max-width:53%}
+body[data-theme="meme-machine"] .hero-copy p{margin-bottom:6px;color:#23a55a;font-size:8px;font-weight:700}
+body[data-theme="meme-machine"] .hero-copy h1{margin-bottom:13px;font-size:clamp(50px,6vw,88px);line-height:.9;color:#fff;text-wrap:balance}
+body[data-theme="meme-machine"] .hero-copy>span{max-width:480px;color:#dbdee1;line-height:1.5}
+body[data-theme="meme-machine"] .hero-copy small{color:#949ba4}
+body[data-theme="meme-machine"] :is(.hero-edit,.metadata-toggle){top:18px;clip-path:none;border:0;border-radius:8px;background:#1e1f22d9;color:#b5bac1;backdrop-filter:blur(12px);font-size:8px;font-weight:650}
+body[data-theme="meme-machine"] .collection-body{padding:16px 26px 70px;background:#313338}
+body[data-theme="meme-machine"] .collection-actions{height:68px;border-bottom:1px solid #3f4147}
+body[data-theme="meme-machine"] .hero-play{width:54px;height:54px;clip-path:none;border:0;border-radius:50%;background:#5865f2;color:#fff;box-shadow:0 8px 20px #11121466}
+body[data-theme="meme-machine"] :is(.subtle-action,.filter,.sort-select){clip-path:none;border:0;border-radius:7px;background:#2b2d31;color:#b5bac1;font-size:9px;font-weight:650}
+body[data-theme="meme-machine"] .filter.active{background:#f2f3f5;color:#1e1f22}
+
+/* Tracks resemble readable bot messages rather than dense table cells. */
+body[data-theme="meme-machine"] .track-table{margin-top:10px}
+body[data-theme="meme-machine"] .track-row{position:relative;min-height:66px;padding-inline:11px;clip-path:none;border:0;border-radius:6px;background:transparent;color:#b5bac1;transition:background .16s,transform .16s}
+body[data-theme="meme-machine"] .track-header{min-height:38px;border-bottom:1px solid #3f4147;border-radius:0;color:#80848e;font-size:7px}
+body[data-theme="meme-machine"] .track-row:not(.track-header):hover{transform:none;background:#2e3035;box-shadow:none}
+body[data-theme="meme-machine"] #trackRows .track-row.playing{background:linear-gradient(90deg,#5865f226,#2e3035 62%);box-shadow:inset 3px 0 #5865f2}
+body[data-theme="meme-machine"] #trackRows .track-row.playing::after{content:"🔥  69   💀  420";position:absolute;right:82px;bottom:4px;padding:3px 7px;border:1px solid #5865f2;border-radius:7px;background:#232428;color:#dbdee1;font:7px "Meme Mono",monospace;letter-spacing:.02em;pointer-events:none}
+body[data-theme="meme-machine"] .track-title strong{color:#f2f3f5;font-size:12px;font-weight:630}
+body[data-theme="meme-machine"] .track-title>span:last-child{color:#949ba4;font-size:9px}
+body[data-theme="meme-machine"] .track-art{width:38px;height:38px;border-radius:50%;background:#5865f2 url("assets/themes/meme-machine/fire.svg") center/70% no-repeat}
+body[data-theme="meme-machine"] :is(.format,.tuned){color:#8ea1e1}
+body[data-theme="meme-machine"] .track-actions button{border-radius:6px;color:#b5bac1}
+body[data-theme="meme-machine"] .track-actions .favorite.active{color:#fee75c}
+
+/* Empty channel gets a sticker wall, without borrowed reaction photos. */
+body[data-theme="meme-machine"] .drop-zone{position:relative;isolation:isolate;overflow:hidden;height:270px;border:2px dashed #4e5058;border-radius:14px;background:#2b2d31;color:#b5bac1;box-shadow:none}
+body[data-theme="meme-machine"] .drop-zone::before{content:"";position:absolute;z-index:-1;left:50%;top:47%;width:380px;height:210px;transform:translate(-50%,-50%);background:url("assets/themes/meme-machine/crying.svg") 10% 48%/110px no-repeat,url("assets/themes/meme-machine/moai.svg") 50% 14%/105px no-repeat,url("assets/themes/meme-machine/skull.svg") 87% 50%/100px no-repeat;opacity:.32;filter:drop-shadow(0 10px 8px #0004)}
+body[data-theme="meme-machine"] .drop-zone strong{color:#f2f3f5;font-size:22px}
+body[data-theme="meme-machine"] .drop-zone small{max-width:420px;color:#b5bac1;text-align:center}
+body[data-theme="meme-machine"] .drop-zone button{clip-path:none;border:0;border-radius:8px;background:#5865f2;color:#fff;font-weight:700;box-shadow:0 6px 18px #11121466}
+body[data-theme="meme-machine"] .rail-empty,body[data-theme="meme-machine"] .queue-empty{color:#949ba4}
+
+/* Inspector reads as bot status plus a voice-channel mixer. */
+body[data-theme="meme-machine"] .inspector{padding:18px 14px;border:0;border-left:1px solid #111214;border-radius:0 12px 12px 0;background:#2b2d31;box-shadow:none}
+body[data-theme="meme-machine"] .inspector-heading{padding-bottom:13px;border-bottom:1px solid #3f4147}
+body[data-theme="meme-machine"] .inspector-heading strong{font-size:13px}
+body[data-theme="meme-machine"] :is(.quality-card,.tuning-card){margin-bottom:12px;padding:16px;border:0;border-radius:12px;background:#1e1f22;box-shadow:none}
+body[data-theme="meme-machine"] :is(.quality-card,.tuning-card) small{color:#949ba4;font-weight:650}
+body[data-theme="meme-machine"] :is(.quality-card,.tuning-card) h3{color:#f2f3f5}
+body[data-theme="meme-machine"] .quality-card h3::before{content:"✓";display:inline-grid;place-items:center;width:18px;height:18px;margin-right:7px;border-radius:50%;background:#23a55a;color:#fff;font-size:11px}
+body[data-theme="meme-machine"] .quality-card p{color:#b5bac1}
+body[data-theme="meme-machine"] .activity-dots i{background:#5865f2}
+body[data-theme="meme-machine"].is-playing .activity-dots i{background:#23a55a;box-shadow:0 0 8px #23a55a88}
+body[data-theme="meme-machine"] .signal-path{border-top-color:#3f4147;color:#949ba4}
+body[data-theme="meme-machine"] .signal-path b{color:#23a55a}
+body[data-theme="meme-machine"] .technical-details span{border-radius:6px;background:#2b2d31;color:#b5bac1}
+body[data-theme="meme-machine"] .eq-visual{position:relative;height:90px;border-radius:9px;background:repeating-linear-gradient(90deg,transparent 0 15px,#5865f21c 16px),linear-gradient(180deg,#232428,#111214);box-shadow:inset 0 0 18px #0004}
+body[data-theme="meme-machine"] .eq-visual::after{content:"bot is listening...";position:absolute;right:8px;top:6px;color:#80848e;font:7px "Meme Mono",monospace}
+body[data-theme="meme-machine"] .eq-slider-shell{width:26px;margin:7px auto;border-radius:14px;background:#111214;box-shadow:inset 0 0 8px #000}
+body[data-theme="meme-machine"] .eq-control input{accent-color:#5865f2}
+body[data-theme="meme-machine"] .eq-control label{color:#dbdee1}
+body[data-theme="meme-machine"] .eq-control strong{color:#23a55a}
+body[data-theme="meme-machine"] .tuning-help{border-top-color:#3f4147;color:#80848e}
+body[data-theme="meme-machine"] .open-systems{border:0;border-radius:8px;background:#1e1f22;color:#dbdee1;font-weight:650}
+
+/* Server audio settings retain workstation clarity. */
+body[data-theme="meme-machine"] .systems-view{position:relative;isolation:isolate;min-height:100%;padding:40px;background:radial-gradient(circle at 83% 15%,#5865f230,transparent 28%),#313338}
+body[data-theme="meme-machine"] .systems-view::before{content:"";position:absolute;z-index:-1;right:5%;top:30px;width:310px;height:260px;background:url("assets/themes/meme-machine/moai.svg") 20% 30%/150px no-repeat,url("assets/themes/meme-machine/fire.svg") 87% 70%/120px no-repeat;opacity:.23}
+body[data-theme="meme-machine"] .systems-view .eyebrow{color:#23a55a}
+body[data-theme="meme-machine"] .systems-view>h1{max-width:700px;font-size:clamp(44px,5vw,72px);line-height:.95}
+body[data-theme="meme-machine"] .systems-view .lede{max-width:570px;color:#b5bac1}
+body[data-theme="meme-machine"] .systems-grid{gap:12px}
+body[data-theme="meme-machine"] .systems-grid .panel{border:0;border-radius:12px;background:#2b2d31;box-shadow:0 8px 22px #1112143d}
+body[data-theme="meme-machine"] .systems-grid .panel label{color:#dbdee1;font-weight:650}
+body[data-theme="meme-machine"] .systems-grid select{border-color:#1e1f22;border-radius:7px;background:#1e1f22;color:#f2f3f5}
+body[data-theme="meme-machine"] .system-character-panel .preset{border:1px solid #3f4147;border-radius:8px;background:#232428;color:#b5bac1}
+body[data-theme="meme-machine"] .system-character-panel .preset.active{border-color:#5865f2;background:#5865f226;color:#fff;box-shadow:inset 3px 0 #5865f2}
+
+/* Bottom bar becomes a premium bot voice activity strip. */
+body[data-theme="meme-machine"] .player{isolation:isolate;overflow:hidden;border:0;border-top:1px solid #111214;background:#1e1f22;box-shadow:0 -8px 26px #0004}
+body[data-theme="meme-machine"] .player::before{content:"";position:absolute;z-index:0;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#5865f2,#eb459e,#fee75c,#23a55a,#5865f2);background-size:200% 100%}
+body[data-theme="meme-machine"] .player>*{position:relative;z-index:1}
+body[data-theme="meme-machine"] .mini-cover{width:56px;height:56px;clip-path:none;border:3px solid #23a55a;border-radius:50%;background:#5865f2 url("assets/themes/meme-machine/crying.svg") center/75% no-repeat;box-shadow:0 0 0 3px #1e1f22}
+body[data-theme="meme-machine"] .playing-info strong{font-weight:650}
+body[data-theme="meme-machine"] .playing-info span{color:#949ba4}
+body[data-theme="meme-machine"] .transport-buttons{display:inline-flex;align-items:center;gap:7px;padding:4px 8px;border:0;border-radius:12px;background:#2b2d31}
+body[data-theme="meme-machine"] .transport-buttons button{clip-path:none;border-radius:50%;color:#b5bac1}
+body[data-theme="meme-machine"] .transport-buttons button:hover{background:#404249;color:#fff}
+body[data-theme="meme-machine"] .transport-buttons .play-button{width:40px;height:40px;margin-inline:6px!important;border:0!important;border-radius:50%!important;background:#5865f2!important;color:#fff!important;box-shadow:0 5px 14px #11121466!important}
+body[data-theme="meme-machine"] .transport-buttons .play-button::before{border-radius:50%!important;clip-path:none!important;border-color:#fee75c!important}
+body[data-theme="meme-machine"] .timeline{color:#80848e}
+body[data-theme="meme-machine"] .timeline input{height:4px;accent-color:#5865f2}
+body[data-theme="meme-machine"] :is(.mini-launch,.queue-button){clip-path:none;border:0;border-radius:7px;background:#2b2d31;color:#b5bac1;font-weight:650}
+body[data-theme="meme-machine"] .volume>span:last-child{border-color:#23a55a;border-radius:7px;background:#23a55a1f;color:#56d985}
+
+/* Every auxiliary surface stays in the same social dark material. */
+body[data-theme="meme-machine"] :is(.settings-drawer,.queue-drawer,.track-editor,.playlist-creator){border:1px solid #111214;border-radius:14px 0 0 14px;background:#2b2d31;box-shadow:-18px 0 50px #0006}
+body[data-theme="meme-machine"] .settings-drawer :is(.settings-nav,.theme-browser-tools){border-color:#1e1f22;border-radius:10px;background:#1e1f22}
+body[data-theme="meme-machine"] :is(.settings-nav button.active,.segmented-setting button.active){background:#5865f2;color:#fff}
+body[data-theme="meme-machine"] .context-menu{border:1px solid #111214;border-radius:8px;background:#111214;box-shadow:0 12px 30px #0008}
+body[data-theme="meme-machine"] .context-menu button{border-radius:5px}
+body[data-theme="meme-machine"] .context-menu button:hover{background:#5865f2;color:#fff}
+body[data-theme="meme-machine"] .toast{border-radius:8px;background:#111214;color:#f2f3f5;box-shadow:0 9px 28px #0008;font-weight:650}
+
+/* Existing action plumbing becomes a compact reaction toast. */
+body[data-theme="meme-machine"] .theme-action-overlay{position:fixed;z-index:88;top:78px;left:50%;width:min(410px,calc(100vw - 40px));height:66px;padding:8px 13px;display:grid;grid-template-columns:48px 1fr;align-items:center;gap:11px;border:1px solid #111214;border-radius:12px;color:#f2f3f5;background:#232428f2;opacity:0;pointer-events:none;transform:translate(-50%,-16px) scale(.94);box-shadow:0 12px 30px #0008;backdrop-filter:blur(10px)}
+body[data-theme="meme-machine"] .theme-action-overlay.active{animation:meme-toast .5s cubic-bezier(.2,.8,.2,1) both}
+body[data-theme="meme-machine"] .theme-action-mark{width:46px;height:46px;border-radius:50%;background:#5865f2 url("assets/themes/meme-machine/skull.svg") center/74% no-repeat}
+body[data-theme="meme-machine"] .theme-action-mark i{display:none}
+body[data-theme="meme-machine"] .theme-action-copy :is(small,strong){display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body[data-theme="meme-machine"] .theme-action-copy small{color:#23a55a;font:7px "Meme Mono",monospace}
+body[data-theme="meme-machine"] .theme-action-copy strong{margin-top:4px;font-size:14px;font-weight:700}
+body[data-theme="meme-machine"] .main-stage.meme-stage-pop::after{content:"";position:absolute;z-index:10;right:20px;top:20px;width:74px;height:74px;pointer-events:none;background:url("assets/themes/meme-machine/fire.svg") center/contain no-repeat;filter:drop-shadow(0 8px 8px #0005);animation:meme-reaction .45s cubic-bezier(.2,.9,.3,1) both}
+
+/* Density and motion are user-controlled. */
+body[data-theme="meme-machine"][data-detail="minimal"]::before{display:none}
+body[data-theme="meme-machine"][data-detail="minimal"] .playlist-hero::before{background:url("assets/themes/meme-machine/crying.svg") 62% 42%/180px no-repeat}
+body[data-theme="meme-machine"][data-detail="minimal"] #trackRows .track-row.playing::after{content:"🔥  1"}
+body[data-theme="meme-machine"][data-detail="expressive"]::before{opacity:.085}
+body[data-theme="meme-machine"][data-detail="expressive"] .playlist-hero::before{filter:drop-shadow(0 18px 18px #0006) saturate(1.18)}
+body[data-theme="meme-machine"][data-motion]:not([data-motion="off"]) .playlist-hero::before{animation:meme-sticker-float 7s ease-in-out infinite}
+body[data-theme="meme-machine"][data-motion="expressive"]::before{animation:meme-wall-drift 12s ease-in-out infinite alternate}
+body[data-theme="meme-machine"][data-motion="expressive"].is-playing .player::before{animation:meme-rainbow 3.2s linear infinite}
+body[data-theme="meme-machine"][data-motion="expressive"].is-playing #trackRows .track-row.playing::after{animation:meme-pill-bop 1.6s ease-in-out infinite}
+body[data-theme="meme-machine"][data-effect-hover="true"] button:active{transform:scale(.96)}
+@keyframes meme-sticker-float{50%{transform:translateY(-7px) rotate(-1deg)}}
+@keyframes meme-wall-drift{to{background-position:9% 20%,79% 9%,76% 75%,18% 82%}}
+@keyframes meme-rainbow{to{background-position:200% 0}}
+@keyframes meme-pill-bop{50%{transform:translateY(-2px);border-color:#fee75c}}
+@keyframes meme-toast{0%{opacity:0;transform:translate(-50%,-16px) scale(.94)}24%,72%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,5px) scale(.98)}}
+@keyframes meme-reaction{0%{opacity:0;transform:scale(.3) rotate(-18deg)}55%{opacity:1;transform:scale(1.12) rotate(5deg)}100%{opacity:0;transform:scale(.92) rotate(0)}}
+
+@media(max-width:1180px){body[data-theme="meme-machine"] .playlist-hero::before{right:-80px;width:350px}body[data-theme="meme-machine"] .hero-copy{max-width:64%}}
+@media(max-width:850px){body[data-theme="meme-machine"] .playlist-hero::after{display:none}body[data-theme="meme-machine"] .library-filters{display:none}body[data-theme="meme-machine"] .playlist-hero::before{right:-125px;opacity:.55}body[data-theme="meme-machine"] .hero-copy{max-width:72%}}
+@media(prefers-reduced-motion:reduce){body[data-theme="meme-machine"]::before,body[data-theme="meme-machine"] .playlist-hero::before,body[data-theme="meme-machine"] .player::before,body[data-theme="meme-machine"] #trackRows .track-row.playing::after,body[data-theme="meme-machine"] .theme-action-overlay.active,body[data-theme="meme-machine"] .main-stage.meme-stage-pop::after{animation:none!important;transition:none!important}body[data-theme="meme-machine"] .theme-action-overlay,body[data-theme="meme-machine"] .main-stage.meme-stage-pop::after{display:none!important}}
+body[data-theme="meme-machine"][data-motion="off"]::before,body[data-theme="meme-machine"][data-motion="off"] .playlist-hero::before,body[data-theme="meme-machine"][data-motion="off"] .player::before,body[data-theme="meme-machine"][data-motion="off"] #trackRows .track-row.playing::after,body[data-theme="meme-machine"][data-motion="off"] .theme-action-overlay.active,body[data-theme="meme-machine"][data-motion="off"] .main-stage.meme-stage-pop::after{animation:none!important;transition:none!important}body[data-theme="meme-machine"][data-motion="off"] .theme-action-overlay,body[data-theme="meme-machine"][data-motion="off"] .main-stage.meme-stage-pop::after{display:none!important}
+
+/* Meme Machine upgrade: original sticker deck, clearer message rhythm, and credit-forward Easter egg. */
+body[data-theme="meme-machine"]{
+  --meme-chat:#232428;
+  --meme-chat-hot:#363941;
+  --meme-sticker:url("assets/themes/meme-machine/reaction-deck.svg");
+  --meme-chaos:url("assets/themes/meme-machine/chaos-cards.svg");
+}
+body[data-theme="meme-machine"] .topbar::after{
+  content:"Pixelody Bot online";
+  position:absolute;
+  left:82px;
+  bottom:-9px;
+  padding:3px 8px;
+  border:1px solid #111214;
+  border-radius:999px;
+  background:#111214;
+  color:#23a55a;
+  font:700 7px "Meme Mono",Consolas,monospace;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+body[data-theme="meme-machine"] .library-rail{
+  background:linear-gradient(180deg,#1e1f22 0,#1a1b1f 100%);
+}
+body[data-theme="meme-machine"] .playlist-item{
+  isolation:isolate;
+}
+body[data-theme="meme-machine"] .playlist-item::after{
+  content:"";
+  position:absolute;
+  inset:7px auto 7px 4px;
+  width:3px;
+  border-radius:4px;
+  background:#5865f2;
+  opacity:0;
+  transform:scaleY(.35);
+  transition:opacity .15s,transform .15s;
+}
+body[data-theme="meme-machine"] .playlist-item:hover::after,
+body[data-theme="meme-machine"] .playlist-item.active::after{
+  opacity:1;
+  transform:scaleY(1);
+}
+body[data-theme="meme-machine"] .playlist-thumb{
+  display:grid;
+  place-items:center;
+  position:relative;
+  opacity:1;
+  background:#313338;
+  box-shadow:inset 0 0 0 1px #111214;
+}
+body[data-theme="meme-machine"] .playlist-thumb::before{
+  content:"";
+  width:20px;
+  height:20px;
+  border-radius:7px;
+  background:#5865f2;
+  box-shadow:9px 9px 0 #23a55a,-5px 10px 0 #fee75c;
+  transform:rotate(-8deg);
+}
+body[data-theme="meme-machine"] .playlist-hero{
+  background-image:
+    radial-gradient(circle at 74% 35%,#5865f25c,transparent 31%),
+    radial-gradient(circle at 90% 18%,#fee75c1c,transparent 20%),
+    linear-gradient(135deg,#313338,#202126 78%);
+}
+body[data-theme="meme-machine"] .playlist-hero::before{
+  right:0;
+  top:16px;
+  width:480px;
+  height:358px;
+  background:
+    var(--meme-sticker) 49% 48%/330px no-repeat,
+    url("assets/themes/meme-machine/crying.svg") 4% 25%/116px no-repeat,
+    url("assets/themes/meme-machine/fire.svg") 93% 80%/88px no-repeat,
+    url("assets/themes/meme-machine/moai.svg") 94% 7%/76px no-repeat;
+}
+body[data-theme="meme-machine"] .hero-content::after{
+  content:"Sticker credits: Noto Emoji / Apache-2.0 + original Pixelody deck";
+  position:absolute;
+  right:0;
+  bottom:-22px;
+  max-width:min(390px,44vw);
+  padding:5px 8px;
+  border:1px solid #4e5058;
+  border-radius:8px;
+  background:#111214d9;
+  color:#949ba4;
+  font:7px "Meme Mono",Consolas,monospace;
+  letter-spacing:.04em;
+  opacity:0;
+  transform:translateY(6px);
+  transition:opacity .18s,transform .18s;
+  pointer-events:none;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+body[data-theme="meme-machine"] .playlist-hero:hover .hero-content::after,
+body[data-theme="meme-machine"] .playlist-hero:focus-within .hero-content::after{
+  opacity:1;
+  transform:translateY(0);
+}
+body[data-theme="meme-machine"] .playlist-cover{
+  background:#5865f2 var(--meme-sticker) center/120% no-repeat;
+  box-shadow:0 16px 36px #0006,8px 8px 0 #fee75c,-7px -7px 0 #23a55a;
+}
+body[data-theme="meme-machine"] .playlist-cover.has-image{
+  background-color:#111214;
+  background-size:cover;
+}
+body[data-theme="meme-machine"] .track-row:not(.track-header){
+  margin-block:4px;
+  background:#2b2d3100;
+}
+body[data-theme="meme-machine"] .track-row:not(.track-header)::before{display:none}
+body[data-theme="meme-machine"] .track-row:not(.track-header):hover{
+  background:linear-gradient(90deg,#35373c,#2b2d31 78%);
+}
+body[data-theme="meme-machine"] #trackRows .track-row.playing{
+  background:linear-gradient(90deg,#5865f23d,#35373c 48%,#2e3035 100%);
+}
+body[data-theme="meme-machine"] #trackRows .track-row.playing .track-art{
+  background:#23a55a url("assets/themes/meme-machine/fire.svg") center/72% no-repeat;
+  box-shadow:0 0 0 3px #1e1f22,0 0 18px #23a55a55;
+}
+body[data-theme="meme-machine"] #trackRows .track-row.playing::after{
+  content:"+69 FIRE  +420 SKULL";
+  right:72px;
+  bottom:5px;
+  border-color:#5865f2;
+  box-shadow:0 0 0 1px #111214;
+}
+body[data-theme="meme-machine"] .track-art{
+  box-shadow:0 0 0 2px #1e1f22;
+}
+body[data-theme="meme-machine"] .track-art.has-image{
+  background-size:cover;
+}
+body[data-theme="meme-machine"] .drop-zone{
+  background:
+    linear-gradient(180deg,#2b2d31e8,#232428f2),
+    var(--meme-sticker) center/340px no-repeat;
+}
+body[data-theme="meme-machine"] .drop-zone::after{
+  content:"safe-to-share sticker mode";
+  position:absolute;
+  right:14px;
+  top:12px;
+  color:#23a55a;
+  font:700 7px "Meme Mono",Consolas,monospace;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+body[data-theme="meme-machine"] .quality-card,
+body[data-theme="meme-machine"] .tuning-card{
+  position:relative;
+  overflow:hidden;
+}
+body[data-theme="meme-machine"] .quality-card::after,
+body[data-theme="meme-machine"] .tuning-card::after{
+  content:"";
+  position:absolute;
+  right:-34px;
+  bottom:-44px;
+  width:132px;
+  height:104px;
+  background:var(--meme-sticker) center/contain no-repeat;
+  opacity:.1;
+  pointer-events:none;
+}
+body[data-theme="meme-machine"] .eq-visual{
+  background:
+    linear-gradient(90deg,#23a55a 0 4px,transparent 4px 22px),
+    repeating-linear-gradient(90deg,transparent 0 15px,#5865f21c 16px),
+    linear-gradient(180deg,#232428,#111214);
+}
+body[data-theme="meme-machine"] .player::after{
+  content:"";
+  position:absolute;
+  right:172px;
+  bottom:-48px;
+  width:150px;
+  height:110px;
+  background:var(--meme-sticker) center/contain no-repeat;
+  opacity:.1;
+  pointer-events:none;
+}
+body[data-theme="meme-machine"] .theme-action-mark{
+  background:#5865f2 var(--meme-sticker) center/125% no-repeat;
+}
+body[data-theme="meme-machine"][data-detail="minimal"] .playlist-hero::before{
+  background:var(--meme-sticker) 62% 42%/240px no-repeat;
+}
+body[data-theme="meme-machine"][data-detail="minimal"] #trackRows .track-row.playing::after{
+  content:"+1 FIRE";
+}
+body[data-theme="meme-machine"][data-detail="expressive"] .hero-content::after{
+  opacity:.58;
+}
+body[data-theme="meme-machine"][data-motion="expressive"].is-playing .playlist-cover::before{
+  content:"";
+  position:absolute;
+  inset:-13px;
+  z-index:-1;
+  border-radius:28px;
+  background:conic-gradient(from 90deg,#5865f2,#eb459e,#fee75c,#23a55a,#5865f2);
+  filter:blur(12px);
+  opacity:.44;
+  animation:meme-cover-signal 4.2s linear infinite;
+}
+@keyframes meme-cover-signal{to{transform:rotate(1turn)}}
+@media(max-width:850px){
+  body[data-theme="meme-machine"] .topbar::after,
+  body[data-theme="meme-machine"] .hero-content::after,
+  body[data-theme="meme-machine"] .drop-zone::after,
+  body[data-theme="meme-machine"] .player::after{display:none}
+  body[data-theme="meme-machine"] #trackRows .track-row.playing::after{right:16px;max-width:118px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
+@media(prefers-reduced-motion:reduce){
+  body[data-theme="meme-machine"][data-motion="expressive"].is-playing .playlist-cover::before{animation:none!important}
+}
+body[data-theme="meme-machine"][data-motion="off"] .playlist-cover::before{display:none!important}
+
+/* Chaos pass: cycling meme backdrops, fake-GIF loops, and extra live reaction crumbs. */
+body[data-theme="meme-machine"] .playlist-hero::before{
+  transform-origin:62% 50%;
+}
+body[data-theme="meme-machine"] .playlist-hero::after{
+  content:"LIVE REACTIONS  +69 FIRE  +420 SKULL  +1 VIBE";
+  max-width:min(430px,calc(100% - 44px));
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+body[data-theme="meme-machine"] .playlist-hero .hero-copy::after{
+  content:"";
+  display:block;
+  width:118px;
+  height:18px;
+  margin-top:12px;
+  border-radius:999px;
+  background:
+    radial-gradient(circle at 15px 9px,#23a55a 0 4px,transparent 5px),
+    radial-gradient(circle at 36px 9px,#fee75c 0 4px,transparent 5px),
+    radial-gradient(circle at 57px 9px,#eb459e 0 4px,transparent 5px),
+    linear-gradient(90deg,#111214,#232428);
+  box-shadow:inset 0 0 0 1px #4e5058;
+}
+body[data-theme="meme-machine"] .collection-actions{
+  position:relative;
+}
+body[data-theme="meme-machine"] .collection-actions::after{
+  content:"chat is typing...  add track?  boost bass?  absolutely.";
+  position:absolute;
+  right:0;
+  top:50%;
+  max-width:min(360px,42%);
+  transform:translateY(-50%);
+  padding:7px 10px;
+  border:1px solid #3f4147;
+  border-radius:999px;
+  background:#1e1f22;
+  color:#949ba4;
+  font:7px "Meme Mono",Consolas,monospace;
+  letter-spacing:.06em;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+body[data-theme="meme-machine"] .systems-view{
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 83% 15%,#5865f23d,transparent 28%),
+    radial-gradient(circle at 18% 82%,#eb459e22,transparent 22%),
+    #313338;
+}
+body[data-theme="meme-machine"] .systems-view::before{
+  right:2%;
+  top:18px;
+  width:430px;
+  height:330px;
+  background:
+    var(--meme-chaos) 50% 44%/360px no-repeat,
+    url("assets/themes/meme-machine/fire.svg") 90% 86%/76px no-repeat;
+  opacity:.24;
+}
+body[data-theme="meme-machine"] .systems-view::after{
+  content:"system defaults unlocked: NORMALIZE VIBES / PROTECT EARS / DO NOT TRUST AUX";
+  position:absolute;
+  left:40px;
+  right:40px;
+  bottom:24px;
+  height:28px;
+  display:flex;
+  align-items:center;
+  padding-inline:12px;
+  border:1px solid #3f4147;
+  border-radius:9px;
+  background:#111214cc;
+  color:#23a55a;
+  font:700 8px "Meme Mono",Consolas,monospace;
+  letter-spacing:.09em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+body[data-theme="meme-machine"] .systems-grid .panel:nth-child(odd)::after{
+  content:"+1";
+  float:right;
+  padding:2px 6px;
+  border-radius:999px;
+  background:#5865f2;
+  color:#fff;
+  font:700 8px "Meme Mono",Consolas,monospace;
+}
+body[data-theme="meme-machine"] .systems-grid .panel:nth-child(even)::after{
+  content:"LOL";
+  float:right;
+  padding:2px 6px;
+  border-radius:999px;
+  background:#fee75c;
+  color:#111214;
+  font:900 8px "Meme Grotesk",Arial,sans-serif;
+}
+body[data-theme="meme-machine"] .theme-action-overlay.active .theme-action-mark{
+  animation:meme-live-sticker .5s cubic-bezier(.2,.9,.3,1) both;
+}
+body[data-theme="meme-machine"][data-detail="expressive"] .playlist-hero::after{
+  content:"LIVE REACTIONS  +69 FIRE  +420 SKULL  +404 VIBE  +999 BASS CRIMES";
+}
+body[data-theme="meme-machine"][data-detail="expressive"] .collection-actions::after{
+  content:"chat is typing...  no skips detected  bass crimes pending  vibe court adjourned";
+}
+body[data-theme="meme-machine"][data-motion]:not([data-motion="off"]) .playlist-hero::before{
+  animation:meme-backdrop-cycle 18s steps(1,end) infinite,meme-sticker-float 7s ease-in-out infinite;
+}
+body[data-theme="meme-machine"][data-motion]:not([data-motion="off"]) .systems-view::before{
+  animation:meme-system-cycle 20s steps(1,end) infinite,meme-system-wobble 8s ease-in-out infinite;
+}
+body[data-theme="meme-machine"][data-motion="expressive"] .playlist-hero .hero-copy::after{
+  animation:meme-typing-dots 1.1s steps(3,end) infinite;
+}
+body[data-theme="meme-machine"][data-motion="expressive"] .collection-actions::after,
+body[data-theme="meme-machine"][data-motion="expressive"] .systems-view::after{
+  animation:meme-ticker 9s linear infinite;
+}
+body[data-theme="meme-machine"][data-motion="expressive"].is-playing .main-stage::before{
+  content:"";
+  position:absolute;
+  z-index:8;
+  top:12px;
+  right:12px;
+  width:68px;
+  height:68px;
+  pointer-events:none;
+  background:url("assets/themes/meme-machine/fire.svg") center/contain no-repeat;
+  filter:drop-shadow(0 10px 10px #0008);
+  animation:meme-live-float 2.8s ease-in-out infinite;
+}
+@keyframes meme-backdrop-cycle{
+  0%,24%{background:var(--meme-sticker) 49% 48%/330px no-repeat,url("assets/themes/meme-machine/crying.svg") 4% 25%/116px no-repeat,url("assets/themes/meme-machine/fire.svg") 93% 80%/88px no-repeat,url("assets/themes/meme-machine/moai.svg") 94% 7%/76px no-repeat}
+  25%,49%{background:var(--meme-chaos) 50% 48%/390px no-repeat,url("assets/themes/meme-machine/skull.svg") 4% 76%/86px no-repeat,url("assets/themes/meme-machine/fire.svg") 94% 22%/82px no-repeat}
+  50%,74%{background:url("assets/themes/meme-machine/moai.svg") 52% 42%/180px no-repeat,url("assets/themes/meme-machine/crying.svg") 12% 76%/112px no-repeat,var(--meme-chaos) 88% 56%/250px no-repeat}
+  75%,100%{background:url("assets/themes/meme-machine/fire.svg") 46% 54%/150px no-repeat,var(--meme-sticker) 85% 46%/270px no-repeat,url("assets/themes/meme-machine/skull.svg") 8% 18%/92px no-repeat}
+}
+@keyframes meme-system-cycle{
+  0%,32%{background:var(--meme-chaos) 50% 44%/360px no-repeat,url("assets/themes/meme-machine/fire.svg") 90% 86%/76px no-repeat}
+  33%,65%{background:var(--meme-sticker) 52% 46%/330px no-repeat,url("assets/themes/meme-machine/moai.svg") 8% 30%/118px no-repeat}
+  66%,100%{background:url("assets/themes/meme-machine/crying.svg") 50% 42%/190px no-repeat,url("assets/themes/meme-machine/skull.svg") 86% 72%/118px no-repeat,url("assets/themes/meme-machine/fire.svg") 12% 78%/96px no-repeat}
+}
+@keyframes meme-system-wobble{50%{transform:translateY(-8px) rotate(1deg);opacity:.32}}
+@keyframes meme-typing-dots{50%{background-position:10px 0,42px 0,74px 0,0 0}}
+@keyframes meme-ticker{0%{text-indent:0}48%{text-indent:-28px}52%{text-indent:-28px}100%{text-indent:0}}
+@keyframes meme-live-sticker{50%{transform:rotate(-9deg) scale(1.12)}}
+@keyframes meme-live-float{50%{transform:translateY(10px) rotate(8deg);opacity:.78}}
+@media(max-width:1180px){
+  body[data-theme="meme-machine"] .collection-actions::after{display:none}
+  body[data-theme="meme-machine"] .systems-view::before{right:-80px}
+}
+@media(max-width:850px){
+  body[data-theme="meme-machine"] .playlist-hero .hero-copy::after,
+  body[data-theme="meme-machine"] .systems-view::after,
+  body[data-theme="meme-machine"][data-motion="expressive"].is-playing .main-stage::before{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  body[data-theme="meme-machine"] .playlist-hero::before,
+  body[data-theme="meme-machine"] .systems-view::before,
+  body[data-theme="meme-machine"] .playlist-hero .hero-copy::after,
+  body[data-theme="meme-machine"] .collection-actions::after,
+  body[data-theme="meme-machine"] .systems-view::after,
+  body[data-theme="meme-machine"] .theme-action-overlay.active .theme-action-mark,
+  body[data-theme="meme-machine"][data-motion="expressive"].is-playing .main-stage::before{animation:none!important}
+  body[data-theme="meme-machine"][data-motion="expressive"].is-playing .main-stage::before{content:none!important}
+}
+body[data-theme="meme-machine"][data-motion="off"] .playlist-hero::before,
+body[data-theme="meme-machine"][data-motion="off"] .systems-view::before,
+body[data-theme="meme-machine"][data-motion="off"] .playlist-hero .hero-copy::after,
+body[data-theme="meme-machine"][data-motion="off"] .collection-actions::after,
+body[data-theme="meme-machine"][data-motion="off"] .systems-view::after,
+body[data-theme="meme-machine"][data-motion="off"].is-playing .main-stage::before{animation:none!important}
+body[data-theme="meme-machine"][data-motion="off"].is-playing .main-stage::before{content:none!important}
+
+/* Release-safe meme Easter egg pack: local original art plus one bundled public-domain GIF. */
+body[data-theme="meme-machine"]{
+  --meme-real-doge:url("assets/themes/meme-machine/chaos-cards.svg");
+  --meme-real-fine:url("assets/themes/meme-machine/reaction-deck.svg");
+  --meme-real-vim:url("assets/themes/meme-machine/crying.svg");
+  --meme-real-work:url("assets/themes/meme-machine/fire.svg");
+  --meme-real-gif:url("assets/themes/meme-machine/licensed-memes/webdriver-torso-public-domain.gif");
+  --meme-real-plato-gif:url("assets/themes/meme-machine/moai.svg");
+  --meme-real-ominous-gif:url("assets/themes/meme-machine/skull.svg");
+  --meme-real-memes-matter-gif:url("assets/themes/meme-machine/reaction-deck.svg");
+  --meme-real-true:url("assets/themes/meme-machine/fire.svg");
+  --meme-real-67:url("assets/themes/meme-machine/chaos-cards.svg");
+  --meme-real-hycaaa:url("assets/themes/meme-machine/crying.svg");
+  --meme-template-battery:url("assets/themes/meme-machine/reaction-deck.svg");
+  --meme-template-apollo:url("assets/themes/meme-machine/moai.svg");
+  --meme-template-replaying:url("assets/themes/meme-machine/chaos-cards.svg");
+  --meme-template-xzibit:url("assets/themes/meme-machine/skull.svg");
+  --meme-template-urubu:url("assets/themes/meme-machine/fire.svg");
+}
+body[data-theme="meme-machine"] .playlist-hero::before{
+  width:520px;
+  background:
+    linear-gradient(135deg,#11121499,#11121433),
+    var(--meme-real-doge) 48% 52%/330px no-repeat,
+    var(--meme-real-ominous-gif) 95% 12%/96px 164px no-repeat,
+    var(--meme-real-gif) 8% 80%/114px 40px no-repeat,
+    url("assets/themes/meme-machine/fire.svg") 92% 82%/82px no-repeat;
+}
+body[data-theme="meme-machine"] .playlist-hero::after{
+  content:"LOCAL MEME FEED  ORIGINAL STICKERS / REACTION DECK / CHAOS CARDS / WEBDRIVER GIF";
+}
+body[data-theme="meme-machine"] .playlist-cover:not(.has-image){
+  background:
+    linear-gradient(180deg,#11121430,#11121475),
+    var(--meme-real-doge) center/cover no-repeat;
+}
+body[data-theme="meme-machine"] .drop-zone{
+  background:
+    linear-gradient(180deg,#2b2d31d8,#232428f5),
+    var(--meme-real-fine) center/cover no-repeat;
+}
+body[data-theme="meme-machine"] .systems-view::before{
+  background:
+    linear-gradient(180deg,#11121470,#11121425),
+    var(--meme-real-work) 52% 45%/330px no-repeat,
+    var(--meme-real-memes-matter-gif) 92% 14%/110px no-repeat,
+    var(--meme-real-gif) 12% 82%/114px 40px no-repeat;
+}
+body[data-theme="meme-machine"] .systems-view::after{
+  content:"actual meme feed: Doge CC0 / This is fine CC BY 4.0 / Vim CC BY-SA 3.0 / Honest Work public domain / Webdriver Torso PD / Plato Cave CC BY-SA 3.0 / Ominous Message CC0 / Memes Matter CC BY-SA 4.0";
+}
+body[data-theme="meme-machine"] .quality-card::after{
+  background:var(--meme-real-memes-matter-gif) center/contain no-repeat;
+  opacity:.34;
+}
+body[data-theme="meme-machine"] .tuning-card::after{
+  background:var(--meme-real-vim) center/cover no-repeat;
+  opacity:.13;
+}
+body[data-theme="meme-machine"] .player::after{
+  background:var(--meme-real-gif) center/contain no-repeat;
+  opacity:.28;
+}
+body[data-theme="meme-machine"] .hero-content::after{
+  content:"Easter egg sources: Commons/CC assets. Credits in THIRD_PARTY_ASSETS.md";
+}
+body[data-theme="meme-machine"] .profile-button::before{
+  content:"";
+  position:absolute;
+  left:-18px;
+  top:-10px;
+  width:34px;
+  height:18px;
+  border:2px solid #111214;
+  border-radius:5px;
+  background:#fff var(--meme-real-gif) center/114px 40px no-repeat;
+  transform:rotate(-12deg);
+  box-shadow:0 5px 10px #0008;
+}
+body[data-theme="meme-machine"] .top-quality::after{
+  content:"";
+  position:absolute;
+  right:-9px;
+  top:-8px;
+  width:46px;
+  height:26px;
+  border:2px solid #111214;
+  border-radius:6px;
+  background:#111214 var(--meme-real-memes-matter-gif) center/cover no-repeat;
+  opacity:.84;
+  transform:rotate(7deg);
+  pointer-events:none;
+}
+body[data-theme="meme-machine"] .playlist-thumb::after{
+  content:"";
+  position:absolute;
+  right:2px;
+  bottom:5px;
+  width:26px;
+  height:14px;
+  border-radius:3px;
+  background:#fff var(--meme-real-ominous-gif) center/cover no-repeat;
+  opacity:.88;
+  transform:rotate(-5deg);
+  box-shadow:0 3px 8px #0008;
+}
+body[data-theme="meme-machine"] .track-actions::before{
+  content:"";
+  width:28px;
+  height:16px;
+  align-self:center;
+  border-radius:3px;
+  background:#fff var(--meme-real-gif) center/96px 34px no-repeat;
+  opacity:.42;
+}
+body[data-theme="meme-machine"] #trackRows .track-row.playing .track-actions::before{
+  opacity:1;
+  background:#111214 var(--meme-real-memes-matter-gif) center/cover no-repeat;
+  box-shadow:0 0 0 1px #5865f2;
+}
+body[data-theme="meme-machine"] .context-menu::after,
+body[data-theme="meme-machine"] .toast::after{
+  content:"";
+  display:inline-block;
+  width:32px;
+  height:18px;
+  margin-left:8px;
+  border-radius:4px;
+  background:#fff var(--meme-real-gif) center/96px 34px no-repeat;
+  vertical-align:middle;
+}
+body[data-theme="meme-machine"][data-detail="minimal"] .playlist-hero::before{
+  background:
+    linear-gradient(135deg,#11121499,#11121433),
+    var(--meme-real-memes-matter-gif) 70% 44%/120px no-repeat,
+    var(--meme-sticker) 62% 42%/220px no-repeat;
+}
+body[data-theme="meme-machine"][data-detail="expressive"] .playlist-hero::after{
+  content:"LIVE MEME FEED  WOW / THIS IS FINE / :q! / HONEST WORK / WEBDRIVER TORSO / PLATO CAVE / OMINOUS MESSAGE / MEMES MATTER / TRUE / 6-7";
+}
+body[data-theme="meme-machine"][data-motion]:not([data-motion="off"]) .playlist-hero::before{
+  animation:meme-real-backdrop-cycle 20s steps(1,end) infinite,meme-sticker-float 7s ease-in-out infinite;
+}
+body[data-theme="meme-machine"][data-motion]:not([data-motion="off"]) .systems-view::before{
+  animation:meme-real-system-cycle 22s steps(1,end) infinite,meme-system-wobble 8s ease-in-out infinite;
+}
+body[data-theme="meme-machine"][data-motion="expressive"] .quality-card::after,
+body[data-theme="meme-machine"][data-motion="expressive"] .tuning-card::after,
+body[data-theme="meme-machine"][data-motion="expressive"] .player::after{
+  animation:meme-gif-badge-jitter 1.8s steps(2,end) infinite;
+}
+@keyframes meme-real-backdrop-cycle{
+  0%,11%{background:linear-gradient(135deg,#11121499,#11121433),var(--meme-real-doge) 48% 52%/330px no-repeat,var(--meme-real-ominous-gif) 96% 10%/96px 164px no-repeat,var(--meme-real-gif) 8% 82%/114px 40px no-repeat}
+  12%,23%{background:linear-gradient(135deg,#111214a8,#11121440),var(--meme-real-fine) 50% 50%/390px no-repeat,var(--meme-real-memes-matter-gif) 94% 12%/112px no-repeat}
+  24%,35%{background:linear-gradient(135deg,#111214a8,#11121440),var(--meme-real-vim) 52% 48%/410px no-repeat,var(--meme-real-plato-gif) 92% 20%/120px no-repeat}
+  36%,47%{background:linear-gradient(135deg,#111214a8,#11121440),var(--meme-real-work) 50% 50%/360px no-repeat,var(--meme-real-gif) 90% 78%/114px 40px no-repeat,var(--meme-real-ominous-gif) 8% 20%/78px 134px no-repeat}
+  48%,59%{background:linear-gradient(135deg,#111214a8,#11121440),var(--meme-real-true) 50% 50%/320px no-repeat,var(--meme-real-memes-matter-gif) 91% 74%/112px no-repeat}
+  60%,71%{background:linear-gradient(135deg,#111214a8,#11121440),var(--meme-real-67) 50% 50%/360px no-repeat,var(--meme-real-plato-gif) 8% 18%/120px no-repeat}
+  72%,83%{background:linear-gradient(135deg,#111214a8,#11121440),var(--meme-real-hycaaa) 50% 50%/170px no-repeat,var(--meme-real-gif) 90% 18%/114px 40px no-repeat}
+  84%,91%{background:linear-gradient(135deg,#11121499,#11121433),var(--meme-template-replaying) 50% 48%/390px no-repeat,var(--meme-real-memes-matter-gif) 92% 16%/112px no-repeat}
+  92%,100%{background:linear-gradient(135deg,#11121499,#11121433),var(--meme-template-apollo) 50% 48%/360px no-repeat,var(--meme-real-ominous-gif) 92% 12%/74px 126px no-repeat}
+}
+@keyframes meme-real-system-cycle{
+  0%,19%{background:linear-gradient(180deg,#11121470,#11121425),var(--meme-real-work) 52% 45%/330px no-repeat,var(--meme-real-memes-matter-gif) 92% 14%/112px no-repeat}
+  20%,39%{background:linear-gradient(180deg,#11121470,#11121425),var(--meme-real-fine) 55% 44%/330px no-repeat,var(--meme-real-plato-gif) 12% 72%/125px no-repeat}
+  40%,59%{background:linear-gradient(180deg,#11121470,#11121425),var(--meme-real-vim) 54% 48%/380px no-repeat,var(--meme-real-gif) 90% 16%/114px 40px no-repeat}
+  60%,79%{background:linear-gradient(180deg,#11121470,#11121425),var(--meme-real-true) 56% 46%/285px no-repeat,var(--meme-real-ominous-gif) 8% 16%/74px 126px no-repeat}
+  80%,100%{background:linear-gradient(180deg,#11121470,#11121425),var(--meme-real-doge) 56% 46%/300px no-repeat,var(--meme-sticker) 6% 78%/180px no-repeat}
+}
+@keyframes meme-gif-badge-jitter{50%{transform:translateY(-4px) rotate(-2deg)}}
+@media(prefers-reduced-motion:reduce){
+  body[data-theme="meme-machine"][data-motion="expressive"] .quality-card::after,
+  body[data-theme="meme-machine"][data-motion="expressive"] .tuning-card::after,
+  body[data-theme="meme-machine"][data-motion="expressive"] .player::after{animation:none!important}
+  body[data-theme="meme-machine"] .profile-button::before,
+  body[data-theme="meme-machine"] .top-quality::after,
+  body[data-theme="meme-machine"] .playlist-thumb::after,
+  body[data-theme="meme-machine"] .track-actions::before,
+  body[data-theme="meme-machine"] .context-menu::after,
+  body[data-theme="meme-machine"] .toast::after{display:none!important}
+}
+
+/* Blank-space reclamation: the meme feed leaks into every spare surface. */
+body[data-theme="meme-machine"] .library-rail,
+body[data-theme="meme-machine"] .collection-body,
+body[data-theme="meme-machine"] .inspector,
+body[data-theme="meme-machine"] .systems-grid .panel,
+body[data-theme="meme-machine"] .queue-drawer,
+body[data-theme="meme-machine"] .settings-drawer{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+}
+body[data-theme="meme-machine"] .library-rail::after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  left:8px;
+  right:8px;
+  bottom:78px;
+  height:160px;
+  border-radius:14px;
+  background:
+    linear-gradient(180deg,#111214d9,#11121466),
+    var(--meme-real-memes-matter-gif) 12px 12px/86px no-repeat,
+    var(--meme-real-ominous-gif) right 12px top 10px/62px 106px no-repeat,
+    var(--meme-real-gif) center bottom 12px/114px 40px no-repeat;
+  opacity:.62;
+  transform:rotate(-1deg);
+}
+body[data-theme="meme-machine"] .library-rail>*{
+  position:relative;
+  z-index:1;
+}
+body[data-theme="meme-machine"] .collection-body::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:80px 18px 24px 38%;
+  border-radius:18px;
+  background:
+    linear-gradient(135deg,#313338d8,#1112147a),
+    var(--meme-real-true) 12% 20%/165px no-repeat,
+    var(--meme-real-67) 92% 18%/210px no-repeat,
+    var(--meme-real-hycaaa) 52% 72%/100px no-repeat,
+    var(--meme-real-memes-matter-gif) 82% 78%/104px no-repeat,
+    var(--meme-real-gif) 8% 86%/114px 40px no-repeat;
+  opacity:.5;
+  filter:saturate(1.08);
+}
+body[data-theme="meme-machine"] .collection-body::after{
+  content:"WHEN THE PLAYLIST HAS NO SKIPS / BUT WINDOWS RESAMPLES ANYWAY";
+  position:absolute;
+  z-index:0;
+  right:28px;
+  bottom:28px;
+  width:min(360px,34%);
+  min-height:154px;
+  display:flex;
+  align-items:flex-end;
+  padding:14px;
+  border:2px solid #111214;
+  border-radius:16px;
+  background:
+    linear-gradient(180deg,#11121408 0 45%,#111214e8 82%),
+    var(--meme-template-replaying) center/cover no-repeat;
+  color:#fff;
+  font:900 15px "Meme Grotesk",Arial,sans-serif;
+  line-height:1.05;
+  text-transform:uppercase;
+  text-shadow:0 2px 0 #000,0 0 14px #000;
+  box-shadow:0 12px 28px #0007,8px 8px 0 #5865f2;
+  transform:rotate(1.4deg);
+  pointer-events:none;
+  opacity:.82;
+}
+body[data-theme="meme-machine"] .track-table,
+body[data-theme="meme-machine"] .collection-actions,
+body[data-theme="meme-machine"] .drop-zone{
+  position:relative;
+  z-index:1;
+}
+body[data-theme="meme-machine"] .inspector::after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  left:10px;
+  right:10px;
+  bottom:16px;
+  height:210px;
+  border-radius:16px;
+  background:
+    linear-gradient(180deg,#2b2d31c9,#11121499),
+    var(--meme-real-fine) center/cover no-repeat,
+    var(--meme-real-gif) right 12px bottom 10px/114px 40px no-repeat;
+  opacity:.34;
+}
+body[data-theme="meme-machine"] .quality-card::before,
+body[data-theme="meme-machine"] .tuning-card::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  left:10px;
+  right:10px;
+  bottom:10px;
+  height:58px;
+  border-radius:10px;
+  background:
+    linear-gradient(90deg,#111214d9,#11121433),
+    var(--meme-template-battery) right center/88px no-repeat,
+    var(--meme-real-gif) left 8px bottom 8px/96px 34px no-repeat;
+  opacity:.32;
+  pointer-events:none;
+}
+body[data-theme="meme-machine"] .tuning-card::before{
+  background:
+    linear-gradient(90deg,#111214d9,#11121433),
+    var(--meme-template-apollo) right center/112px no-repeat,
+    var(--meme-real-memes-matter-gif) left 8px bottom 4px/68px no-repeat;
+}
+body[data-theme="meme-machine"] :is(.quality-card,.tuning-card)>*{
+  position:relative;
+  z-index:1;
+}
+body[data-theme="meme-machine"] .inspector>*{
+  position:relative;
+  z-index:1;
+}
+body[data-theme="meme-machine"] .systems-grid .panel::before{
+  content:"";
+  position:absolute;
+  inset:6px;
+  z-index:0;
+  border-radius:10px;
+  background:
+    linear-gradient(135deg,#111214b0,#2b2d316e),
+    var(--meme-real-memes-matter-gif) right 8px top 8px/74px no-repeat,
+    var(--meme-real-gif) left 10px bottom 8px/96px 34px no-repeat;
+  opacity:.36;
+}
+body[data-theme="meme-machine"] .systems-grid .panel>*{
+  position:relative;
+  z-index:1;
+}
+body[data-theme="meme-machine"] .systems-grid .panel:nth-child(3n)::before{
+  background:
+    linear-gradient(135deg,#111214bd,#2b2d316e),
+    var(--meme-real-ominous-gif) right 10px top 8px/52px 88px no-repeat,
+    var(--meme-real-plato-gif) left 10px bottom 8px/82px no-repeat;
+}
+body[data-theme="meme-machine"] .systems-grid .panel:nth-child(4n)::before{
+  background:
+    linear-gradient(135deg,#111214bd,#2b2d316e),
+    var(--meme-template-xzibit) right -6px bottom -4px/132px no-repeat,
+    var(--meme-real-gif) left 10px top 10px/96px 34px no-repeat;
+}
+body[data-theme="meme-machine"] .systems-grid .panel:nth-child(5n)::before{
+  background:
+    linear-gradient(135deg,#111214bd,#2b2d316e),
+    var(--meme-template-urubu) right 8px bottom 8px/96px no-repeat,
+    var(--meme-real-memes-matter-gif) left 10px top 10px/72px no-repeat;
+}
+body[data-theme="meme-machine"] .queue-drawer::after,
+body[data-theme="meme-machine"] .settings-drawer::after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  right:18px;
+  bottom:18px;
+  width:220px;
+  height:180px;
+  border-radius:16px;
+  background:
+    linear-gradient(180deg,#111214d6,#11121462),
+    var(--meme-real-doge) center/cover no-repeat,
+    var(--meme-real-memes-matter-gif) right 10px bottom 8px/88px no-repeat;
+  opacity:.28;
+  transform:rotate(2deg);
+}
+body[data-theme="meme-machine"] .settings-drawer::before,
+body[data-theme="meme-machine"] .queue-drawer::before{
+  content:"MEME TEMPLATE MODE: FILLING UNUSED UI WITH QUESTIONABLE DECISIONS";
+  position:absolute;
+  z-index:0;
+  left:18px;
+  bottom:46px;
+  width:250px;
+  min-height:116px;
+  display:flex;
+  align-items:flex-end;
+  padding:12px;
+  border:2px solid #111214;
+  border-radius:14px;
+  background:
+    linear-gradient(180deg,#11121405 0 42%,#111214e8 80%),
+    var(--meme-template-battery) center/cover no-repeat;
+  color:#fee75c;
+  font:900 13px "Meme Grotesk",Arial,sans-serif;
+  line-height:1.02;
+  text-transform:uppercase;
+  text-shadow:0 2px 0 #000;
+  opacity:.48;
+  transform:rotate(-2deg);
+}
+body[data-theme="meme-machine"] :is(.queue-drawer,.settings-drawer)>*{
+  position:relative;
+  z-index:1;
+}
+body[data-theme="meme-machine"] :is(.hero-play,.subtle-action,.filter,.sort-select,.create-button,.rail-import button,.settings-trigger,.top-quality,.queue-button,.mini-launch,.open-systems,.context-menu button,.segmented-setting button,.settings-nav button){
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+body[data-theme="meme-machine"] :is(.hero-play,.subtle-action,.filter,.sort-select,.create-button,.rail-import button,.settings-trigger,.top-quality,.queue-button,.mini-launch,.open-systems,.context-menu button,.segmented-setting button,.settings-nav button)::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:
+    linear-gradient(90deg,#11121466,#11121410),
+    var(--meme-real-gif) center/114px 40px repeat;
+  opacity:.22;
+  pointer-events:none;
+}
+body[data-theme="meme-machine"] :is(.hero-play,.filter.active,.rail-import button:first-child,.settings-nav button.active,.segmented-setting button.active)::before{
+  background:
+    linear-gradient(90deg,#5865f277,#eb459e33),
+    var(--meme-real-memes-matter-gif) center/88px no-repeat;
+  opacity:.5;
+}
+body[data-theme="meme-machine"] .hero-play::after{
+  content:"";
+  position:absolute;
+  right:-10px;
+  bottom:-6px;
+  width:36px;
+  height:22px;
+  border-radius:5px;
+  background:#111214 var(--meme-real-ominous-gif) center/cover no-repeat;
+  transform:rotate(-12deg);
+}
+body[data-theme="meme-machine"] .track-row:not(.track-header){
+  background:
+    linear-gradient(90deg,#2b2d3100,#2b2d3126),
+    var(--meme-real-gif) right 12px center/86px 30px no-repeat;
+}
+body[data-theme="meme-machine"] #trackRows .track-row:nth-child(3n):not(.track-header){
+  background:
+    linear-gradient(90deg,#2b2d3100,#2b2d3126),
+    var(--meme-real-memes-matter-gif) right 12px center/58px no-repeat;
+}
+body[data-theme="meme-machine"] #trackRows .track-row:nth-child(5n):not(.track-header){
+  background:
+    linear-gradient(90deg,#2b2d3100,#2b2d3126),
+    var(--meme-real-ominous-gif) right 18px center/34px 58px no-repeat;
+}
+body[data-theme="meme-machine"] .technical-details span:nth-child(odd){
+  background:
+    linear-gradient(90deg,#2b2d31d9,#11121499),
+    var(--meme-real-gif) right 4px center/58px 20px no-repeat;
+}
+body[data-theme="meme-machine"] .technical-details span:nth-child(even){
+  background:
+    linear-gradient(90deg,#2b2d31d9,#11121499),
+    var(--meme-real-memes-matter-gif) right 4px center/34px no-repeat;
+}
+body[data-theme="meme-machine"] .drop-zone::before{
+  background:
+    var(--meme-template-apollo) 8% 50%/118px no-repeat,
+    var(--meme-real-ominous-gif) 50% 10%/70px 120px no-repeat,
+    var(--meme-template-battery) 90% 54%/120px no-repeat!important;
+  opacity:.26!important;
+}
+body[data-theme="meme-machine"] .drop-zone::after{
+  content:"DROP FILES / RECEIVE MEME";
+  font-size:8px;
+}
+body[data-theme="meme-machine"][data-detail="minimal"] .library-rail::after,
+body[data-theme="meme-machine"][data-detail="minimal"] .collection-body::before,
+body[data-theme="meme-machine"][data-detail="minimal"] .collection-body::after,
+body[data-theme="meme-machine"][data-detail="minimal"] .inspector::after{
+  opacity:.18;
+}
+body[data-theme="meme-machine"][data-motion="expressive"] .library-rail::after,
+body[data-theme="meme-machine"][data-motion="expressive"] .collection-body::before,
+body[data-theme="meme-machine"][data-motion="expressive"] .collection-body::after,
+body[data-theme="meme-machine"][data-motion="expressive"] .inspector::after,
+body[data-theme="meme-machine"][data-motion="expressive"] .systems-grid .panel::before{
+  animation:meme-space-leak 6s steps(2,end) infinite;
+}
+body[data-theme="meme-machine"][data-motion="expressive"] :is(.hero-play,.subtle-action,.filter,.sort-select,.create-button,.rail-import button,.settings-trigger,.top-quality,.queue-button,.mini-launch,.open-systems,.context-menu button,.segmented-setting button,.settings-nav button)::before{
+  animation:meme-button-static 1.9s steps(2,end) infinite;
+}
+body[data-theme="meme-machine"] .meme-now-playing{
+  position:fixed;
+  z-index:70;
+  right:18px;
+  top:76px;
+  width:min(360px,calc(100vw - 36px));
+  display:grid;
+  grid-template-columns:128px 1fr;
+  gap:10px;
+  align-items:center;
+  padding:10px;
+  border:3px solid #111214;
+  border-radius:14px;
+  background:
+    linear-gradient(135deg,#111214ee,#2b2d31ee),
+    var(--meme-cue-image) center/cover no-repeat;
+  box-shadow:0 24px 52px #000b,8px 8px 0 #5865f2,-6px -6px 0 #fee75c;
+  color:#f2f3f5;
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(-18px) rotate(1.5deg) scale(.92);
+  transition:opacity .18s,transform .18s;
+  backdrop-filter:blur(8px);
+}
+body[data-theme="meme-machine"] .meme-now-playing.active{
+  opacity:1;
+  transform:translateY(0) rotate(-1deg) scale(1);
+}
+body[data-theme="meme-machine"].meme-invading .meme-now-playing{
+  right:max(16px,8vw);
+  top:clamp(92px,18vh,210px);
+  width:min(500px,calc(100vw - 32px));
+  grid-template-columns:190px 1fr;
+  box-shadow:0 34px 72px #000d,14px 14px 0 #fee75c,-12px -12px 0 #eb459e;
+  transform:rotate(3deg) scale(1.04);
+  animation:meme-invade-jolt .34s steps(2,end) infinite;
+}
+body[data-theme="meme-machine"].meme-invading .meme-now-playing-frame{
+  width:190px;
+}
+body[data-theme="meme-machine"].meme-invading::after{
+  content:"";
+  position:fixed;
+  z-index:6;
+  left:clamp(16px,8vw,120px);
+  bottom:86px;
+  width:min(28vw,260px);
+  aspect-ratio:1;
+  pointer-events:none;
+  border:3px solid #111214;
+  border-radius:18px;
+  background:var(--meme-cue-image) center/cover no-repeat;
+  box-shadow:8px 8px 0 #5865f2,-6px -6px 0 #23a55a;
+  opacity:.74;
+  transform:rotate(-8deg);
+  mix-blend-mode:normal;
+}
+body[data-theme="meme-machine"] .meme-now-playing-frame{
+  width:128px;
+  aspect-ratio:1;
+  overflow:hidden;
+  border:2px solid #f2f3f5;
+  border-radius:10px;
+  background:#111214;
+  box-shadow:4px 4px 0 #23a55a;
+}
+body[data-theme="meme-machine"] .meme-now-playing-frame img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+}
+body[data-theme="meme-machine"] .meme-now-playing-copy{
+  min-width:0;
+}
+body[data-theme="meme-machine"] .meme-now-playing-copy small{
+  display:inline-block;
+  margin-bottom:7px;
+  padding:4px 6px;
+  border-radius:5px;
+  background:#fee75c;
+  color:#111214;
+  font:800 8px "Meme Mono",monospace;
+}
+body[data-theme="meme-machine"] .meme-now-playing-copy strong{
+  display:block;
+  color:#fff;
+  font-size:18px;
+  line-height:1;
+  text-transform:uppercase;
+  text-shadow:2px 2px 0 #111214;
+}
+body[data-theme="meme-machine"].meme-cue-active .hero-shade::after{
+  content:"";
+  position:absolute;
+  right:3%;
+  top:8%;
+  width:min(34vw,310px);
+  height:min(34vw,310px);
+  border:3px solid #111214;
+  border-radius:18px;
+  background:var(--meme-cue-image) center/cover no-repeat;
+  box-shadow:10px 10px 0 #23a55a,-8px -8px 0 #eb459e;
+  opacity:.42;
+  mix-blend-mode:screen;
+  transform:rotate(4deg);
+}
+body[data-theme="meme-machine"].meme-cue-active .collection-body::before{
+  background:
+    linear-gradient(90deg,#31333840,#313338f2 78%),
+    var(--meme-cue-image) left center/240px auto repeat-y,
+    var(--meme-user-popcat) 91% 18%/126px no-repeat,
+    var(--meme-user-toothless) 84% 82%/180px no-repeat!important;
+  opacity:.62;
+}
+body[data-theme="meme-machine"] :is(.hero-play,.subtle-action,.filter,.sort-select,.create-button,.rail-import button,.settings-trigger,.top-quality,.queue-button,.mini-launch,.open-systems,.context-menu button,.segmented-setting button,.settings-nav button){
+  position:relative;
+  overflow:hidden;
+}
+body[data-theme="meme-machine"] :is(.hero-play,.subtle-action,.filter,.sort-select,.create-button,.rail-import button,.settings-trigger,.top-quality,.queue-button,.mini-launch,.open-systems,.context-menu button,.segmented-setting button,.settings-nav button)::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:
+    linear-gradient(90deg,#111214cc,#11121466),
+    var(--meme-cue-image) center/cover no-repeat;
+  opacity:.16;
+}
+body[data-theme="meme-machine"][data-meme-cue="funk"] .meme-now-playing{
+  width:min(430px,calc(100vw - 36px));
+  grid-template-columns:160px 1fr;
+  box-shadow:0 24px 52px #000b,10px 10px 0 #fee75c,-8px -8px 0 #eb459e;
+}
+body[data-theme="meme-machine"][data-meme-cue="funk"] .meme-now-playing-frame{
+  width:160px;
+}
+body[data-theme="meme-machine"][data-meme-cue="funk"] .playlist-hero::after{
+  content:"FUNK TRACK DETECTED / PHONK PHRIDAY IS LIVE";
+  color:#111214;
+  background:#fee75c;
+  border-color:#111214;
+}
+body[data-theme="meme-machine"][data-meme-cue^="genre-"] .meme-now-playing{
+  width:min(500px,calc(100vw - 36px));
+  grid-template-columns:190px 1fr;
+  background:
+    linear-gradient(135deg,#111214b8,#2b2d31ec 62%),
+    var(--meme-cue-image) center/cover no-repeat;
+  box-shadow:0 30px 70px #000d,12px 12px 0 #fee75c,-10px -10px 0 #23a55a;
+}
+body[data-theme="meme-machine"][data-meme-cue^="genre-"] .meme-now-playing-frame{
+  width:190px;
+}
+body[data-theme="meme-machine"][data-meme-cue^="genre-"] .meme-now-playing-copy small{
+  background:#23a55a;
+  color:#fff;
+}
+body[data-theme="meme-machine"][data-meme-cue^="genre-"] .hero-shade::after{
+  opacity:.64;
+  mix-blend-mode:normal;
+}
+body[data-theme="meme-machine"][data-meme-cue^="genre-"] .playlist-hero::after{
+  content:"DOMINANT GENRE MEME ACTIVE";
+  color:#111214;
+  background:#23a55a;
+  border-color:#111214;
+}
+@keyframes meme-space-leak{50%{filter:hue-rotate(16deg) saturate(1.35);transform:translateY(-3px) rotate(.6deg)}}
+@keyframes meme-button-static{50%{background-position:10px 0,18px 0;opacity:.34}}
+@keyframes meme-invade-jolt{50%{filter:hue-rotate(28deg) saturate(1.45);transform:translate(4px,-3px) rotate(-2deg) scale(1.07)}}
+@media(max-width:1180px){
+  body[data-theme="meme-machine"] .collection-body::before{inset:110px 16px 22px 48%;opacity:.3}
+  body[data-theme="meme-machine"] .collection-body::after{width:260px;opacity:.45}
+  body[data-theme="meme-machine"] .inspector::after{display:none}
+  body[data-theme="meme-machine"].meme-cue-active .hero-shade::after{width:220px;height:220px;opacity:.34}
+}
+@media(max-width:850px){
+  body[data-theme="meme-machine"] .meme-now-playing{right:10px;top:68px;width:calc(100vw - 20px);grid-template-columns:86px 1fr}
+  body[data-theme="meme-machine"] .meme-now-playing-frame,
+  body[data-theme="meme-machine"].meme-invading .meme-now-playing-frame,
+  body[data-theme="meme-machine"][data-meme-cue^="genre-"] .meme-now-playing-frame,
+  body[data-theme="meme-machine"][data-meme-cue="funk"] .meme-now-playing-frame{width:86px}
+  body[data-theme="meme-machine"].meme-invading .meme-now-playing,
+  body[data-theme="meme-machine"][data-meme-cue^="genre-"] .meme-now-playing,
+  body[data-theme="meme-machine"][data-meme-cue="funk"] .meme-now-playing{grid-template-columns:86px 1fr}
+  body[data-theme="meme-machine"].meme-invading::after{display:none}
+  body[data-theme="meme-machine"] .meme-now-playing-copy strong{font-size:14px}
+  body[data-theme="meme-machine"] .library-rail::after,
+  body[data-theme="meme-machine"] .collection-body::before,
+  body[data-theme="meme-machine"] .collection-body::after,
+  body[data-theme="meme-machine"] .track-row:not(.track-header){
+    background-image:none;
+  }
+  body[data-theme="meme-machine"] :is(.hero-play,.subtle-action,.filter,.sort-select,.create-button,.rail-import button,.settings-trigger,.top-quality,.queue-button,.mini-launch,.open-systems,.context-menu button,.segmented-setting button,.settings-nav button)::before{opacity:.12}
+  body[data-theme="meme-machine"].meme-cue-active .hero-shade::after{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  body[data-theme="meme-machine"] .library-rail::after,
+  body[data-theme="meme-machine"] .collection-body::before,
+  body[data-theme="meme-machine"] .collection-body::after,
+  body[data-theme="meme-machine"] .inspector::after,
+  body[data-theme="meme-machine"] .systems-grid .panel::before,
+  body[data-theme="meme-machine"] .meme-now-playing,
+  body[data-theme="meme-machine"].meme-invading .meme-now-playing,
+  body[data-theme="meme-machine"] :is(.hero-play,.subtle-action,.filter,.sort-select,.create-button,.rail-import button,.settings-trigger,.top-quality,.queue-button,.mini-launch,.open-systems,.context-menu button,.segmented-setting button,.settings-nav button)::before{animation:none!important}
+}

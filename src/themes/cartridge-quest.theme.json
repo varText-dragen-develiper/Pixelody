@@ -1,0 +1,14 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.cartridge-quest",
+  "name": "Cartridge Quest",
+  "author": "Pixelody",
+  "description": "An original 8/16-bit console music adventure with cartridge libraries, pixel landscapes, RPG selection states, and hardware-like playback controls.",
+  "palette": { "primary": "#7b68c9", "secondary": "#f2c94c", "base": "#10131f" },
+  "assets": { "backgroundTexture": null, "heroOverlay": "../assets/themes/cartridge-quest/snes-workbench.png", "panelFrame": "../assets/themes/cartridge-quest/console-rack.svg", "iconSet": null },
+  "hud": { "layout": "arcade", "controls": "pixel", "corners": "pixel-cut" },
+  "typography": { "profile": "pixel", "font": "../assets/fonts/GeistPixel-Circle.woff2" },
+  "motion": { "profile": "mechanical", "intensity": "responsive" },
+  "navigation": { "trackBrowser": "carousel" }
+}

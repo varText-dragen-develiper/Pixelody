@@ -1,0 +1,135 @@
+/* Shared structural CSS for the cover-flow navigation mechanic
+   (src/theme-runtime/navigation/cover-flow.js). Per the cascade order in
+   docs/themes/THEME_SYSTEM.md, shared behavior styles load before per-theme
+   files -- this defines layout/interaction mechanics only, no color or
+   texture opinions. Themes assigning the cover-flow mechanic layer
+   decoration on top via body[data-theme="..."] .cover-flow-card selectors,
+   which win on specificity regardless of load order.
+
+   #trackRows has no display rule of its own outside files like this one --
+   normal (linear-list) rendering leaves it a plain block wrapping
+   .track-row grid children. .cover-flow-mounted (toggled by
+   cover-flow.js's mount()/destroy()) is what switches it into a shelf
+   stage; nothing here affects #trackRows when a different mechanic is
+   mounted.
+
+   Distinct from carousel-navigation.css on purpose: fewer covers are ever
+   sharply legible at once (MAX_VISUAL_DISTANCE = 4 vs carousel's 5),
+   rotation is steeper (classic Cover Flow reads as covers standing nearly
+   on their spine to either side of center), and every cover carries its
+   own reflection underneath via a duplicated background-image element
+   (.cover-flow-reflection), faded and flipped with a mask. Per-card text
+   is intentionally absent -- title/artist/duration for only the centered
+   cover live in the single fixed .cover-flow-caption line below the
+   stage, matching the reference behavior this mechanic is modeled on. */
+
+#trackRows.cover-flow-mounted {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 320px;
+  padding: 24px 0 0;
+}
+
+.cover-flow-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  perspective: 1200px;
+}
+
+.cover-flow-card {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  width: 150px;
+  cursor: pointer;
+  outline: none;
+  transform:
+    translateX(-50%)
+    translateX(calc(var(--card-offset, 0) * 120px))
+    translateZ(calc(var(--card-distance, 0) * -90px))
+    rotateY(calc(var(--card-offset, 0) * -55deg))
+    scale(calc(1 - var(--card-distance, 0) * 0.08));
+  opacity: calc(1 - var(--card-distance, 0) * 0.22);
+  z-index: calc(20 - var(--card-distance, 0));
+  transition: transform 260ms ease, opacity 260ms ease, z-index 0ms;
+}
+
+body[data-motion="off"] .cover-flow-card {
+  transition: none;
+}
+
+.cover-flow-card:focus-visible .cover-flow-art {
+  box-shadow: 0 0 0 2px var(--gold, #d8b66a);
+}
+
+.cover-flow-card.is-playing .cover-flow-art {
+  box-shadow: 0 0 0 2px var(--green, #65d6a1);
+}
+
+.cover-flow-art {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 4px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--surface2, #181a1d);
+}
+
+.cover-flow-reflection {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  margin-top: 2px;
+  border-radius: 4px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--surface2, #181a1d);
+  transform: scaleY(-1);
+  opacity: 0.28;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent 70%);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent 70%);
+}
+
+.cover-flow-caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 0 4px;
+  text-align: center;
+}
+
+.cover-flow-caption-title {
+  font-size: 14px;
+  color: var(--text, #f5f3ef);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.cover-flow-caption-meta {
+  font-size: 12px;
+  color: var(--muted, #a2a5aa);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.cover-flow-caption-duration {
+  font-size: 10px;
+  color: var(--muted, #a2a5aa);
+  opacity: 0.8;
+}
+
+@media (max-width: 480px) {
+  #trackRows.cover-flow-mounted {
+    height: 240px;
+  }
+  .cover-flow-card {
+    width: 110px;
+  }
+}

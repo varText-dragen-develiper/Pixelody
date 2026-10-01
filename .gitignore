@@ -1,0 +1,32 @@
+# Dependencies and package-manager caches
+node_modules/
+.pnpm-store/
+
+# Local development and test profiles
+.appdata/
+.localappdata/
+.dotnet/
+.nuget/
+
+# Generated build artifacts
+.artifacts/
+
+# IDE metadata and compiled .NET output
+.vs/
+**/bin/
+**/obj/
+*.user
+*.suo
+
+# Secrets and machine-specific configuration
+.env
+.env.*
+!.env.example
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+*.lnk
+
+# Dev-only renderer console mirror (src/main.js, isDevelopment-gated)
+Pixelody-console-log.txt

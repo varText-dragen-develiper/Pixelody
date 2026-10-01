@@ -1,0 +1,356 @@
+name: Cross-platform CI & Windows integration
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ci-matrix:
+    name: ${{ matrix.os }} / Node ${{ matrix.node }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [22, 24]
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.9.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run syntax, state, domain, and UI audits
+        run: pnpm run check
+
+      - name: Run focused repository audits
+        run: |
+          pnpm run check:state
+          pnpm run check:renderer-domains
+          pnpm run check:audio
+          pnpm run check:themes
+          pnpm run check:server
+          pnpm run check:legal
+          pnpm run check:security
+
+      - name: Run headless smoke harness (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" pnpm run check:smoke
+
+      - name: Run headless smoke harness (macOS)
+        if: runner.os == 'macOS'
+        run: pnpm run check:smoke
+
+      # Hosted Windows runners start at 1024x768 and Windows will not size a
+      # window beyond the desktop, but the Singularity scenarios assert a
+      # 1440x800 window and the narrow layout asks for 1050 px.
+      - name: Enlarge the Windows desktop for sized scenarios
+        if: runner.os == 'Windows'
+        run: .\scripts\set-windows-ci-desktop.ps1
+
+      - name: Run headless smoke harness (Windows)
+        if: runner.os == 'Windows'
+        run: pnpm run check:smoke
+
+      - name: Run unpackaged and packaged Windows scenarios
+        if: runner.os == 'Windows'
+        run: pnpm run check:integration:all --skip-development-canvas
+
+      - name: Build and audit instrumented production layout
+        if: runner.os == 'Windows' && matrix.node == 22
+        run: pnpm run release:windows:instrumented
+
+      - name: Run scenarios against production layout
+        if: runner.os == 'Windows' && matrix.node == 22
+        run: pnpm run check:release-integration
+
+      - name: Build and audit unsigned PR installer
+        if: runner.os == 'Windows' && matrix.node == 22
+        run: pnpm run release:windows:unsigned
+
+      - name: Build controlled two-version installer fixture
+        if: runner.os == 'Windows' && matrix.node == 22
+        run: pnpm run release:windows:upgrade-fixture
+
+      - name: Capture disposable Windows release surface
+        if: runner.os == 'Windows' && matrix.node == 22
+        shell: pwsh
+        env:
+          PIXELODY_DISPOSABLE_WINDOWS: '1'
+        run: .\scripts\test-windows-release-surface.ps1 -Phase Capture -EvidenceDirectory .artifacts\ci-lifecycle-evidence -ConfirmDisposableEnvironment
+
+      - name: Verify install, repair, upgrade, uninstall, and reinstall
+        if: runner.os == 'Windows' && matrix.node == 22
+        shell: pwsh
+        env:
+          PIXELODY_DISPOSABLE_WINDOWS: '1'
+        run: |
+          $inputs = .\scripts\resolve-windows-lifecycle-inputs.ps1
+          $previous = $inputs.PreviousInstaller
+          $current = $inputs.CurrentInstaller
+          .\scripts\test-windows-installer-lifecycle.ps1 -PreviousInstaller $previous -CurrentInstaller $current -EvidenceDirectory .artifacts\ci-lifecycle-evidence -ConfirmDisposableEnvironment
+
+      - name: Verify Windows release surface is unchanged
+        if: runner.os == 'Windows' && matrix.node == 22
+        shell: pwsh
+        env:
+          PIXELODY_DISPOSABLE_WINDOWS: '1'
+        run: .\scripts\test-windows-release-surface.ps1 -Phase Verify -EvidenceDirectory .artifacts\ci-lifecycle-evidence -ConfirmDisposableEnvironment
+
+      - name: Stage privacy-safe package evidence
+        if: always() && runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $identity = Get-Content -LiteralPath release/windows-identity.json -Raw | ConvertFrom-Json
+          $source = '.artifacts/windows-package/{0}-win32-{1}/resources/app/package-contents.json' -f $identity.productName, $identity.architecture[0]
+          if (Test-Path -LiteralPath $source) {
+            New-Item -ItemType Directory -Force -Path '.artifacts/ci-evidence' | Out-Null
+            Copy-Item -LiteralPath $source -Destination '.artifacts/ci-evidence/package-contents.json'
+          }
+
+      - name: Upload sanitized smoke failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pixelody-smoke-failure-${{ matrix.os }}-node-${{ matrix.node }}
+          path: .artifacts/smoke-failures
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload sanitized Windows failure evidence
+        if: failure() && runner.os == 'Windows'
+        uses: actions/upload-artifact@v7
+        with:
+          name: pixelody-windows-failure-node-${{ matrix.node }}
+          path: .artifacts/windows-integration
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload package content manifest
+        if: always() && runner.os == 'Windows'
+        uses: actions/upload-artifact@v7
+        with:
+          name: pixelody-package-manifest-node-${{ matrix.node }}
+          path: .artifacts/ci-evidence/package-contents.json
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload unsigned release audit manifest
+        if: always() && runner.os == 'Windows' && matrix.node == 22
+        uses: actions/upload-artifact@v7
+        with:
+          name: pixelody-unsigned-release-manifest
+          path: .artifacts/windows-release/unsigned/release-manifest.json
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload sanitized installer lifecycle evidence
+        if: always() && runner.os == 'Windows' && matrix.node == 22
+        uses: actions/upload-artifact@v7
+        with:
+          name: pixelody-installer-lifecycle-evidence
+          path: |
+            .artifacts/ci-lifecycle-evidence/installer-lifecycle.json
+            .artifacts/ci-lifecycle-evidence/release-surface.json
+          if-no-files-found: ignore
+          retention-days: 7
+
+  canvas-development:
+    # Canvas Studio is development-only and not in installed
+    # builds. Its scenario runs and reports here without gating the release
+    # checks above; see the job summary for the outcome.
+    name: Canvas development scenarios (non-blocking)
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.9.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Enlarge the Windows desktop for sized scenarios
+        run: .\scripts\set-windows-ci-desktop.ps1
+
+      - name: Run Canvas Studio scenario
+        id: canvas_studio
+        continue-on-error: true
+        run: node scripts/check-windows-integration.js --mode=unpacked --scenario=workspace-canvas-studio
+
+      - name: Summarize development scenarios
+        if: always()
+        run: |
+          @(
+            '### Canvas development scenarios (non-blocking)'
+            ''
+            "- Canvas Studio: ${{ steps.canvas_studio.outcome }}"
+          ) | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
+
+      - name: Upload sanitized development scenario evidence
+        if: steps.canvas_studio.outcome == 'failure'
+        uses: actions/upload-artifact@v7
+        with:
+          name: pixelody-canvas-development-failure
+          path: .artifacts/windows-integration
+          if-no-files-found: ignore
+          retention-days: 7
+
+  signed-release:
+    name: Signed Windows release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: ci-matrix
+    runs-on: windows-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.9.0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run check
+      - name: Build, sign, timestamp, and verify
+        run: pnpm run release:windows:signed
+        env:
+          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+          PIXELODY_WINDOWS_PUBLISHER_SUBJECT: ${{ secrets.PIXELODY_WINDOWS_PUBLISHER_SUBJECT }}
+      - name: Build controlled previous-version fixture
+        run: pnpm run release:windows:upgrade-fixture
+      - name: Capture disposable signed-release surface
+        shell: pwsh
+        env:
+          PIXELODY_DISPOSABLE_WINDOWS: '1'
+        run: .\scripts\test-windows-release-surface.ps1 -Phase Capture -EvidenceDirectory .artifacts\signed-lifecycle-evidence -ConfirmDisposableEnvironment
+      - name: Verify signed install, upgrade, uninstall, and reinstall
+        shell: pwsh
+        env:
+          PIXELODY_DISPOSABLE_WINDOWS: '1'
+          PIXELODY_WINDOWS_PUBLISHER_SUBJECT: ${{ secrets.PIXELODY_WINDOWS_PUBLISHER_SUBJECT }}
+        run: |
+          $inputs = .\scripts\resolve-windows-lifecycle-inputs.ps1 -Signed
+          $previous = $inputs.PreviousInstaller
+          $current = $inputs.CurrentInstaller
+          .\scripts\test-windows-installer-lifecycle.ps1 -PreviousInstaller $previous -CurrentInstaller $current -EvidenceDirectory .artifacts\signed-lifecycle-evidence -ExpectedPublisherSubject $env:PIXELODY_WINDOWS_PUBLISHER_SUBJECT -ConfirmDisposableEnvironment
+      - name: Verify signed-release surface is unchanged
+        shell: pwsh
+        env:
+          PIXELODY_DISPOSABLE_WINDOWS: '1'
+        run: .\scripts\test-windows-release-surface.ps1 -Phase Verify -EvidenceDirectory .artifacts\signed-lifecycle-evidence -ConfirmDisposableEnvironment
+      - name: Upload intended distribution artifacts only
+        uses: actions/upload-artifact@v7
+        with:
+          name: pixelody-windows-signed-${{ github.ref_name }}
+          path: |
+            .artifacts/windows-release/signed/*.exe
+            .artifacts/windows-release/signed/*.exe.blockmap
+            .artifacts/windows-release/signed/latest.yml
+            .artifacts/windows-release/signed/release-manifest.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload sanitized signed lifecycle evidence separately
+        uses: actions/upload-artifact@v7
+        with:
+          name: pixelody-windows-signed-lifecycle-${{ github.ref_name }}
+          path: |
+            .artifacts/signed-lifecycle-evidence/installer-lifecycle.json
+            .artifacts/signed-lifecycle-evidence/release-surface.json
+          if-no-files-found: error
+          retention-days: 14
+
+  clean-current-lifecycle:
+    name: Exact current installer clean-install lifecycle
+    needs: [ci-matrix, signed-release]
+    if: always() && needs.ci-matrix.result == 'success' && (!startsWith(github.ref, 'refs/tags/v') || needs.signed-release.result == 'success')
+    runs-on: windows-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.9.0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run release:windows:upgrade-fixture
+      - name: Download the exact signed artifact from the signing job
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/download-artifact@v8
+        with:
+          name: pixelody-windows-signed-${{ github.ref_name }}
+          path: .artifacts/windows-release/signed
+      - name: Capture clean-current surface
+        shell: pwsh
+        env:
+          PIXELODY_DISPOSABLE_WINDOWS: '1'
+        run: .\scripts\test-windows-release-surface.ps1 -Phase Capture -EvidenceDirectory .artifacts\clean-current-lifecycle-evidence -ConfirmDisposableEnvironment
+      - name: Verify exact current clean install, repair, uninstall, and reinstall
+        shell: pwsh
+        env:
+          PIXELODY_DISPOSABLE_WINDOWS: '1'
+          PIXELODY_WINDOWS_PUBLISHER_SUBJECT: ${{ startsWith(github.ref, 'refs/tags/v') && secrets.PIXELODY_WINDOWS_PUBLISHER_SUBJECT || '' }}
+          SIGNED_LIFECYCLE: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        run: |
+          $signed = $env:SIGNED_LIFECYCLE -eq 'true'
+          if ($signed -and -not $env:PIXELODY_WINDOWS_PUBLISHER_SUBJECT) { throw 'Signed lifecycle requires its private expected publisher subject.' }
+          $inputs = .\scripts\resolve-windows-lifecycle-inputs.ps1 -Signed:$signed
+          .\scripts\test-windows-installer-lifecycle.ps1 @inputs -CleanCurrent -EvidenceDirectory .artifacts\clean-current-lifecycle-evidence -ExpectedPublisherSubject $env:PIXELODY_WINDOWS_PUBLISHER_SUBJECT -ConfirmDisposableEnvironment
+      - name: Verify clean-current surface unchanged
+        shell: pwsh
+        env:
+          PIXELODY_DISPOSABLE_WINDOWS: '1'
+        run: .\scripts\test-windows-release-surface.ps1 -Phase Verify -EvidenceDirectory .artifacts\clean-current-lifecycle-evidence -ConfirmDisposableEnvironment
+      - name: Upload sanitized clean-current evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pixelody-clean-current-lifecycle-evidence
+          path: |
+            .artifacts/clean-current-lifecycle-evidence/installer-lifecycle.json
+            .artifacts/clean-current-lifecycle-evidence/release-surface.json
+          if-no-files-found: ignore
+          retention-days: 14

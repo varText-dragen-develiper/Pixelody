@@ -1,0 +1,12 @@
+pixelody
+Copyright (C) 2026 Hikari
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, version 3 only. It is distributed WITHOUT ANY WARRANTY; see the
+LICENSE file for details.
+
+"Pixelody" and the Pixelody logo are not licensed under the GPL; see
+TRADEMARKS.md. Third-party components and bundled assets keep their own
+licenses, recorded in THIRD_PARTY_ASSETS.md (desktop) and the dependency
+manifests, with license texts under licenses/ where they are bundled.

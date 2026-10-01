@@ -1,0 +1,36 @@
+:root{--signal-orbit-speed:5.8s;--signal-orbit-opacity:.68}
+
+.playlist-cover,.mini-cover,.quality-card,.play-button,.track-row.playing{position:relative;isolation:isolate}
+.signal-orbit-ring,.signal-edge-ring{display:block!important;position:absolute;pointer-events:none;z-index:18;contain:layout paint style}
+.signal-orbit-ring{inset:3px;border-radius:inherit;opacity:.34;transform:translateZ(0);transform-origin:center;will-change:transform,opacity;border:2px solid color-mix(in srgb,var(--gold) 55%,transparent);box-shadow:inset 0 0 8px color-mix(in srgb,var(--gold) 22%,transparent)}
+.play-button .signal-orbit-ring{inset:3px;border-radius:50%;border-width:2px}
+.signal-orbit-ring::before{content:"";position:absolute;right:-1px;top:50%;width:34%;height:3px;border-radius:999px;background:linear-gradient(90deg,transparent,var(--gold2) 42%,#fff9df);box-shadow:0 0 8px var(--gold2),0 0 2px #fff;transform:translateY(-50%)}
+.signal-orbit-ring::after{content:"";position:absolute;right:-2px;top:calc(50% - 3px);width:6px;height:6px;border-radius:50%;background:#fff9df;box-shadow:0 0 8px var(--gold2),0 0 14px var(--gold)}
+.signal-edge-ring{left:0;top:16%;bottom:16%;width:2px;background:var(--gold);opacity:.18;transform:translateZ(0) scaleY(.72);transform-origin:center;will-change:transform,opacity}
+.track-row.playing .signal-edge-ring{top:22%;bottom:22%}
+
+/* Square artwork and transport controls can rotate entirely on the compositor. */
+.playlist-cover::before,.mini-cover::before,.play-button::before{content:"";position:absolute;inset:0;z-index:4;padding:1px;pointer-events:none;background:conic-gradient(transparent 0deg,transparent 250deg,color-mix(in srgb,var(--gold) 8%,transparent) 276deg,color-mix(in srgb,var(--gold) 55%,transparent) 304deg,var(--gold2) 324deg,#fff9df 332deg,var(--gold) 340deg,transparent 358deg);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.13;transform:translateZ(0);transform-origin:center;will-change:transform,opacity}
+.play-button::before{border-radius:50%;padding:2px}
+
+/* Large rectangles use a tiny edge indicator rather than a repainted full border. */
+.quality-card::before,.track-row.playing::before{content:"";position:absolute;z-index:4;left:0;top:16%;bottom:16%;width:2px;pointer-events:none;background:var(--gold);opacity:.13;transform:translateZ(0) scaleY(.72);transform-origin:center;will-change:transform,opacity}
+.track-row.playing::before{top:22%;bottom:22%}
+
+.is-playing .playlist-cover::before,.is-playing .mini-cover::before,.is-playing .play-button::before{opacity:var(--signal-orbit-opacity);animation:signal-orbit-transform var(--signal-orbit-speed) linear infinite}
+.is-playing .quality-card::before,.is-playing .track-row.playing::before{opacity:.52;animation:signal-edge-pulse 2.4s ease-in-out infinite}
+.is-playing .play-button::before{--signal-orbit-opacity:.9;filter:drop-shadow(0 0 4px color-mix(in srgb,var(--gold) 65%,transparent))}
+.is-playing .signal-orbit-ring{opacity:var(--signal-orbit-opacity);animation:signal-orbit-transform var(--signal-orbit-speed) linear infinite}
+.is-playing .play-button .signal-orbit-ring{--signal-orbit-opacity:.95;animation-duration:4.2s}
+.is-playing .signal-edge-ring{opacity:.72;animation:signal-edge-pulse 2.4s ease-in-out infinite;box-shadow:0 0 8px color-mix(in srgb,var(--gold) 62%,transparent)}
+
+body[data-motion="calm"]{--signal-orbit-speed:6.4s;--signal-orbit-opacity:.6}
+body[data-motion="expressive"]{--signal-orbit-speed:3.8s;--signal-orbit-opacity:.78}
+body[data-motion="expressive"].is-playing .playlist-cover{box-shadow:0 22px 52px #000b,0 0 18px color-mix(in srgb,var(--gold) 11%,transparent)}
+
+body[data-motion="off"] :is(.playlist-cover,.mini-cover,.quality-card,.play-button,.track-row.playing)::before,body[data-motion="off"] :is(.signal-orbit-ring,.signal-edge-ring){animation:none!important;opacity:.12!important;filter:none!important}
+
+@keyframes signal-orbit-transform{to{transform:translateZ(0) rotate(360deg)}}
+@keyframes signal-edge-pulse{50%{opacity:.82;transform:translateZ(0) scaleY(1)}}
+
+@media(prefers-reduced-motion:reduce){.playlist-cover::before,.mini-cover::before,.quality-card::before,.play-button::before,.track-row.playing::before,.signal-orbit-ring,.signal-edge-ring{animation:none!important;opacity:.16!important;filter:none!important}}

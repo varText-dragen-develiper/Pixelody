@@ -1,0 +1,13 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.cut-sheet",
+  "name": "Cut Sheet",
+  "author": "Pixelody",
+  "description": "An original vinyl-mastering cut sheet translated into a listening console: circuit-cut ink panels on a deep aubergine field, a warm terracotta signal route, concentric lathe-groove artwork with a resting tonearm, corner registration marks, and a brick-stamped manifest number for whatever is currently cut to the master.",
+  "palette": { "primary": "#c2734f", "secondary": "#5c4478", "base": "#2c2040" },
+  "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
+  "hud": { "layout": "modular", "controls": "technical", "corners": "square" },
+  "typography": { "profile": "technical", "font": null },
+  "motion": { "profile": "mechanical", "intensity": "calm" }
+}

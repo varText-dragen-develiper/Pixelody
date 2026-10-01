@@ -1,0 +1,12 @@
+{
+  "type": "pixelody-pairing",
+  "version": 1,
+  "hostId": "studio-pc",
+  "hostName": "Pixelody on Studio PC",
+  "baseUrl": "http://192.168.1.45:4822",
+  "baseUrls": ["http://192.168.1.45:4822", "http://127.0.0.1:4822"],
+  "pairingCode": "042917",
+  "secret": "pairing-secret",
+  "expiresAt": "2026-07-02T00:05:00.000Z",
+  "permissions": ["browse", "stream", "playback:read"]
+}

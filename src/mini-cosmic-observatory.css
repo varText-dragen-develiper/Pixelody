@@ -1,0 +1,151 @@
+@font-face { font-family:"Space Grotesk Cosmic";src:url("assets/themes/cosmic-cinema/SpaceGrotesk-Variable.ttf") format("truetype");font-weight:300 700;font-display:swap }
+@font-face { font-family:"IBM Plex Mono Cosmic";src:url("assets/themes/cosmic-cinema/IBMPlexMono-Regular.ttf") format("truetype");font-weight:400;font-display:swap }
+body[data-theme="cosmic-cinema"] {
+  --mini-accent: #fffdf2;
+  color: #f2f0e8;
+  background: #030407;
+  font-family: "Space Grotesk Cosmic", "Segoe UI", sans-serif;
+}
+body[data-theme="cosmic-cinema"] .mini-shell {
+  overflow: hidden;
+  border: 1px solid rgba(216, 216, 210, .28);
+  border-radius: 1px;
+  background:
+    radial-gradient(circle at 18% 25%, rgba(255, 253, 242, .6) 0 .5px, transparent 1px),
+    radial-gradient(circle at 82% 70%, rgba(143, 173, 235, .45) 0 .5px, transparent 1px),
+    radial-gradient(circle at 24% 50%, rgba(143, 173, 235, .11), transparent 28%),
+    linear-gradient(135deg, #070b14, #030407 72%);
+  background-size: 83px 83px, 127px 127px, auto, auto;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .04), 0 18px 46px rgba(0, 0, 0, .55);
+}
+body[data-theme="cosmic-cinema"] .mini-shell::after {
+  content: "";
+  position: absolute;
+  right: 11px;
+  bottom: 7px;
+  color: rgba(216, 216, 210, .35);
+  font: 6px "IBM Plex Mono Cosmic", Consolas, monospace;
+  letter-spacing: .16em;
+}
+body[data-theme="cosmic-cinema"] .mini-shell::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  right: 37px;
+  top: -23px;
+  width: 78px;
+  height: 104px;
+  pointer-events: none;
+  background: url("assets/themes/cosmic-cinema/signal-relic.svg") center / contain no-repeat;
+  opacity: .1;
+}
+body[data-theme="cosmic-cinema"] .mini-shell > * { position: relative; z-index: 1; }
+body[data-theme="cosmic-cinema"] .mini-art {
+  border: 1px solid rgba(255, 253, 242, .66);
+  border-radius: 50%;
+  background-color: #030407;
+  box-shadow: 0 0 0 7px rgba(216, 216, 210, .04), 0 0 25px rgba(255, 253, 242, .12);
+}
+body[data-theme="cosmic-cinema"] .mini-copy small { color: #8fadeb; font-family: "IBM Plex Mono Cosmic", Consolas, monospace; letter-spacing: .16em; }
+body[data-theme="cosmic-cinema"] .mini-copy strong { font-family: "Space Grotesk Cosmic", "Segoe UI", sans-serif; font-weight: 500; letter-spacing: .05em; }
+body[data-theme="cosmic-cinema"] .mini-copy > span,
+body[data-theme="cosmic-cinema"] .mini-time { color: #a8a9a6; }
+body[data-theme="cosmic-cinema"] .mini-progress { height: 2px; background: rgba(216, 216, 210, .14); }
+body[data-theme="cosmic-cinema"] .mini-progress i { background: linear-gradient(90deg, #8fadeb, #fffdf2); box-shadow: 0 0 7px rgba(143, 173, 235, .48); }
+body[data-theme="cosmic-cinema"] .mini-controls .mini-play {
+  border: 1px solid #fffdf2;
+  background: radial-gradient(circle, #fffdf2, #d8d8d2);
+  box-shadow: 0 0 0 5px rgba(216, 216, 210, .05), 0 0 18px rgba(255, 253, 242, .18);
+}
+body[data-theme="cosmic-cinema"] .mini-controls button:hover { color: #fffdf2; text-shadow: 0 0 8px rgba(255, 253, 242, .5); }
+body[data-theme="cosmic-cinema"].playing .mini-art { animation: cosmic-mini-orbit 8s linear infinite; }
+body[data-theme="cosmic-cinema"].playing .mini-shell::before { animation: cosmic-mini-relic 7s ease-in-out infinite; }
+@keyframes cosmic-mini-orbit {
+  50% { box-shadow: 0 0 0 10px rgba(216, 216, 210, .035), 0 0 30px rgba(143, 173, 235, .16); }
+}
+@keyframes cosmic-mini-relic { 50% { transform: translateY(5px); opacity: .16; } }
+@media (prefers-reduced-motion: reduce) {
+  body[data-theme="cosmic-cinema"].playing .mini-art,
+  body[data-theme="cosmic-cinema"].playing .mini-shell::before { animation: none; }
+}
+
+/* Tiny event-horizon viewport for the edge-of-space pass. */
+body[data-theme="cosmic-cinema"] .mini-shell {
+  border-color: rgba(227, 229, 223, .28);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 19% 50%, rgba(255, 254, 250, .14), transparent 20%),
+    radial-gradient(circle at 19% 50%, rgba(1, 1, 3, .94) 0 18%, rgba(227, 229, 223, .14) 19% 19.7%, transparent 20.4%),
+    repeating-radial-gradient(circle at 19% 50%, transparent 0 28px, rgba(227, 229, 223, .08) 29px 30px, transparent 31px 48px),
+    radial-gradient(circle at 82% 70%, rgba(159, 183, 245, .45) 0 .5px, transparent 1px),
+    linear-gradient(135deg, #05070d, #010103 72%);
+  background-size: auto, auto, auto, 127px 127px, auto;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .05), 0 18px 46px rgba(0, 0, 0, .62);
+}
+
+body[data-theme="cosmic-cinema"] .mini-shell::after {
+  right: 14px;
+  bottom: 11px;
+  width: 86px;
+  height: 18px;
+  background:
+    radial-gradient(ellipse at center, transparent 0 36%, rgba(227, 229, 223, .3) 37% 39%, transparent 40%),
+    linear-gradient(90deg, transparent, rgba(227, 229, 223, .42), transparent) 0 50% / 100% 1px no-repeat;
+}
+
+body[data-theme="cosmic-cinema"] .mini-shell::before {
+  right: 27px;
+  top: -30px;
+  width: 118px;
+  height: 118px;
+  border: 1px solid rgba(227, 229, 223, .1);
+  border-radius: 50%;
+  background:
+    conic-gradient(from -24deg, transparent 0 58%, rgba(159, 183, 245, .22), #fffefa 72%, transparent 79%),
+    repeating-conic-gradient(rgba(255, 254, 250, .05) 0 1deg, transparent 1deg 18deg);
+  opacity: .3;
+  -webkit-mask: radial-gradient(circle, transparent 0 58%, #000 59% 60%, transparent 61% 76%, #000 77% 78%, transparent 79%);
+  mask: radial-gradient(circle, transparent 0 58%, #000 59% 60%, transparent 61% 76%, #000 77% 78%, transparent 79%);
+}
+
+body[data-theme="cosmic-cinema"] .mini-art {
+  border-color: rgba(255, 254, 250, .72);
+  box-shadow:
+    0 0 0 7px rgba(227, 229, 223, .045),
+    0 0 0 15px rgba(159, 183, 245, .02),
+    0 0 30px rgba(255, 254, 250, .16);
+}
+
+body[data-theme="cosmic-cinema"] .mini-progress {
+  border-radius: 999px;
+  background: rgba(227, 229, 223, .12);
+}
+
+body[data-theme="cosmic-cinema"] .mini-progress i {
+  background: linear-gradient(90deg, #9fb7f5, #fffefa);
+  box-shadow: 0 0 10px rgba(255, 254, 250, .38);
+}
+
+body[data-theme="cosmic-cinema"] .mini-controls {
+  border-radius: 999px;
+  background: rgba(5, 7, 13, .44);
+}
+
+body[data-theme="cosmic-cinema"] .mini-controls .mini-play {
+  border-color: #fffefa;
+  background: radial-gradient(circle at 45% 42%, #fffefa, #e3e5df 62%, #b8bdb7);
+  box-shadow: 0 0 0 6px rgba(227, 229, 223, .055), 0 0 23px rgba(255, 254, 250, .22);
+}
+
+body[data-theme="cosmic-cinema"].playing .mini-shell::before { animation: cosmic-mini-ring 10s linear infinite; }
+body[data-theme="cosmic-cinema"].playing .mini-art { animation: cosmic-mini-orbit 4.8s ease-in-out infinite; }
+
+@keyframes cosmic-mini-ring { to { transform: rotate(360deg); } }
+
+body[data-theme="cosmic-cinema"][data-motion="off"].playing .mini-shell::before,
+body[data-theme="cosmic-cinema"][data-motion="off"].playing .mini-art,
+body[data-theme="cosmic-cinema"][data-performance="conserve"].playing .mini-shell::before,
+body[data-theme="cosmic-cinema"][data-performance="conserve"].playing .mini-art {
+  animation: none !important;
+  transform: none !important;
+}

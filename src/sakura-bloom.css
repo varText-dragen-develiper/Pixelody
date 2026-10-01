@@ -1,0 +1,630 @@
+/* Sakura Bloom: a calm hanami listening room using original CSS floral geometry. */
+.sakura-bloom-preview {
+  position: relative;
+  overflow: hidden;
+  background:
+    url("assets/themes/sakura-bloom/hanami-screen.svg") center/cover no-repeat,
+    radial-gradient(circle at 76% 18%, #f5c1cf 0 12%, transparent 13%),
+    linear-gradient(135deg, #1f1719 0 38%, #eef1e7 39% 100%) !important;
+  background-blend-mode: soft-light, normal, normal !important;
+}
+.sakura-bloom-preview i { display: block; min-height: 100%; }
+.sakura-bloom-preview i:nth-child(1) { background: #d9829c; border-radius: 999px 999px 4px 999px; transform: rotate(18deg) scale(.72); }
+.sakura-bloom-preview i:nth-child(2) { background: #6f9f85; transform: skewX(-18deg); }
+.sakura-bloom-preview i:nth-child(3) { background: #7a5b43; border-radius: 999px 4px 999px 999px; transform: rotate(-14deg) scale(.72); }
+
+body[data-theme="sakura-bloom"] {
+  --sakura-hero-art: url("assets/themes/sakura-bloom/derived/sakura-hero-met-hanami-public-domain.webp");
+  --sakura-panel-texture: url("assets/themes/sakura-bloom/derived/sakura-kosode-panel-texture-public-domain.webp");
+  --sakura-lacquer-wash: url("assets/themes/sakura-bloom/derived/sakura-lacquer-textile-wash-public-domain.webp");
+  --sakura-original-screen: url("assets/themes/sakura-bloom/hanami-screen.svg");
+  --sakura-branch-vector: url("assets/themes/sakura-bloom/blossom-branch.svg");
+  --sakura-washi-vector: url("assets/themes/sakura-bloom/washi-grain.svg");
+  --sakura-paper: #d7d2c3;
+  --sakura-paper-2: #bcc6b6;
+  --sakura-petal: #d9829c;
+  --sakura-petal-hot: #f0a9bd;
+  --sakura-petal-deep: #a54d69;
+  --sakura-blush: #cfa8b4;
+  --sakura-ink: #211a1a;
+  --sakura-lacquer: #1f1719;
+  --sakura-plum: #3f2b32;
+  --sakura-leaf: #6f9f85;
+  --sakura-moss: #314c3e;
+  --sakura-branch: #7a5b43;
+  --sakura-ivory: #f4efe3;
+  --sakura-muted: #62564f;
+  color: var(--sakura-ink);
+  background:
+    var(--sakura-washi-vector) center/180px 180px repeat,
+    radial-gradient(circle at 80% 18%, rgba(240,169,189,.18), transparent 22%),
+    radial-gradient(circle at 26% 82%, rgba(217,130,156,.12), transparent 26%),
+    radial-gradient(circle at 16% 20%, rgba(111,159,133,.18), transparent 29%),
+    linear-gradient(140deg, #1f1719 0 34%, #314c3e 58%, #9fa895 100%),
+    var(--sakura-lacquer);
+  background-blend-mode: multiply, screen, screen, normal, normal, normal;
+}
+
+body[data-theme="sakura-bloom"]::before,
+body[data-theme="sakura-bloom"]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+body[data-theme="sakura-bloom"]::before {
+  background:
+    var(--sakura-branch-vector) right -74px top -118px/560px 560px no-repeat,
+    radial-gradient(ellipse at 74% 11%, rgba(240,169,189,.52) 0 10px, transparent 11px),
+    radial-gradient(ellipse at 81% 18%, rgba(217,130,156,.44) 0 8px, transparent 9px),
+    radial-gradient(ellipse at 88% 27%, rgba(245,193,207,.34) 0 7px, transparent 8px),
+    linear-gradient(135deg, transparent 0 62%, rgba(122,91,67,.36) 63% 64%, transparent 65%);
+  background-size: 560px 560px, 260px 220px, 300px 260px, 240px 210px, 720px 520px;
+  background-position: right -74px top -118px, right -20px top -18px, right 56px top 84px, right 154px top 30px, right -130px top -70px;
+  background-repeat: no-repeat;
+  opacity: .4;
+  filter: saturate(.86);
+}
+
+body[data-theme="sakura-bloom"]::after {
+  background:
+    radial-gradient(circle at 12% 74%, rgba(111,159,133,.18), transparent 28%),
+    radial-gradient(circle at 86% 12%, rgba(217,130,156,.16), transparent 24%),
+    linear-gradient(rgba(31,23,25,.2), rgba(31,23,25,.34)),
+    var(--sakura-panel-texture),
+    repeating-linear-gradient(115deg, rgba(245,241,232,.04) 0 1px, transparent 1px 13px);
+  background-size: cover, cover, 820px auto, auto;
+  background-position: center, center, center, center;
+  opacity: .34;
+  mix-blend-mode: multiply;
+}
+
+body[data-theme="sakura-bloom"] :is(.topbar,.player,.library-rail,.inspector,.collection-body,.settings-drawer,.queue-drawer,.systems-grid .panel) {
+  background:
+    linear-gradient(90deg, rgba(240,169,189,.14), transparent 18%, transparent 82%, rgba(217,130,156,.1)),
+    linear-gradient(145deg, rgba(215,210,195,.92), rgba(188,198,182,.92)),
+    var(--sakura-washi-vector),
+    linear-gradient(145deg, rgba(215,210,195,.98), rgba(188,198,182,.96)),
+    var(--sakura-panel-texture),
+    radial-gradient(circle at 100% 0, rgba(111,159,133,.12), transparent 34%);
+  background-size: cover, cover, 180px 180px, cover, 760px auto, cover;
+  background-position: center, center, center, center, center, center;
+  background-blend-mode: screen, normal, multiply, normal, soft-light, normal;
+  border-color: rgba(165,77,105,.28);
+  color: var(--sakura-ink);
+  box-shadow: 0 16px 36px rgba(38,22,31,.2), inset 0 1px rgba(255,255,255,.35), inset 0 0 0 1px rgba(240,169,189,.08);
+}
+
+body[data-theme="sakura-bloom"] :is(.topbar,.player,.library-rail) {
+  background:
+    var(--sakura-branch-vector) right -170px bottom -230px/430px 430px no-repeat,
+    linear-gradient(90deg, rgba(217,130,156,.16), transparent 34%, transparent 72%, rgba(240,169,189,.1)),
+    linear-gradient(145deg, rgba(31,23,25,.99), rgba(36,55,45,.98)),
+    var(--sakura-lacquer-wash),
+    radial-gradient(circle at 8% 0, rgba(111,159,133,.18), transparent 34%);
+  background-size: 430px 430px, cover, cover, 420px auto, cover;
+  background-position: right -170px bottom -230px, center, center, center, center;
+  background-blend-mode: soft-light, screen, normal, screen, normal;
+  color: var(--sakura-ivory);
+  border-color: rgba(240,169,189,.22);
+  box-shadow: 0 16px 36px rgba(38,22,31,.24), inset 0 1px rgba(244,239,227,.14), inset 0 0 0 1px rgba(217,130,156,.1);
+}
+
+body[data-theme="sakura-bloom"] .library-rail {
+  position: relative;
+  overflow: hidden;
+}
+
+body[data-theme="sakura-bloom"] .library-rail::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: -50px;
+  bottom: 76px;
+  width: 250px;
+  height: 250px;
+  pointer-events: none;
+  background: var(--sakura-branch-vector) center/contain no-repeat;
+  opacity: .26;
+  filter: saturate(.8) contrast(.95);
+  transform-origin: 18% 88%;
+}
+
+body[data-theme="sakura-bloom"][data-motion="calm"] .library-rail::before,
+body[data-theme="sakura-bloom"][data-motion="expressive"] .library-rail::before {
+  animation: sakura-branch-sway 8s ease-in-out infinite alternate;
+}
+
+body[data-theme="sakura-bloom"] .library-rail > * { position: relative; z-index: 1; }
+
+body[data-theme="sakura-bloom"] .rail-heading strong,
+body[data-theme="sakura-bloom"] .rail-tools,
+body[data-theme="sakura-bloom"] .top-quality,
+body[data-theme="sakura-bloom"] .settings-trigger { color: var(--sakura-ivory); }
+
+body[data-theme="sakura-bloom"] .rail-tools,
+body[data-theme="sakura-bloom"] .top-quality small,
+body[data-theme="sakura-bloom"] .player :is(.playing-info span,.timeline,.volume > span) {
+  color: rgba(244,239,227,.68);
+}
+
+body[data-theme="sakura-bloom"] .create-button,
+body[data-theme="sakura-bloom"] .rail-import button,
+body[data-theme="sakura-bloom"] .settings-trigger,
+body[data-theme="sakura-bloom"] .top-quality,
+body[data-theme="sakura-bloom"] .global-search {
+  background:
+    linear-gradient(135deg, rgba(240,169,189,.12), rgba(244,239,227,.08)),
+    rgba(244,239,227,.08);
+  border: 1px solid rgba(240,169,189,.24);
+  box-shadow: inset 0 1px rgba(244,239,227,.1);
+}
+
+body[data-theme="sakura-bloom"] .rail-import { border-top-color: rgba(244,239,227,.16); }
+body[data-theme="sakura-bloom"] .rail-import button { color: rgba(244,239,227,.86); }
+
+body[data-theme="sakura-bloom"] .rail-import button:first-child {
+  background: linear-gradient(135deg, var(--sakura-ivory), rgba(240,169,189,.34));
+  color: var(--sakura-lacquer);
+}
+
+body[data-theme="sakura-bloom"] .global-search input { color: var(--sakura-ivory); }
+body[data-theme="sakura-bloom"] .global-search input::placeholder { color: rgba(244,239,227,.58); }
+
+body[data-theme="sakura-bloom"] :is(.playlist-hero,.panel,.quality-card,.tuning-card,.playlist-item,.theme-option,.hero-track-info) {
+  border: 1px solid rgba(122,91,67,.22);
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(240,169,189,.14), transparent 44%),
+    linear-gradient(145deg, rgba(215,210,195,.96), rgba(188,198,182,.9)),
+    var(--sakura-washi-vector) center/180px 180px repeat;
+  background-blend-mode: screen, normal, multiply;
+  box-shadow: 0 10px 26px rgba(38,22,31,.14), inset 0 1px rgba(255,255,255,.36), inset 0 0 0 1px rgba(240,169,189,.1);
+}
+
+body[data-theme="sakura-bloom"] .main-stage,
+body[data-theme="sakura-bloom"] #libraryView {
+  min-height: 100%;
+  background:
+    linear-gradient(180deg, rgba(215,210,195,.99), rgba(188,198,182,.98)),
+    radial-gradient(circle at 82% 12%, rgba(111,159,133,.14), transparent 30%);
+}
+
+body[data-theme="sakura-bloom"] .playlist-hero {
+  overflow: hidden;
+  min-height: 350px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background:
+    var(--sakura-branch-vector) right -60px top -92px/520px 520px no-repeat,
+    radial-gradient(ellipse at 70% 18%, rgba(240,169,189,.42) 0 18px, transparent 19px),
+    radial-gradient(ellipse at 78% 28%, rgba(217,130,156,.34) 0 14px, transparent 15px),
+    radial-gradient(ellipse at 88% 38%, rgba(245,193,207,.24) 0 11px, transparent 12px),
+    radial-gradient(circle at 94% 8%, rgba(240,169,189,.18), transparent 18%),
+    linear-gradient(90deg, rgba(31,23,25,.96), rgba(49,76,62,.72) 48%, rgba(16,10,14,.36)),
+    linear-gradient(0deg, rgba(16,10,14,.62), rgba(16,10,14,.04) 58%),
+    var(--sakura-hero-art),
+    linear-gradient(135deg, #1f1719, #314c3e 62%, #9fa895);
+  background-repeat: no-repeat;
+  background-position: right -60px top -92px, center, center, center, center, center, center, center, center;
+  background-size: 520px 520px, cover, cover, cover, cover, cover, cover, cover, cover;
+}
+
+body[data-theme="sakura-bloom"] .playlist-hero::after {
+  content: "HANAMI / LOCAL AUDIO";
+  position: absolute;
+  right: 18px;
+  bottom: 16px;
+  padding: 5px 8px;
+  color: var(--sakura-ivory);
+  background: linear-gradient(135deg, rgba(31,23,25,.72), rgba(165,77,105,.28));
+  border: 1px solid rgba(240,169,189,.34);
+  border-radius: 999px;
+  font: 700 10px/1.1 "Segoe UI", sans-serif;
+  letter-spacing: .16em;
+  box-shadow: 0 10px 24px rgba(16,10,14,.22), inset 0 1px rgba(244,239,227,.12);
+}
+
+body[data-theme="sakura-bloom"] .hero-shade {
+  background:
+    linear-gradient(0deg, rgba(16,10,14,.88), rgba(16,10,14,.22) 62%, rgba(244,239,227,.04)),
+    linear-gradient(90deg, rgba(16,10,14,.58), transparent 70%);
+}
+
+body[data-theme="sakura-bloom"] .hero-copy :is(p,small),
+body[data-theme="sakura-bloom"] :is(.quality-card small,.technical-details,.setting-label span) {
+  color: color-mix(in srgb, var(--sakura-plum) 72%, var(--sakura-ink));
+  letter-spacing: .08em;
+}
+
+body[data-theme="sakura-bloom"] .hero-copy h1 {
+  max-width: 760px;
+  color: var(--sakura-ivory);
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-weight: 800;
+  text-shadow: 0 3px 24px rgba(38,22,31,.45), 0 0 28px rgba(217,130,156,.2);
+}
+
+body[data-theme="sakura-bloom"] .hero-copy span,
+body[data-theme="sakura-bloom"] .hero-copy small { color: rgba(244,239,227,.86); }
+
+body[data-theme="sakura-bloom"] :is(.playlist-cover,.mini-cover,.metadata-art,.track-art) {
+  border-radius: 14px;
+  border-color: rgba(244,239,227,.5);
+  background:
+    var(--sakura-branch-vector) 62% 44%/138% 138% no-repeat,
+    radial-gradient(circle at 18% 18%, rgba(240,169,189,.46), transparent 22%),
+    linear-gradient(140deg, rgba(215,210,195,.9), rgba(111,159,133,.45)),
+    radial-gradient(circle at 28% 28%, rgba(255,255,255,.82), transparent 24%);
+  background-blend-mode: soft-light, screen, normal, normal;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.6), inset 0 0 0 2px rgba(240,169,189,.12), 0 12px 28px rgba(38,22,31,.24);
+}
+
+body[data-theme="sakura-bloom"] .playlist-item {
+  grid-template-columns: 42px minmax(0, 1fr) 18px;
+  min-height: 58px;
+  gap: 11px;
+  padding: 8px;
+  border-radius: 14px;
+  background: rgba(244,239,227,.08);
+  box-shadow: none;
+}
+
+body[data-theme="sakura-bloom"] .playlist-thumb {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  color: var(--sakura-ivory);
+  background:
+    var(--sakura-branch-vector) 60% 45%/170% 170% no-repeat,
+    radial-gradient(ellipse at 34% 28%, rgba(245,193,207,.95) 0 7px, transparent 8px),
+    radial-gradient(ellipse at 66% 72%, rgba(217,130,156,.52) 0 5px, transparent 6px),
+    linear-gradient(145deg, rgba(111,159,133,.8), rgba(122,91,67,.9));
+  background-blend-mode: soft-light, normal, normal, normal;
+  box-shadow: inset 0 0 0 1px rgba(240,169,189,.38), 0 8px 18px rgba(16,10,14,.2);
+  font: 700 16px "Segoe UI", sans-serif;
+}
+
+body[data-theme="sakura-bloom"] .playlist-copy {
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  min-height: 42px;
+}
+
+body[data-theme="sakura-bloom"] .playlist-copy strong { color: var(--sakura-ivory); font-size: 12px; }
+body[data-theme="sakura-bloom"] .playlist-copy span { margin: 0; color: rgba(244,239,227,.68); font-size: 9px; }
+body[data-theme="sakura-bloom"] .playlist-dots { justify-self: center; align-self: center; color: rgba(244,239,227,.62); }
+
+body[data-theme="sakura-bloom"] .collection-body {
+  min-height: calc(100vh - 532px);
+  background:
+    radial-gradient(circle at 94% 8%, rgba(240,169,189,.18), transparent 26%),
+    radial-gradient(circle at 18% 20%, rgba(217,130,156,.1), transparent 20%),
+    var(--sakura-washi-vector),
+    linear-gradient(180deg, rgba(215,210,195,.99) 0, rgba(188,198,182,.98) 240px, rgba(207,202,187,.99) 100%),
+    var(--sakura-panel-texture),
+    radial-gradient(circle at 12% 0, rgba(111,159,133,.12), transparent 28%);
+  background-size: cover, cover, 180px 180px, cover, 900px auto, cover;
+  background-position: center, center, center, center, center top, center;
+  background-blend-mode: screen, screen, multiply, normal, soft-light, normal;
+}
+
+body[data-theme="sakura-bloom"] .collection-actions {
+  align-items: center;
+  border-bottom: 1px solid rgba(63,43,50,.22);
+  margin-bottom: 8px;
+}
+
+body[data-theme="sakura-bloom"] :is(button,.chip,.filter,.subtle-action,.quiet-button,.open-systems,.settings-trigger,.sort-select) {
+  border-radius: 16px;
+  border-color: rgba(87,49,66,.36);
+  color: var(--sakura-ink);
+}
+
+body[data-theme="sakura-bloom"] :is(.topbar,.library-rail,.player) :is(button,.chip,.filter,.subtle-action,.quiet-button,.open-systems,.settings-trigger) {
+  color: var(--sakura-ivory);
+}
+
+body[data-theme="sakura-bloom"] :is(.chip.active,.filter.active,.playlist-item.active,.preset.active),
+body[data-theme="sakura-bloom"] .track-row.active {
+  background:
+    linear-gradient(90deg, rgba(240,169,189,.22), rgba(111,159,133,.24), rgba(122,91,67,.12));
+  border-color: rgba(217,130,156,.56);
+  box-shadow: inset 4px 0 var(--sakura-petal), inset 0 0 0 1px rgba(240,169,189,.16);
+}
+
+body[data-theme="sakura-bloom"] .library-rail .chip { background: rgba(244,239,227,.1); color: rgba(244,239,227,.76); }
+body[data-theme="sakura-bloom"] .library-rail .chip.active {
+  background: linear-gradient(135deg, var(--sakura-ivory), rgba(240,169,189,.4));
+  color: var(--sakura-lacquer);
+  box-shadow: inset 0 0 0 1px rgba(240,169,189,.3);
+}
+body[data-theme="sakura-bloom"] .player .playing-info strong { color: var(--sakura-ivory); }
+body[data-theme="sakura-bloom"] .player :is(.transport-buttons button,.queue-button,.mini-launch,.volume span) { color: rgba(244,239,227,.82); }
+body[data-theme="sakura-bloom"] .player .play-button { color: var(--sakura-lacquer); }
+body[data-theme="sakura-bloom"] .player .mini-cover { color: #23171e; }
+
+body[data-theme="sakura-bloom"] .player .queue-button,
+body[data-theme="sakura-bloom"] .player .mini-launch {
+  background: linear-gradient(135deg, rgba(240,169,189,.14), rgba(244,239,227,.08));
+  border: 1px solid rgba(240,169,189,.24);
+}
+
+body[data-theme="sakura-bloom"] .volume input,
+body[data-theme="sakura-bloom"] .timeline input,
+body[data-theme="sakura-bloom"] input[type="range"] { accent-color: var(--sakura-leaf); }
+
+body[data-theme="sakura-bloom"] #qualityBadge {
+  color: var(--sakura-ivory);
+  border-color: rgba(240,169,189,.34);
+  background: linear-gradient(135deg, rgba(111,159,133,.18), rgba(217,130,156,.16));
+}
+
+body[data-theme="sakura-bloom"] .collection-actions :is(.filter,.subtle-action,.sort-select) {
+  min-height: 34px;
+  background: rgba(232,226,209,.72);
+  border: 1px solid rgba(63,43,50,.24);
+  color: #3d2a33;
+}
+
+body[data-theme="sakura-bloom"] .collection-actions .filter.active {
+  background: linear-gradient(135deg, rgba(111,159,133,.22), rgba(240,169,189,.18));
+  border-color: rgba(217,130,156,.64);
+  color: #234234;
+  box-shadow: inset 0 0 0 1px rgba(244,239,227,.5), 0 8px 18px rgba(165,77,105,.08);
+}
+
+body[data-theme="sakura-bloom"] .icon-action { color: #6f5962; }
+
+body[data-theme="sakura-bloom"] .track-row {
+  min-height: 56px;
+  border-radius: 10px;
+  color: #382930;
+  border: 1px solid transparent;
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+body[data-theme="sakura-bloom"] .track-header {
+  min-height: 34px;
+  color: rgba(45,35,37,.68);
+  border-bottom-color: rgba(63,43,50,.2);
+  background: transparent;
+  font-weight: 800;
+}
+
+body[data-theme="sakura-bloom"] .track-title strong { color: #211a1a; font-weight: 800; }
+body[data-theme="sakura-bloom"] .track-title span { color: #5f534e; }
+body[data-theme="sakura-bloom"] .track-row.playing,
+body[data-theme="sakura-bloom"] .track-row.active {
+  background:
+    radial-gradient(circle at 18px 50%, rgba(240,169,189,.4), transparent 20px),
+    linear-gradient(90deg, rgba(240,169,189,.2), rgba(111,159,133,.24), rgba(122,91,67,.1)),
+    var(--sakura-washi-vector) center/180px 180px repeat;
+  border-color: rgba(217,130,156,.34);
+  box-shadow: inset 4px 0 var(--sakura-petal), inset 0 0 0 1px rgba(244,239,227,.24);
+}
+body[data-theme="sakura-bloom"] .track-row.playing .track-title strong { color: #315c48; }
+body[data-theme="sakura-bloom"] :is(.format,.quality,.tuned) { color: #55494b; }
+body[data-theme="sakura-bloom"] .track-row > span:not(.track-title):not(.format):not(.quality):not(.tuned) { color: #62564f; }
+body[data-theme="sakura-bloom"] .format { color: #744456; }
+body[data-theme="sakura-bloom"] .tuned { color: #477861; }
+
+body[data-theme="sakura-bloom"] .track-row:hover {
+  background:
+    linear-gradient(90deg, rgba(217,130,156,.12), rgba(111,159,133,.16), rgba(244,239,227,.1)),
+    var(--sakura-washi-vector) center/180px 180px repeat;
+  border-color: rgba(217,130,156,.22);
+  transform: translateY(-1px);
+}
+
+body[data-theme="sakura-bloom"] .track-row :is(button,.remove) { color: #3b2932; }
+
+body[data-theme="sakura-bloom"] :is(.metadata-toggle,.hero-edit) {
+  background: linear-gradient(135deg, rgba(35,23,30,.7), rgba(165,77,105,.28));
+  color: var(--sakura-ivory);
+  border-color: rgba(240,169,189,.3);
+  border-radius: 14px;
+}
+
+body[data-theme="sakura-bloom"] .hero-edit { top: 20px; }
+body[data-theme="sakura-bloom"] .metadata-toggle { top: 66px; }
+
+body[data-theme="sakura-bloom"] .hero-edit:hover,
+body[data-theme="sakura-bloom"] .metadata-toggle:hover,
+body[data-theme="sakura-bloom"] .hero-edit:focus-visible,
+body[data-theme="sakura-bloom"] .metadata-toggle:focus-visible {
+  background: rgba(244,239,227,.92);
+  color: var(--sakura-ink);
+  border-color: rgba(87,49,66,.28);
+}
+
+body[data-theme="sakura-bloom"] :is(.hero-edit,.metadata-toggle) :is(.pixel-icon,.public-icon) { color: var(--sakura-leaf); }
+
+body[data-theme="sakura-bloom"] .hero-track-info {
+  right: 18px;
+  top: 72px;
+  bottom: 18px;
+  width: min(390px, calc(100% - 36px));
+  display: grid;
+  grid-template-rows: auto auto auto auto 1fr;
+  align-content: start;
+  gap: 8px;
+  padding: 18px;
+  color: var(--sakura-ink);
+  background:
+    radial-gradient(circle at 95% 4%, rgba(240,169,189,.24), transparent 22%),
+    linear-gradient(145deg, rgba(215,210,195,.98), rgba(188,198,182,.96)),
+    var(--sakura-panel-texture),
+    radial-gradient(circle at 100% 0, rgba(111,159,133,.16), transparent 34%);
+  background-size: cover, cover, 520px auto, cover;
+  background-position: center, center, center, center;
+  border-left: 1px solid rgba(217,130,156,.28);
+  box-shadow: -16px 0 34px rgba(16,10,14,.22), inset 0 0 0 1px rgba(240,169,189,.12);
+}
+
+body[data-theme="sakura-bloom"] .metadata-art {
+  width: 96px;
+  height: 96px;
+  justify-self: start;
+  margin-bottom: 4px;
+}
+
+body[data-theme="sakura-bloom"] .hero-track-info :is(p,h2,h3,.metadata-album) { margin-left: 0; max-width: 100%; }
+
+body[data-theme="sakura-bloom"] .metadata-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+body[data-theme="sakura-bloom"] .metadata-grid span {
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid rgba(165,77,105,.18);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(240,169,189,.1), rgba(122,91,67,.04));
+}
+
+body[data-theme="sakura-bloom"] .metadata-grid b { overflow: hidden; text-overflow: ellipsis; }
+
+body[data-theme="sakura-bloom"] .panel-handle {
+  min-width: 92px;
+  height: 40px;
+  border-radius: 14px;
+  clip-path: none;
+  color: #3f2a34;
+  background: linear-gradient(135deg, rgba(215,210,195,.94), rgba(240,169,189,.22));
+  border-color: rgba(217,130,156,.28);
+  box-shadow: 0 10px 22px rgba(35,23,30,.14), inset 0 1px rgba(244,239,227,.38);
+}
+
+body[data-theme="sakura-bloom"] .panel-handle .public-icon,
+body[data-theme="sakura-bloom"] .panel-handle small { color: #477861; }
+body[data-theme="sakura-bloom"] .panel-handle b { color: #3f2a34; }
+
+body[data-theme="sakura-bloom"].library-collapsed .library-panel-handle,
+body[data-theme="sakura-bloom"].inspector-collapsed .info-panel-handle {
+  color: #23171e;
+  background: #bcc6b6;
+  border-color: rgba(87,49,66,.3);
+  box-shadow: 0 10px 26px rgba(35,23,30,.18);
+}
+
+body[data-theme="sakura-bloom"] .hero-play,
+body[data-theme="sakura-bloom"] .play-button {
+  background:
+    radial-gradient(circle at 28% 20%, rgba(240,169,189,.9), transparent 26%),
+    linear-gradient(145deg, #e8e2d2, #6f9f85 70%);
+  color: var(--sakura-lacquer);
+  border-color: rgba(165,77,105,.42);
+  box-shadow: 0 12px 28px rgba(87,49,66,.22), 0 0 22px rgba(217,130,156,.16), inset 0 1px rgba(255,255,255,.8);
+}
+
+body[data-theme="sakura-bloom"] .activity-dots i {
+  background: var(--sakura-leaf);
+  box-shadow: 0 0 12px rgba(140,201,168,.72);
+}
+
+body[data-theme="sakura-bloom"] .theme-action-overlay {
+  border-radius: 14px;
+  border-color: rgba(165,77,105,.34);
+  border-left-color: var(--sakura-petal);
+  background:
+    radial-gradient(ellipse at 92% 18%, rgba(240,169,189,.38) 0 14px, transparent 15px),
+    radial-gradient(circle at 8% 80%, rgba(217,130,156,.16), transparent 28%),
+    linear-gradient(135deg, rgba(215,210,195,.98), rgba(188,198,182,.96)),
+    var(--sakura-panel-texture);
+  background-size: cover, cover, cover, 520px auto;
+}
+
+body[data-theme="sakura-bloom"] .drop-zone {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(122,91,67,.32);
+  background:
+    radial-gradient(circle at 86% 16%, rgba(240,169,189,.22), transparent 28%),
+    linear-gradient(145deg, rgba(215,210,195,.9), rgba(188,198,182,.78)),
+    var(--sakura-original-screen) center/cover no-repeat;
+  background-blend-mode: screen, normal, soft-light;
+}
+
+body[data-theme="sakura-bloom"] .drop-zone > * {
+  position: relative;
+  z-index: 1;
+}
+
+body[data-theme="sakura-bloom"] .main-stage.sakura-stage-drift::after {
+  content: "";
+  position: absolute;
+  z-index: 12;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(255,216,230,.52) 0 4px, transparent 5px),
+    radial-gradient(ellipse at 72% 36%, rgba(217,130,156,.44) 0 6px, transparent 7px),
+    radial-gradient(ellipse at 48% 72%, rgba(245,193,207,.42) 0 4px, transparent 5px),
+    radial-gradient(ellipse at 88% 18%, rgba(240,169,189,.36) 0 7px, transparent 8px);
+  background-size: 130px 170px, 180px 150px, 150px 190px, 220px 180px;
+  animation: sakura-stage-drift 660ms ease both;
+}
+
+body[data-theme="sakura-bloom"][data-motion="expressive"]::before {
+  animation: sakura-branch-breathe 12s ease-in-out infinite alternate;
+}
+
+body[data-theme="sakura-bloom"][data-motion="expressive"] .playlist-hero::before {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(245,193,207,.72) 0 4px, transparent 5px),
+    radial-gradient(ellipse at 66% 24%, rgba(217,130,156,.58) 0 6px, transparent 7px),
+    radial-gradient(ellipse at 42% 74%, rgba(245,241,232,.56) 0 4px, transparent 5px),
+    radial-gradient(ellipse at 84% 58%, rgba(240,169,189,.48) 0 7px, transparent 8px);
+  background-size: 150px 210px, 190px 180px, 170px 230px, 230px 190px;
+  opacity: .62;
+  animation: sakura-petal-fall 18s linear infinite;
+}
+
+body[data-theme="sakura-bloom"][data-motion="off"] *,
+body[data-theme="sakura-bloom"][data-performance="conserve"].is-playing * {
+  animation: none !important;
+  transition: none !important;
+}
+
+@keyframes sakura-branch-breathe {
+  from { transform: translate3d(0,0,0) scale(1); opacity: .16; }
+  to { transform: translate3d(-18px, 10px, 0) scale(1.03) rotate(-1.5deg); opacity: .23; }
+}
+
+@keyframes sakura-branch-sway {
+  from { transform: rotate(-2.2deg) translate3d(0,0,0); }
+  50% { transform: rotate(1.2deg) translate3d(5px,-3px,0); }
+  to { transform: rotate(-.8deg) translate3d(2px,2px,0); }
+}
+
+@keyframes sakura-petal-fall {
+  from { transform: translate3d(0,-8%,0) rotate(0deg); }
+  to { transform: translate3d(-4%, 12%, 0) rotate(7deg); }
+}
+
+@keyframes sakura-stage-drift {
+  from { opacity: 0; transform: translate3d(0,-14px,0) scale(1.02); filter: blur(5px); }
+  45% { opacity: .72; }
+  to { opacity: 0; transform: translate3d(-18px,18px,0) scale(1); filter: blur(0); }
+}
+
+@media (max-width: 1000px) {
+  body[data-theme="sakura-bloom"] .playlist-hero { min-height: 300px; }
+
+  body[data-theme="sakura-bloom"] .hero-track-info {
+    top: 62px;
+    width: calc(100% - 28px);
+    right: 14px;
+  }
+}

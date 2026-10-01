@@ -1,0 +1,46 @@
+/* Graphite Loadout mini player. Consolidated 2026-07-26: this file previously
+   carried two full, competing redefinitions of the shell/art/copy/controls
+   (the same leftover-merge pattern found and fixed in
+   mini-cartridge-quest.css) -- the second block silently won on every
+   shared property via source order, so the first block's values for those
+   properties were dead. This version keeps only what actually rendered,
+   deduplicated, and now onto mini-player.css's --mini-* token baseline for
+   the colors/geometry that map cleanly. Bespoke selectors remain for the
+   angular clip-path silhouette, grid overlay, and header labels. */
+@font-face{font-family:"Rajdhani";src:url("assets/themes/graphite-loadout/Rajdhani-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap}
+@font-face{font-family:"Rajdhani";src:url("assets/themes/graphite-loadout/Rajdhani-Bold.ttf") format("truetype");font-weight:700 950;font-display:swap}
+body[data-theme="graphite-loadout"]{
+  padding:6px;
+  background:#050506;
+  font-family:"Rajdhani","Segoe UI",sans-serif;
+  --mini-shell-bg:linear-gradient(98deg,#12142a 0 25%,#292bd1 25% 70%,#090a0e 70%);
+  --mini-shell-border:0;
+  --mini-shell-shadow:inset 0 5px 0 #050506,inset 0 8px 0 #5b5cff;
+  --mini-art-border:1px solid #ffffff70;
+  --mini-art-radius:0;
+  --mini-art-shadow:6px 6px 0 #d9ff00;
+  --mini-copy-eyebrow-color:#d9ff00;
+  --mini-copy-title-color:#f3f0e7;
+  --mini-progress-height:5px;
+  --mini-progress-bg:#050506;
+  --mini-progress-fill:#d9ff00;
+  --mini-play-bg:#f3f5f0;
+  --mini-play-color:#050506;
+  --mini-play-shadow:5px 5px 0 #d9ff00;
+}
+body[data-theme="graphite-loadout"] .mini-shell{
+  height:134px;
+  grid-template-columns:98px 1fr 84px;
+  border-top:3px solid #f3f5f0;
+  clip-path:polygon(0 0,94% 0,100% 16%,100% 100%,6% 100%,0 84%);
+}
+body[data-theme="graphite-loadout"] .mini-shell::before{content:"AUDIO LOADOUT // 046";position:absolute;top:5px;right:14px;color:#d9ff00;font:6px monospace;letter-spacing:.1em}
+body[data-theme="graphite-loadout"] .mini-shell::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.13;background-image:repeating-linear-gradient(90deg,transparent 0 47px,#d9ff0024 47px 48px),repeating-linear-gradient(0deg,transparent 0 47px,#5b5cff20 47px 48px),linear-gradient(90deg,transparent 0 72%,#ff6138 72% 76%,transparent 76%);background-position:center;background-size:auto}
+body[data-theme="graphite-loadout"] .mini-art{clip-path:none}
+body[data-theme="graphite-loadout"] .mini-copy{z-index:1;padding:6px 8px;background:#090a0db8;border:1px solid #ffffff45;backdrop-filter:blur(7px)}
+body[data-theme="graphite-loadout"] .mini-copy small{font-family:monospace}
+body[data-theme="graphite-loadout"] .mini-copy strong{font:900 15px/1 "Rajdhani",sans-serif;letter-spacing:-.02em;text-transform:uppercase}
+body[data-theme="graphite-loadout"] .mini-copy>span{color:#d7d7e0;font-family:monospace}
+body[data-theme="graphite-loadout"] .mini-controls{z-index:1}
+body[data-theme="graphite-loadout"] .mini-controls button{color:#f3f0e7;border:1px solid #ffffff55;background:#090a0dc2;backdrop-filter:blur(7px)}
+body[data-theme="graphite-loadout"] .mini-controls .mini-play{width:44px;height:38px;border-radius:0;clip-path:polygon(0 0,76% 0,100% 28%,100% 100%,24% 100%,0 72%)}

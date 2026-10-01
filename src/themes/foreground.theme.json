@@ -1,0 +1,35 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.foreground",
+  "name": "Pixelody Foreground",
+  "author": "Pixelody",
+  "description": "One lit stage and a recessed margin. The first movable child of the Pixelody Canvas owns the foreground; the rest hold position until promoted.",
+  "palette": {
+    "primary": "#ffb454",
+    "secondary": "#7fd6c0",
+    "base": "#08090c"
+  },
+  "assets": {
+    "backgroundTexture": null,
+    "heroOverlay": null,
+    "panelFrame": null,
+    "iconSet": "../assets/icons/"
+  },
+  "hud": {
+    "layout": "studio",
+    "controls": "minimal",
+    "corners": "soft"
+  },
+  "typography": {
+    "profile": "technical",
+    "font": null
+  },
+  "motion": {
+    "profile": "signal",
+    "intensity": "calm"
+  },
+  "navigation": {
+    "trackBrowser": "linear-list"
+  }
+}

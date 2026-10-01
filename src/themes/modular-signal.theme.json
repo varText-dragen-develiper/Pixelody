@@ -1,0 +1,13 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.modular-signal",
+  "name": "Modular Signal",
+  "author": "Pixelody",
+  "description": "An original modular design-system poster translated into a calm music workstation: lavender field, curved blush signal ribbons, black structural ink, a spoked vinyl instrument ring, and a directional arrow/numbered-index wayfinding language.",
+  "palette": { "primary": "#efcbd0", "secondary": "#6f58a0", "base": "#7660a8" },
+  "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
+  "hud": { "layout": "modular", "controls": "graphic", "corners": "square" },
+  "typography": { "profile": "technical", "font": null },
+  "motion": { "profile": "mechanical", "intensity": "calm" }
+}

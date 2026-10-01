@@ -1,0 +1,387 @@
+@font-face {
+  font-family: "Kenney Future";
+  src: url("assets/themes/orbital-retro/KenneyFuture.ttf") format("truetype");
+  font-display: swap;
+}
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.theme-option {
+  min-height: 104px;
+  padding: 11px;
+  color: var(--text);
+  background: #ffffff07;
+  border: 1px solid #ffffff14;
+  clip-path: var(--pixel-cut);
+  text-align: left;
+}
+
+.theme-option.active {
+  border-color: var(--gold);
+  box-shadow: inset 0 -3px 0 var(--gold);
+}
+
+.theme-option b,
+.theme-option small {
+  display: block;
+}
+
+.theme-option b {
+  margin-top: 9px;
+  font: 8px var(--pixel-font);
+}
+
+.theme-option small,
+.theme-credit {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 7px;
+  line-height: 1.45;
+}
+
+.theme-preview {
+  height: 42px;
+  display: grid;
+  grid-template-columns: 28% 1fr 20%;
+  gap: 4px;
+  padding: 5px;
+  overflow: hidden;
+  background: #08090a;
+  border: 1px solid #ffffff18;
+}
+
+.theme-preview i {
+  display: block;
+  background: #25282c;
+}
+
+.studio-preview i:nth-child(2) {
+  background: linear-gradient(145deg, #d8b66a, #2b2418 70%);
+}
+
+.orbital-preview {
+  background: #061318;
+  border: 2px solid #ffd447;
+  clip-path: polygon(0 0, 87% 0, 100% 25%, 100% 100%, 12% 100%, 0 75%);
+}
+
+.orbital-preview i:nth-child(1) { background: #0d5964; }
+.orbital-preview i:nth-child(2) { background: linear-gradient(145deg, #ff5a70 0 24%, #09242b 24% 66%, #58e3e8 66%); }
+.orbital-preview i:nth-child(3) { background: #ffd447; }
+
+body[data-theme="orbital"] {
+  font-family: "Kenney Future", "Segoe UI", sans-serif;
+  background-color: var(--bg);
+  background-image: radial-gradient(circle at 50% -20%, #17687755, transparent 44%), repeating-linear-gradient(90deg, transparent 0 31px, #58e3e807 31px 32px);
+}
+
+body[data-theme="orbital"]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: .075;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, #58e3e8 3px 4px);
+  mix-blend-mode: screen;
+}
+
+body[data-theme="orbital"] .topbar {
+  background: linear-gradient(90deg, #061318, #0b3038 50%, #061318);
+  border-bottom: 3px solid var(--gold);
+  box-shadow: 0 4px 0 #ff5a7033;
+}
+
+body[data-theme="orbital"] .global-search {
+  height: 39px;
+  background: #061318dd;
+  border: 2px solid var(--gold2);
+  border-radius: 0;
+  clip-path: polygon(11px 0, 100% 0, 100% calc(100% - 11px), calc(100% - 11px) 100%, 0 100%, 0 11px);
+}
+
+body[data-theme="orbital"] .global-search input,
+body[data-theme="orbital"] button,
+body[data-theme="orbital"] select {
+  font-family: "Kenney Future", "Segoe UI", sans-serif;
+  letter-spacing: .04em;
+}
+
+body[data-theme="orbital"] .round-button {
+  border-radius: 0;
+  border: 2px solid var(--gold);
+  clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+}
+
+body[data-theme="orbital"] .settings-trigger,
+body[data-theme="orbital"] .top-quality {
+  border-radius: 0;
+  border: 1px solid var(--gold2);
+  background: #09242b;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+
+body[data-theme="orbital"] .workspace {
+  padding-top: 4px;
+  gap: 3px;
+}
+
+body[data-theme="orbital"] .library-rail,
+body[data-theme="orbital"] .main-stage,
+body[data-theme="orbital"] .inspector {
+  border: 2px solid var(--line);
+  border-radius: 0;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--surface) 94%, var(--gold2) 6%), var(--surface));
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 10px);
+  box-shadow: inset 0 0 0 2px #0008;
+}
+
+body[data-theme="orbital"] .library-rail,
+body[data-theme="orbital"] .inspector {
+  border-color: var(--gold2);
+}
+
+body[data-theme="orbital"] .rail-heading {
+  margin: -4px -2px 12px;
+  padding: 10px 8px;
+  color: #061318;
+  background: var(--gold);
+  clip-path: polygon(0 0, 88% 0, 100% 45%, 100% 100%, 0 100%);
+}
+
+body[data-theme="orbital"] .rail-heading strong,
+body[data-theme="orbital"] .inspector-heading strong {
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+body[data-theme="orbital"] .create-button {
+  color: #061318;
+  background: var(--gold2);
+  border-radius: 0;
+  clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+}
+
+body[data-theme="orbital"] .chip {
+  border-radius: 0;
+  border: 1px solid var(--line);
+  background: #061318;
+}
+
+body[data-theme="orbital"] .chip.active {
+  color: white;
+  background: var(--green);
+  border-color: var(--green);
+  box-shadow: 4px 4px 0 #0008;
+}
+
+body[data-theme="orbital"] .playlist-item {
+  margin-bottom: 3px;
+  border: 1px solid transparent;
+  border-radius: 0;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+}
+
+body[data-theme="orbital"] .playlist-item:hover,
+body[data-theme="orbital"] .playlist-item.active {
+  background: #0d3a43;
+  border-color: var(--gold2);
+  box-shadow: inset 5px 0 0 var(--gold);
+}
+
+body[data-theme="orbital"] .playlist-thumb,
+body[data-theme="orbital"] .mini-cover {
+  border: 2px solid var(--gold2);
+  border-radius: 0;
+  box-shadow: 4px 4px 0 #0009;
+}
+
+body[data-theme="orbital"] .playlist-hero {
+  height: 400px;
+  background-color: var(--hero);
+  clip-path: polygon(0 0, 100% 0, 100% 94%, 96% 100%, 0 100%);
+}
+
+body[data-theme="orbital"] .playlist-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .45;
+  background-image: linear-gradient(115deg, transparent 0 55%, #58e3e81f 55% 57%, transparent 57%), repeating-linear-gradient(90deg, transparent 0 79px, #ffd44712 79px 80px);
+  animation: orbital-scan 7s linear infinite;
+}
+
+body[data-theme="orbital"] .hero-shade {
+  background: linear-gradient(0deg, #061318f5, transparent 72%), linear-gradient(105deg, #ff5a7040 0 16%, transparent 16% 70%, #58e3e82b 70%);
+}
+
+body[data-theme="orbital"] .playlist-cover {
+  border: 3px solid var(--gold);
+  border-radius: 0;
+  box-shadow: 10px 10px 0 var(--green), 14px 14px 0 #0008;
+  clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
+}
+
+body[data-theme="orbital"] .hero-copy p,
+body[data-theme="orbital"] .hero-copy small {
+  color: var(--gold2);
+}
+
+body[data-theme="orbital"] .hero-copy h1 {
+  max-width: 760px;
+  color: #fff8df;
+  font-family: "Kenney Future", sans-serif;
+  font-size: clamp(38px, 4.8vw, 70px);
+  letter-spacing: .01em;
+  text-transform: uppercase;
+  text-shadow: 4px 4px 0 #061318, 7px 7px 0 #ff5a7066;
+}
+
+body[data-theme="orbital"] .hero-edit,
+body[data-theme="orbital"] .metadata-toggle {
+  background: #061318e8;
+  border: 2px solid var(--gold);
+  clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+}
+
+body[data-theme="orbital"] .collection-body {
+  background: linear-gradient(color-mix(in srgb, var(--hero) 54%, #061318), #07171c 190px);
+}
+
+body[data-theme="orbital"] .hero-play {
+  width: 58px;
+  color: #061318;
+  background: var(--gold);
+  border: 3px solid #061318;
+  box-shadow: 5px 5px 0 var(--green);
+}
+
+body[data-theme="orbital"] .filter,
+body[data-theme="orbital"] .subtle-action,
+body[data-theme="orbital"] .sort-select {
+  border-radius: 0;
+  border: 1px solid var(--gold2);
+  background: #061318;
+  clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+}
+
+body[data-theme="orbital"] .filter.active {
+  color: #061318;
+  background: var(--gold2);
+}
+
+body[data-theme="orbital"] .track-row {
+  margin-bottom: 2px;
+  border: 1px solid transparent;
+  border-radius: 0;
+  clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+}
+
+body[data-theme="orbital"] .track-row:not(.track-header):hover,
+body[data-theme="orbital"] .track-row.playing {
+  background: #0d333c;
+  border-color: var(--gold2);
+}
+
+body[data-theme="orbital"] .track-row.playing {
+  box-shadow: inset 7px 0 0 var(--green);
+}
+
+body[data-theme="orbital"] .quality-card,
+body[data-theme="orbital"] .tuning-card,
+body[data-theme="orbital"] .panel {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid var(--line);
+  border-radius: 0;
+  background: #09242b;
+  clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+}
+
+body[data-theme="orbital"] .quality-card::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 120px;
+  height: 60px;
+  opacity: .12;
+  pointer-events: none;
+  background: url("assets/themes/orbital-retro/hud-frame.png") center / 100% 100% no-repeat;
+  mix-blend-mode: screen;
+}
+
+body[data-theme="orbital"] .status-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 0;
+  background: url("assets/themes/orbital-retro/target-marker.png") center / contain no-repeat;
+  box-shadow: none;
+  animation: orbital-marker 1.8s steps(2, end) infinite;
+}
+
+body[data-theme="orbital"] .panel-handle {
+  min-width: 124px;
+  border: 2px solid var(--gold);
+  background: #09242b;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+
+body[data-theme="orbital"] .player {
+  height: 88px;
+  background: linear-gradient(90deg, #061318, #0d333c 50%, #061318);
+  border-top: 4px solid var(--gold);
+  box-shadow: inset 0 3px 0 #58e3e829;
+}
+
+body[data-theme="orbital"] .transport-buttons button {
+  color: var(--gold2);
+  border-color: #58e3e82d;
+}
+
+body[data-theme="orbital"] .transport-buttons .play-button {
+  width: 48px !important;
+  height: 42px !important;
+  color: #061318;
+  background: var(--gold);
+  box-shadow: 4px 4px 0 var(--green);
+  clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+}
+
+body[data-theme="orbital"] .settings-drawer,
+body[data-theme="orbital"] .queue-drawer,
+body[data-theme="orbital"] .track-editor,
+body[data-theme="orbital"] .playlist-creator {
+  background: #071a20;
+  border: 3px solid var(--gold);
+  clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+}
+
+body[data-theme="orbital"] .theme-option,
+body[data-theme="orbital"] .palette-option {
+  clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+}
+
+@keyframes orbital-scan {
+  from { background-position: -300px 0, 0 0; }
+  to { background-position: 900px 0, 160px 0; }
+}
+
+@keyframes orbital-marker {
+  50% { filter: brightness(1.8) drop-shadow(0 0 5px var(--gold2)); }
+}
+
+@media (max-width: 850px) {
+  .theme-grid { grid-template-columns: 1fr; }
+  body[data-theme="orbital"] .playlist-hero { height: 340px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-theme="orbital"] .playlist-hero::after,
+  body[data-theme="orbital"] .status-dot { animation: none; }
+}

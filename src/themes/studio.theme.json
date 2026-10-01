@@ -1,0 +1,13 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.studio",
+  "name": "Pixelody Studio",
+  "author": "Pixelody",
+  "description": "The default elegant pixel-graphic interface with warm audio-hardware restraint.",
+  "palette": { "builtIn": "gold" },
+  "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": "../assets/icons/" },
+  "hud": { "layout": "studio", "controls": "pixel", "corners": "pixel-cut" },
+  "typography": { "profile": "pixel", "font": "../assets/fonts/GeistPixel-Circle.woff2" },
+  "motion": { "profile": "signal", "intensity": "calm" }
+}

@@ -1,0 +1,201 @@
+/* Shared structural CSS for the Pass Deck navigation mechanic.
+   The active/confirmed pass is a complete two-zone information object;
+   neighboring passes compress into diagonal apertures. This file owns only
+   geometry and interaction. Theme-specific color/material lives in the
+   assigning theme's stylesheet. */
+
+#trackRows.pass-deck-mounted {
+  display: flex;
+  flex-direction: column;
+  height: 350px;
+  padding: 18px 0 0;
+}
+
+.pass-deck-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  perspective: 1200px;
+}
+
+.pass-deck-card {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  width: min(680px, 78vw);
+  outline: none;
+  cursor: pointer;
+  z-index: calc(20 - var(--pass-distance, 0));
+  opacity: calc(1 - var(--pass-distance, 0) * 0.2);
+  transform:
+    translateX(-50%)
+    translateX(calc(var(--pass-offset, 0) * 230px))
+    translateY(calc(var(--pass-distance, 0) * 12px))
+    translateZ(calc(var(--pass-distance, 0) * -110px))
+    rotateY(calc(var(--pass-offset, 0) * -14deg))
+    scaleX(calc(1 - var(--pass-distance, 0) * 0.17))
+    scaleY(calc(1 - var(--pass-distance, 0) * 0.055));
+  transition: transform 340ms cubic-bezier(.2, .75, .15, 1), opacity 260ms ease;
+}
+
+.pass-deck-shell {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) 92px;
+  min-height: 128px;
+  overflow: hidden;
+  background: var(--surface2, #181a1d);
+  border: 1px solid var(--edge, #3a3935);
+  border-radius: 16px;
+}
+
+.pass-deck-art {
+  display: grid;
+  place-items: center;
+  margin: 12px;
+  min-width: 0;
+  border-radius: 10px;
+  background-color: var(--surface3, #22252a);
+  background-position: center;
+  background-size: cover;
+}
+
+.pass-deck-art > span {
+  color: var(--muted, #a2a5aa);
+  font: 700 11px/1 monospace;
+}
+
+.pass-deck-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 18px;
+  border-inline: 1px dashed var(--line, #2b2e33);
+}
+
+.pass-deck-copy small,
+.pass-deck-stub small,
+.pass-deck-status span {
+  color: var(--muted, #a2a5aa);
+  font: 700 9px/1.2 monospace;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.pass-deck-copy strong {
+  overflow: hidden;
+  color: var(--text, #f5f3ef);
+  font-size: 19px;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pass-deck-copy > span {
+  overflow: hidden;
+  color: var(--muted, #a2a5aa);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pass-deck-stub {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.pass-deck-stub b {
+  color: var(--text, #f5f3ef);
+  font: 700 12px/1 monospace;
+}
+
+.pass-deck-stub i {
+  display: block;
+  width: 0;
+  height: 0;
+  border-block: 10px solid transparent;
+  border-left: 15px solid var(--gold, #d8b66a);
+}
+
+.pass-deck-card:focus-visible .pass-deck-shell {
+  outline: 3px solid var(--gold, #d8b66a);
+  outline-offset: 4px;
+}
+
+.pass-deck-card.is-playing .pass-deck-shell {
+  border-color: var(--green, #65d6a1);
+}
+
+.pass-deck-card.is-playing .pass-deck-stub i {
+  border-left-color: var(--green, #65d6a1);
+}
+
+.pass-deck-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 38px;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+.pass-deck-status b {
+  overflow: hidden;
+  max-width: 65%;
+  color: var(--text, #f5f3ef);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body[data-motion="off"] .pass-deck-card,
+body[data-performance="conserve"] .pass-deck-card {
+  transition: none;
+}
+
+@media (max-width: 640px) {
+  #trackRows.pass-deck-mounted {
+    height: 280px;
+  }
+
+  .pass-deck-card {
+    top: 13%;
+    width: calc(100% - 24px);
+    transform:
+      translateX(-50%)
+      translateX(calc(var(--pass-offset, 0) * 116px))
+      translateY(calc(var(--pass-distance, 0) * 10px))
+      translateZ(calc(var(--pass-distance, 0) * -90px))
+      rotateY(calc(var(--pass-offset, 0) * -12deg))
+      scaleX(calc(1 - var(--pass-distance, 0) * 0.2))
+      scaleY(calc(1 - var(--pass-distance, 0) * 0.06));
+  }
+
+  .pass-deck-shell {
+    grid-template-columns: 68px minmax(0, 1fr) 62px;
+    min-height: 104px;
+  }
+
+  .pass-deck-art {
+    margin: 9px;
+  }
+
+  .pass-deck-copy {
+    padding: 10px 12px;
+  }
+
+  .pass-deck-copy strong {
+    font-size: 15px;
+  }
+
+  .pass-deck-copy > span {
+    display: none;
+  }
+}

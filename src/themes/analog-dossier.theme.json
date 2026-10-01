@@ -1,0 +1,9 @@
+{
+  "$schema": "./theme.schema.json", "schemaVersion": 1, "id": "pixelody.analog-dossier", "name": "Analog Dossier", "author": "Pixelody",
+  "description": "A personal audio case room for crate-diggers and liner-note archivists, built from Library of Congress public-domain poster material, file-cabinet tabs, catalog cards, ledger rows, lab-report frames, and restrained burnt-orange signal states.",
+  "palette": { "primary": "#bf5726", "secondary": "#e08b4d", "base": "#d8d0bf" },
+  "assets": { "backgroundTexture": "../assets/themes/analog-dossier/derived/analog-panel-loc-beall-no-known-restrictions.webp", "heroOverlay": "../assets/themes/analog-dossier/derived/analog-hero-loc-science-no-known-restrictions.webp", "panelFrame": "../assets/themes/analog-dossier/catalog-card.svg", "iconSet": "../assets/themes/analog-dossier/seismograph-strip.svg", "navigationTexture": "../assets/themes/analog-dossier/file-cabinet-tabs.svg", "trackLedger": "../assets/themes/analog-dossier/archive-ledger.svg", "technicalFrame": "../assets/themes/analog-dossier/lab-report-frame.svg" },
+  "hud": { "layout": "compact", "controls": "technical", "corners": "square" },
+  "typography": { "profile": "editorial", "font": null },
+  "motion": { "profile": "mechanical", "intensity": "calm" }
+}

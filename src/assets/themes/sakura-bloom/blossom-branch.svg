@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" role="img" aria-label="Original sakura branch with blossoms">
+  <defs>
+    <linearGradient id="branch-main" x1="40" y1="610" x2="604" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2b1b1f"/>
+      <stop offset=".42" stop-color="#6d4a37"/>
+      <stop offset=".72" stop-color="#8b6548"/>
+      <stop offset="1" stop-color="#2f473a"/>
+    </linearGradient>
+    <linearGradient id="branch-ridge" x1="70" y1="588" x2="570" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f0a9bd" stop-opacity=".06"/>
+      <stop offset=".48" stop-color="#f5d5dc" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#f4efe3" stop-opacity=".1"/>
+    </linearGradient>
+    <radialGradient id="petal-soft" cx=".42" cy=".35" r=".74">
+      <stop offset="0" stop-color="#fff7f6"/>
+      <stop offset=".46" stop-color="#f6c9d4"/>
+      <stop offset=".78" stop-color="#e79ab0"/>
+      <stop offset="1" stop-color="#b55c75"/>
+    </radialGradient>
+    <radialGradient id="petal-shadow" cx=".58" cy=".72" r=".82">
+      <stop offset="0" stop-color="#d9829c"/>
+      <stop offset="1" stop-color="#7a3f52"/>
+    </radialGradient>
+    <filter id="soft-shadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="#1f1719" flood-opacity=".24"/>
+    </filter>
+    <symbol id="five-petal-blossom" viewBox="-40 -42 80 84">
+      <g>
+        <path d="M0-37 C12-35 22-24 20-12 C18 2 7 7 0 2 C-7 7-18 2-20-12 C-22-24-12-35 0-37Z" fill="url(#petal-soft)"/>
+        <path d="M35-10 C40 2 34 17 21 21 C8 25 0 17 2 8 C-7 4-9-9 1-18 C12-28 29-24 35-10Z" fill="url(#petal-soft)"/>
+        <path d="M22 31 C12 40-5 40-13 29 C-21 18-15 8-5 6 C-3-4 10-7 20 2 C31 11 33 24 22 31Z" fill="url(#petal-soft)"/>
+        <path d="M-22 31 C-33 24-31 11-20 2 C-10-7 3-4 5 6 C15 8 21 18 13 29 C5 40-12 40-22 31Z" fill="url(#petal-soft)"/>
+        <path d="M-35-10 C-29-24-12-28-1-18 C9-9 7 4-2 8 C0 17-8 25-21 21 C-34 17-40 2-35-10Z" fill="url(#petal-soft)"/>
+        <g fill="none" stroke="#fff7f6" stroke-linecap="round" opacity=".42">
+          <path d="M0-27 C1-16 0-8 0-1"/>
+          <path d="M27-8 C18-4 10 1 4 5"/>
+          <path d="M16 24 C10 16 5 11 2 6"/>
+          <path d="M-16 24 C-10 16-5 11-2 6"/>
+          <path d="M-27-8 C-18-4-10 1-4 5"/>
+        </g>
+        <circle cx="0" cy="5" r="6.2" fill="#b87b53"/>
+        <circle cx="-3" cy="3" r="2" fill="#f4d67a"/>
+        <circle cx="3" cy="7" r="1.8" fill="#f4d67a"/>
+      </g>
+    </symbol>
+    <symbol id="bud" viewBox="-12 -18 24 36">
+      <path d="M0-17 C10-11 12 2 5 12 C2 17-4 17-7 12 C-14 1-10-11 0-17Z" fill="url(#petal-shadow)"/>
+      <path d="M-5 11 C-1 5 2 0 4-11" fill="none" stroke="#f7d4dd" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+    </symbol>
+  </defs>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#soft-shadow)">
+    <path d="M44 602 C132 514 166 430 246 354 C326 278 394 238 454 150 C490 98 536 56 604 22" stroke="url(#branch-main)" stroke-width="30"/>
+    <path d="M74 578 C162 490 196 414 274 342 C354 268 420 218 486 122 C522 70 564 42 606 24" stroke="url(#branch-ridge)" stroke-width="7"/>
+    <path d="M238 360 C178 340 124 356 78 404" stroke="#704b36" stroke-width="15"/>
+    <path d="M210 386 C156 386 104 430 58 494" stroke="#3f2b32" stroke-width="10"/>
+    <path d="M336 270 C310 206 326 146 380 82" stroke="#704b36" stroke-width="13"/>
+    <path d="M398 220 C462 208 526 236 590 294" stroke="#704b36" stroke-width="12"/>
+    <path d="M450 154 C506 144 552 108 616 62" stroke="#5f4132" stroke-width="9"/>
+    <path d="M278 330 C318 350 354 398 382 452" stroke="#5f4132" stroke-width="8"/>
+  </g>
+  <g filter="url(#soft-shadow)">
+    <use href="#five-petal-blossom" x="384" y="84" width="88" height="92" transform="rotate(-14 428 130)"/>
+    <use href="#five-petal-blossom" x="514" y="246" width="78" height="82" transform="rotate(18 553 287)"/>
+    <use href="#five-petal-blossom" x="94" y="374" width="74" height="78" transform="rotate(-23 131 413)"/>
+    <use href="#five-petal-blossom" x="348" y="424" width="56" height="60" transform="rotate(16 376 454)" opacity=".9"/>
+    <use href="#five-petal-blossom" x="554" y="40" width="58" height="62" transform="rotate(28 583 71)" opacity=".82"/>
+    <use href="#bud" x="304" y="206" width="30" height="44" transform="rotate(-22 319 228)"/>
+    <use href="#bud" x="464" y="198" width="28" height="40" transform="rotate(30 478 218)"/>
+    <use href="#bud" x="172" y="338" width="26" height="38" transform="rotate(-52 185 357)"/>
+    <use href="#bud" x="412" y="326" width="24" height="36" transform="rotate(36 424 344)"/>
+  </g>
+  <g opacity=".82">
+    <path d="M303 246 C318 238 336 246 341 260 C326 270 310 270 296 260 C297 254 299 250 303 246Z" fill="#f0a9bd"/>
+    <path d="M244 314 C256 303 276 306 282 319 C270 331 252 333 240 322 C240 319 241 316 244 314Z" fill="#f5c1cf"/>
+    <path d="M458 162 C470 154 487 158 494 170 C483 180 466 183 455 174 C455 170 456 166 458 162Z" fill="#f0a9bd"/>
+    <path d="M496 360 C508 352 524 358 528 371 C516 380 500 379 491 368 C492 365 493 362 496 360Z" fill="#d9829c"/>
+    <path d="M182 502 C194 494 210 500 214 512 C202 522 187 521 178 510 C178 507 180 504 182 502Z" fill="#f5c1cf" opacity=".72"/>
+  </g>
+  <g fill="#f4efe3" opacity=".5">
+    <circle cx="430" cy="126" r="2.2"/>
+    <circle cx="552" cy="286" r="1.8"/>
+    <circle cx="132" cy="414" r="1.8"/>
+    <circle cx="376" cy="456" r="1.6"/>
+  </g>
+</svg>
