@@ -1,0 +1,18 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.sakura-bloom",
+  "name": "Sakura Bloom",
+  "author": "Pixelody",
+  "description": "A calm hanami listening room with public-domain Japanese blossom art, shaded sage-washi surfaces, dark lacquer framing, soft green signal state, and original vector floral ornament.",
+  "palette": { "primary": "#d9829c", "secondary": "#6f9f85", "base": "#1f1719" },
+  "assets": {
+    "backgroundTexture": "../assets/themes/sakura-bloom/derived/sakura-kosode-panel-texture-public-domain.webp",
+    "heroOverlay": "../assets/themes/sakura-bloom/derived/sakura-hero-met-hanami-public-domain.webp",
+    "panelFrame": "../assets/themes/sakura-bloom/derived/sakura-lacquer-textile-wash-public-domain.webp",
+    "iconSet": "../assets/themes/sakura-bloom/blossom-branch.svg"
+  },
+  "hud": { "layout": "studio", "controls": "ornamental", "corners": "soft" },
+  "typography": { "profile": "editorial", "font": null },
+  "motion": { "profile": "drift", "intensity": "calm" }
+}

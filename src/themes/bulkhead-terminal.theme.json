@@ -1,0 +1,32 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.bulkhead-terminal",
+  "name": "Bulkhead Terminal",
+  "author": "Pixelody",
+  "description": "An unofficial original homage to heavy industrial science-fiction terminals and classic shooter HUD design.",
+  "palette": {
+    "primary": "#f6c945",
+    "secondary": "#78f09a",
+    "base": "#090c0b"
+  },
+  "assets": {
+    "backgroundTexture": null,
+    "heroOverlay": null,
+    "panelFrame": null,
+    "iconSet": null
+  },
+  "hud": {
+    "layout": "arcade",
+    "controls": "technical",
+    "corners": "framed"
+  },
+  "typography": {
+    "profile": "technical",
+    "font": "../assets/themes/orbital-retro/KenneyFuture.ttf"
+  },
+  "motion": {
+    "profile": "mechanical",
+    "intensity": "expressive"
+  }
+}

@@ -1,0 +1,5 @@
+﻿UI Sound Effects Library by Little Robot Sound Factory
+Source: https://opengameart.org/content/ui-sound-effects-library
+License: Creative Commons Attribution 3.0 Unported
+License URL: https://creativecommons.org/licenses/by/3.0/
+Attribution notice from source page: Attribute Little Robot Sound Factory, and provide this link where possible: www.littlerobotsoundfactory.com

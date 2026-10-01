@@ -1,0 +1,29 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.counterform-choir",
+  "name": "Counterform Choir",
+  "author": "Pixelody",
+  "description": "C3 experiment: a pearl open score where complete track voices form counter-curves and only host-confirmed playback closes the cross-surface white aperture.",
+  "palette": { "builtIn": "counterform-choir" },
+  "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
+  "hud": { "layout": "cinematic", "controls": "technical", "corners": "square" },
+  "typography": { "profile": "display" },
+  "motion": { "profile": "mechanical", "intensity": "calm" },
+  "tokens": {
+    "accentPrimary": "#2f4dff",
+    "accentSecondary": "#32d8c4",
+    "accentState": "#e84f67",
+    "heroTone": "#ddd9ff",
+    "canvas": "#f5f1ff",
+    "elevation1": "#fffdfa",
+    "elevation2": "#ece8fb",
+    "elevation3": "#211553",
+    "divider": "#aaa4c8",
+    "frame": "#211553",
+    "foreground": "#211553",
+    "foregroundMuted": "#625a83"
+  },
+  "navigation": { "trackBrowser": "chorus-fold" },
+  "information": { "profile": "counterform-choir" }
+}

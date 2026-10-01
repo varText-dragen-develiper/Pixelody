@@ -1,0 +1,28 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.tideplot",
+  "name": "Tideplot",
+  "author": "Pixelody",
+  "description": "C3 structural-reset experiment: a high-key editorial current atlas where compressed current banks create a truthful pressure gap and confirmed playback locks that same datum into a shared main/mini aperture.",
+  "palette": { "builtIn": "tideplot" },
+  "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
+  "hud": { "layout": "cinematic", "controls": "technical", "corners": "square" },
+  "typography": { "profile": "display" },
+  "motion": { "profile": "drift", "intensity": "calm" },
+  "tokens": {
+    "accentPrimary": "#6947e8",
+    "accentSecondary": "#2c58e9",
+    "accentState": "#24d9e7",
+    "heroTone": "#ececf6",
+    "canvas": "#f7f7f1",
+    "elevation1": "#fffefa",
+    "elevation2": "#ececf6",
+    "elevation3": "#111236",
+    "divider": "#aeb2cb",
+    "frame": "#17216f",
+    "foreground": "#111236",
+    "foregroundMuted": "#69709a"
+  },
+  "navigation": { "trackBrowser": "current-weave" }
+}

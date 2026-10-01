@@ -1,0 +1,2141 @@
+/*
+ * Counterform Choir — C3 vertical-slice candidate
+ * Original CSS/procedural construction; supplied images are analytical references only.
+ */
+
+.counterform-choir-preview {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #211553;
+  background:
+    radial-gradient(circle at 72% 42%, #fff 0 10%, transparent 11%),
+    radial-gradient(circle at 26% 62%, #32d8c4 0 6%, transparent 7%),
+    linear-gradient(153deg, transparent 0 31%, #2f4dff 32% 37%, transparent 38%),
+    #f5f1ff;
+}
+
+.counterform-choir-preview::before,
+.counterform-choir-preview::after {
+  content: "";
+  position: absolute;
+  left: -12%;
+  width: 108%;
+  height: 46%;
+  border: 2px solid #211553;
+  border-inline-color: transparent;
+  border-radius: 50%;
+}
+
+.counterform-choir-preview::before { top: 12%; transform: rotate(-9deg); }
+.counterform-choir-preview::after { top: 38%; transform: rotate(13deg); }
+.counterform-choir-preview i:nth-child(1) { background: #211553; transform: rotate(-8deg); }
+.counterform-choir-preview i:nth-child(2) { background: #fff; border: 5px solid #211553; border-radius: 50%; }
+.counterform-choir-preview i:nth-child(3) { background: #2f4dff; transform: rotate(8deg); }
+
+body[data-theme="counterform-choir"] {
+  --cf-ink: #211553;
+  --cf-deep: #100a28;
+  --cf-cobalt: #2f4dff;
+  --cf-mint: #32d8c4;
+  --cf-cyan: #69d8ff;
+  --cf-coral: #e84f67;
+  --cf-pearl: #f5f1ff;
+  --cf-chalk: #fffdfa;
+  color: var(--cf-ink);
+  background: var(--cf-pearl);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body[data-theme="counterform-choir"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(33, 21, 83, .042) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(33, 21, 83, .042) 1px, transparent 1px),
+    radial-gradient(circle at 72% 18%, rgba(105, 216, 255, .2), transparent 27%),
+    radial-gradient(circle at 14% 64%, rgba(50, 216, 196, .11), transparent 25%),
+    var(--cf-pearl);
+  background-size: 44px 44px, 44px 44px, auto, auto, auto;
+}
+
+body[data-theme="counterform-choir"] button,
+body[data-theme="counterform-choir"] select,
+body[data-theme="counterform-choir"] input {
+  border-radius: 0;
+}
+
+body[data-theme="counterform-choir"] button:focus-visible,
+body[data-theme="counterform-choir"] select:focus-visible,
+body[data-theme="counterform-choir"] input:focus-visible,
+body[data-theme="counterform-choir"] [tabindex]:focus-visible {
+  outline: 4px double var(--cf-cobalt);
+  outline-offset: 3px;
+}
+
+body[data-theme="counterform-choir"] .topbar {
+  min-height: 54px;
+  border-bottom: 1px solid var(--cf-ink);
+  color: var(--cf-ink);
+  background: rgba(255, 253, 250, .88);
+  box-shadow: none;
+}
+
+body[data-theme="counterform-choir"] .topbar::after {
+  content: "LOCAL FIELD / PRIVATE LISTENING / COUNTERFORM CHOIR";
+  position: absolute;
+  left: clamp(160px, 18vw, 290px);
+  bottom: 4px;
+  color: var(--cf-ink);
+  font: 700 8px/1 Consolas, "Courier New", monospace;
+  letter-spacing: .12em;
+  opacity: .7;
+}
+
+body[data-theme="counterform-choir"] .brand-mark,
+body[data-theme="counterform-choir"] .top-quality,
+body[data-theme="counterform-choir"] .topbar button {
+  color: var(--cf-ink);
+}
+
+body[data-theme="counterform-choir"] .workspace {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 112px minmax(0, 1fr);
+  gap: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+body[data-theme="counterform-choir"] .library-rail,
+body[data-theme="counterform-choir"] .main-stage,
+body[data-theme="counterform-choir"] .inspector {
+  grid-column: 1;
+}
+
+body[data-theme="counterform-choir"] .library-rail {
+  grid-row: 1;
+  z-index: 8;
+  width: auto !important;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 188px 226px minmax(240px, 1fr) 224px;
+  grid-template-rows: 36px 52px;
+  grid-template-areas:
+    "head filters tools import"
+    "head filters list import";
+  gap: 5px 14px;
+  padding: 12px 18px 10px;
+  overflow: hidden;
+  border: 0;
+  border-bottom: 1px solid var(--cf-ink);
+  color: var(--cf-ink);
+  background: rgba(255, 253, 250, .9);
+  box-shadow: none;
+}
+
+body[data-theme="counterform-choir"] .rail-heading {
+  grid-area: head;
+  display: grid;
+  gap: 9px;
+  border-top: 3px solid var(--cf-ink);
+  padding-top: 9px;
+}
+
+body[data-theme="counterform-choir"] .rail-heading > div {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+}
+
+body[data-theme="counterform-choir"] .rail-heading strong,
+body[data-theme="counterform-choir"] .rail-tools,
+body[data-theme="counterform-choir"] .rail-import button,
+body[data-theme="counterform-choir"] .library-filters button,
+body[data-theme="counterform-choir"] .playlist-item {
+  color: var(--cf-ink);
+  font-family: Consolas, "Courier New", monospace;
+}
+
+body[data-theme="counterform-choir"] .library-filters {
+  grid-area: filters;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: center;
+  padding: 0;
+}
+
+body[data-theme="counterform-choir"] .rail-tools {
+  grid-area: tools;
+  align-self: end;
+  padding: 0 4px;
+}
+
+body[data-theme="counterform-choir"] .playlist-list {
+  grid-area: list;
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 4px 4px;
+}
+
+body[data-theme="counterform-choir"] .playlist-item {
+  flex: 0 0 152px;
+  grid-template-columns: 34px minmax(0, 1fr);
+  min-height: 42px;
+  padding: 4px;
+  border: 1px solid rgba(33, 21, 83, .24);
+}
+
+body[data-theme="counterform-choir"] .playlist-thumb {
+  width: 34px;
+  height: 34px;
+}
+
+body[data-theme="counterform-choir"] .playlist-dots { display: none; }
+
+body[data-theme="counterform-choir"] .rail-import {
+  grid-area: import;
+  align-self: stretch;
+  padding: 0;
+  border: 0;
+}
+
+body[data-theme="counterform-choir"] .library-filters button,
+body[data-theme="counterform-choir"] .rail-import button,
+body[data-theme="counterform-choir"] .create-button {
+  border: 1px solid var(--cf-ink);
+  color: var(--cf-ink);
+  background: rgba(255, 253, 250, .76);
+  box-shadow: none;
+}
+
+body[data-theme="counterform-choir"] .library-filters button.active,
+body[data-theme="counterform-choir"] .playlist-item.active {
+  color: #fff;
+  background: var(--cf-cobalt);
+}
+
+body[data-theme="counterform-choir"] .panel-resizer,
+body[data-theme="counterform-choir"] .panel-handle {
+  z-index: 30;
+}
+
+body[data-theme="counterform-choir"] .left-resizer,
+body[data-theme="counterform-choir"] .right-resizer {
+  opacity: .25;
+}
+
+body[data-theme="counterform-choir"] .main-stage {
+  grid-row: 2;
+  z-index: 3;
+  min-width: 0;
+  padding: 0 clamp(214px, 18vw, 260px) 132px clamp(20px, 3vw, 48px);
+  overflow-y: auto;
+  background: transparent;
+}
+
+body[data-theme="counterform-choir"] #libraryView {
+  max-width: none;
+}
+
+body[data-theme="counterform-choir"] .playlist-hero {
+  height: 320px;
+  min-height: 286px;
+  overflow: visible;
+  border: 0;
+  border-bottom: 1px solid var(--cf-ink);
+  color: var(--cf-ink);
+  background: transparent !important;
+  box-shadow: none;
+}
+
+body[data-theme="counterform-choir"] .playlist-hero::before {
+  content: "";
+  position: absolute;
+  left: -7%;
+  right: -4%;
+  top: 42px;
+  height: 210px;
+  border-block: 2px solid var(--cf-ink);
+  border-inline: 0;
+  border-radius: 48%;
+  transform: rotate(-4deg);
+  opacity: .78;
+  pointer-events: none;
+}
+
+body[data-theme="counterform-choir"] .hero-shade {
+  background: linear-gradient(90deg, rgba(245, 241, 255, .95), rgba(245, 241, 255, .42) 58%, transparent);
+}
+
+body[data-theme="counterform-choir"] .hero-content {
+  position: relative;
+  z-index: 6;
+  align-items: center;
+  min-height: 244px;
+  padding: 26px clamp(24px, 4vw, 70px);
+}
+
+body[data-theme="counterform-choir"] .playlist-cover {
+  width: clamp(132px, 15vw, 200px);
+  height: clamp(154px, 17vw, 224px);
+  border: 2px solid var(--cf-ink);
+  border-radius: 0;
+  background-color: var(--cf-chalk);
+  box-shadow: 15px 17px 0 rgba(33, 21, 83, .12);
+  clip-path: polygon(0 0, 100% 0, 100% 72%, 83% 100%, 0 100%);
+  transform: rotate(-3deg);
+}
+
+body[data-theme="counterform-choir"] .playlist-cover::after {
+  content: "USER ART / LOCAL";
+  position: absolute;
+  left: 10px;
+  bottom: 8px;
+  padding: 4px 6px;
+  color: #fff;
+  background: var(--cf-ink);
+  font: 700 8px/1 Consolas, "Courier New", monospace;
+  letter-spacing: .08em;
+}
+
+body[data-theme="counterform-choir"] .hero-copy {
+  min-width: 0;
+  max-width: min(620px, 48vw);
+}
+
+body[data-theme="counterform-choir"] .hero-copy p,
+body[data-theme="counterform-choir"] .hero-copy small,
+body[data-theme="counterform-choir"] .hero-copy > span {
+  color: var(--cf-ink);
+  font-family: Consolas, "Courier New", monospace;
+}
+
+body[data-theme="counterform-choir"] .hero-copy h1 {
+  max-width: 100%;
+  margin: 7px 0 9px;
+  color: var(--cf-ink);
+  font: 900 clamp(32px, 4vw, 58px)/.9 Arial, Helvetica, sans-serif;
+  letter-spacing: -.075em;
+  overflow-wrap: anywhere;
+  text-shadow: none;
+}
+
+body[data-theme="counterform-choir"] .hero-edit,
+body[data-theme="counterform-choir"] .metadata-toggle {
+  z-index: 12;
+  border: 1px solid var(--cf-ink);
+  color: var(--cf-ink);
+  background: rgba(255, 253, 250, .9);
+}
+
+body[data-theme="counterform-choir"] .hero-track-info {
+  z-index: 9;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-left: 1px solid var(--cf-ink);
+  color: var(--cf-ink);
+  background: linear-gradient(90deg, rgba(255, 253, 250, .25), rgba(255, 253, 250, .97) 14%);
+}
+
+body[data-theme="counterform-choir"] .playlist-hero.track-info-open .hero-copy h1 {
+  font-size: clamp(29px, 3.25vw, 46px);
+}
+
+.counterform-choir-hud {
+  display: none;
+}
+
+body[data-theme="counterform-choir"] .counterform-choir-hud {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: block;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+body[data-theme="counterform-choir"] .cf-choir-mark {
+  position: absolute;
+  right: 3%;
+  top: 30px;
+  width: clamp(180px, 21vw, 286px);
+  color: var(--cf-ink);
+  font: 900 clamp(27px, 3.1vw, 46px)/.78 Arial, Helvetica, sans-serif;
+  letter-spacing: -.085em;
+  text-align: right;
+  opacity: .72;
+}
+
+body[data-theme="counterform-choir"] .cf-choir-mark small {
+  display: block;
+  margin-top: 12px;
+  font: 800 8px/1 Consolas, "Courier New", monospace;
+  letter-spacing: .18em;
+}
+
+body[data-theme="counterform-choir"] .cf-hero-aperture {
+  position: absolute;
+  right: 8%;
+  bottom: 24px;
+  width: 118px;
+  height: 96px;
+  border: 14px solid #fff;
+  border-radius: 61% 39% 47% 53% / 43% 64% 36% 57%;
+  outline: 2px solid var(--cf-ink);
+  box-shadow: 9px 10px 0 rgba(33, 21, 83, .12);
+  transform: rotate(-14deg) scale(.76);
+  opacity: .28;
+  transition: transform 260ms ease, opacity 180ms ease;
+}
+
+body[data-theme="counterform-choir"].is-playing .cf-hero-aperture {
+  transform: rotate(-14deg) scale(1);
+  opacity: 1;
+}
+
+body[data-theme="counterform-choir"] .cf-hero-readout {
+  position: absolute;
+  right: 4%;
+  bottom: 12px;
+  display: flex;
+  gap: 15px;
+  color: var(--cf-ink);
+  font: 8px/1 Consolas, "Courier New", monospace;
+}
+
+body[data-theme="counterform-choir"] .cf-hero-readout span { display: grid; gap: 3px; }
+body[data-theme="counterform-choir"] .cf-hero-readout b { font-size: 11px; }
+
+body[data-theme="counterform-choir"] .collection-body {
+  position: relative;
+  z-index: 7;
+  margin-top: -18px;
+  padding: 0;
+  color: var(--cf-ink);
+  background: transparent;
+}
+
+body[data-theme="counterform-choir"] .collection-actions {
+  position: relative;
+  z-index: 35;
+  min-height: 68px;
+  margin: 0 14px -1px;
+  padding: 12px 16px;
+  border-block: 1px solid var(--cf-ink);
+  background: rgba(255, 253, 250, .88);
+  backdrop-filter: blur(8px);
+}
+
+body[data-theme="counterform-choir"] .collection-actions button,
+body[data-theme="counterform-choir"] .collection-actions select {
+  border: 1px solid var(--cf-ink);
+  color: var(--cf-ink);
+  background: var(--cf-chalk);
+  box-shadow: none;
+}
+
+body[data-theme="counterform-choir"] .collection-actions .hero-play {
+  color: #fff;
+  background: var(--cf-ink);
+}
+
+body[data-theme="counterform-choir"] .filter.active {
+  color: #fff;
+  background: var(--cf-cobalt);
+}
+
+body[data-theme="counterform-choir"] .track-table {
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body[data-theme="counterform-choir"] .drop-zone {
+  min-height: 330px;
+  border: 2px solid var(--cf-ink);
+  border-radius: 0;
+  color: var(--cf-ink);
+  background:
+    radial-gradient(circle at 72% 42%, #fff 0 13%, transparent 14%),
+    linear-gradient(145deg, transparent 0 55%, rgba(50, 216, 196, .22) 56% 66%, transparent 67%),
+    var(--cf-pearl);
+}
+
+body[data-theme="counterform-choir"] .drop-zone::before {
+  content: "EMPTY CHOIR / 00 VOICES";
+  position: absolute;
+  left: 18px;
+  top: 16px;
+  font: 800 9px/1 Consolas, "Courier New", monospace;
+  letter-spacing: .12em;
+}
+
+body[data-theme="counterform-choir"] .drop-zone button {
+  border: 2px solid var(--cf-ink);
+  color: #fff;
+  background: var(--cf-ink);
+}
+
+body[data-theme="counterform-choir"] .inspector {
+  position: absolute;
+  right: 12px;
+  top: 426px;
+  z-index: 10;
+  width: clamp(204px, 17vw, 244px) !important;
+  max-height: calc(100vh - 540px);
+  margin: 0;
+  padding: 10px 12px 112px;
+  overflow-y: auto;
+  border: 0;
+  border-top: 3px solid var(--cf-ink);
+  color: var(--cf-ink);
+  background: linear-gradient(180deg, rgba(255, 253, 250, .94), rgba(255, 253, 250, .7));
+  box-shadow: none;
+}
+
+body[data-theme="counterform-choir"] .inspector-heading {
+  border-top: 3px solid var(--cf-ink);
+  color: var(--cf-ink);
+  background: transparent;
+}
+
+body[data-theme="counterform-choir"] .quality-card,
+body[data-theme="counterform-choir"] .tuning-card,
+body[data-theme="counterform-choir"] .panel,
+body[data-theme="counterform-choir"] .setting-card,
+body[data-theme="counterform-choir"] .collapsible-card {
+  border: 1px solid color-mix(in srgb, var(--cf-ink) 38%, transparent);
+  border-radius: 0;
+  color: var(--cf-ink);
+  background: rgba(255, 253, 250, .82);
+  box-shadow: 7px 8px 0 rgba(33, 21, 83, .06);
+}
+
+body[data-theme="counterform-choir"] .technical-details,
+body[data-theme="counterform-choir"] .signal-path,
+body[data-theme="counterform-choir"] .metadata-grid,
+body[data-theme="counterform-choir"] .track-intel-grid {
+  font-family: Consolas, "Courier New", monospace;
+}
+
+body[data-theme="counterform-choir"] .player {
+  min-height: 92px;
+  border-top: 2px solid var(--cf-ink);
+  color: var(--cf-ink);
+  background: rgba(255, 253, 250, .94);
+  box-shadow: 0 -12px 34px rgba(33, 21, 83, .08);
+}
+
+body[data-theme="counterform-choir"] .player::before {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 44%;
+  z-index: 0;
+  height: 2px;
+  background: var(--cf-ink);
+  transform: rotate(-1.2deg);
+  opacity: .78;
+}
+
+body[data-theme="counterform-choir"] .playing-info,
+body[data-theme="counterform-choir"] .transport,
+body[data-theme="counterform-choir"] .volume-control,
+body[data-theme="counterform-choir"] .player-actions {
+  position: relative;
+  z-index: 4;
+}
+
+body[data-theme="counterform-choir"] .playing-info {
+  border: 1px solid var(--cf-ink);
+  color: #fff;
+  background: var(--cf-ink);
+  transform: rotate(-1deg);
+}
+
+body[data-theme="counterform-choir"] .mini-cover {
+  border-radius: 0;
+  clip-path: polygon(0 0, 100% 0, 100% 74%, 78% 100%, 0 100%);
+}
+
+body[data-theme="counterform-choir"] .transport button,
+body[data-theme="counterform-choir"] .player button {
+  border-color: var(--cf-ink);
+  color: var(--cf-ink);
+  background-color: var(--cf-chalk);
+}
+
+body[data-theme="counterform-choir"] .transport .play-button {
+  color: #fff;
+  background: var(--cf-cobalt);
+}
+
+.counterform-player-hud { display: none; }
+
+body[data-theme="counterform-choir"] .counterform-player-hud {
+  position: absolute;
+  left: 28%;
+  right: 27%;
+  top: 5px;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+body[data-theme="counterform-choir"] .counterform-player-hud span {
+  min-width: 0;
+  overflow: hidden;
+  padding: 4px 7px;
+  border-left: 4px solid var(--cf-mint);
+  color: var(--cf-ink);
+  background: rgba(255, 253, 250, .82);
+  font: 8px/1.1 Consolas, "Courier New", monospace;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transform: rotate(-2deg);
+}
+
+body[data-theme="counterform-choir"] .counterform-player-hud .cf-player-current {
+  border-left-color: #fff;
+  color: #fff;
+  background: var(--cf-ink);
+  transform: rotate(1.5deg);
+}
+
+body[data-theme="counterform-choir"].is-playing .counterform-player-hud .cf-player-current {
+  outline: 3px double var(--cf-cobalt);
+}
+
+body[data-theme="counterform-choir"] .settings-overlay,
+body[data-theme="counterform-choir"] .jams-overlay,
+body[data-theme="counterform-choir"] .migration-drawer,
+body[data-theme="counterform-choir"] .queue-drawer {
+  color: var(--cf-ink);
+  background: rgba(245, 241, 255, .97);
+}
+
+body[data-theme="counterform-choir"] #systemsView {
+  color: var(--cf-ink);
+  background: transparent;
+}
+
+body[data-theme="counterform-choir"] .theme-load-screen[data-load-theme="counterform-choir"] {
+  color: var(--cf-ink);
+  background:
+    radial-gradient(circle at 68% 46%, #fff 0 10%, transparent 11%),
+    linear-gradient(145deg, transparent 0 44%, rgba(47, 77, 255, .2) 45% 49%, transparent 50%),
+    var(--cf-pearl);
+}
+
+body[data-theme="counterform-choir"] .theme-load-screen[data-load-theme="counterform-choir"] .theme-load-content i {
+  background: var(--cf-cobalt);
+}
+
+body[data-theme="counterform-choir"][data-performance="conserve"]::before {
+  background: var(--cf-pearl);
+}
+
+body[data-theme="counterform-choir"][data-performance="conserve"] .cf-hero-aperture,
+body[data-theme="counterform-choir"][data-motion="off"] .cf-hero-aperture,
+body[data-theme="counterform-choir"][data-motion="off"] .counterform-player-hud span {
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-theme="counterform-choir"] .cf-hero-aperture,
+  body[data-theme="counterform-choir"] .counterform-player-hud span {
+    transition: none !important;
+  }
+}
+
+@media (max-width: 1280px) {
+  body[data-theme="counterform-choir"] .library-rail { grid-template-columns: 164px 196px minmax(180px, 1fr) 190px; gap-inline: 9px; padding-inline: 12px; }
+
+  body[data-theme="counterform-choir"] .main-stage {
+    padding-inline: 18px 214px;
+  }
+
+  body[data-theme="counterform-choir"] .cf-choir-mark { opacity: .28; }
+  body[data-theme="counterform-choir"] .counterform-player-hud { display: none; }
+}
+
+@media (max-width: 1120px) {
+  body[data-theme="counterform-choir"] .workspace {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  body[data-theme="counterform-choir"] .library-rail,
+  body[data-theme="counterform-choir"] .main-stage,
+  body[data-theme="counterform-choir"] .inspector {
+    width: 100% !important;
+  }
+
+  body[data-theme="counterform-choir"] .library-rail {
+    position: relative;
+    display: block;
+    flex: 0 0 auto;
+    max-height: 250px;
+    padding: 12px 16px;
+    border-right: 0;
+    border-bottom: 1px solid var(--cf-ink);
+  }
+
+  body[data-theme="counterform-choir"] .main-stage {
+    order: 2;
+    overflow: visible;
+    padding: 0 0 144px;
+  }
+
+  body[data-theme="counterform-choir"] .inspector {
+    position: relative;
+    inset: auto;
+    order: 3;
+    max-height: none;
+    margin: 0;
+    padding: 14px 16px 150px;
+    border-left: 0;
+    border-top: 1px solid var(--cf-ink);
+    background: rgba(255, 253, 250, .92);
+  }
+
+  body[data-theme="counterform-choir"] .playlist-hero,
+  body[data-theme="counterform-choir"] .hero-content {
+    min-height: 330px;
+  }
+
+  body[data-theme="counterform-choir"] .hero-content {
+    align-items: end;
+    padding: 52px 24px 30px;
+  }
+
+  body[data-theme="counterform-choir"] .hero-copy { max-width: calc(100% - 150px); }
+  body[data-theme="counterform-choir"] .hero-copy h1 { font-size: clamp(30px, 4.8vw, 48px); }
+  body[data-theme="counterform-choir"] .playlist-cover { width: 108px; height: 132px; }
+  body[data-theme="counterform-choir"] .cf-choir-mark { right: 20px; top: 18px; width: 220px; font-size: 32px; opacity: .2; }
+  body[data-theme="counterform-choir"] .cf-hero-readout { left: 24px; right: auto; }
+  body[data-theme="counterform-choir"] .cf-hero-aperture { right: 18px; }
+  body[data-theme="counterform-choir"] .collection-actions { margin-inline: 0; }
+}
+
+@media (max-width: 540px) {
+  body[data-theme="counterform-choir"] .topbar::after,
+  body[data-theme="counterform-choir"] .cf-choir-mark small { display: none; }
+  body[data-theme="counterform-choir"] .hero-content { gap: 14px; }
+  body[data-theme="counterform-choir"] .hero-copy { max-width: 100%; }
+  body[data-theme="counterform-choir"] .playlist-cover { width: 86px; height: 110px; }
+  body[data-theme="counterform-choir"] .cf-hero-aperture { width: 82px; height: 70px; border-width: 10px; }
+  body[data-theme="counterform-choir"] .collection-actions { flex-wrap: wrap; }
+  body[data-theme="counterform-choir"] .player { min-height: 118px; }
+}
+
+/*
+ * Midpoint repair / candidate successor to 20260801-1757-7e27fc31.
+ * SC-01 makes the open score the ordinary shell. Literal rails stay available,
+ * but they are horizon marks and contextual proof rather than page containers.
+ */
+.counterform-choir-preview {
+  background:
+    linear-gradient(164deg, transparent 0 34%, #211553 35% 42%, transparent 43%),
+    linear-gradient(18deg, transparent 0 48%, #2f4dff 49% 57%, transparent 58%),
+    #f5f1ff;
+}
+
+.counterform-choir-preview::before,
+.counterform-choir-preview::after {
+  border: 0;
+  border-radius: 0;
+  background: #211553;
+  clip-path: polygon(0 42%, 18% 12%, 44% 31%, 61% 6%, 100% 28%, 77% 51%, 92% 83%, 54% 68%, 30% 96%, 12% 67%);
+}
+
+.counterform-choir-preview::after {
+  background: #fff;
+  clip-path: polygon(0 31%, 35% 5%, 52% 24%, 96% 0, 78% 42%, 100% 62%, 64% 68%, 70% 100%, 38% 77%, 6% 96%, 18% 57%);
+}
+
+.counterform-choir-preview i:nth-child(2) {
+  border: 0;
+  border-radius: 0;
+  background: #fff;
+  clip-path: polygon(0 28%, 42% 0, 100% 20%, 74% 52%, 98% 83%, 44% 72%, 16% 100%, 23% 57%);
+}
+
+body[data-theme="counterform-choir"] .topbar {
+  min-height: 46px;
+  border-bottom-color: color-mix(in srgb, var(--cf-ink) 26%, transparent);
+  background: rgba(255, 253, 250, .8);
+}
+
+body[data-theme="counterform-choir"] .topbar::after {
+  bottom: 2px;
+  opacity: .48;
+}
+
+body[data-theme="counterform-choir"] .workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 76px minmax(0, 1fr);
+  overflow: hidden;
+}
+
+body[data-theme="counterform-choir"] .library-rail {
+  display: grid;
+  grid-template-columns: 150px 176px minmax(220px, 1fr) 188px;
+  grid-template-rows: 25px 31px;
+  grid-template-areas:
+    "head filters tools import"
+    "head filters list import";
+  gap: 3px 10px;
+  padding: 7px 14px 6px;
+  border-bottom-color: color-mix(in srgb, var(--cf-ink) 28%, transparent);
+  background: rgba(255, 253, 250, .76);
+}
+
+body[data-theme="counterform-choir"] .rail-heading {
+  gap: 4px;
+  padding-top: 4px;
+  border-top-width: 2px;
+}
+
+body[data-theme="counterform-choir"] .rail-heading > div {
+  grid-template-columns: 22px 1fr;
+  align-items: center;
+}
+
+body[data-theme="counterform-choir"] .library-profile {
+  width: 21px;
+  height: 21px;
+}
+
+body[data-theme="counterform-choir"] .library-filters {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+}
+
+body[data-theme="counterform-choir"] .library-filters button,
+body[data-theme="counterform-choir"] .rail-import button,
+body[data-theme="counterform-choir"] .create-button {
+  min-height: 24px;
+  border-color: color-mix(in srgb, var(--cf-ink) 54%, transparent);
+  background: rgba(255, 253, 250, .54);
+}
+
+body[data-theme="counterform-choir"] .playlist-list {
+  gap: 5px;
+  padding: 0 2px 2px;
+}
+
+body[data-theme="counterform-choir"] .playlist-item {
+  flex-basis: 142px;
+  min-height: 29px;
+  padding: 2px 5px;
+  border: 0;
+  border-left: 2px solid color-mix(in srgb, var(--cf-ink) 24%, transparent);
+  background: transparent;
+}
+
+body[data-theme="counterform-choir"] .playlist-thumb { display: none; }
+
+body[data-theme="counterform-choir"] .rail-tools {
+  align-self: center;
+  opacity: .58;
+}
+
+body[data-theme="counterform-choir"] .main-stage {
+  grid-row: 2;
+  padding: 0 0 82px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+body[data-theme="counterform-choir"] .playlist-hero {
+  height: 218px;
+  min-height: 218px;
+  border-bottom: 0;
+}
+
+body[data-theme="counterform-choir"] .playlist-hero::before {
+  left: -2%;
+  right: -2%;
+  top: 40px;
+  height: 142px;
+  border: 0;
+  border-radius: 0;
+  background: color-mix(in srgb, var(--cf-ink) 86%, transparent);
+  clip-path: polygon(0 48%, 13% 29%, 29% 36%, 44% 12%, 62% 38%, 78% 24%, 100% 47%, 82% 54%, 68% 68%, 47% 48%, 31% 71%, 12% 57%);
+  transform: rotate(-1.3deg);
+  opacity: .16;
+}
+
+body[data-theme="counterform-choir"] .hero-shade {
+  background: linear-gradient(90deg, rgba(245, 241, 255, .96), rgba(245, 241, 255, .6) 58%, rgba(245, 241, 255, .12));
+}
+
+body[data-theme="counterform-choir"] .hero-content {
+  min-height: 194px;
+  padding: 18px clamp(24px, 4vw, 68px) 30px;
+}
+
+body[data-theme="counterform-choir"] .playlist-cover {
+  width: clamp(94px, 10vw, 132px);
+  height: clamp(112px, 12vw, 148px);
+  border: 0;
+  filter: drop-shadow(9px 10px 0 rgba(33, 21, 83, .13));
+  clip-path: polygon(0 8%, 82% 0, 100% 22%, 88% 78%, 72% 100%, 8% 91%);
+}
+
+body[data-theme="counterform-choir"] .hero-copy {
+  max-width: min(760px, 62vw);
+}
+
+body[data-theme="counterform-choir"] .hero-copy h1 {
+  margin-block: 4px 6px;
+  font-size: clamp(30px, 3.35vw, 48px);
+  line-height: .88;
+}
+
+body[data-theme="counterform-choir"] .hero-track-info {
+  inset: 42px 24px auto auto;
+  width: min(272px, 25vw);
+  height: auto;
+  max-height: 58px;
+  padding: 10px 13px;
+  overflow: hidden;
+  border: 0;
+  border-top: 2px solid var(--cf-ink);
+  color: var(--cf-ink);
+  background: rgba(255, 253, 250, .86);
+  box-shadow: none;
+  opacity: .78;
+  transition: max-height 180ms ease, width 180ms ease, opacity 180ms ease;
+}
+
+body[data-theme="counterform-choir"] .hero-track-info:hover,
+body[data-theme="counterform-choir"] .hero-track-info:focus-within {
+  width: min(352px, 35vw);
+  max-height: min(430px, calc(100vh - 170px));
+  overflow-y: auto;
+  opacity: 1;
+  box-shadow: 9px 10px 0 rgba(33, 21, 83, .1);
+}
+
+body[data-theme="counterform-choir"] .hero-track-info .metadata-art {
+  width: 36px;
+  height: 36px;
+  float: left;
+  margin: 0 9px 5px 0;
+}
+
+body[data-theme="counterform-choir"] .hero-track-info p,
+body[data-theme="counterform-choir"] .hero-track-info h2,
+body[data-theme="counterform-choir"] .hero-track-info h3 {
+  margin-block: 0 3px;
+}
+
+body[data-theme="counterform-choir"] .playlist-hero.track-info-open .hero-copy h1 {
+  font-size: clamp(30px, 3.35vw, 48px);
+}
+
+body[data-theme="counterform-choir"] .cf-choir-mark {
+  right: 2%;
+  top: 18px;
+  font-size: clamp(25px, 2.6vw, 40px);
+  opacity: .26;
+}
+
+body[data-theme="counterform-choir"] .cf-hero-aperture { display: none; }
+
+body[data-theme="counterform-choir"] .cf-hero-readout {
+  right: 2%;
+  bottom: 25px;
+  opacity: .7;
+}
+
+body[data-theme="counterform-choir"] .collection-body {
+  z-index: 7;
+  margin-top: -24px;
+}
+
+body[data-theme="counterform-choir"] .collection-actions {
+  min-height: 52px;
+  margin: 0 clamp(18px, 4vw, 64px) -1px;
+  padding: 7px 10px;
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--cf-ink) 48%, transparent);
+  background: linear-gradient(90deg, rgba(255, 253, 250, .82), rgba(255, 253, 250, .34), transparent);
+  backdrop-filter: none;
+}
+
+body[data-theme="counterform-choir"] .collection-actions button,
+body[data-theme="counterform-choir"] .collection-actions select {
+  min-height: 32px;
+  border-color: color-mix(in srgb, var(--cf-ink) 62%, transparent);
+}
+
+body[data-theme="counterform-choir"] .inspector {
+  position: absolute;
+  inset: auto 22px 82px auto;
+  z-index: 38;
+  width: min(286px, 29vw) !important;
+  max-height: 38px;
+  margin: 0;
+  padding: 0 10px;
+  overflow: hidden;
+  border: 0;
+  border-top: 2px solid var(--cf-ink);
+  background: rgba(255, 253, 250, .86);
+  box-shadow: none;
+  opacity: .74;
+  transition: max-height 180ms ease, opacity 180ms ease, padding 180ms ease;
+}
+
+body[data-theme="counterform-choir"] .inspector:hover,
+body[data-theme="counterform-choir"] .inspector:focus-within {
+  max-height: min(520px, calc(100vh - 180px));
+  padding-block: 0 12px;
+  overflow-y: auto;
+  opacity: 1;
+  box-shadow: 10px 12px 0 rgba(33, 21, 83, .1);
+}
+
+body[data-theme="counterform-choir"] .inspector-heading {
+  min-height: 36px;
+  padding-block: 5px;
+  border: 0;
+  background: transparent;
+}
+
+body[data-theme="counterform-choir"] .inspector .quality-card,
+body[data-theme="counterform-choir"] .inspector .tuning-card {
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--cf-ink) 32%, transparent);
+  background: transparent;
+  box-shadow: none;
+}
+
+body[data-theme="counterform-choir"] .player {
+  min-height: 78px;
+  border-top: 0;
+  background: linear-gradient(90deg, rgba(255, 253, 250, .96), rgba(245, 241, 255, .88));
+  box-shadow: 0 -7px 22px rgba(33, 21, 83, .05);
+}
+
+body[data-theme="counterform-choir"] .player::before {
+  left: 2%;
+  right: 2%;
+  top: 22%;
+  height: 1px;
+  transform: rotate(-.45deg);
+  opacity: .48;
+}
+
+body[data-theme="counterform-choir"] .playing-info {
+  border: 0;
+  color: #fff;
+  background: var(--cf-ink);
+  clip-path: polygon(0 12%, 93% 0, 100% 70%, 87% 100%, 3% 87%);
+  transform: rotate(-.4deg);
+}
+
+body[data-theme="counterform-choir"] .counterform-player-hud {
+  left: 31%;
+  right: 31%;
+  top: 2px;
+  opacity: .48;
+}
+
+body[data-theme="counterform-choir"] .counterform-player-hud span {
+  padding: 2px 6px;
+  border-left-width: 2px;
+  background: rgba(255, 253, 250, .52);
+}
+
+body[data-theme="counterform-choir"] .counterform-player-hud .cf-player-current {
+  color: var(--cf-ink);
+  background: rgba(255, 253, 250, .76);
+}
+
+body[data-theme="counterform-choir"].is-playing .counterform-player-hud .cf-player-current {
+  outline: 1px solid var(--cf-cobalt);
+}
+
+body[data-theme="counterform-choir"] .theme-load-screen[data-load-theme="counterform-choir"] {
+  background:
+    linear-gradient(159deg, transparent 0 41%, rgba(47, 77, 255, .2) 42% 48%, transparent 49%),
+    var(--cf-pearl);
+}
+
+body[data-theme="counterform-choir"] .theme-load-screen[data-load-theme="counterform-choir"]::before {
+  content: "";
+  position: absolute;
+  left: 58%;
+  top: 24%;
+  width: 260px;
+  height: 190px;
+  background: #fff;
+  clip-path: polygon(0 29%, 37% 3%, 54% 25%, 97% 0, 79% 42%, 100% 63%, 66% 69%, 71% 100%, 42% 77%, 8% 96%, 19% 57%);
+  filter: drop-shadow(9px 10px 0 rgba(33, 21, 83, .13));
+  transform: rotate(-12deg);
+}
+
+/* The destination owns its load surface even while the previous body theme is
+   still active. This is required for normal theme-switch captures. */
+.theme-load-screen[data-load-theme="counterform-choir"] {
+  color: #211553;
+  background: #f5f1ff;
+}
+
+.theme-load-screen[data-load-theme="counterform-choir"]::after {
+  inset: 0;
+  z-index: 0;
+  opacity: 1;
+  background:
+    linear-gradient(159deg, transparent 0 41%, rgba(47, 77, 255, .16) 42% 48%, transparent 49%),
+    linear-gradient(16deg, rgba(50, 216, 196, .11), transparent 42%),
+    #f5f1ff;
+  transform: none;
+}
+
+.theme-load-screen[data-load-theme="counterform-choir"]::before {
+  inset: auto;
+  left: 58%;
+  top: 24%;
+  z-index: 1;
+  width: 260px;
+  height: 190px;
+  opacity: 1;
+  background: #fff;
+  clip-path: polygon(0 29%, 37% 3%, 54% 25%, 97% 0, 79% 42%, 100% 63%, 66% 69%, 71% 100%, 42% 77%, 8% 96%, 19% 57%);
+  filter: drop-shadow(9px 10px 0 rgba(33, 21, 83, .18));
+  transform: rotate(-12deg);
+}
+
+.theme-load-screen[data-load-theme="counterform-choir"] .theme-load-content {
+  z-index: 2;
+  color: #211553;
+  text-shadow: none;
+}
+
+@media (max-width: 1280px) {
+  body[data-theme="counterform-choir"] .library-rail {
+    grid-template-columns: 138px 168px minmax(190px, 1fr) 178px;
+    padding-inline: 10px;
+  }
+
+  body[data-theme="counterform-choir"] .main-stage { padding-inline: 0; }
+  body[data-theme="counterform-choir"] .counterform-player-hud { display: none; }
+}
+
+@media (max-width: 1120px) {
+  body[data-theme="counterform-choir"] .workspace {
+    display: grid;
+    grid-template-rows: 68px minmax(0, 1fr);
+    overflow: hidden;
+  }
+
+  body[data-theme="counterform-choir"] .library-rail {
+    position: relative;
+    display: grid;
+    grid-template-columns: 132px 154px minmax(180px, 1fr) 170px;
+    grid-template-rows: 23px 27px;
+    max-height: none;
+    padding: 7px 10px 5px;
+    border-bottom-color: color-mix(in srgb, var(--cf-ink) 25%, transparent);
+  }
+
+  body[data-theme="counterform-choir"] .main-stage {
+    order: initial;
+    overflow-y: auto;
+    padding: 0 0 82px;
+  }
+
+  body[data-theme="counterform-choir"] .inspector {
+    position: absolute;
+    inset: auto 14px 80px auto;
+    order: initial;
+    width: min(260px, 36vw) !important;
+    max-height: 36px;
+    margin: 0;
+    padding: 0 8px;
+    border: 0;
+    border-top: 2px solid var(--cf-ink);
+    background: rgba(255, 253, 250, .88);
+  }
+
+  body[data-theme="counterform-choir"] .playlist-hero,
+  body[data-theme="counterform-choir"] .hero-content {
+    min-height: 188px;
+  }
+
+  body[data-theme="counterform-choir"] .playlist-hero { height: 188px; }
+
+  body[data-theme="counterform-choir"] .hero-content {
+    align-items: center;
+    padding: 15px 24px 24px;
+  }
+
+  body[data-theme="counterform-choir"] .hero-copy { max-width: calc(100% - 130px); }
+  body[data-theme="counterform-choir"] .playlist-cover { width: 86px; height: 106px; }
+  body[data-theme="counterform-choir"] .cf-choir-mark { right: 16px; top: 14px; width: 210px; font-size: 28px; opacity: .14; }
+  body[data-theme="counterform-choir"] .cf-hero-readout { left: auto; right: 18px; bottom: 20px; }
+  body[data-theme="counterform-choir"] .collection-actions { margin-inline: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-theme="counterform-choir"] .inspector { transition: none !important; }
+}
+
+/*
+ * Repeat-midpoint shell repair. The required controls remain literal and
+ * reachable, but occupy two thin orientation datums around the score instead of
+ * framing it as a conventional desktop-player page.
+ */
+body[data-theme="counterform-choir"] .topbar {
+  height: 36px;
+  min-height: 36px;
+  padding: 3px 16px;
+  border-bottom-color: color-mix(in srgb, var(--cf-ink) 18%, transparent);
+  background: rgba(255, 253, 250, .62);
+}
+
+body[data-theme="counterform-choir"] .topbar::after {
+  left: 18px;
+  bottom: 1px;
+  font-size: 6px;
+  opacity: .32;
+}
+
+body[data-theme="counterform-choir"] .topbar .profile-button {
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+}
+
+body[data-theme="counterform-choir"] .topbar .global-search {
+  width: min(430px, 38vw);
+  height: 28px;
+  padding-inline: 12px;
+  border-color: color-mix(in srgb, var(--cf-ink) 34%, transparent);
+  background: rgba(33, 21, 83, .9);
+}
+
+body[data-theme="counterform-choir"] .topbar :is(.jams-trigger, .settings-trigger, .top-quality) {
+  height: 28px;
+  min-height: 28px;
+  opacity: .72;
+}
+
+body[data-theme="counterform-choir"] .topbar :is(.jams-trigger, .settings-trigger, .top-quality):is(:hover, :focus-visible, :focus-within) {
+  opacity: 1;
+}
+
+body[data-theme="counterform-choir"] .workspace {
+  height: calc(100vh - 100px);
+  grid-template-rows: 50px minmax(0, 1fr);
+}
+
+body[data-theme="counterform-choir"] .library-rail {
+  grid-template-columns: 128px 152px minmax(180px, 1fr) 166px;
+  grid-template-rows: 18px 22px;
+  gap: 2px 8px;
+  padding: 4px 12px;
+  border-bottom-color: color-mix(in srgb, var(--cf-ink) 19%, transparent);
+  background: rgba(255, 253, 250, .58);
+  opacity: .78;
+  transition: opacity 140ms ease;
+}
+
+body[data-theme="counterform-choir"] .library-rail:is(:hover, :focus-within) { opacity: 1; }
+
+body[data-theme="counterform-choir"] .rail-heading {
+  gap: 2px;
+  padding-top: 2px;
+  border-top-width: 1px;
+}
+
+body[data-theme="counterform-choir"] .rail-heading > div { grid-template-columns: 17px 1fr; gap: 5px; }
+body[data-theme="counterform-choir"] .rail-heading strong { font-size: 10px; }
+body[data-theme="counterform-choir"] .library-profile { width: 16px; height: 16px; }
+body[data-theme="counterform-choir"] .create-button { min-height: 17px; padding: 1px 5px; font-size: 7px; }
+
+body[data-theme="counterform-choir"] .library-filters {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2px;
+}
+
+body[data-theme="counterform-choir"] .library-filters button,
+body[data-theme="counterform-choir"] .rail-import button {
+  min-height: 18px;
+  padding: 1px 4px;
+  font-size: 7px;
+}
+
+body[data-theme="counterform-choir"] .rail-tools { align-self: center; font-size: 7px; opacity: .5; }
+body[data-theme="counterform-choir"] .playlist-list { gap: 3px; padding: 0; }
+
+body[data-theme="counterform-choir"] .playlist-item {
+  flex-basis: 112px;
+  min-height: 20px;
+  padding: 1px 4px;
+  border-left-width: 1px;
+  font-size: 7px;
+}
+
+body[data-theme="counterform-choir"] .playlist-copy span { display: none; }
+
+body[data-theme="counterform-choir"] .rail-import {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px;
+}
+
+body[data-theme="counterform-choir"] .main-stage {
+  grid-row: 2;
+  padding: 0 0 64px;
+}
+
+body[data-theme="counterform-choir"] .playlist-hero,
+body[data-theme="counterform-choir"] .hero-content {
+  height: 110px;
+  min-height: 110px;
+}
+
+body[data-theme="counterform-choir"] .playlist-hero {
+  border-bottom: 1px solid color-mix(in srgb, var(--cf-ink) 17%, transparent);
+}
+
+body[data-theme="counterform-choir"] .playlist-hero::before {
+  left: 8%;
+  right: auto;
+  top: 42px;
+  width: 76%;
+  height: 122px;
+  background: color-mix(in srgb, var(--cf-cobalt) 14%, transparent);
+  clip-path: polygon(0 8%, 20% 14%, 40% 28%, 58% 47%, 76% 64%, 100% 76%, 100% 86%, 75% 75%, 57% 57%, 39% 38%, 19% 23%, 0 17%);
+  transform: none;
+  opacity: 1;
+}
+
+body[data-theme="counterform-choir"] .hero-shade {
+  background: linear-gradient(90deg, rgba(245, 241, 255, .92), rgba(245, 241, 255, .6) 56%, rgba(245, 241, 255, .18));
+}
+
+body[data-theme="counterform-choir"] .hero-content {
+  align-items: center;
+  gap: 14px;
+  padding: 8px clamp(18px, 3vw, 42px) 9px;
+}
+
+body[data-theme="counterform-choir"] .playlist-cover {
+  width: 68px;
+  height: 80px;
+  filter: drop-shadow(4px 5px 0 rgba(33, 21, 83, .13));
+}
+
+body[data-theme="counterform-choir"] .hero-copy { max-width: min(720px, 65vw); }
+
+body[data-theme="counterform-choir"] .hero-copy h1,
+body[data-theme="counterform-choir"] .playlist-hero.track-info-open .hero-copy h1 {
+  margin-block: 2px 3px;
+  font-size: clamp(24px, 2.65vw, 36px);
+  line-height: .9;
+}
+
+body[data-theme="counterform-choir"] .hero-copy p { margin-bottom: 3px; font-size: 7px; }
+body[data-theme="counterform-choir"] .hero-copy > span { margin-bottom: 3px; font-size: 9px; }
+body[data-theme="counterform-choir"] .hero-copy small { font-size: 8px; }
+
+body[data-theme="counterform-choir"] .hero-track-info {
+  inset: 8px 14px auto auto;
+  width: 172px;
+  max-height: 27px;
+  padding: 5px 8px;
+  opacity: .38;
+}
+
+body[data-theme="counterform-choir"] .hero-track-info:hover,
+body[data-theme="counterform-choir"] .hero-track-info:focus-within {
+  width: min(352px, 36vw);
+  max-height: min(430px, calc(100vh - 130px));
+  opacity: 1;
+}
+
+body[data-theme="counterform-choir"] .hero-track-info .metadata-art { width: 22px; height: 22px; }
+body[data-theme="counterform-choir"] .cf-choir-mark { top: 7px; right: 1%; font-size: 20px; opacity: .07; }
+body[data-theme="counterform-choir"] .cf-hero-readout { right: 1%; bottom: 6px; opacity: .38; transform: scale(.82); transform-origin: 100% 100%; }
+
+body[data-theme="counterform-choir"] .collection-body {
+  margin-top: 0;
+  padding: 0;
+  background: transparent;
+}
+
+body[data-theme="counterform-choir"] .collection-actions {
+  min-height: 40px;
+  height: 40px;
+  margin: 0 16px;
+  padding: 3px 7px;
+  border-top-color: color-mix(in srgb, var(--cf-ink) 24%, transparent);
+  background: linear-gradient(90deg, rgba(255, 253, 250, .48), transparent 76%);
+  opacity: .68;
+}
+
+body[data-theme="counterform-choir"] .collection-actions:is(:hover, :focus-within) { opacity: 1; }
+
+body[data-theme="counterform-choir"] .collection-actions .hero-play {
+  width: 30px;
+  height: 30px;
+}
+
+body[data-theme="counterform-choir"] .collection-actions button,
+body[data-theme="counterform-choir"] .collection-actions select {
+  min-height: 25px;
+  padding-block: 2px;
+  font-size: 7px;
+}
+
+body[data-theme="counterform-choir"] .inspector { bottom: 65px; opacity: .48; }
+body[data-theme="counterform-choir"] .inspector:is(:hover, :focus-within) { opacity: 1; }
+
+body[data-theme="counterform-choir"] .player {
+  height: 64px;
+  min-height: 64px;
+  grid-template-columns: 260px minmax(300px, 1fr) 260px;
+  padding: 0 14px;
+  border-top: 1px solid color-mix(in srgb, var(--cf-ink) 23%, transparent);
+  background: rgba(255, 253, 250, .88);
+  box-shadow: none;
+}
+
+body[data-theme="counterform-choir"] .player::before { top: 12%; opacity: .3; }
+
+body[data-theme="counterform-choir"] .playing-info {
+  min-height: 46px;
+  padding: 4px 8px 4px 10px;
+  border-left: 5px solid var(--cf-ink);
+  color: var(--cf-ink);
+  background: rgba(255, 253, 250, .5);
+  clip-path: none;
+  transform: none;
+}
+
+body[data-theme="counterform-choir"] .playing-info .mini-cover { width: 38px; height: 38px; }
+body[data-theme="counterform-choir"] .playing-info strong { font-size: 9px; }
+body[data-theme="counterform-choir"] .playing-info span { font-size: 7px; }
+body[data-theme="counterform-choir"] .counterform-player-hud { top: 0; opacity: .3; }
+
+body[data-theme="counterform-choir"] .transport-buttons .play-button {
+  width: 32px;
+  height: 32px;
+  margin-inline: 9px;
+}
+
+body[data-theme="counterform-choir"] .timeline { font-size: 7px; }
+
+@media (max-width: 1120px) {
+  body[data-theme="counterform-choir"] .workspace {
+    height: calc(100vh - 100px);
+    grid-template-rows: 46px minmax(0, 1fr);
+  }
+
+  body[data-theme="counterform-choir"] .library-rail {
+    grid-template-columns: 116px 142px minmax(160px, 1fr) 156px;
+    grid-template-rows: 17px 19px;
+    padding: 4px 8px;
+  }
+
+  body[data-theme="counterform-choir"] .playlist-hero,
+  body[data-theme="counterform-choir"] .hero-content {
+    height: 104px;
+    min-height: 104px;
+  }
+
+  body[data-theme="counterform-choir"] .hero-content { padding: 7px 18px 8px; }
+  body[data-theme="counterform-choir"] .playlist-cover { width: 62px; height: 72px; }
+  body[data-theme="counterform-choir"] .hero-copy { max-width: calc(100% - 92px); }
+  body[data-theme="counterform-choir"] .hero-copy h1,
+  body[data-theme="counterform-choir"] .playlist-hero.track-info-open .hero-copy h1 { font-size: clamp(22px, 3.1vw, 31px); }
+  body[data-theme="counterform-choir"] .collection-actions { margin-inline: 10px; }
+  body[data-theme="counterform-choir"] .inspector { bottom: 64px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-theme="counterform-choir"] .library-rail,
+  body[data-theme="counterform-choir"] .collection-actions { transition: none !important; }
+}
+
+/*
+ * Repeat-audit repair: literal jobs are score-margin datums.  They remain
+ * keyboard/pointer reachable and upright, but no persistent filled header,
+ * hero band, action band, or footer rectangle encloses the Living Score.
+ */
+body[data-theme="counterform-choir"] .topbar {
+  height: 30px;
+  min-height: 30px;
+  padding: 2px 12px;
+  border: 0;
+  background: rgba(245, 241, 255, .72);
+}
+
+body[data-theme="counterform-choir"] .topbar::after { left: 10px; bottom: 0; opacity: .22; }
+body[data-theme="counterform-choir"] .topbar .profile-button { width: 23px; height: 23px; border: 0; background: transparent; font-size: 12px; }
+
+body[data-theme="counterform-choir"] .topbar .global-search {
+  width: min(330px, 31vw);
+  height: 23px;
+  padding-inline: 9px;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--cf-ink) 46%, transparent);
+  border-radius: 0;
+  color: var(--cf-ink);
+  background: transparent;
+}
+
+body[data-theme="counterform-choir"] .topbar .global-search input { color: var(--cf-ink); font-size: 8px; }
+body[data-theme="counterform-choir"] .topbar .global-search input::placeholder { color: color-mix(in srgb, var(--cf-ink) 55%, transparent); }
+
+body[data-theme="counterform-choir"] .topbar :is(.jams-trigger, .settings-trigger, .top-quality) {
+  height: 23px;
+  min-height: 23px;
+  padding-block: 1px;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--cf-ink) 28%, transparent);
+  background: transparent;
+  opacity: .58;
+}
+
+body[data-theme="counterform-choir"] .workspace {
+  height: calc(100vh - 30px);
+  grid-template-rows: 27px minmax(0, 1fr);
+  overflow: hidden;
+}
+
+body[data-theme="counterform-choir"] .library-rail {
+  grid-template-columns: 118px 168px minmax(150px, 1fr) 306px;
+  grid-template-rows: 27px;
+  gap: 6px;
+  height: 27px;
+  min-height: 27px;
+  padding: 2px 10px;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--cf-ink) 16%, transparent);
+  background: transparent;
+  opacity: .56;
+}
+
+body[data-theme="counterform-choir"] .rail-heading {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 0;
+  border: 0;
+}
+
+body[data-theme="counterform-choir"] .rail-heading > div { grid-template-columns: 13px 1fr; gap: 4px; }
+body[data-theme="counterform-choir"] .rail-heading strong { font-size: 8px; }
+body[data-theme="counterform-choir"] .library-profile { width: 12px; height: 12px; }
+body[data-theme="counterform-choir"] .create-button { min-height: 16px; padding: 0 3px; border: 0; background: transparent; font-size: 6px; }
+
+body[data-theme="counterform-choir"] .library-filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: center;
+  gap: 2px;
+}
+
+body[data-theme="counterform-choir"] .library-filters button,
+body[data-theme="counterform-choir"] .rail-import button {
+  min-height: 18px;
+  padding: 1px 3px;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--cf-ink) 26%, transparent);
+  background: transparent;
+  font-size: 6px;
+}
+
+body[data-theme="counterform-choir"] .rail-tools { display: none; }
+body[data-theme="counterform-choir"] .playlist-list { align-items: center; gap: 3px; padding: 0; overflow: hidden; }
+
+body[data-theme="counterform-choir"] .playlist-item {
+  flex-basis: 104px;
+  min-height: 19px;
+  padding: 1px 3px;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--cf-ink) 24%, transparent);
+  background: transparent;
+  font-size: 6px;
+}
+
+body[data-theme="counterform-choir"] .rail-import {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: center;
+  gap: 2px;
+}
+
+body[data-theme="counterform-choir"] .main-stage {
+  position: relative;
+  grid-row: 2;
+  padding: 0;
+}
+
+body[data-theme="counterform-choir"] #libraryView { position: relative; min-height: 100%; }
+
+body[data-theme="counterform-choir"] .playlist-hero {
+  position: absolute;
+  inset: 6px auto auto 18px;
+  z-index: 29;
+  width: min(710px, 67vw);
+  height: 92px;
+  min-height: 92px;
+  overflow: visible;
+  border: 0;
+  background: transparent !important;
+  pointer-events: none;
+}
+
+body[data-theme="counterform-choir"] .playlist-hero::before {
+  left: -9%;
+  top: 56px;
+  width: 126%;
+  height: 32px;
+  background: color-mix(in srgb, var(--cf-cobalt) 13%, transparent);
+  clip-path: polygon(0 27%, 20% 7%, 42% 35%, 64% 12%, 100% 48%, 100% 68%, 64% 35%, 42% 60%, 19% 31%, 0 52%);
+}
+
+body[data-theme="counterform-choir"] .hero-shade { display: none; }
+
+body[data-theme="counterform-choir"] .hero-content {
+  height: 92px;
+  min-height: 92px;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 4px 8px;
+  pointer-events: none;
+}
+
+body[data-theme="counterform-choir"] .playlist-cover,
+body[data-theme="counterform-choir"] .playlist-hero :is(button, input, select, .hero-track-info) { pointer-events: auto; }
+
+body[data-theme="counterform-choir"] .playlist-cover { width: 48px; height: 58px; }
+body[data-theme="counterform-choir"] .hero-copy { max-width: min(650px, 60vw); }
+
+body[data-theme="counterform-choir"] .hero-copy h1,
+body[data-theme="counterform-choir"] .playlist-hero.track-info-open .hero-copy h1 {
+  margin-block: 1px 2px;
+  font-size: clamp(25px, 2.7vw, 38px);
+  line-height: .88;
+}
+
+body[data-theme="counterform-choir"] .hero-copy p { margin-bottom: 2px; font-size: 6px; }
+body[data-theme="counterform-choir"] .hero-copy > span { margin-bottom: 2px; font-size: 8px; }
+body[data-theme="counterform-choir"] .hero-copy small { font-size: 7px; }
+body[data-theme="counterform-choir"] .cf-choir-mark { top: 2px; right: -32vw; font-size: 12px; opacity: .12; }
+body[data-theme="counterform-choir"] .cf-hero-readout { right: -31vw; bottom: 4px; opacity: .42; transform: scale(.72); }
+
+body[data-theme="counterform-choir"] .hero-edit,
+body[data-theme="counterform-choir"] .metadata-toggle {
+  top: 5px;
+  opacity: .34;
+}
+
+body[data-theme="counterform-choir"] .hero-track-info {
+  inset: 4px -30vw auto auto;
+  max-height: 24px;
+}
+
+body[data-theme="counterform-choir"] .collection-body { position: relative; margin: 0; padding: 0; }
+
+body[data-theme="counterform-choir"] .collection-actions {
+  position: absolute;
+  top: 82px;
+  right: 13px;
+  z-index: 30;
+  width: min(466px, 45vw);
+  height: 29px;
+  min-height: 29px;
+  margin: 0;
+  padding: 2px 4px;
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--cf-ink) 30%, transparent);
+  background: transparent;
+  opacity: .48;
+}
+
+body[data-theme="counterform-choir"] .collection-actions .hero-play { width: 25px; height: 25px; }
+body[data-theme="counterform-choir"] .collection-actions button,
+body[data-theme="counterform-choir"] .collection-actions select { min-height: 21px; padding-block: 1px; border: 0; background: rgba(255, 253, 250, .72); font-size: 6px; }
+
+body[data-theme="counterform-choir"] .track-table { margin: 0; }
+
+body[data-theme="counterform-choir"] .panel-handle {
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  padding: 2px;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  opacity: .28;
+}
+
+body[data-theme="counterform-choir"] .panel-handle:is(:hover, :focus-visible) { width: auto; opacity: 1; overflow: visible; }
+
+body[data-theme="counterform-choir"] .inspector { bottom: 62px; opacity: .35; }
+
+body[data-theme="counterform-choir"] .player {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 7px;
+  z-index: 130;
+  width: auto;
+  height: 50px;
+  min-height: 50px;
+  grid-template-columns: 232px minmax(290px, 1fr) 244px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+body[data-theme="counterform-choir"] .player::before {
+  left: 245px;
+  right: 254px;
+  top: 45%;
+  height: 1px;
+  background: color-mix(in srgb, var(--cf-ink) 42%, transparent);
+  opacity: 1;
+}
+
+body[data-theme="counterform-choir"] .playing-info,
+body[data-theme="counterform-choir"] .transport,
+body[data-theme="counterform-choir"] .volume { position: relative; z-index: 2; pointer-events: auto; }
+
+body[data-theme="counterform-choir"] .playing-info {
+  min-height: 46px;
+  padding: 3px 7px;
+  border: 0;
+  color: #fff;
+  background: var(--cf-ink);
+  clip-path: polygon(0 12%, 92% 0, 100% 35%, 94% 88%, 9% 100%, 0 76%);
+}
+
+body[data-theme="counterform-choir"] .playing-info .mini-cover { width: 35px; height: 35px; }
+body[data-theme="counterform-choir"] .playing-info strong { font-size: 8px; }
+body[data-theme="counterform-choir"] .playing-info span { color: rgba(255,255,255,.72); font-size: 6px; }
+
+body[data-theme="counterform-choir"] .transport {
+  justify-self: center;
+  align-self: center;
+  min-width: min(430px, 42vw);
+  padding: 1px 8px 3px;
+  background: rgba(245, 241, 255, .82);
+  clip-path: polygon(2% 15%, 98% 0, 100% 80%, 6% 100%);
+}
+
+body[data-theme="counterform-choir"] .transport-buttons .play-button { width: 30px; height: 30px; margin-inline: 8px; }
+body[data-theme="counterform-choir"] .timeline { font-size: 6px; }
+
+body[data-theme="counterform-choir"] .volume {
+  min-height: 37px;
+  align-self: center;
+  padding: 2px 6px;
+  background: rgba(245, 241, 255, .84);
+  clip-path: polygon(0 13%, 96% 0, 100% 82%, 7% 100%);
+}
+
+body[data-theme="counterform-choir"] .counterform-player-hud { display: none; }
+
+@media (max-width: 1120px) {
+  body[data-theme="counterform-choir"] .workspace { height: calc(100vh - 30px); grid-template-rows: 25px minmax(0, 1fr); }
+  body[data-theme="counterform-choir"] .library-rail { grid-template-columns: 102px 142px minmax(120px, 1fr) 270px; height: 25px; min-height: 25px; padding-inline: 6px; }
+  body[data-theme="counterform-choir"] .playlist-hero { width: min(650px, 72vw); height: 88px; min-height: 88px; }
+  body[data-theme="counterform-choir"] .hero-content { height: 88px; min-height: 88px; padding-inline: 4px; }
+  body[data-theme="counterform-choir"] .hero-copy h1,
+  body[data-theme="counterform-choir"] .playlist-hero.track-info-open .hero-copy h1 { font-size: clamp(23px, 3vw, 32px); }
+  body[data-theme="counterform-choir"] .collection-actions { top: 77px; width: min(420px, 48vw); }
+  body[data-theme="counterform-choir"] .player { grid-template-columns: 205px minmax(270px, 1fr) 220px; }
+  body[data-theme="counterform-choir"] .transport { min-width: min(390px, 43vw); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-theme="counterform-choir"] .panel-handle { transition: none !important; }
+}
+
+/*
+ * Owner usability repair lane: the score remains the visual constitution, but
+ * its literal library, inspector, current-track, and collection controls get
+ * real, bounded territories instead of compressed or competing hit targets.
+ */
+body[data-theme="counterform-choir"] .workspace {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+body[data-theme="counterform-choir"] .main-stage {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  min-width: 0;
+}
+
+body[data-theme="counterform-choir"] :is(.left-resizer, .right-resizer) { display: none; }
+
+/* UX-04: a library is a reachable score-margin drawer, not a 27px strip. */
+body[data-theme="counterform-choir"] .library-rail {
+  position: fixed;
+  top: calc(var(--library-handle-y, 20px) + 50px);
+  left: 14px;
+  bottom: 64px;
+  z-index: 126;
+  display: flex;
+  width: clamp(250px, var(--library-width), 430px) !important;
+  height: auto;
+  min-height: 180px;
+  padding: 13px 11px 11px;
+  gap: 0;
+  border: 1px solid color-mix(in srgb, var(--cf-ink) 68%, transparent);
+  border-left: 5px solid var(--cf-cobalt);
+  border-radius: 0;
+  background: rgba(255, 253, 250, .98);
+  box-shadow: 8px 10px 0 rgba(33, 21, 83, .16);
+  opacity: 1;
+  overflow: hidden;
+  backdrop-filter: blur(14px);
+}
+
+body[data-theme="counterform-choir"] .library-rail::before {
+  content: "COLLECTIONS / LOCAL LIBRARY";
+  flex: 0 0 auto;
+  margin: 0 0 7px 2px;
+  color: color-mix(in srgb, var(--cf-ink) 68%, transparent);
+  font: 700 7px/1 var(--pixel-font);
+  letter-spacing: .13em;
+}
+
+body[data-theme="counterform-choir"] .rail-heading {
+  flex: 0 0 auto;
+  display: flex;
+  min-height: 28px;
+  padding: 0 2px 8px;
+  border-bottom: 1px solid color-mix(in srgb, var(--cf-ink) 18%, transparent);
+}
+
+body[data-theme="counterform-choir"] .rail-heading > div { display: flex; grid-template-columns: none; gap: 7px; }
+body[data-theme="counterform-choir"] .rail-heading strong { font-size: 10px; }
+body[data-theme="counterform-choir"] .library-profile { width: 18px; height: 18px; }
+body[data-theme="counterform-choir"] .create-button { min-height: 24px; padding: 3px 7px; border: 1px solid var(--cf-ink); color: #fff; background: var(--cf-ink); font-size: 7px; }
+
+body[data-theme="counterform-choir"] .library-filters {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 3px;
+  padding: 10px 0 7px;
+}
+
+body[data-theme="counterform-choir"] .library-filters button,
+body[data-theme="counterform-choir"] .rail-import button {
+  min-height: 26px;
+  padding: 3px 4px;
+  border: 1px solid color-mix(in srgb, var(--cf-ink) 30%, transparent);
+  color: var(--cf-ink);
+  background: rgba(236, 233, 255, .55);
+  font-size: 7px;
+}
+
+body[data-theme="counterform-choir"] .library-filters button.active { color: #fff; border-color: var(--cf-ink); background: var(--cf-ink); }
+body[data-theme="counterform-choir"] .rail-tools { display: flex; flex: 0 0 auto; padding: 3px 2px 7px; font-size: 7px; }
+
+body[data-theme="counterform-choir"] .playlist-list {
+  display: block;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 2px 0 7px;
+  overflow: auto;
+}
+
+body[data-theme="counterform-choir"] .playlist-item {
+  display: grid;
+  width: 100%;
+  min-height: 52px;
+  margin: 0 0 4px;
+  padding: 5px;
+  border: 1px solid transparent;
+  border-bottom-color: color-mix(in srgb, var(--cf-ink) 18%, transparent);
+  color: var(--cf-ink);
+  background: transparent;
+  font-size: 8px;
+}
+
+body[data-theme="counterform-choir"] .playlist-item:is(:hover, :focus-visible) { border-color: var(--cf-cobalt); background: rgba(47, 77, 255, .08); }
+body[data-theme="counterform-choir"] .rail-import { flex: 0 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 8px 0 0; }
+
+/* UX-01/04: handles remain distinct, named orientation datums. */
+body[data-theme="counterform-choir"] .panel-handle {
+  position: fixed;
+  z-index: 129;
+  width: 134px;
+  min-width: 134px;
+  height: 34px;
+  padding: 4px 7px;
+  border: 1px solid color-mix(in srgb, var(--cf-ink) 65%, transparent);
+  border-radius: 0;
+  color: var(--cf-ink);
+  background: rgba(255, 253, 250, .94);
+  box-shadow: 4px 5px 0 rgba(33, 21, 83, .12);
+  opacity: 1;
+  overflow: visible;
+}
+
+body[data-theme="counterform-choir"] .panel-handle:is(:hover, :focus-visible) { width: 134px; opacity: 1; }
+body[data-theme="counterform-choir"] .library-panel-handle { top: var(--library-handle-y, 20px); left: 14px; }
+/* The inspector handle is movable, but its useful range begins below the
+ * compact current-summary. This keeps two independent controls from
+ * occupying the same hit target when an older saved layout used a higher
+ * placement. */
+body[data-theme="counterform-choir"] .info-panel-handle { top: clamp(128px, var(--info-handle-y, 128px), calc(100vh - 48px)); right: 14px; }
+body[data-theme="counterform-choir"].library-collapsed .library-panel-handle { left: 14px; }
+body[data-theme="counterform-choir"].inspector-collapsed .info-panel-handle { right: 14px; }
+body[data-theme="counterform-choir"] .panel-handle .public-icon { width: 17px; height: 17px; flex-basis: 17px; color: var(--cf-cobalt); }
+body[data-theme="counterform-choir"] .panel-handle b { font-size: 8px; }
+body[data-theme="counterform-choir"] .panel-handle small { color: color-mix(in srgb, var(--cf-ink) 65%, transparent); font-size: 6px; }
+
+body[data-theme="counterform-choir"] .inspector {
+  position: fixed;
+  top: calc(clamp(128px, var(--info-handle-y, 128px), calc(100vh - 48px)) + 50px);
+  right: 14px;
+  bottom: 64px;
+  z-index: 126;
+  width: clamp(240px, var(--inspector-width), 430px);
+  max-width: calc(100vw - 28px);
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--cf-ink) 58%, transparent);
+  border-right: 5px solid var(--cf-cobalt);
+  border-radius: 0;
+  background: rgba(255, 253, 250, .98);
+  box-shadow: -8px 10px 0 rgba(33, 21, 83, .13);
+  opacity: 1;
+  overflow: auto;
+}
+
+/* UX-01/06: collection identity, state, and cabinet now have separate lanes. */
+body[data-theme="counterform-choir"] .playlist-hero {
+  inset: 8px auto auto 18px;
+  width: min(470px, 45vw);
+  height: 104px;
+  min-height: 104px;
+}
+
+/* Keep the collection annotation stack out of both score-margin handles and
+ * an intentionally opened library drawer. */
+body[data-theme="counterform-choir"].library-collapsed .playlist-hero { left: 164px; }
+body[data-theme="counterform-choir"]:not(.library-collapsed) .playlist-hero { left: calc(var(--library-width) + 32px); }
+
+body[data-theme="counterform-choir"] .hero-content { height: 104px; min-height: 104px; padding: 5px 8px; gap: 9px; }
+body[data-theme="counterform-choir"] .playlist-cover { width: 48px; height: 62px; }
+body[data-theme="counterform-choir"] .hero-copy { max-width: min(350px, 34vw); }
+body[data-theme="counterform-choir"] .hero-copy h1,
+body[data-theme="counterform-choir"] .playlist-hero.track-info-open .hero-copy h1 { margin-block: 2px 4px; font-size: clamp(23px, 2.35vw, 32px); line-height: .94; }
+body[data-theme="counterform-choir"] .hero-copy > span { max-width: 100%; margin-bottom: 3px; font-size: 8px; }
+body[data-theme="counterform-choir"] .hero-copy small { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 7px; }
+body[data-theme="counterform-choir"] .cf-choir-mark { display: none; }
+body[data-theme="counterform-choir"] .cf-hero-readout { right: auto; bottom: -23px; left: 58px; transform: none; opacity: .72; }
+body[data-theme="counterform-choir"] .hero-edit,
+body[data-theme="counterform-choir"] .metadata-toggle { display: none; }
+
+body[data-theme="counterform-choir"] .counterform-workspace-cabinet {
+  position: absolute;
+  top: 4px;
+  right: 7px;
+  z-index: 35;
+  display: block;
+  pointer-events: auto;
+}
+
+body[data-theme="counterform-choir"] .counterform-workspace-cabinet-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 25px;
+  padding: 4px 7px;
+  border: 1px solid color-mix(in srgb, var(--cf-ink) 54%, transparent);
+  color: var(--cf-ink);
+  background: rgba(255, 253, 250, .92);
+  font: 700 7px/1 var(--pixel-font);
+  letter-spacing: .08em;
+}
+
+body[data-theme="counterform-choir"] .counterform-workspace-cabinet-toggle .public-icon { width: 13px; height: 13px; color: var(--cf-cobalt); }
+body[data-theme="counterform-choir"] .counterform-workspace-cabinet-panel {
+  position: absolute;
+  top: calc(100% + 5px);
+  right: 0;
+  display: grid;
+  width: 156px;
+  padding: 7px;
+  gap: 4px;
+  border: 1px solid var(--cf-ink);
+  color: var(--cf-ink);
+  background: rgba(255, 253, 250, .99);
+  box-shadow: 6px 8px 0 rgba(33, 21, 83, .17);
+}
+
+body[data-theme="counterform-choir"] .counterform-workspace-cabinet-panel[hidden] { display: none; }
+body[data-theme="counterform-choir"] .counterform-workspace-cabinet-title { padding: 1px 2px 4px; font: 700 6px/1 var(--pixel-font); letter-spacing: .12em; color: color-mix(in srgb, var(--cf-ink) 63%, transparent); }
+body[data-theme="counterform-choir"] .counterform-workspace-cabinet-panel button { display: flex; align-items: center; min-height: 27px; gap: 6px; padding: 4px 6px; border: 1px solid color-mix(in srgb, var(--cf-ink) 30%, transparent); color: var(--cf-ink); background: rgba(236, 233, 255, .52); text-align: left; font-size: 7px; }
+body[data-theme="counterform-choir"] .counterform-workspace-cabinet-panel button:is(:hover, :focus-visible) { color: #fff; border-color: var(--cf-ink); background: var(--cf-ink); }
+body[data-theme="counterform-choir"] .counterform-workspace-cabinet-panel .public-icon,
+body[data-theme="counterform-choir"] .counterform-workspace-cabinet-panel .pixel-icon { width: 13px; height: 13px; flex: 0 0 13px; }
+
+/* UX-02: the resting Track Intelligence cabinet carries current title,
+ * artist, and artwork. Hover/cabinet-open reveals the full dossier. */
+body[data-theme="counterform-choir"] .hero-track-info {
+  position: fixed;
+  inset: 42px 18px auto auto;
+  z-index: 127;
+  width: var(--counterform-track-info-width, 248px);
+  max-width: calc(100vw - 36px);
+  height: 72px;
+  max-height: 72px;
+  padding: 7px 18px 7px 9px;
+  border: 1px solid color-mix(in srgb, var(--cf-ink) 60%, transparent);
+  border-left: 5px solid var(--cf-cobalt);
+  color: var(--cf-ink);
+  background: rgba(255, 253, 250, .95);
+  box-shadow: 6px 8px 0 rgba(33, 21, 83, .13);
+  opacity: 1;
+  overflow: hidden;
+  transition: width 160ms ease, max-height 180ms ease, box-shadow 160ms ease;
+}
+
+body[data-theme="counterform-choir"] .hero-track-info .metadata-art {
+  width: 48px;
+  height: 48px;
+  margin: 0 8px 0 0;
+  float: left;
+}
+
+body[data-theme="counterform-choir"] .hero-track-info p { margin: 0 0 2px; color: color-mix(in srgb, var(--cf-ink) 68%, transparent); font-size: 6px; letter-spacing: .1em; }
+body[data-theme="counterform-choir"] .hero-track-info h2 { margin: 0; overflow: hidden; font-size: 11px; line-height: 1.12; text-overflow: ellipsis; white-space: nowrap; }
+body[data-theme="counterform-choir"] .hero-track-info h3 { margin: 3px 0 0; overflow: hidden; font-size: 8px; line-height: 1.1; text-overflow: ellipsis; white-space: nowrap; }
+body[data-theme="counterform-choir"] .hero-track-info .metadata-close { display: none; }
+body[data-theme="counterform-choir"] .playlist-hero:not(.track-info-open) .hero-track-info:not(:hover):not(:focus-within) :is(.metadata-album, .metadata-grid, .track-intelligence) { display: none; }
+body[data-theme="counterform-choir"] .playlist-hero.track-info-open .hero-track-info,
+body[data-theme="counterform-choir"] .hero-track-info:is(:hover, :focus-within) {
+  width: min(480px, calc(100vw - 36px));
+  height: auto;
+  max-height: min(560px, calc(100vh - 92px));
+  padding: 11px 18px 12px 12px;
+  overflow-y: auto;
+  box-shadow: 10px 12px 0 rgba(33, 21, 83, .17);
+}
+
+body[data-theme="counterform-choir"] .playlist-hero.track-info-open .hero-track-info .metadata-art,
+body[data-theme="counterform-choir"] .hero-track-info:is(:hover, :focus-within) .metadata-art { width: 64px; height: 64px; margin-right: 11px; }
+body[data-theme="counterform-choir"] .playlist-hero.track-info-open .hero-track-info .metadata-close,
+body[data-theme="counterform-choir"] .hero-track-info:focus-within .metadata-close { display: grid; }
+
+body[data-theme="counterform-choir"] .counterform-track-info-resizer {
+  position: absolute;
+  top: 8px;
+  left: 3px;
+  bottom: 8px;
+  z-index: 8;
+  display: grid;
+  width: 10px;
+  place-items: center;
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+body[data-theme="counterform-choir"] .counterform-track-info-resizer::before,
+body[data-theme="counterform-choir"] .counterform-track-info-resizer::after,
+body[data-theme="counterform-choir"] .counterform-track-info-resizer span { width: 2px; height: 2px; content: ""; background: var(--cf-cobalt); box-shadow: 0 5px 0 var(--cf-cobalt), 0 -5px 0 var(--cf-cobalt); }
+body[data-theme="counterform-choir"] .counterform-track-info-resizer:is(:hover, :focus-visible, .dragging) { outline: 2px solid var(--cf-mint); outline-offset: 1px; }
+
+/* UX-08: ordinary collection work belongs to one compact, aligned strip. */
+body[data-theme="counterform-choir"] .collection-actions {
+  display: grid;
+  grid-template-columns: 28px minmax(92px, 1fr) 24px minmax(96px, 132px) minmax(126px, auto);
+  align-items: center;
+  gap: 5px;
+  width: min(520px, 47vw);
+  min-width: 0;
+  height: 34px;
+  min-height: 34px;
+  padding: 3px 4px;
+  border-top: 1px solid color-mix(in srgb, var(--cf-ink) 36%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--cf-ink) 15%, transparent);
+  background: rgba(255, 253, 250, .46);
+  opacity: 1;
+}
+
+body[data-theme="counterform-choir"] .collection-actions .hero-play,
+body[data-theme="counterform-choir"] .collection-actions button,
+body[data-theme="counterform-choir"] .collection-actions select { min-width: 0; min-height: 26px; padding: 3px 5px; border: 1px solid color-mix(in srgb, var(--cf-ink) 30%, transparent); color: var(--cf-ink); background: rgba(255, 253, 250, .82); font-size: 7px; }
+body[data-theme="counterform-choir"] .collection-actions .hero-play { width: 26px; height: 26px; border-radius: 0; color: #fff; background: var(--cf-ink); }
+body[data-theme="counterform-choir"] .collection-actions .filter-row { min-width: 0; margin-left: 0; gap: 3px; }
+body[data-theme="counterform-choir"] .collection-actions .filter { min-width: 0; flex: 1 1 0; min-height: 24px; padding-inline: 5px; border-radius: 0; font-size: 6px; }
+
+/* UX-02/05: the summary has a persistent useful width; state treatment never moves its hit box. */
+body[data-theme="counterform-choir"] .player {
+  grid-template-columns: var(--counterform-now-playing-width, 280px) minmax(290px, 1fr) 244px;
+}
+
+body[data-theme="counterform-choir"] .player::before { left: calc(var(--counterform-now-playing-width, 280px) + 13px); right: 254px; }
+body[data-theme="counterform-choir"] .playing-info { min-height: 50px; padding: 5px 18px 5px 8px; clip-path: polygon(0 12%, 94% 0, 100% 35%, 94% 88%, 9% 100%, 0 76%); }
+body[data-theme="counterform-choir"] .playing-info .mini-cover { width: 40px; height: 40px; flex: 0 0 40px; }
+body[data-theme="counterform-choir"] .playing-info strong { font-size: 9px; }
+body[data-theme="counterform-choir"] .playing-info span { font-size: 7px; }
+body[data-theme="counterform-choir"] .counterform-now-playing-resizer {
+  position: absolute;
+  top: 8px;
+  right: 3px;
+  bottom: 8px;
+  z-index: 5;
+  display: grid;
+  width: 11px;
+  place-items: center;
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+body[data-theme="counterform-choir"] .counterform-now-playing-resizer::before,
+body[data-theme="counterform-choir"] .counterform-now-playing-resizer::after,
+body[data-theme="counterform-choir"] .counterform-now-playing-resizer span { width: 2px; height: 2px; content: ""; background: rgba(255,255,255,.78); box-shadow: 0 5px 0 rgba(255,255,255,.78), 0 -5px 0 rgba(255,255,255,.78); }
+body[data-theme="counterform-choir"] .counterform-now-playing-resizer:is(:hover, :focus-visible, .dragging) { outline: 2px solid var(--cf-mint); outline-offset: 1px; }
+
+/* A selected/current state is drawn in-place. It must not move under a pointer or focused key target. */
+body[data-theme="counterform-choir"] .chorus-fold-voice.is-selected { transform: translate(0, -50%) rotate(var(--cf-angle)) !important; }
+
+@media (max-width: 1120px) {
+  body[data-theme="counterform-choir"] .library-rail { width: min(var(--library-width), calc(100vw - 42px)) !important; }
+  body[data-theme="counterform-choir"] .inspector { width: min(var(--inspector-width), calc(100vw - 42px)); }
+  body[data-theme="counterform-choir"] .playlist-hero { width: min(440px, 54vw); }
+  body[data-theme="counterform-choir"].library-collapsed .playlist-hero { left: 152px; }
+  body[data-theme="counterform-choir"]:not(.library-collapsed) .playlist-hero { left: calc(var(--library-width) + 24px); }
+  body[data-theme="counterform-choir"] .hero-copy { max-width: min(310px, 38vw); }
+  body[data-theme="counterform-choir"] .collection-actions { grid-template-columns: 27px minmax(78px, 1fr) 23px 92px minmax(112px, auto); width: min(500px, 52vw); }
+  body[data-theme="counterform-choir"] .player { grid-template-columns: var(--counterform-now-playing-width, 260px) minmax(270px, 1fr) 220px; }
+  body[data-theme="counterform-choir"] .player::before { left: calc(var(--counterform-now-playing-width, 260px) + 11px); right: 230px; }
+  body[data-theme="counterform-choir"] .hero-track-info { inset: 38px 12px auto auto; max-width: calc(100vw - 24px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-theme="counterform-choir"] .chorus-fold-voice.is-selected { transition: none !important; }
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.orbital-retro",
+  "name": "Orbital Retro-Future",
+  "author": "Pixelody",
+  "description": "An original bold spacecraft HUD theme inspired by classic retro-futurist science-fiction interfaces.",
+  "palette": {
+    "primary": "#ffd447",
+    "secondary": "#ff5a70",
+    "base": "#061318"
+  },
+  "assets": {
+    "backgroundTexture": null,
+    "heroOverlay": null,
+    "panelFrame": "../assets/themes/orbital-retro/hud-frame.png",
+    "iconSet": "../assets/themes/orbital-retro/target-marker.png"
+  },
+  "hud": {
+    "layout": "cinematic",
+    "controls": "technical",
+    "corners": "framed"
+  },
+  "typography": {
+    "profile": "technical",
+    "font": "../assets/themes/orbital-retro/KenneyFuture.ttf"
+  },
+  "motion": {
+    "profile": "signal",
+    "intensity": "expressive"
+  }
+}

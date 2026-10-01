@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "id": "pixelody.listening-notes",
+  "version": "1.0.0",
+  "kind": "listening-notes",
+  "platforms": [
+    "desktop",
+    "android"
+  ],
+  "name": "Listening Notes",
+  "description": "A private notebook for the records, moments and ideas you want to come back to.",
+  "prompt": "What do you want to remember about this listen?"
+}

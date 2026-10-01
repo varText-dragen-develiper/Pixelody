@@ -1,0 +1,37 @@
+/* Cut Sheet mini-player companion. Original CSS, no shared code with
+   mini-modular-signal.css. Converted onto mini-player.css's --mini-* token
+   baseline for shell/art/copy/progress/play colors and geometry -- this is
+   the newest theme in the app (added 2026-07-26), so it's a good template
+   for what a brand-new theme's mini-player file should look like going
+   forward: mostly token declarations on the body[data-theme] rule, plus a
+   handful of bespoke selectors for genuine one-off motifs (the vinyl-label
+   watermark, the lathe-groove artwork rings, the glow tint). */
+body[data-theme="cut-sheet"]{
+  color:#150f1e;
+  --mini-shell-border:1px solid #150f1e;
+  --mini-shell-bg:#2c2040;
+  --mini-shell-shadow:4px 4px 0 #150f1e;
+  --mini-art-border:1px solid #150f1e;
+  --mini-art-radius:50%;
+  --mini-art-bg:radial-gradient(circle,transparent 0 33%,#f1e6da 33.4% 100%),repeating-radial-gradient(circle,transparent 0 2px,rgba(21,15,30,.32) 2px 2.6px),radial-gradient(circle,#150f1e 0 9%,transparent 9.4%),#e3b489;
+  --mini-art-glyph-color:#150f1e;
+  --mini-copy-eyebrow-color:#e3b489;
+  --mini-copy-eyebrow-font:7px Consolas,"Courier New",monospace;
+  --mini-copy-eyebrow-tracking:.12em;
+  --mini-copy-title-color:#f1e6da;
+  --mini-copy-meta-color:#c8a9dd;
+  --mini-copy-time-color:#c8a9dd;
+  --mini-progress-bg:#4a3a68;
+  --mini-progress-fill:#c2734f;
+  --mini-play-border:1px solid #150f1e;
+  --mini-play-bg:#c2734f;
+  --mini-play-color:#150f1e;
+  --mini-play-shadow:inset 0 -3px #9c3b28;
+}
+body[data-theme="cut-sheet"] .mini-shell{position:relative;overflow:hidden}
+body[data-theme="cut-sheet"] .mini-shell::after{content:"CUT / MINI";position:absolute;right:10px;bottom:7px;font:700 7px Consolas,"Courier New",monospace;letter-spacing:.16em;color:#e3b489}
+body[data-theme="cut-sheet"] .mini-art{position:relative;overflow:hidden}
+body[data-theme="cut-sheet"] .mini-copy small{text-transform:uppercase}
+body[data-theme="cut-sheet"] .mini-copy strong{text-transform:uppercase}
+body[data-theme="cut-sheet"] .mini-controls button{color:#f1e6da}
+body[data-theme="cut-sheet"] .mini-glow{background:linear-gradient(90deg,transparent,#c2734f,transparent)}

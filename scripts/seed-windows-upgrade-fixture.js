@@ -1,0 +1,23 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const { PixelodyStateStore } = require('../src/state-store');
+const { createWaveBuffer, fixtureValues } = require('./check-windows-integration');
+const identity = require('../release/windows-identity.json');
+
+const profileArg = process.argv.find((value) => value.startsWith('--profile='))?.slice(10);
+if (!profileArg || !path.isAbsolute(profileArg)) throw new Error('An absolute --profile path is required.');
+const expected = path.resolve(process.env.APPDATA || '', identity.userDataDirectoryName);
+const profile = path.resolve(profileArg);
+if (profile.toLowerCase() !== expected.toLowerCase() || process.env.PIXELODY_DISPOSABLE_WINDOWS !== '1') throw new Error('Upgrade fixture seeding is restricted to the Pixelody profile in an explicitly marked disposable Windows environment.');
+const fixtures = path.join(profile, 'upgrade-fixtures');
+fs.mkdirSync(fixtures, { recursive: true });
+fs.writeFileSync(path.join(fixtures, 'fixture-a.wav'), createWaveBuffer(330));
+fs.writeFileSync(path.join(fixtures, 'fixture-b.wav'), createWaveBuffer(550));
+const values = fixtureValues(fixtures);
+values['pixelody.favorites'] = ['fixture-tone-a'];
+values['aurelia.tunings'] = { 'fixture-tone-a': { simple: { bass: 1, presence: 0.5, treble: -0.5 } } };
+values['pixelody.session'] = { id: 'fixture-tone-a', time: 1.25, volume: 0.6 };
+const store = new PixelodyStateStore({ directory: path.join(profile, 'state'), backupIntervalMs: 0 });
+store.commitSync(values, { reason: 'windows-upgrade-fixture' });
+store.commitSync(values, { reason: 'windows-upgrade-fixture-recovery-generation' });
+console.log('Generated upgrade fixture state seeded without user media.');

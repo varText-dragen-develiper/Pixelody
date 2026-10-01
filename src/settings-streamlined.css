@@ -1,0 +1,25 @@
+/* Final settings navigation normalization across every visual theme. */
+.settings-drawer .settings-nav button,
+.settings-drawer .theme-filters button,
+.settings-drawer .theme-search {
+  clip-path:none;
+  border-radius:2px;
+  box-shadow:none;
+  text-transform:none;
+  letter-spacing:normal;
+}
+.settings-drawer .settings-nav button.active {
+  color:var(--text);
+  background:color-mix(in srgb,var(--gold) 12%,var(--surface2));
+  border:1px solid color-mix(in srgb,var(--gold) 55%,var(--line));
+  box-shadow:inset 0 -2px var(--gold);
+}
+.settings-drawer .theme-filters button.active {
+  color:var(--bg);
+  background:var(--gold);
+  border-color:var(--gold);
+}
+.settings-drawer .theme-option.hidden { display:none!important; }
+body[data-theme="poster-pop"] .settings-drawer .settings-nav,
+body[data-theme="poster-pop"] .settings-drawer .theme-browser-tools { border-width:2px;box-shadow:none; }
+body[data-theme="monument"] .settings-drawer .settings-nav button.active { border-bottom:2px solid var(--gold); }

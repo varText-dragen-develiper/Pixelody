@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" role="img" aria-label="Original gallery plinth and measured light">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eee9dd"/>
+      <stop offset=".56" stop-color="#d6d3ca"/>
+      <stop offset="1" stop-color="#9fa8aa"/>
+    </linearGradient>
+    <linearGradient id="shadow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f7f2e8" stop-opacity=".7"/>
+      <stop offset="1" stop-color="#17191c" stop-opacity=".08"/>
+    </linearGradient>
+    <filter id="stoneNoise">
+      <feTurbulence type="fractalNoise" baseFrequency=".018 .12" numOctaves="3" seed="47"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 .12"/>
+      </feComponentTransfer>
+    </filter>
+  </defs>
+  <rect width="900" height="520" fill="url(#wall)"/>
+  <path d="M0 0h900L608 520H288z" fill="url(#shadow)" opacity=".7"/>
+  <g opacity=".36" fill="none" stroke="#17191c">
+    <path d="M78 72h210M78 86h146M78 422h244M608 90h188M652 104h144" stroke-width="2"/>
+    <path d="M110 120h88M650 404h116" stroke-width="1"/>
+  </g>
+  <g>
+    <path d="M278 344h344l54 98H224z" fill="#c8c1b3"/>
+    <path d="M224 442h452v42H224z" fill="#a8a196"/>
+    <path d="M278 344h344l-26 18H304z" fill="#eee9dd" opacity=".72"/>
+    <path d="M224 442h452" stroke="#17191c" stroke-opacity=".2"/>
+  </g>
+  <rect width="900" height="520" filter="url(#stoneNoise)"/>
+  <g fill="#9f633d" opacity=".82">
+    <rect x="402" y="80" width="96" height="4"/>
+    <rect x="448" y="34" width="4" height="94"/>
+    <circle cx="450" cy="82" r="8"/>
+  </g>
+</svg>

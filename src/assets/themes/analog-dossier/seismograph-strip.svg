@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 180" role="img" aria-label="Original seismograph waveform strip">
+  <rect width="960" height="180" fill="none"/>
+  <g stroke="#1d1d1b" stroke-opacity=".16" stroke-width="1">
+    <path d="M0 30h960M0 60h960M0 90h960M0 120h960M0 150h960"/>
+    <path d="M40 0v180M80 0v180M120 0v180M160 0v180M200 0v180M240 0v180M280 0v180M320 0v180M360 0v180M400 0v180M440 0v180M480 0v180M520 0v180M560 0v180M600 0v180M640 0v180M680 0v180M720 0v180M760 0v180M800 0v180M840 0v180M880 0v180M920 0v180"/>
+  </g>
+  <path d="M0 96 L32 96 L44 92 L58 100 L74 95 L90 96 L104 94 L120 99 L136 89 L150 104 L166 96 L182 96 L198 70 L212 122 L228 44 L244 137 L260 88 L276 98 L292 96 L312 96 L332 94 L352 99 L372 96 L392 96 L408 85 L424 106 L442 92 L460 99 L480 96 L500 96 L518 65 L536 128 L552 42 L568 140 L586 92 L604 96 L630 96 L656 97 L680 94 L704 99 L724 96 L744 96 L760 80 L774 111 L790 91 L806 102 L824 96 L842 96 L862 90 L884 104 L904 95 L924 96 L960 96" fill="none" stroke="#bf5726" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M0 96h960" stroke="#1d1d1b" stroke-width="1" stroke-opacity=".28"/>
+  <g fill="#1d1d1b" font-family="Consolas, 'Courier New', monospace" font-size="16" letter-spacing="3" opacity=".55">
+    <text x="20" y="26">TRACE A-01</text>
+    <text x="746" y="166">AUDIO SIGNAL</text>
+  </g>
+</svg>

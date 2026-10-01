@@ -1,0 +1,42 @@
+{
+  "schema": "pixelody.counterform-choir.hostile-fixture.v1",
+  "id": "counterform-choir-stress-v1",
+  "rightsBoundary": "Generated test tones and original procedural SVG artwork only; no supplied reference image is used.",
+  "wideViewport": { "outerWidth": 1440, "outerHeight": 920, "capturedInnerWidth": 1424, "capturedInnerHeight": 881 },
+  "narrowViewport": { "outerWidth": 1050, "outerHeight": 700, "capturedInnerWidth": 1034, "capturedInnerHeight": 661 },
+  "motionModes": ["expressive", "off"],
+  "performanceModes": ["full", "conserve"],
+  "collections": [
+    { "id": "all", "name": "A Very Long Collection Name / 記憶 ∑ Choir", "trackIds": ["cf-track-01", "cf-track-02", "cf-track-03", "cf-track-04", "cf-track-05", "cf-track-06", "cf-track-07", "cf-track-08"] },
+    { "id": "empty-score", "name": "Empty Score / 〇", "trackIds": [] }
+  ],
+  "tracks": [
+    { "id": "cf-track-01", "title": "Previous Voice / 밝은 밤", "artist": "Unknown Artist", "album": "Warm Pearl Studies", "format": "WAV", "artworkRole": "bright", "missing": false },
+    { "id": "cf-track-02", "title": "Luminous Entry / Untitled", "artist": "Field Recording", "album": "Counter-curve Assembly", "format": "FLAC", "artworkRole": "dark", "missing": false },
+    { "id": "cf-track-03", "title": "The Unreasonably Long Track Title (Live at Łódź)", "artist": "A Very Long Artist Name", "album": "Collected Counterforms / 記憶", "format": "FLAC", "artworkRole": "near-black", "missing": false },
+    { "id": "cf-track-04", "title": "미완성 궤도 / Not Yet Playing", "artist": "Choir Assembly", "album": "Open Score", "format": "ALAC", "artworkRole": "high-key", "missing": false },
+    { "id": "cf-track-05", "title": "White Aperture Does Not Mean Play", "artist": "State Truth Unit", "album": "Selected ≠ Current", "format": "WAV", "artworkRole": "neutral", "missing": false },
+    { "id": "cf-track-06", "title": "A/B seam — close inspection", "artist": "Material Proof Choir", "album": "Face / underside / seam", "format": "WAV", "artworkRole": "graphic", "missing": false },
+    { "id": "cf-track-07", "title": "Low Contrast User Artwork / recover me", "artist": "Quiet Signal", "album": "Do Not Occlude", "format": "WAV", "artworkRole": "low-contrast", "missing": false },
+    { "id": "cf-track-08", "title": "□□□□□ / Missing Artwork + Missing Source", "artist": "Failure Receipt", "album": "Literal Recovery", "format": "UNKNOWN", "artworkRole": "missing", "missing": true }
+  ],
+  "frozenStatePath": {
+    "startup": { "currentId": "cf-track-03", "selectedId": "cf-track-03", "playback": "paused" },
+    "playing": { "currentId": "cf-track-04", "selectedId": "cf-track-05", "playback": "playing" },
+    "paused": { "currentId": "cf-track-04", "selectedId": "cf-track-05", "playback": "paused" },
+    "failure": { "currentId": "cf-track-04", "selectedId": "cf-track-08", "failedId": "cf-track-08", "playback": "paused" }
+  },
+  "requiredClaims": [
+    "chorus-fold-mounted",
+    "selected-distinct-from-playing",
+    "requested-before-confirmed",
+    "pause-preserves-current",
+    "failed-activation-preserves-current",
+    "context-menu-targets-selected",
+    "real-mini-three-voice-projection",
+    "empty-collection",
+    "narrow-ordered-stack",
+    "motion-off-performance-conserve",
+    "linear-fallback-and-theme-return"
+  ]
+}

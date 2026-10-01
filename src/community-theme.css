@@ -1,0 +1,36 @@
+/* Product-owned embodiment for declarative local themes. Imported packages
+   supply bounded tokens and recipe keys; they never supply selectors or CSS. */
+.community-theme-manager{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.community-theme-manager-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.community-theme-manager-head div{display:grid;gap:3px}.community-theme-manager-head strong{font-size:13px}.community-theme-manager-head span{color:var(--muted);font-size:11px;line-height:1.4}
+.community-theme-manager-head button{min-height:36px;padding:0 14px;border:1px solid var(--pixel-edge);background:var(--surface2);color:var(--text);font:700 11px inherit}
+.community-theme-status{margin:8px 0;color:var(--muted);font-size:11px}.community-theme-status[data-state="error"]{color:#ff8c8c}.community-theme-status[data-state="success"]{color:var(--green)}
+.community-theme-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.community-theme-card{position:relative;display:grid;grid-template-rows:auto 1fr auto;gap:8px;min-width:0;padding:10px;border:1px solid var(--line);background:var(--surface);color:var(--text)}
+.community-theme-card.active{border-color:var(--gold);box-shadow:0 0 0 1px color-mix(in srgb,var(--gold),transparent 45%)}
+.community-theme-card .theme-preview{display:grid;grid-template-columns:1.4fr .8fr .8fr;gap:4px;height:66px;padding:7px;border:1px solid var(--community-frame,var(--line));background:var(--community-canvas,var(--bg));overflow:hidden}
+.community-theme-card .theme-preview i{display:block;border:1px solid var(--community-divider,var(--line));background:var(--community-elevation,var(--surface2))}.community-theme-card .theme-preview i:first-child{background:linear-gradient(145deg,var(--community-primary,var(--gold)),var(--community-canvas,var(--bg)) 64%)}.community-theme-card .theme-preview i:last-child{background:var(--community-state,var(--green))}
+.community-theme-card-copy{display:grid;gap:2px}.community-theme-card-copy b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}.community-theme-card-copy small{color:var(--muted);font-size:9px;line-height:1.35}.community-theme-card-copy em{font:700 8px Consolas,"Courier New",monospace;letter-spacing:.08em;color:var(--gold);text-transform:uppercase}
+.community-theme-card-actions{display:grid;grid-template-columns:1fr auto;gap:6px}.community-theme-card-actions button{min-height:32px;border:1px solid var(--line);background:var(--surface2);color:var(--text);font:700 9px inherit}.community-theme-card-actions [data-community-action="apply"]{border-color:var(--community-primary,var(--gold))}.community-theme-card-actions [data-community-action="delete"]{width:34px;color:var(--muted)}
+
+body[data-theme="community"]{font-family:var(--community-ui-font,Inter,"Segoe UI",sans-serif)}
+body[data-theme="community"] :is(.topbar,.library-rail,.inspector,.player,.settings-drawer,.queue-drawer,.playlist-hero){border-color:var(--pixel-edge);background-color:var(--surface)}
+body[data-theme="community"] .playlist-hero{background:linear-gradient(135deg,var(--hero),var(--bg) 72%)}
+body[data-theme="community"] :is(.primary,.hero-play,.transport-buttons .play-button,.chip.active,.filter.active){border-color:var(--gold);background:var(--gold);color:var(--bg)}
+body[data-theme="community"] :is(.track-row.playing,.playlist.active){border-color:var(--green);box-shadow:inset 3px 0 var(--green)}
+body[data-theme="community"][data-community-corners="square"] :is(button,.playlist-hero,.library-rail,.inspector,.player,.settings-drawer,.track-row){border-radius:0!important}
+body[data-theme="community"][data-community-corners="soft"] :is(button,.playlist-hero,.library-rail,.inspector,.settings-drawer,.track-row){border-radius:14px}
+body[data-theme="community"][data-community-corners="framed"] :is(.playlist-hero,.library-rail,.inspector,.settings-drawer){border:2px double var(--pixel-edge)}
+body[data-theme="community"][data-community-layout="compact"]{--rail-w:250px;--inspector-w:260px}
+body[data-theme="community"][data-community-layout="cinematic"] .playlist-hero{min-height:320px}
+body[data-theme="community"][data-community-layout="arcade"] :is(button,.chip,.filter){text-transform:uppercase;letter-spacing:.08em}
+body[data-theme="community"][data-community-controls="minimal"] :is(button,.chip,.filter){box-shadow:none!important}
+body[data-theme="community"][data-community-controls="technical"] :is(.section-title small,.quality-card small,.tuning-card small){font-family:Consolas,"Courier New",monospace;letter-spacing:.08em}
+body[data-theme="community"][data-community-controls="ornamental"] :is(.playlist-hero,.player){box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--gold),transparent 72%),0 16px 42px color-mix(in srgb,var(--bg),transparent 25%)}
+body[data-theme="community"][data-community-type="pixel"]{--community-ui-font:"Geist Pixel",Inter,"Segoe UI",sans-serif}
+body[data-theme="community"][data-community-type="technical"]{--community-ui-font:Consolas,"Courier New",monospace}
+body[data-theme="community"][data-community-type="editorial"]{--community-ui-font:Georgia,"Times New Roman",serif}
+body[data-theme="community"][data-community-type="display"] :is(h1,h2,h3,.playlist-name){font-family:"Space Grotesk",Inter,"Segoe UI",sans-serif;letter-spacing:.04em}
+body[data-theme="community"][data-community-motion="none"] *{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){body[data-theme="community"] *{animation:none!important;transition:none!important}}
+@media(max-width:700px){.community-theme-manager-head{align-items:stretch;flex-direction:column}.community-theme-manager-head button{width:100%}.community-theme-grid{grid-template-columns:1fr}}

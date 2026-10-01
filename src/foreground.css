@@ -1,0 +1,1874 @@
+/*
+ * Pixelody Foreground — Foreground Stage R1, 2026-08-26
+ *
+ * A theme for the painted Pixelody Canvas. It does not restyle the legacy
+ * shell: every rule below addresses a container the canvas painter created
+ * from the composition graph, so the arrangement is the graph's and only the
+ * material is the theme's.
+ *
+ * The thesis is one lit foreground and a recessed margin. The first module in
+ * the canvas grid holds the stage; the others hold position until promoted.
+ * Promotion reorders the graph, the painter reorders the DOM, and the paint
+ * follows automatically -- no slot bookkeeping in this file.
+ *
+ * For anyone writing the next theme: the whole vocabulary is .cw-canvas,
+ * .cw-split[data-axis], .cw-grid[--cw-columns], .cw-dock[data-edge],
+ * .cw-overlay[data-anchor-point], .cw-stack, and .cw-module. Style those and
+ * you have a theme. Nothing here reaches into a module's internals.
+ */
+
+body[data-theme="foreground"] {
+  --edge: var(--pixel-edge);
+  --dim: color-mix(in srgb, var(--muted) 68%, var(--bg));
+  --fg-pane-radius: 16px;
+  --fg-gutter: 14px;
+  --fg-stage-face: linear-gradient(168deg, color-mix(in srgb, var(--surface2) 84%, var(--gold) 16%), var(--surface) 72%);
+  --fg-stage-edge: color-mix(in srgb, var(--gold) 30%, transparent);
+  --fg-stage-glow: 0 0 0 1px color-mix(in srgb, var(--gold) 14%, transparent), 0 28px 70px color-mix(in srgb, var(--bg) 78%, transparent);
+  --fg-margin-face: linear-gradient(168deg, var(--surface2), var(--surface) 78%);
+  --fg-margin-edge: color-mix(in srgb, var(--text) 9%, transparent);
+  --fg-hairline: color-mix(in srgb, var(--text) 10%, transparent);
+  --fg-recess: .58;
+  --fg-ease: cubic-bezier(.22, .8, .28, 1);
+  --fg-app-face:
+    radial-gradient(ellipse at 28% -18%, color-mix(in srgb, var(--gold) 12%, transparent) 0, transparent 46%),
+    radial-gradient(ellipse at 96% 82%, color-mix(in srgb, var(--green) 7%, transparent) 0, transparent 40%),
+    linear-gradient(168deg, color-mix(in srgb, var(--bg) 90%, var(--surface2)), var(--bg) 62%, color-mix(in srgb, var(--bg) 92%, var(--gold)));
+  --fg-pasteboard-pad: 56px;
+  --fg-pasteboard-face: color-mix(in srgb, var(--bg) 62%, #000);
+  --fg-artboard-edge: 0 0 0 1px color-mix(in srgb, var(--gold) 26%, transparent), 0 24px 64px rgba(0, 0, 0, .55);
+  color-scheme: dark;
+  background: var(--fg-app-face);
+  font-family: "Segoe UI Variable Text", "Segoe UI", Inter, sans-serif;
+}
+
+/* Development furniture stays out of the way until its own host runs. */
+body[data-theme="foreground"] .cw-production-workbench,
+body[data-theme="foreground"] .cw-production-edit-chrome {
+  display: none;
+}
+/* The signal preview only exists once it has been placed on the canvas. Left
+   to the host-active rule alone it painted inside whichever product root it
+   still happened to live in. */
+body[data-theme="foreground"] .cw-production-signal { display: none; }
+
+/* Theme-specific DOM stays in the product shell so archived themes can be
+   reconstructed later without losing behavior hooks. With their stylesheets
+   detached, every dormant ornament has to be suppressed explicitly or it
+   paints as raw text over the canvas. Mirrors the Studio rebuild's list. */
+body[data-theme="foreground"] :is(
+  .meme-now-playing,
+  .tideplot-field-hud,
+  .abyssal-pressure-hud,
+  .violet-gate-hud,
+  .ghost-aperture-hud,
+  .harmonic-registry-hud,
+  .axis-break-hud,
+  .creator-theme-studio,
+  .quest-boot-message,
+  .quest-rare-cue,
+  .ghost-record-cabinet,
+  .quest-cabinet-stack,
+  .counterform-workspace-cabinet,
+  .theme-action-overlay,
+  .ghost-reconstruction,
+  .harmonic-player-hud,
+  .ghost-evidence-hud,
+  .violet-player-hud,
+  .quest-hotbar-hud,
+  .quest-status-lights,
+  .quest-stats,
+  .quest-log-recap,
+  .quest-mode-label,
+  .quest-mode-readout,
+  .quest-output-label,
+  .quest-output-readout,
+  .quest-output-status,
+  .signal-orbit-ring,
+  .axis-cutaway-mask
+) {
+  display: none !important;
+}
+
+/* Two of the dormant ornaments WRAP live controls: .quest-boss-bar holds the
+   seek input and .quest-volume-meter holds the volume input. They cannot be
+   hidden, only made transparent -- the wrapper collapses to display:contents
+   and only its decorative children go away.
+   This used to be handled for every theme by unscoped base rules inside
+   cartridge-quest.css. The 2026-08-25 reset detached that file, so those
+   rules are gone and each theme now has to carry them itself or the player
+   bar paints "BOSS HP / TRACK" and a duplicate volume readout. */
+body[data-theme="foreground"] :is(.quest-boss-bar, .quest-volume-meter) { display: contents; }
+body[data-theme="foreground"] .quest-boss-bar > :not(input) { display: none; }
+body[data-theme="foreground"] :is(.quest-volume-meter small, .quest-volume-meter b) { display: none; }
+body[data-theme="foreground"] :is(.track-row, .playlist-item, .quality-card, .tuning-card, .panel) { clip-path: none; }
+
+/* ====================================================================
+   THE CANVAS
+   The host surface stops being a three-column grid and becomes a single
+   field the painted tree fills. The player bar is inside that field now,
+   docked by the graph rather than pinned by the shell.
+   ==================================================================== */
+
+body[data-theme="foreground"][data-cw-canvas-painted="true"] .workspace {
+  height: calc(100vh - 58px);
+  display: block;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body[data-theme="foreground"] .cw-canvas {
+  /* The gutter a grid insets its panes by belongs to the grid above them, not
+     to the pane. A nested grid is both -- a pane of its parent and a grid to
+     its own children -- and one name cannot serve both, because a grid that
+     sets the name for its children has already overwritten what its parent
+     told it by the time it reads its own inset. So the pane gutter travels
+     down from here and a grid names only its own. */
+  --cw-pane-gutter: var(--canvas-port-gutter, var(--fg-gutter));
+  height: 100%;
+  padding: var(--cw-canvas-inset, var(--fg-gutter));
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+body[data-theme="foreground"] .cw-node { min-width: 0; min-height: 0; }
+/* Every container stretches to the cell it was given. Without this the tree
+   is block-height-auto all the way down and the canvas grows past the
+   viewport instead of the panes scrolling inside it. */
+body[data-theme="foreground"] .cw-root {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  height: 100%;
+}
+
+/* ---- Splits: the graph's weights are the layout ---------------------- */
+
+body[data-theme="foreground"] .cw-split {
+  position: relative;
+  display: grid;
+  gap: var(--fg-gutter);
+  min-height: 0;
+}
+body[data-theme="foreground"] .cw-split[data-axis="horizontal"] { grid-template-columns: var(--cw-split-template, 1fr); }
+body[data-theme="foreground"] .cw-split[data-axis="vertical"] { grid-template-rows: var(--cw-split-template, 1fr); }
+/* A content-sized dock should claim exactly what it needs, not its weighted
+   share. The weight still describes intent for hosts that cannot measure. */
+body[data-theme="foreground"] .cw-split[data-axis="vertical"]:has(> .cw-dock[data-size-policy="content"]:last-child) {
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
+/* ---- The grid: first child is the foreground ------------------------- */
+
+/* The canvas grid has to hold whatever the composition contains -- one pane
+   or ten, modules or splits or stacks -- so the rules are a general flow with
+   one emphasis, not a fixed arrangement. The first child holds the foreground
+   and everything after it takes a third of the width and flows onto new rows.
+   Nothing here counts panes. */
+/* The fine grid is gapless, and the gutter is drawn by the panes.
+   `gap` puts a gutter between every column track, so at 96 columns the 95
+   gutters would eat two thirds of the canvas. Pane margins put a gutter only
+   between panes, which is what a gutter actually means.
+   The negative margin is the part that makes the two models agree exactly:
+   a 24-column grid is 24 tracks plus only 23 gutters, one short of a uniform
+   repeat, so the fine grid is widened by that missing gutter and pulled back
+   by half of it on each side. Measured in Chromium, the archive frame then
+   lands on the same pixels it always did. */
+body[data-theme="foreground"] .cw-grid {
+  --cw-grid-gutter: var(--canvas-port-gutter, var(--fg-gutter));
+  /* The base row is a height a composition states; dividing it is this
+     sheet's job. The gutter goes inside the measurement because the grid is
+     gapless and the pane margins draw it, so a grid told to run without a
+     gutter divides the bare base and lands on the same pixels either way. */
+  --cw-grid-row-size: calc((var(--canvas-port-row-base, 150px) + var(--cw-grid-gutter)) / 6);
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--cw-columns, 48), minmax(0, 1fr));
+  grid-auto-rows: var(--cw-grid-row-size);
+  align-content: stretch;
+  gap: 0;
+  margin: calc(var(--cw-grid-gutter) / -2);
+  /* A value a composition states for one grid must not leak into the grids
+     inside it -- custom properties inherit, and an inset meant for the
+     workspace would otherwise be applied again by every grid nested in it.
+     Resetting it here means each grid gets the inset stated for that grid or
+     none at all. */
+  --cw-grid-inset: initial;
+  padding: var(--cw-grid-inset, 0);
+  min-height: 0;
+}
+
+body[data-theme="foreground"] .cw-grid > .cw-node {
+  margin: calc(var(--cw-pane-gutter, var(--cw-grid-gutter)) / 2);
+}
+/* A grid inside a grid carries both: the inset its parent gives it, and the
+   half gutter its own gapless repeat is widened by. They are on the same edge,
+   so they are one margin, and when the two gutters agree they cancel. */
+body[data-theme="foreground"] .cw-grid > .cw-grid {
+  margin: calc((var(--cw-pane-gutter, var(--cw-grid-gutter)) - var(--cw-grid-gutter)) / 2);
+}
+
+body[data-theme="foreground"][data-canvas-port-composition="archive-host"] .cw-canvas {
+  padding: 0;
+}
+
+body[data-theme="foreground"][data-canvas-port-composition="archive-host"] .cw-root > .cw-split > .cw-grid > .cw-node {
+  margin-top: 0;
+}
+
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-grid {
+  min-height: max(680px, calc(100vh - 150px));
+  align-content: start;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--green) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--green) 8%, transparent) 1px, transparent 1px);
+  /* Every fourth column and sixth row -- the archive's own grid. At the fine
+     pitch this would be a 12px hatch and read as noise. */
+  background-size: calc(100% / (var(--cw-columns, 48) / 4)) calc(var(--cw-grid-row-size) * 6);
+  background-position: 0 0;
+}
+/* That floor is for the composition's own grid, so there is room to drop
+   into. A grid nested inside it is a pane -- the Stage in every ported
+   theme -- and held to the same floor it could not be made shorter than most
+   of the window: the model and the track browser inside shrank, the Stage's
+   box did not, and its bottom corner was left far below what had visibly
+   shrunk. */
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-grid .cw-grid {
+  min-height: 0;
+}
+
+body[data-theme="foreground"] .cw-grid > .cw-node:not(.cw-overlay) { grid-column: span 16; grid-row: span 6; }
+body[data-theme="foreground"] .cw-grid > .cw-node:not(.cw-overlay):first-child { grid-column: span 32; grid-row: span 12; }
+
+/* A pane the person has actually sized wins over both defaults. The painter
+   writes only the custom properties; what a span means stays the theme's
+   decision, which is why this rule is here and not in the painter. */
+body[data-theme="foreground"] .cw-grid > .cw-node[data-cw-placed="true"],
+body[data-theme="foreground"] .cw-grid > .cw-node[data-cw-placed="true"]:first-child {
+  grid-column: span var(--cw-column-span, 4);
+  grid-row: span var(--cw-row-span, 6);
+}
+body[data-theme="foreground"] .cw-grid > .cw-node[data-cw-positioned="true"],
+body[data-theme="foreground"] .cw-grid > .cw-node[data-cw-positioned="true"]:first-child {
+  grid-column: var(--cw-column-start) / span var(--cw-column-span, 4);
+  grid-row: var(--cw-row-start) / span var(--cw-row-span, 6);
+}
+/* A canvas holding only its opening pane gives that pane the whole field. */
+body[data-theme="foreground"] .cw-grid > .cw-node:not(.cw-overlay):not([data-cw-placed="true"]):first-child:last-child { grid-column: 1 / -1; grid-row: 1 / -1; }
+
+/* ---- Docks ----------------------------------------------------------- */
+
+body[data-theme="foreground"] .cw-dock { display: grid; min-height: 0; }
+body[data-theme="foreground"] .cw-dock[data-edge="bottom"] { align-content: end; }
+body[data-theme="foreground"] .cw-dock[data-edge="right"] { min-width: 0; }
+
+/* The playback dock holds the product-owned player bar whole. It loses the
+   shell's hard top border and becomes another pane on the field. */
+body[data-theme="foreground"] .cw-dock[data-cw-anchored=".player"] > .player {
+  height: 74px;
+  padding: 0 18px;
+  background: linear-gradient(100deg, #12151cf0, #0c0e14f0);
+  border: 1px solid var(--fg-hairline);
+  border-radius: var(--fg-pane-radius);
+  box-shadow: 0 18px 46px #01020575;
+}
+
+/* ---- Overlay --------------------------------------------------------- */
+
+body[data-theme="foreground"] .cw-overlay {
+  position: absolute;
+  z-index: 6;
+  pointer-events: none;
+}
+body[data-theme="foreground"] .cw-overlay[data-anchor-point="bottom-left"] { left: 0; bottom: 0; width: min(300px, 32%); }
+body[data-theme="foreground"] .cw-overlay[data-anchor-point="bottom-right"] { right: 0; bottom: 0; width: min(300px, 32%); }
+body[data-theme="foreground"] .cw-overlay[data-anchor-point="fill"] { inset: 0; }
+body[data-theme="foreground"] .cw-overlay > .cw-module { border: 0; background: none; box-shadow: none; }
+
+/* ---- Stacks ---------------------------------------------------------- */
+
+body[data-theme="foreground"] .cw-stack { display: grid; gap: 8px; min-height: 0; }
+/* A stack draws its own corners and Move grip in Composition Mode, all of
+   them absolutely positioned. Unpositioned, they were placed against the
+   nearest positioned ancestor instead -- the utility stack's corners landed at
+   the corners of the whole composition and its grip at the far left. */
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-stack { position: relative; }
+body[data-theme="foreground"] .cw-stack > [hidden] { display: none; }
+
+/* ====================================================================
+   THE MODULE PANE
+   One material, one radius, one seam. Position decides how lit it is.
+   ==================================================================== */
+
+body[data-theme="foreground"] .cw-module {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--fg-margin-face);
+  border: 1px solid var(--fg-margin-edge);
+  border-radius: var(--fg-pane-radius);
+  opacity: var(--fg-recess);
+  transition: opacity 260ms var(--fg-ease), border-color 260ms var(--fg-ease), box-shadow 260ms var(--fg-ease), background 260ms var(--fg-ease);
+}
+
+/* The relocated product root fills the pane. `width: auto !important` is what
+   overrides the shell's fixed rail widths -- but it also hit the absolutely
+   positioned grips, which then computed to zero width against their own
+   `right: 0` and became impossible to grab while still looking correct.
+   Grips are excluded explicitly. */
+body[data-theme="foreground"] .cw-module > :not(.cw-production-edit-chrome):not(.cw-pane-drag-handle):not(.cw-pane-resize-handle):not(.cw-pane-actions):not(.cw-inline-target-menu):not(.cw-module-effects):not([data-cw-resize-visual="true"]) {
+  flex: 1 1 auto;
+  isolation: isolate;
+  z-index: 0;
+  min-height: 0;
+  width: auto !important;
+  max-width: none !important;
+  overflow: auto;
+}
+
+/* Module-authored motion primitives. These are intentionally a small,
+   whitelisted vocabulary driven by persisted graph configuration. Themes can
+   recolor them through their existing tokens without injecting CSS or script. */
+body[data-theme="foreground"] .cw-module-effects {
+  --cw-effect-alpha: .34;
+  --cw-effect-duration: 4.8s;
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms var(--fg-ease);
+}
+body[data-theme="foreground"] .cw-module[data-cw-effect-intensity="standard"] .cw-module-effects { --cw-effect-alpha: .52; }
+body[data-theme="foreground"] .cw-module[data-cw-effect-intensity="vivid"] .cw-module-effects { --cw-effect-alpha: .72; }
+body[data-theme="foreground"] .cw-module[data-cw-effect-speed="slow"] .cw-module-effects { --cw-effect-duration: 7.2s; }
+body[data-theme="foreground"] .cw-module[data-cw-effect-speed="fast"] .cw-module-effects { --cw-effect-duration: 2.8s; }
+:where(
+  body[data-theme="foreground"] .cw-module[data-cw-effect-trigger="always"],
+  body[data-theme="foreground"] .cw-module[data-cw-effect-trigger="interaction"]:is(:hover,:focus-within),
+  body[data-theme="foreground"].is-playing .cw-module[data-cw-effect-trigger="playback"]
+) .cw-module-effects { opacity: var(--cw-effect-alpha); }
+body[data-theme="foreground"] .cw-module-effects > i {
+  position: absolute;
+  left: var(--cw-particle-x);
+  top: var(--cw-particle-y);
+  display: none;
+  width: 5px;
+  height: 5px;
+  background: var(--gold2);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--gold) 62%, #08090c);
+  animation: cw-module-particle-rise var(--cw-effect-duration) linear infinite;
+  animation-delay: calc(var(--cw-particle-index) * -.37s);
+}
+body[data-theme="foreground"] .cw-module[data-cw-particles]:not([data-cw-particles="none"]) .cw-module-effects > i { display: block; }
+body[data-theme="foreground"] .cw-module[data-cw-particles="pixels"] .cw-module-effects > i { border-radius: 0; }
+body[data-theme="foreground"] .cw-module[data-cw-effect-intensity="subtle"] .cw-module-effects > i:nth-child(n+5),
+body[data-theme="foreground"] .cw-module[data-cw-effect-intensity="standard"] .cw-module-effects > i:nth-child(n+9) { display: none; }
+body[data-theme="foreground"] .cw-module[data-cw-particles="sparks"] .cw-module-effects > i { width: 2px; height: 10px; background: var(--green); transform: rotate(22deg); }
+body[data-theme="foreground"] .cw-module[data-cw-particles="stars"] .cw-module-effects > i { width: 3px; height: 3px; background: #fff; box-shadow: -4px 0 var(--gold2),4px 0 var(--gold2),0 -4px var(--gold2),0 4px var(--gold2); }
+body[data-theme="foreground"] .cw-module[data-cw-particles="dust"] .cw-module-effects > i { width: 4px; height: 4px; border-radius: 50%; background: color-mix(in srgb, var(--dim) 72%, transparent); box-shadow: none; filter: blur(.4px); }
+body[data-theme="foreground"] .cw-module[data-cw-animation="scan"] .cw-module-effects::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -18%;
+  width: 14%;
+  background: linear-gradient(90deg,transparent,color-mix(in srgb,var(--gold2) 38%,transparent),transparent);
+  transform: skewX(-8deg);
+  animation: cw-module-scan var(--cw-effect-duration) steps(18,end) infinite;
+}
+:where(
+  body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-effect-trigger="always"],
+  body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-effect-trigger="interaction"]:is(:hover,:focus-within),
+  body[data-theme="foreground"].is-playing:not([data-composition-mode="edit"]) .cw-module[data-cw-effect-trigger="playback"]
+)[data-cw-animation="breathe"] { animation: cw-module-breathe var(--cw-effect-duration) ease-in-out infinite; }
+:where(
+  body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-effect-trigger="always"],
+  body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-effect-trigger="interaction"]:is(:hover,:focus-within),
+  body[data-theme="foreground"].is-playing:not([data-composition-mode="edit"]) .cw-module[data-cw-effect-trigger="playback"]
+)[data-cw-animation="float"] { animation: cw-module-float var(--cw-effect-duration) ease-in-out infinite; }
+:where(
+  body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-effect-trigger="always"],
+  body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-effect-trigger="interaction"]:is(:hover,:focus-within),
+  body[data-theme="foreground"].is-playing:not([data-composition-mode="edit"]) .cw-module[data-cw-effect-trigger="playback"]
+)[data-cw-animation="pulse"] { animation: cw-module-pulse var(--cw-effect-duration) steps(4,end) infinite; }
+:where(
+  body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-effect-trigger="always"],
+  body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-effect-trigger="interaction"]:is(:hover,:focus-within),
+  body[data-theme="foreground"].is-playing:not([data-composition-mode="edit"]) .cw-module[data-cw-effect-trigger="playback"]
+)[data-cw-animation="jitter"] { animation: cw-module-jitter var(--cw-effect-duration) steps(8,end) infinite; }
+@keyframes cw-module-particle-rise { 0%{opacity:0;translate:0 18px} 18%{opacity:1} 82%{opacity:.68} 100%{opacity:0;translate:10px -52px} }
+@keyframes cw-module-scan { from{translate:0} to{translate:850%} }
+@keyframes cw-module-breathe { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.07)} }
+@keyframes cw-module-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+@keyframes cw-module-pulse { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.13)} }
+@keyframes cw-module-jitter { 0%,100%{transform:translate(0)} 28%{transform:translate(1px,-1px)} 62%{transform:translate(-1px,1px)} }
+
+/* The foreground pane. The only lit surface on the field. */
+body[data-theme="foreground"] .cw-grid > .cw-module:first-child {
+  background: var(--fg-stage-face);
+  border-color: var(--fg-stage-edge);
+  box-shadow: var(--fg-stage-glow);
+  opacity: 1;
+}
+
+/* Recession is never a barrier: pointing at a pane or focusing anything in
+   it brings it fully forward. */
+body[data-theme="foreground"] .cw-module:is(:hover, :focus-within) {
+  opacity: 1;
+  border-color: color-mix(in srgb, var(--gold) 24%, transparent);
+}
+
+body[data-theme="foreground"] .cw-grid > .cw-module:not(:first-child) :is(.rail-import, .library-filters, .rail-tools) {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 240ms var(--fg-ease), opacity 180ms var(--fg-ease);
+}
+body[data-theme="foreground"] .cw-grid > .cw-module:not(:first-child):is(:hover, :focus-within) :is(.rail-import, .library-filters, .rail-tools) {
+  max-height: 260px;
+  opacity: 1;
+}
+body[data-motion="off"][data-theme="foreground"] .cw-grid > .cw-module:not(:first-child) :is(.rail-import, .library-filters, .rail-tools),
+body[data-performance="conserve"][data-theme="foreground"] .cw-grid > .cw-module:not(:first-child) :is(.rail-import, .library-filters, .rail-tools) {
+  max-height: none;
+  opacity: 1;
+  transition: none;
+}
+
+/* A pane that is not the foreground gets a smaller version of the same
+   content rather than a clipped one. This is the part of "liquid" that
+   matters: the module did not change, its room did, and the presentation
+   answers the room. */
+body[data-theme="foreground"] .cw-grid > .cw-module:not(:first-child) .playlist-hero { height: 168px; }
+body[data-theme="foreground"] .cw-grid > .cw-module:not(:first-child) :is(.hero-copy h1, .playlist-hero h1) { font-size: 26px; line-height: 1.1; }
+body[data-theme="foreground"] .cw-grid > .cw-module:not(:first-child) :is(.playlist-cover, .hero-art) { width: 74px; height: 74px; }
+body[data-theme="foreground"] .cw-grid > .cw-module:not(:first-child) :is(.hero-description, .playlist-description) { display: none; }
+body[data-theme="foreground"] .cw-grid > .cw-module:not(:first-child) .track-row :is(.format, .quality) { display: none; }
+
+/* A quiet identity tag. Position is the navigation model here, so which pane
+   holds the foreground should never have to be inferred from size alone. */
+body[data-theme="foreground"] .cw-module::after {
+  content: attr(data-cw-module-key);
+  position: absolute;
+  z-index: 8;
+  right: 0;
+  top: 0;
+  padding: 4px 10px;
+  color: var(--dim);
+  background: #07080bd0;
+  border-bottom-left-radius: 10px;
+  font: 6px Consolas, "Courier New", monospace;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+body[data-theme="foreground"] .cw-grid > .cw-module:first-child::after {
+  content: "FOREGROUND · " attr(data-cw-module-key);
+  color: #08090c;
+  background: var(--gold);
+}
+body[data-theme="foreground"] .cw-dock > .cw-module::after,
+body[data-theme="foreground"] .cw-overlay > .cw-module::after { display: none; }
+
+body[data-theme="foreground"] .cw-module[data-cw-root-missing="true"] {
+  display: grid;
+  place-content: center;
+  min-height: 120px;
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--gold) 30%, transparent);
+}
+body[data-theme="foreground"] .cw-module[data-cw-root-missing="true"]::before {
+  content: "unavailable in this composition";
+  color: var(--dim);
+  font: 8px Consolas, "Courier New", monospace;
+  letter-spacing: .12em;
+}
+
+/* The relocated product panels drop their own shell chrome. The pane is the
+   boundary now; a panel drawing a second one inside it reads as a box in a
+   box, which is exactly the rigidity this theme is replacing. */
+body[data-theme="foreground"] .cw-module > :is(.library-rail, .main-stage, .inspector, .queue-drawer) {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+body[data-theme="foreground"] .cw-module > .queue-drawer {
+  position: static;
+  inset: auto;
+  width: auto;
+  height: auto;
+  transform: none;
+  animation: none;
+}
+body[data-theme="foreground"] .cw-module > .main-stage { isolation: auto; }
+
+/* ====================================================================
+   COMPOSITION MODE
+   ==================================================================== */
+
+body[data-theme="foreground"].cw-production-host-active[data-composition-mode="edit"] .cw-module {
+  opacity: 1;
+  outline: 1px dashed color-mix(in srgb, var(--gold) 40%, transparent);
+  outline-offset: -4px;
+}
+body[data-theme="foreground"].cw-production-host-active[data-composition-mode="edit"] [data-cw-selected] {
+  outline: 3px solid var(--green);
+  outline-offset: -3px;
+}
+body[data-theme="foreground"].cw-production-host-active[data-composition-mode="edit"] .cw-production-edit-chrome {
+  position: absolute;
+  z-index: 34;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  color: #08090c;
+  background: var(--gold);
+  border: 1px solid var(--gold2);
+  border-radius: 8px;
+  box-shadow: 0 7px 18px #000a;
+  -webkit-app-region: no-drag;
+  pointer-events: auto;
+}
+body[data-theme="foreground"] .cw-production-edit-chrome button {
+  min-width: 27px;
+  height: 26px;
+  padding: 0 7px;
+  color: #08090c;
+  background: #fff6e8;
+  border: 1px solid #08090c55;
+  border-radius: 4px;
+  font: 700 8px Consolas, "Courier New", monospace;
+  cursor: pointer;
+}
+body[data-theme="foreground"] .cw-production-edit-chrome button:disabled { opacity: .35; cursor: not-allowed; }
+body[data-theme="foreground"] .cw-production-edit-chrome button:focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
+body[data-theme="foreground"] .cw-production-drag-handle { cursor: grab !important; touch-action: none; }
+body[data-theme="foreground"] .cw-production-drag-handle:active { cursor: grabbing !important; }
+body[data-theme="foreground"] .cw-production-group-label {
+  min-width: 0;
+  padding: 0 5px;
+  color: #2a1c05;
+  font: 700 7px Consolas, "Courier New", monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+body[data-theme="foreground"].cw-production-host-active[data-composition-mode="edit"] [data-cw-movable="false"] .cw-production-edit-chrome {
+  background: var(--green);
+  border-color: color-mix(in srgb, var(--green) 60%, #ffffff);
+}
+body[data-theme="foreground"].cw-production-host-active [data-cw-drop-intent] {
+  outline: 4px solid var(--gold2) !important;
+  outline-offset: -4px;
+}
+body[data-theme="foreground"].cw-production-host-active [data-cw-drop-intent]::before {
+  content: attr(data-cw-drop-label);
+  position: absolute;
+  z-index: 35;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #08090c;
+  background: color-mix(in srgb, var(--gold2) 82%, transparent);
+  font: 900 11px Consolas, "Courier New", monospace;
+  letter-spacing: .1em;
+  pointer-events: none;
+}
+body[data-theme="foreground"] .cw-production-drag-ghost {
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  padding: 9px 12px;
+  color: #08090c;
+  background: var(--gold);
+  border-radius: 8px;
+  box-shadow: 0 14px 32px #000b;
+  font: 800 8px Consolas, "Courier New", monospace;
+  letter-spacing: .1em;
+  pointer-events: none;
+}
+
+/* ====================================================================
+   WORKBENCH
+   ==================================================================== */
+
+body[data-theme="foreground"] .cw-production-workbench[hidden] { display: none !important; }
+body[data-runtime-mode="development"][data-theme="foreground"].cw-production-host-active .cw-production-workbench {
+  position: fixed;
+  z-index: 46;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1180px, calc(100vw - 32px));
+  min-height: 42px;
+  display: grid;
+  grid-template-columns: minmax(180px, .8fr) minmax(180px, .55fr) minmax(420px, 2fr);
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  color: var(--text);
+  background: #0d1016f2;
+  border: 1px solid var(--fg-hairline);
+  border-radius: 12px;
+  box-shadow: 0 18px 44px #01020590;
+  backdrop-filter: blur(10px);
+  -webkit-app-region: no-drag;
+}
+body[data-theme="foreground"] .cw-production-identity { min-width: 0; }
+body[data-theme="foreground"] .cw-production-identity :is(small, strong, span) { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body[data-theme="foreground"] .cw-production-identity small { color: var(--gold); font: 7px Consolas, "Courier New", monospace; letter-spacing: .18em; }
+body[data-theme="foreground"] .cw-production-identity strong { margin-top: 2px; font-size: 11px; }
+body[data-theme="foreground"] .cw-production-identity span { margin-top: 1px; color: var(--muted); font-size: 8px; }
+body[data-theme="foreground"] .cw-production-module-picker { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 7px; color: var(--muted); font: 7px Consolas, "Courier New", monospace; letter-spacing: .1em; }
+body[data-theme="foreground"] .cw-production-module-picker select { min-width: 0; height: 30px; padding: 0 8px; color: var(--text); background: #07080b; border: 1px solid var(--fg-hairline); border-radius: 7px; font: 9px system-ui, sans-serif; }
+body[data-theme="foreground"] .cw-production-actions { display: flex; align-items: center; justify-content: flex-end; gap: 5px; flex-wrap: wrap; }
+body[data-theme="foreground"] .cw-production-actions button { min-height: 28px; padding: 0 10px; color: var(--muted); background: #ffffff08; border: 1px solid var(--fg-hairline); border-radius: 7px; font: 7px Consolas, "Courier New", monospace; letter-spacing: .1em; }
+body[data-theme="foreground"] .cw-production-actions button:not(:disabled):hover,
+body[data-theme="foreground"] .cw-production-actions button[aria-pressed="true"] { color: #08090c; background: var(--gold); border-color: var(--gold); }
+body[data-theme="foreground"] .cw-production-actions button:disabled { opacity: .34; }
+body[data-theme="foreground"] .cw-production-actions #workspaceProductionLegacy { color: var(--green); border-color: color-mix(in srgb, var(--green) 40%, transparent); }
+body[data-theme="foreground"] #workspaceProductionStatus {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding-top: 5px;
+  border-top: 1px solid var(--fg-hairline);
+  color: var(--muted);
+  font: 8px/1.5 Consolas, "Courier New", monospace;
+  letter-spacing: .06em;
+}
+/* The launcher strip Canvas keeps above the composition, named so that a
+   composition stating its height against the window can take it off. */
+body[data-runtime-mode="development"][data-theme="foreground"].cw-production-host-active .cw-canvas { --cw-host-strip: 0px; padding-top: var(--cw-canvas-inset, var(--fg-gutter)); }
+
+body[data-runtime-mode="development"][data-theme="foreground"].cw-production-host-active .cw-module > .cw-production-signal {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 5px;
+  height: 66px;
+  padding: 8px 12px;
+  pointer-events: none;
+  background: #07080bcc;
+  border: 1px solid var(--fg-hairline);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+}
+body[data-theme="foreground"] .cw-production-signal small { color: var(--gold); font: 6px Consolas, "Courier New", monospace; letter-spacing: .16em; }
+body[data-theme="foreground"] .cw-production-signal div { display: flex; align-items: end; gap: 4px; }
+body[data-theme="foreground"] .cw-production-signal i { flex: 1; height: calc(var(--cw-signal-level, .1) * 100%); min-height: 3px; border-radius: 2px; background: linear-gradient(var(--gold2), var(--gold)); }
+
+body[data-theme="foreground"] .cw-product-fallback { order: 99; min-width: 220px; padding: 14px; color: var(--text); background: #23160c; border: 1px solid var(--gold); border-radius: var(--fg-pane-radius); }
+
+/* ====================================================================
+   NARROW TIERS AND MOTION
+   The margin cannot survive as a column, so it becomes a row. Both panes
+   stay present: recession is never allowed to become concealment.
+   ==================================================================== */
+
+@media (max-width: 1180px) {
+  body[data-theme="foreground"] .cw-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body[data-theme="foreground"] .cw-grid > .cw-node:not(.cw-overlay) { grid-column: span 1; }
+  body[data-theme="foreground"] .cw-grid > .cw-node:not(.cw-overlay):first-child { grid-column: span 2; grid-row: span 1; }
+  body[data-theme="foreground"] .cw-grid > .cw-node[data-cw-positioned="true"] { grid-column: auto / span 1; grid-row: auto / span var(--cw-row-span, 1); }
+  body[data-theme="foreground"] .cw-grid > .cw-node[data-cw-positioned="true"]:first-child { grid-column: auto / span 2; }
+  body[data-runtime-mode="development"][data-theme="foreground"].cw-production-host-active .cw-production-workbench { grid-template-columns: 1fr 1fr; }
+  body[data-theme="foreground"] .cw-production-actions { grid-column: 1 / -1; justify-content: flex-start; }
+  body[data-runtime-mode="development"][data-theme="foreground"].cw-production-host-active .cw-canvas { --cw-host-strip: 0px; padding-top: var(--cw-canvas-inset, var(--fg-gutter)); }
+}
+
+@media (max-width: 850px) {
+  body[data-theme="foreground"][data-cw-canvas-painted="true"] .workspace { overflow: auto; }
+  body[data-theme="foreground"] .cw-split[data-axis="horizontal"] { grid-template-columns: 1fr; }
+  body[data-theme="foreground"] .cw-grid { grid-template-columns: 1fr; }
+  /* Same specificity as the 1180 tier or that tier's spans win here too --
+     both queries match below 850px. */
+  body[data-theme="foreground"] .cw-grid > .cw-node:not(.cw-overlay),
+  body[data-theme="foreground"] .cw-grid > .cw-node:not(.cw-overlay):first-child,
+  body[data-theme="foreground"] .cw-grid > .cw-node[data-cw-positioned="true"],
+  body[data-theme="foreground"] .cw-grid > .cw-node[data-cw-positioned="true"]:first-child { grid-column: 1; grid-row: auto; min-height: 280px; opacity: 1; }
+  body[data-theme="foreground"] .cw-grid { grid-auto-rows: auto; }
+  body[data-theme="foreground"] .cw-overlay { position: relative; width: auto; }
+}
+
+body[data-motion="off"][data-theme="foreground"] .cw-module,
+body[data-performance="conserve"][data-theme="foreground"] .cw-module {
+  opacity: 1;
+  transition: none;
+  animation: none !important;
+}
+body[data-motion="off"][data-theme="foreground"] .cw-module-effects,
+body[data-performance="conserve"][data-theme="foreground"] .cw-module-effects { display: none; }
+body[data-performance="conserve"][data-theme="foreground"] :is(.cw-production-workbench, .cw-production-signal) { backdrop-filter: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-theme="foreground"] .cw-module { transition: none; animation: none !important; }
+  body[data-theme="foreground"] .cw-module-effects { display: none; }
+}
+
+/* ====================================================================
+   CANVAS STUDIO
+   The authoring rail. It appears only in Composition Mode and pushes the
+   canvas rather than covering it, so you are always editing the thing you
+   are looking at.
+   ==================================================================== */
+
+body[data-theme="foreground"] .cw-studio-rail {
+  position: fixed;
+  z-index: 44;
+  left: 0;
+  top: 58px;
+  bottom: 0;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 14px 22px;
+  overflow-y: auto;
+  color: var(--text);
+  background: linear-gradient(180deg, #0d1016f7, #08090cf7);
+  border-right: 1px solid var(--fg-hairline);
+  box-shadow: 20px 0 60px #01020575;
+  backdrop-filter: blur(12px);
+  -webkit-app-region: no-drag;
+}
+body[data-theme="foreground"] .cw-studio-rail[hidden] { display: none; }
+body[data-theme="foreground"] .cw-studio-launcher {
+  position: fixed;
+  z-index: 38;
+  top: 70px;
+  left: 14px;
+  min-height: 36px;
+  padding: 0 14px;
+  color: #08090c;
+  background: var(--gold);
+  border: 1px solid var(--gold2);
+  border-radius: 9px;
+  box-shadow: 0 10px 30px #01020575;
+  font: 700 10px system-ui, sans-serif;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+body[data-theme="foreground"] .cw-studio-launcher[hidden] { display: none; }
+body[data-theme="foreground"] .cw-studio-launcher:hover { background: var(--gold2); }
+body[data-theme="foreground"] .cw-studio-legacy-launcher {
+  position: fixed;
+  z-index: 38;
+  top: 70px;
+  left: 122px;
+  min-height: 36px;
+  padding: 0 12px;
+  color: var(--text);
+  background: #08090ce8;
+  border: 1px solid var(--fg-hairline);
+  border-radius: 9px;
+  box-shadow: 0 10px 30px #01020575;
+  font: 700 10px system-ui, sans-serif;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+body[data-theme="foreground"] .cw-studio-legacy-launcher[hidden] { display: none; }
+body[data-theme="foreground"] .cw-canvas-add-button {
+  position: fixed;
+  z-index: 43;
+  top: 70px;
+  right: 16px;
+  min-height: 38px;
+  padding: 0 14px;
+  color: #08090c;
+  background: var(--gold);
+  border: 1px solid var(--gold2);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px #01020575;
+  font: 800 10px system-ui, sans-serif;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+body[data-theme="foreground"] .cw-canvas-add-button[hidden] { display: none; }
+body[data-theme="foreground"] .cw-canvas-add-button:hover { background: var(--gold2); }
+body[data-theme="foreground"] :is(.cw-studio-launcher, .cw-studio-legacy-launcher, .cw-canvas-add-button, .cw-studio-button, .cw-studio-tray-item, .cw-stack-tab):focus-visible {
+  outline: 3px solid var(--green);
+  outline-offset: 2px;
+}
+body[data-theme="foreground"][data-cw-studio="open"] .cw-canvas { padding-left: calc(300px + var(--fg-gutter)); }
+
+body[data-theme="foreground"] .cw-studio-head { display: grid; gap: 2px; padding-bottom: 12px; border-bottom: 1px solid var(--fg-hairline); }
+body[data-theme="foreground"] .cw-studio-head small { color: var(--gold); font: 7px Consolas, "Courier New", monospace; letter-spacing: .2em; }
+body[data-theme="foreground"] .cw-studio-title { font-size: 15px; letter-spacing: -.01em; }
+body[data-theme="foreground"] .cw-studio-state { color: var(--dim); font: 8px Consolas, "Courier New", monospace; letter-spacing: .1em; text-transform: uppercase; }
+body[data-theme="foreground"] .cw-studio-state[data-dirty="true"] { color: var(--gold); }
+body[data-theme="foreground"] .cw-studio-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  margin: -5px 0 0;
+  color: var(--dim);
+  font-size: 8px;
+  line-height: 1.35;
+}
+body[data-theme="foreground"] .cw-studio-shortcuts > span { flex: 1 1 100%; color: var(--muted); font: 700 7px Consolas, "Courier New", monospace; letter-spacing: .12em; text-transform: uppercase; }
+body[data-theme="foreground"] .cw-studio-shortcuts kbd {
+  padding: 2px 4px;
+  color: var(--gold2);
+  background: #ffffff08;
+  border: 1px solid var(--fg-hairline);
+  border-radius: 4px;
+  box-shadow: inset 0 -1px 0 #ffffff0b;
+  font: 700 7px Consolas, "Courier New", monospace;
+}
+body[data-theme="foreground"] .cw-studio-live-status {
+  margin: 0;
+  padding: 8px 10px;
+  color: var(--dim);
+  background: #ffffff05;
+  border-left: 3px solid var(--fg-hairline);
+  border-radius: 0 7px 7px 0;
+  font-size: 10px;
+  line-height: 1.45;
+}
+body[data-theme="foreground"] .cw-studio-live-status[data-tone="success"] { color: var(--green); border-left-color: var(--green); }
+body[data-theme="foreground"] .cw-studio-live-status[data-tone="warning"] { color: var(--gold2); border-left-color: var(--gold2); }
+body[data-theme="foreground"] .cw-studio-live-status[data-tone="error"] { color: #ffb0a0; border-left-color: #ff8068; }
+
+body[data-theme="foreground"] .cw-studio-section { display: grid; gap: 8px; }
+body[data-theme="foreground"] .cw-studio-section h3 { margin: 0; color: var(--muted); font: 700 8px Consolas, "Courier New", monospace; letter-spacing: .18em; text-transform: uppercase; }
+body[data-theme="foreground"] .cw-studio-note { margin: 0; color: var(--dim); font-size: 10px; line-height: 1.5; }
+body[data-theme="foreground"] .cw-studio-warning { color: #ffc5a0; }
+body[data-theme="foreground"] .cw-studio-template-list,
+body[data-theme="foreground"] .cw-studio-target-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; }
+body[data-theme="foreground"] .cw-studio-target-actions .cw-studio-button:last-child:nth-child(odd) { grid-column: 1 / -1; }
+body[data-theme="foreground"] .cw-studio-template { min-height: 34px; }
+
+body[data-theme="foreground"] .cw-studio-jobs { display: grid; gap: 3px; margin: 0; padding: 0; list-style: none; }
+body[data-theme="foreground"] .cw-studio-jobs li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 7px;
+  background: #ffffff05;
+  color: var(--dim);
+  font-size: 10px;
+  text-transform: capitalize;
+}
+body[data-theme="foreground"] .cw-studio-jobs li::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .5;
+}
+body[data-theme="foreground"] .cw-studio-jobs li[data-met="true"] { color: var(--green); background: color-mix(in srgb, var(--green) 8%, transparent); }
+body[data-theme="foreground"] .cw-studio-jobs li[data-met="true"]::before { opacity: 1; }
+
+body[data-theme="foreground"] .cw-studio-tray-list { display: grid; gap: 5px; }
+body[data-theme="foreground"] .cw-studio-tray-search {
+  min-height: 34px;
+  width: 100%;
+  padding: 0 10px;
+  color: var(--text);
+  background: #07080b;
+  border: 1px solid var(--fg-hairline);
+  border-radius: 8px;
+  font: 10px system-ui, sans-serif;
+}
+body[data-theme="foreground"] .cw-studio-tray-search::placeholder { color: var(--dim); }
+body[data-theme="foreground"] .cw-studio-tray-search:focus-visible { border-color: var(--green); outline: 2px solid color-mix(in srgb, var(--green) 58%, transparent); outline-offset: 1px; }
+body[data-theme="foreground"] .cw-studio-tray-item {
+  display: grid;
+  gap: 2px;
+  padding: 9px 10px;
+  text-align: left;
+  color: var(--text);
+  background: #ffffff07;
+  border: 1px solid var(--fg-hairline);
+  border-radius: 9px;
+  cursor: pointer;
+  transition: border-color 140ms var(--fg-ease), background 140ms var(--fg-ease);
+}
+body[data-theme="foreground"] .cw-studio-tray-item[hidden],
+body[data-theme="foreground"] .cw-studio-tray-empty[hidden] { display: none; }
+body[data-theme="foreground"] .cw-studio-tray-item:hover { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 10%, transparent); }
+body[data-theme="foreground"] .cw-studio-tray-item strong { font-size: 11px; }
+body[data-theme="foreground"] .cw-studio-tray-item small { color: var(--dim); font: 7px Consolas, "Courier New", monospace; letter-spacing: .08em; text-transform: uppercase; }
+
+body[data-theme="foreground"] .cw-studio-row { display: flex; flex-wrap: wrap; gap: 5px; }
+body[data-theme="foreground"] .cw-studio-button {
+  flex: 1 1 auto;
+  min-height: 30px;
+  padding: 0 10px;
+  color: var(--text);
+  background: #ffffff08;
+  border: 1px solid var(--fg-hairline);
+  border-radius: 8px;
+  font: 9px system-ui, sans-serif;
+  cursor: pointer;
+}
+body[data-theme="foreground"] .cw-studio-button:not(:disabled):hover { border-color: var(--gold); color: var(--gold2); }
+body[data-theme="foreground"] .cw-studio-button:disabled { opacity: .32; cursor: not-allowed; }
+body[data-theme="foreground"] .cw-studio-wide { flex: 1 1 100%; }
+body[data-theme="foreground"] .cw-studio-primary { color: #08090c; background: var(--gold); border-color: var(--gold); font-weight: 700; }
+body[data-theme="foreground"] .cw-studio-primary:not(:disabled):hover { color: #08090c; background: var(--gold2); }
+body[data-theme="foreground"] .cw-studio-danger { color: #ffb0a0; border-color: #ffb0a03d; }
+body[data-theme="foreground"] .cw-studio-selected-name { font-size: 12px; }
+
+body[data-theme="foreground"] .cw-studio-field { display: grid; gap: 4px; }
+body[data-theme="foreground"] .cw-studio-field span { color: var(--dim); font: 7px Consolas, "Courier New", monospace; letter-spacing: .12em; text-transform: uppercase; }
+body[data-theme="foreground"] .cw-studio-field select {
+  min-height: 30px;
+  padding: 0 8px;
+  color: var(--text);
+  background: #07080b;
+  border: 1px solid var(--fg-hairline);
+  border-radius: 8px;
+  font: 10px system-ui, sans-serif;
+}
+body[data-theme="foreground"] .cw-studio-field input[type="range"] { accent-color: var(--gold); }
+body[data-theme="foreground"] .cw-studio-effects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin: 2px 0;
+  padding: 9px;
+  border: 1px solid color-mix(in srgb, var(--gold) 28%, var(--fg-hairline));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--gold) 4%, transparent);
+}
+body[data-theme="foreground"] .cw-studio-effects legend {
+  padding: 0 5px;
+  color: var(--gold2);
+  font: 700 8px Consolas, "Courier New", monospace;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+body[data-theme="foreground"] .cw-studio-effects .cw-studio-note { grid-column: 1 / -1; }
+body[data-theme="foreground"] .cw-studio-group-card {
+  display: grid;
+  gap: 5px;
+  padding: 8px;
+  background: #ffffff05;
+  border: 1px solid var(--fg-hairline);
+  border-radius: 8px;
+}
+body[data-theme="foreground"] .cw-studio-group-card > strong { font-size: 10px; text-transform: capitalize; }
+body[data-theme="foreground"] .cw-studio-group-card > small { color: var(--dim); font-size: 8px; }
+body[data-theme="foreground"] .cw-studio-group-card[data-selected] { border-color: var(--green); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green) 40%, transparent); }
+
+body[data-theme="foreground"] .cw-studio-commit { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--fg-hairline); }
+
+/* The pane the rail is acting on. Selection has to read at a glance from
+   across the canvas, so it is a full ring rather than a corner mark. */
+body[data-theme="foreground"] .cw-module[data-cw-studio-selected] {
+  opacity: 1;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold), 0 24px 60px #01020590;
+}
+/* A pane can be picked up by its surface, so the surface says so. Controls
+   inside it keep their own cursors. */
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-module { cursor: grab; }
+body[data-theme="foreground"][data-cw-studio-pointer="dragging-pane"] { cursor: grabbing; }
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-module[data-cw-pick-target] { outline: 2px dashed color-mix(in srgb, var(--green) 70%, transparent); outline-offset: -5px; }
+body[data-theme="foreground"] .cw-module[data-cw-studio-source] { opacity: .54; pointer-events: none; }
+body[data-theme="foreground"] .cw-module[data-cw-studio-lifted="true"] {
+  position: fixed !important;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: var(--cw-drag-width) !important;
+  height: var(--cw-drag-height) !important;
+  min-height: 0;
+  margin: 0;
+  opacity: .96;
+  border-color: var(--gold);
+  box-shadow: 0 22px 52px #000c, 0 0 0 2px color-mix(in srgb, var(--gold) 75%, transparent);
+  transform-origin: top left;
+  transition: box-shadow 120ms ease, opacity 120ms ease;
+  contain: layout paint;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+body[data-theme="foreground"] .cw-module[data-cw-studio-lifted="true"] > :not(.cw-pane-drag-handle):not(.cw-pane-resize-handle):not(.cw-pane-actions) {
+  visibility: hidden;
+}
+body[data-theme="foreground"] .cw-module[data-cw-studio-lifted="true"]::before {
+  content: attr(data-cw-drag-label);
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--gold);
+  background: var(--fg-margin-face);
+  font: 800 9px Consolas, "Courier New", monospace;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+body[data-theme="foreground"] .cw-drag-placeholder {
+  min-width: 0;
+  min-height: var(--cw-placeholder-height, 120px);
+  background: color-mix(in srgb, var(--green) 8%, transparent);
+  border: 2px dashed color-mix(in srgb, var(--green) 72%, transparent);
+  border-radius: var(--fg-pane-radius);
+  box-shadow: inset 0 0 36px color-mix(in srgb, var(--green) 10%, transparent);
+}
+body[data-theme="foreground"] .cw-drag-placeholder::after {
+  content: "Drop here";
+  display: grid;
+  place-items: center;
+  min-height: 100%;
+  color: var(--green);
+  font: 800 8px Consolas, "Courier New", monospace;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+body[data-theme="foreground"][data-cw-studio-drag-conserve="true"] .cw-module[data-cw-studio-lifted="true"] {
+  box-shadow: 0 14px 30px #000b, 0 0 0 2px color-mix(in srgb, var(--gold) 75%, transparent);
+  contain: strict;
+}
+body[data-theme="foreground"][data-cw-studio-drag-conserve="true"] .cw-module[data-cw-studio-lifted="true"] > :not(.cw-pane-drag-handle):not(.cw-pane-resize-handle):not(.cw-pane-actions) {
+  visibility: hidden;
+}
+body[data-theme="foreground"][data-cw-studio-drag-conserve="true"] .cw-module[data-cw-studio-lifted="true"]::before {
+  content: attr(data-cw-drag-label);
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--gold);
+  background: var(--fg-margin-face);
+  font: 800 9px Consolas, "Courier New", monospace;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+body[data-theme="foreground"][data-composition-mode="edit"] [data-cw-studio-group-selected] { outline: 3px solid var(--green); outline-offset: 3px; }
+
+/* A placed pane is owned by the canvas rather than the legacy drawer/cabinet
+   disclosure. Removing it is an explicit, recoverable Return-to-tray action. */
+body[data-theme="foreground"][data-cw-canvas-painted="true"] :is(#closeQueue, #closeInspector) { display: none; }
+body[data-theme="foreground"][data-cw-studio-enabled="true"] .cw-production-edit-chrome { display: none !important; }
+
+@media (max-width: 1180px) {
+  body[data-theme="foreground"] .cw-studio-rail { width: 260px; }
+  body[data-theme="foreground"][data-cw-studio="open"] .cw-canvas { padding-left: calc(260px + var(--fg-gutter)); }
+}
+@media (max-width: 850px) {
+  body[data-theme="foreground"] .cw-studio-rail { width: 100%; top: auto; height: 46vh; border-right: 0; border-top: 1px solid var(--fg-hairline); }
+  body[data-theme="foreground"][data-cw-studio="open"] .cw-canvas { padding-left: var(--fg-gutter); padding-bottom: 48vh; }
+}
+body[data-motion="off"][data-theme="foreground"] .cw-studio-tray-item,
+body[data-performance="conserve"][data-theme="foreground"] .cw-studio-tray-item { transition: none; }
+body[data-performance="conserve"][data-theme="foreground"] .cw-studio-rail { backdrop-filter: none; }
+
+/* Development entry point into Canvas Studio. It remains confined to the
+   Studio proving ground while direct manipulation receives hands-on QA. */
+.cw-studio-entry { display: grid; gap: 5px; margin-bottom: 12px; }
+.cw-studio-entry button {
+  min-height: 34px;
+  padding: 0 12px;
+  color: #08090c;
+  background: #ffb454;
+  border: 1px solid #ffb454;
+  border-radius: 8px;
+  font: 700 10px system-ui, sans-serif;
+  cursor: pointer;
+}
+.cw-studio-entry button[aria-pressed="true"] { color: #f3f4f7; background: #ffffff0f; border-color: #ffb45466; }
+.cw-studio-entry small { color: var(--muted); font-size: 9px; line-height: 1.45; }
+.cw-studio-entry label { display: grid; gap: 4px; color: var(--muted); font-size: 9px; }
+.cw-studio-entry select {
+  min-height: 34px;
+  padding: 0 10px;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px solid color-mix(in srgb, var(--gold) 42%, var(--line));
+  border-radius: 8px;
+  font: 600 10px system-ui, sans-serif;
+}
+.cw-studio-entry select:focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
+
+
+/* ====================================================================
+   DIRECT MANIPULATION
+   One move handle exposes the full ranked intent system: reorder, split,
+   stack, or recombine. Grid panes get one corner resize handle; split
+   containers get a semantic separator. Every pointer gesture commits one
+   graph operation on release and every resize also has a keyboard route.
+   ==================================================================== */
+
+body[data-theme="foreground"] :is(.cw-pane-drag-handle, .cw-pane-resize-handle, .cw-split-handle) { display: none; }
+body[data-theme="foreground"][data-composition-mode="edit"] :is(.cw-pane-drag-handle, .cw-pane-resize-handle, .cw-split-handle) {
+  position: absolute;
+  z-index: 34;
+  display: grid;
+  place-items: center;
+  min-width: 42px;
+  min-height: 42px;
+  padding: 0;
+  touch-action: none;
+}
+body[data-theme="foreground"][data-composition-mode="edit"] :is(.cw-pane-drag-handle, .cw-pane-resize-handle, .cw-split-handle):focus-visible {
+  outline: 3px solid var(--green);
+  outline-offset: 2px;
+}
+
+/* Clear of the top-left resize corner. Both are 42px touch targets, so a
+   Move grip at left:10px sits underneath the corner handle and stops being
+   clickable. Corners belong to resize grips; the Move grip sits inboard. */
+body[data-theme="foreground"] .cw-pane-drag-handle {
+  left: 52px;
+  top: 10px;
+  color: #08090c;
+  background: var(--gold);
+  border: 1px solid color-mix(in srgb, var(--gold) 72%, white);
+  border-radius: 9px;
+  box-shadow: 0 8px 24px #0008;
+  font: 800 8px Consolas, "Courier New", monospace;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  cursor: grab;
+}
+body[data-theme="foreground"] .cw-pane-drag-handle:active { cursor: grabbing; }
+
+/* A group's own grip. The panes inside a group keep theirs at their top left,
+   so a split's sits beside the first one's, and a stack's rides at the end of
+   its tab strip. A section that is one pane wrapped (the Stage) keeps the
+   ordinary place, because on screen it is that pane. Groups read "Move group"
+   so the two grips on one corner are not mistaken for each other. */
+body[data-theme="foreground"] .cw-section-drag-handle[data-cw-section-filled="false"] {
+  left: 104px;
+  padding: 0 9px;
+  color: var(--gold);
+  background: #08090de8;
+  border-color: var(--gold);
+}
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-stack-switcher > .cw-section-drag-handle {
+  position: relative;
+  top: auto;
+  left: auto;
+  min-height: 34px;
+  margin-left: auto;
+  box-shadow: none;
+}
+
+/* An overlay lets the pointer through to the pane beneath it, and that used
+   to include its own Move grip and menu: both were drawn, neither could be
+   pressed, and they sat exactly on top of the covered pane's grip and menu,
+   so the badge that looked like the Stage's belonged to the overlay and a
+   press went through to whatever was underneath. In Composition Mode the
+   overlay's controls take the pointer again and move to the middle of the
+   overlay, clear of the pane under it. */
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-overlay > .cw-module > :is(.cw-pane-drag-handle, .cw-pane-actions) { pointer-events: auto; }
+body[data-theme="foreground"] .cw-overlay > .cw-module > .cw-pane-drag-handle { left: calc(50% - 47px); }
+body[data-theme="foreground"] .cw-overlay > .cw-module > .cw-pane-actions { right: auto; left: calc(50% + 5px); }
+
+body[data-theme="foreground"] .cw-pane-actions {
+  position: absolute;
+  z-index: 36;
+  top: 10px;
+  right: 10px;
+}
+body[data-theme="foreground"] .cw-pane-menu-button {
+  display: grid;
+  place-items: center;
+  min-width: 42px;
+  min-height: 42px;
+  padding: 0;
+  overflow: hidden;
+  color: transparent;
+  background: #08090de8;
+  border: 1px solid var(--fg-hairline);
+  border-radius: 9px;
+  box-shadow: 0 8px 24px #0008;
+  cursor: pointer;
+}
+body[data-theme="foreground"] .cw-pane-menu-button::after {
+  content: "•••";
+  color: var(--gold);
+  font: 900 12px system-ui, sans-serif;
+  letter-spacing: .12em;
+  transform: translateX(1px);
+}
+body[data-theme="foreground"] .cw-pane-menu-button:is(:hover, :focus-visible) { color: transparent; background: var(--gold); border-color: var(--gold2); outline: 0; }
+body[data-theme="foreground"] .cw-pane-menu-button:is(:hover, :focus-visible)::after { color: #08090c; }
+body[data-theme="foreground"] .cw-pane-menu-button:focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
+
+body[data-theme="foreground"] .cw-inline-target-action {
+  min-height: 38px;
+  padding: 6px 9px;
+  color: var(--text);
+  background: #ffffff0a;
+  border: 1px solid var(--fg-hairline);
+  border-radius: 7px;
+  font: 700 8px system-ui, sans-serif;
+  cursor: pointer;
+}
+body[data-theme="foreground"] .cw-inline-target-action:is(:hover, :focus-visible) { color: #08090c; background: var(--gold); border-color: var(--gold); outline: 0; }
+
+body[data-theme="foreground"] .cw-inline-target-menu {
+  position: absolute;
+  z-index: 37;
+  inset: auto 10px 10px 10px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+  padding: 7px;
+  background: #08090df2;
+  border: 2px solid var(--green);
+  border-radius: 10px;
+  box-shadow: 0 18px 46px #000c;
+}
+body[data-theme="foreground"] .cw-inline-target-cancel { color: #ffb6a7; }
+
+body[data-theme="foreground"] .cw-module-context-menu {
+  position: fixed;
+  z-index: 1200;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(112px, 1fr));
+  gap: 7px;
+  width: min(310px, calc(100vw - 20px));
+  max-height: calc(100vh - 20px);
+  padding: 9px;
+  overflow: auto;
+  color: var(--text);
+  background: #08090df8;
+  border: 1px solid color-mix(in srgb, var(--gold) 62%, var(--fg-hairline));
+  border-radius: 12px;
+  box-shadow: 0 24px 70px #000e, 0 0 0 1px #ffffff08;
+}
+body[data-theme="foreground"] .cw-module-context-heading {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 2px;
+  padding: 3px 4px 7px;
+  border-bottom: 1px solid var(--fg-hairline);
+}
+body[data-theme="foreground"] .cw-module-context-heading small,
+body[data-theme="foreground"] .cw-module-context-label {
+  color: var(--dim);
+  font: 700 7px Consolas, "Courier New", monospace;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+body[data-theme="foreground"] .cw-module-context-heading strong { color: var(--gold2); font-size: 12px; }
+body[data-theme="foreground"] .cw-add-pane-destination { color: var(--dim); font-size: 9px; line-height: 1.35; }
+body[data-theme="foreground"] .cw-module-context-group {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  min-width: 0;
+}
+body[data-theme="foreground"] .cw-module-context-label { padding: 2px 3px 0; }
+body[data-theme="foreground"] .cw-module-context-action {
+  min-height: 36px;
+  padding: 7px 9px;
+  color: var(--text);
+  background: #ffffff0a;
+  border: 1px solid var(--fg-hairline);
+  border-radius: 8px;
+  font: 700 9px system-ui, sans-serif;
+  text-align: left;
+  cursor: pointer;
+}
+body[data-theme="foreground"] .cw-module-context-action:is(:hover, :focus-visible) {
+  color: #08090c;
+  background: var(--gold);
+  border-color: var(--gold);
+  outline: 0;
+}
+body[data-theme="foreground"] .cw-module-context-action:disabled { opacity: .32; cursor: not-allowed; }
+body[data-theme="foreground"] .cw-module-context-danger { color: #ffb6a7; }
+body[data-theme="foreground"] .cw-add-pane-options {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+body[data-theme="foreground"] .cw-add-pane-option { display: grid; gap: 3px; }
+body[data-theme="foreground"] .cw-add-pane-option strong { font-size: 10px; }
+body[data-theme="foreground"] .cw-add-pane-option small {
+  color: var(--dim);
+  font: 700 7px Consolas, "Courier New", monospace;
+  letter-spacing: .08em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+body[data-theme="foreground"] .cw-add-pane-option:is(:hover, :focus-visible) small { color: #08090c; }
+
+@media (max-width: 520px) {
+  body[data-theme="foreground"] .cw-module-context-menu { grid-template-columns: 1fr; width: min(250px, calc(100vw - 20px)); }
+  body[data-theme="foreground"] .cw-add-pane-options { grid-template-columns: 1fr; }
+}
+
+body[data-theme="foreground"] .cw-stack-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 5px;
+  background: #08090ccc;
+  border: 1px solid var(--fg-hairline);
+  border-radius: 8px;
+}
+body[data-theme="foreground"] .cw-stack-tab {
+  min-height: 34px;
+  padding: 0 10px;
+  color: var(--dim);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  font: 700 9px system-ui, sans-serif;
+  cursor: pointer;
+}
+body[data-theme="foreground"] .cw-stack-tab[aria-selected="true"] { color: #08090c; background: var(--gold); border-color: var(--gold2); }
+
+body[data-theme="foreground"] .cw-pane-resize-handle {
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  color: transparent;
+  background: linear-gradient(135deg, transparent 48%, color-mix(in srgb, var(--gold) 78%, transparent) 49%);
+  border: 0;
+  cursor: nwse-resize;
+}
+
+/* The second corner. One handle can only push the far edge out from a fixed
+   origin; this one pins the far edge and pulls the near one, which is the
+   only way to grow a pane leftwards or upwards without moving it first. The
+   gradient is mirrored so the wedge points out of the corner it belongs to. */
+body[data-theme="foreground"] .cw-pane-resize-handle[data-cw-resize-corner="start"] {
+  right: auto;
+  bottom: auto;
+  left: 0;
+  top: 0;
+  background: linear-gradient(315deg, transparent 48%, color-mix(in srgb, var(--gold) 78%, transparent) 49%);
+}
+body[data-theme="foreground"] .cw-pane-resize-handle::after {
+  content: "";
+  width: 13px;
+  height: 13px;
+  border-right: 3px solid #08090c;
+  border-bottom: 3px solid #08090c;
+  transform: translate(7px, 7px);
+}
+
+/* A pane's corners appear when the pane is chosen, not before.
+   With every pane carrying two 42px grips all the time the canvas read as a
+   field of handles rather than a layout, and a section and the pane filling it
+   put their grips on the same corners -- where the section's, painted above
+   the isolated pane, always won, so the inner pane's corners could not be
+   reached at all. Now a pane shows its corners when it is selected, when its
+   group is selected from the rail, or when keyboard focus is on the pane or
+   one of its own controls. Keyboard focus counts so Tab can still reach the
+   grips; focus inside a nested pane does not, or focusing the track browser
+   would raise the Stage's corners over it. The Move grip and the pane menu are
+   not gated: picking a pane up should stay one gesture. */
+body[data-theme="foreground"] .cw-pane-resize-handle {
+  transform-origin: bottom right;
+  transition: opacity 120ms ease-out, transform 120ms ease-out, visibility 120ms;
+}
+body[data-theme="foreground"] .cw-pane-resize-handle[data-cw-resize-corner="start"] {
+  transform-origin: top left;
+}
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-node:not([data-cw-studio-selected], [data-cw-studio-group-selected], :focus-visible, :has(> :not(.cw-node):focus-visible), :has(> :not(.cw-node) :focus-visible)) > .cw-pane-resize-handle {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(.8);
+}
+body[data-theme="foreground"] .cw-module[data-cw-resize-preview="true"] {
+  min-height: var(--cw-preview-block-size, 120px);
+}
+/* A pane being resized follows the pointer as one box: it keeps the cells it
+   started on, is sized to the pointer, and when the top-left corner is the
+   one being dragged it is moved by the difference, so the bottom-right corner
+   stays exactly where it was. Its corners are inside it, so they go with it,
+   and its content is scaled to it (see [data-cw-resize-visual] below). */
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-grid > .cw-node[data-cw-resize-live] {
+  position: relative;
+  z-index: 30;
+  justify-self: start !important;
+  align-self: start !important;
+  width: var(--cw-preview-inline-size) !important;
+  height: var(--cw-preview-block-size) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  translate: var(--cw-preview-x, 0px) var(--cw-preview-y, 0px);
+  overflow: hidden;
+  transition: none !important;
+}
+/* Where the resized pane will land on release, in whole cells. */
+body[data-theme="foreground"] .cw-grid > .cw-resize-slot {
+  z-index: 29;
+  min-width: 0;
+  min-height: 0;
+  border: 2px dashed color-mix(in srgb, var(--gold) 78%, transparent);
+  border-radius: var(--fg-pane-radius);
+  background: color-mix(in srgb, var(--gold) 7%, transparent);
+  pointer-events: none;
+}
+
+/* The hit box is deliberately wider than the visible seam. The split's first
+   normalized weight positions it and the button's pseudo-element draws it. */
+body[data-theme="foreground"] .cw-split[data-axis="horizontal"] > .cw-split-handle {
+  left: calc((100% - var(--fg-gutter)) * var(--cw-split-0, .5) + var(--fg-gutter) / 2);
+  top: 50%;
+  width: 44px;
+  height: 64px;
+  transform: translate(-50%, -50%);
+  cursor: ew-resize;
+}
+body[data-theme="foreground"] .cw-split[data-axis="vertical"] > .cw-split-handle {
+  left: 50%;
+  top: calc((100% - var(--fg-gutter)) * var(--cw-split-0, .5) + var(--fg-gutter) / 2);
+  width: 64px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+  cursor: ns-resize;
+}
+body[data-theme="foreground"] .cw-split-handle {
+  color: transparent;
+  background: transparent;
+  border: 0;
+}
+body[data-theme="foreground"] .cw-split-handle::after {
+  content: "";
+  border-radius: 999px;
+  background: var(--gold);
+  box-shadow: 0 0 0 3px #08090ccc, 0 8px 24px #0009;
+}
+body[data-theme="foreground"] .cw-split[data-axis="horizontal"] > .cw-split-handle::after { width: 5px; height: 38px; }
+body[data-theme="foreground"] .cw-split[data-axis="vertical"] > .cw-split-handle::after { width: 38px; height: 5px; }
+
+body[data-theme="foreground"] .cw-module[data-cw-studio-drop] {
+  outline: 3px solid var(--gold2);
+  outline-offset: -3px;
+}
+body[data-theme="foreground"] .cw-module[data-cw-studio-drop]::before {
+  content: attr(data-cw-studio-drop);
+  position: absolute;
+  z-index: 35;
+  inset: auto 0 0 0;
+  padding: 9px;
+  color: #08090c;
+  background: color-mix(in srgb, var(--gold2) 90%, transparent);
+  font: 800 9px Consolas, "Courier New", monospace;
+  letter-spacing: .08em;
+  text-align: center;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+body[data-theme="foreground"] .cw-studio-drag-ghost {
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  padding: 9px 13px;
+  color: #08090c;
+  background: var(--gold);
+  border-radius: 9px;
+  box-shadow: 0 14px 34px #000b;
+  font: 800 9px Consolas, "Courier New", monospace;
+  letter-spacing: .08em;
+  pointer-events: none;
+}
+body[data-theme="foreground"] .cw-studio-drop-preview {
+  position: fixed;
+  z-index: 998;
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  color: #08090c;
+  background: color-mix(in srgb, var(--green) 30%, transparent);
+  border: 3px solid var(--green);
+  border-radius: 10px;
+  box-shadow: 0 12px 30px #0008;
+  font: 800 8px Consolas, "Courier New", monospace;
+  text-align: center;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+body[data-composition-mode="edit"] :is(.cw-pane-drag-handle, .cw-pane-resize-handle, .cw-split-handle, .cw-production-drag-handle, .cw-drag-handle, .cw-resize-handle) {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  touch-action: none;
+}
+body[data-cw-studio-pointer], body[data-cw-studio-pointer] * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -webkit-user-drag: none !important;
+}
+body[data-cw-studio-pointer] .cw-module > [data-cw-product-root] {
+  pointer-events: none !important;
+}
+body[data-composition-mode="edit"] .cw-module > [data-cw-resize-visual="true"] {
+  position: absolute !important;
+  z-index: 0;
+  inset: auto !important;
+  left: var(--cw-resize-source-left, 0) !important;
+  top: var(--cw-resize-source-top, 0) !important;
+  flex: none !important;
+  width: var(--cw-resize-source-width) !important;
+  height: var(--cw-resize-source-height) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  overflow: hidden !important;
+  contain: strict !important;
+  content-visibility: visible !important;
+  visibility: visible !important;
+  transform-origin: top left !important;
+  transform: scale(var(--cw-resize-scale-x, 1), var(--cw-resize-scale-y, 1)) !important;
+  transition: none !important;
+  will-change: transform;
+  pointer-events: none;
+}
+body[data-cw-studio-pointer="dragging-pane"] { cursor: grabbing !important; }
+body[data-cw-studio-live-preview]:not([data-cw-studio-dense="true"]) .cw-grid > .cw-node { will-change: transform; }
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-theme="foreground"] :is(.cw-pane-drag-handle, .cw-pane-resize-handle, .cw-split-handle, .cw-studio-drop-preview, .cw-pane-actions, .cw-inline-target-menu, .cw-module-context-menu) { transition: none; }
+}
+body[data-motion="off"][data-theme="foreground"] :is(.cw-pane-drag-handle, .cw-pane-resize-handle, .cw-split-handle) { transition: none; }
+
+/* ====================================================================
+   PLACED MODULES ARE FURNITURE ONCE COMPOSITION MODE IS CLOSED
+
+   Every relocated product root is given `overflow: auto` above, which makes
+   the whole of a module scrollable. For a list that is correct. For a module
+   whose root also contains fixed furniture it is not: the collection hero
+   scrolls away inside its own pane, the rail heading and filters scroll away
+   inside theirs, and a placed module stops feeling placed at all.
+
+   The rule a composed workspace needs is that a module scrolls its *content*
+   and never its *frame*. So the root stops being the scroller, the frame
+   becomes a column, the header-ish child is pinned, and the list child takes
+   the remaining height and scrolls inside it.
+
+   Gated on not-editing rather than on use, so rigidity also holds on any
+   launch where the mode attribute has not been written yet. Composition Mode
+   keeps the old behaviour, because while you are arranging panes being able to
+   scroll a whole pane is useful.
+   ==================================================================== */
+
+/* Named roots only. A blanket rule here reaches roots this file has not
+   mapped, and forcing a column on an unmapped root changes how its contents
+   size themselves -- which is a layout change wearing a scroll fix's clothes.
+   Each root below is one whose internal frame/content split is known. */
+body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-module-key="tracks.browser"] > .main-stage,
+body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-module-key="library.browser"] > .library-rail,
+body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-module-key="track.information"] > .inspector {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Stage: the hero is the frame, the track list is the content. */
+body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-module-key="tracks.browser"] > .main-stage > :is(.playlist-hero, .collection-header, .collection-actions, .library-filters) { flex: 0 0 auto; }
+body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-module-key="tracks.browser"] > .main-stage > .collection-body { flex: 1 1 auto; min-height: 0; overflow: auto; }
+
+/* Rail: heading and filters are the frame, the collection list is the content. */
+body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-module-key="library.browser"] > .library-rail > :is(.rail-heading, .library-filters, .library-profile, .rail-import, .rail-tools) { flex: 0 0 auto; }
+body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-module-key="library.browser"] > .library-rail > .playlist-list { flex: 1 1 auto; min-height: 0; overflow: auto; }
+
+/* Inspector and queue: heading pinned, body scrolls. */
+body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-module-key="track.information"] > .inspector > :is(.inspector-heading, .metadata-art) { flex: 0 0 auto; }
+body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-module-key="track.information"] > .inspector > :not(.inspector-heading):not(.metadata-art) { flex: 0 1 auto; min-height: 0; overflow: auto; }
+body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-module-key="queue.view"] > * > :is(.queue-heading) { flex: 0 0 auto; }
+
+/* A strip or an ambient field has no content to scroll and must never offer
+   to: a transport deck that can be scrolled out of its own pane is a transport
+   deck you can lose. */
+body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module:is([data-cw-shape="strip"], [data-cw-shape="ambient"]) > *,
+body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module:is([data-cw-shape="strip"], [data-cw-shape="ambient"]) { overflow: hidden; }
+
+/* ---- The artboard (Composition Mode only) -----------------------------
+   Composition Mode turns the canvas into a workspace and the composition
+   into an artboard inside it: a rectangle exactly the size the player fills
+   at 100%, with pasteboard around it. Zooming out makes that rectangle
+   smaller instead of making the composition looser, so what you are looking
+   at is the real layout at a smaller size rather than the same layout
+   spread differently.
+
+   A transform does not change layout, so the scroll container would keep
+   reserving the unscaled box and scrolling would reach past the artboard at
+   50% and stop short of it at 150%. The margins below correct the reserved
+   footprint to what the artboard actually paints -- negative when zoomed
+   out, positive when zoomed in. */
+/* [data-cw-zoom] is redundant for matching -- the studio always writes it
+   beside [data-cw-artboard] -- and is here to carry specificity.
+   canvas-theme-ports.css zeroes this padding for the archive host, at exactly
+   equal specificity (0,4,1), and loads after this file, so it used to win:
+   the artboard lost its pasteboard and pinned itself into the corner under
+   the 300px rail. One more attribute settles it without editing that sheet,
+   and the port's flush padding still applies everywhere outside edit mode. */
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-canvas[data-cw-artboard][data-cw-zoom] {
+  overflow: auto;
+  /* The studio rail is fixed over the canvas and is reserved only by the
+     canvas's own padding (left beside the rail, bottom under 850px). A flat
+     pasteboard pad on every side gave that reservation back: the artboard
+     centred across the whole width and its left edge sat about 155px under
+     the rail at every window size, so the leftmost pane's Move grip and
+     top-left corner could not be pressed. The sides and bottom keep the
+     insets the artboard was measured inside; zooming out still opens
+     pasteboard all round, because the artboard centres within them. */
+  padding: var(--fg-pasteboard-pad)
+    var(--cw-artboard-inset-right, var(--fg-pasteboard-pad))
+    max(var(--fg-pasteboard-pad), var(--cw-artboard-inset-bottom, 0px))
+    var(--cw-artboard-inset-left, var(--fg-pasteboard-pad));
+  background: var(--fg-pasteboard-face);
+  cursor: default;
+  /* An artboard smaller than the workspace belongs in the middle of it, not
+     in the corner. `safe` keeps the start edge reachable when the artboard is
+     larger than the workspace, which plain centring would push out of scroll
+     range. */
+  display: flex;
+  justify-content: safe center;
+  align-items: safe center;
+}
+
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-canvas[data-cw-artboard][data-cw-zoom] > .cw-root {
+  position: relative;
+  width: var(--cw-artboard-width);
+  /* The artboard is the player's window, and it is a floor rather than a
+     ceiling. A composition may run past the bottom of the window -- that is
+     what scrolling is for -- and where it ends is the person's decision, not
+     a limit the canvas imposes. --cw-canvas-height is the studio's
+     measurement of how tall the composition actually got. */
+  min-height: var(--cw-artboard-height);
+  height: auto;
+  transform: scale(var(--cw-zoom, 1));
+  transform-origin: top left;
+  margin-right: calc(var(--cw-artboard-width) * (var(--cw-zoom, 1) - 1));
+  margin-bottom: calc(var(--cw-canvas-height, var(--cw-artboard-height)) * (var(--cw-zoom, 1) - 1));
+  /* Flex would otherwise shrink the artboard to fit rather than let it
+     overflow into scroll range. */
+  flex: 0 0 auto;
+  background: var(--fg-app-face);
+  box-shadow: var(--fg-artboard-edge);
+}
+
+/* The whole artboard is droppable even when the composition does not fill it,
+   and the grid may grow past it when the composition does. */
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-canvas[data-cw-artboard][data-cw-zoom] .cw-grid:not(.cw-grid .cw-grid) {
+  /* Only the composition's own grid. A grid nested inside it -- the Stage in
+     every ported theme -- was held to the artboard's height too, so it ran
+     past its own rows and under the player dock, and its bottom corner, the
+     one you pull to resize it, sat underneath the dock where a press cleared
+     the selection instead. */
+  min-height: calc(var(--cw-artboard-height) + var(--cw-grid-gutter));
+}
+
+/* Where the player's window ends. Without this the artboard stops being a
+   reference and becomes just the top of a taller sheet, and there is no way
+   to tell what someone will actually see at rest. */
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-canvas[data-cw-artboard][data-cw-zoom] > .cw-root::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--cw-artboard-height);
+  border-top: 1px dashed color-mix(in srgb, var(--gold) 42%, transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Nothing below the fold is part of the window, so it reads as held back
+   rather than laid out. */
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-canvas[data-cw-artboard][data-cw-zoom] > .cw-root {
+  background-image: linear-gradient(
+    to bottom,
+    transparent var(--cw-artboard-height),
+    color-mix(in srgb, #000 34%, transparent) var(--cw-artboard-height)
+  );
+}
+
+/* ---- The window outside Composition Mode ----------------------------
+   A composition may run past the bottom of the window. Outside Composition
+   Mode the player is docked below the composition, and the composition's
+   grid had no way to hold anything taller than its row: whatever ran past it
+   was drawn straight over the player and on below the window, where nothing
+   could reach it. The composition's own grid now scrolls inside its row, so
+   the player stays put, nothing is ever under it, and everything below the
+   fold is a scroll away. A composition that fits has nothing to scroll. */
+body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-split:has(> .cw-dock[data-cw-anchored=".player"]) .cw-grid:not(.cw-grid .cw-grid) {
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* The same window, drawn while composing, for the archived host every ported
+   theme uses. The player stays exactly where it will be outside Composition
+   Mode -- on the line the composition's row ends at -- and is drawn over
+   anything that runs past that line, because that is what will be behind it
+   at rest. (Letting the player follow the composition down instead made a
+   pane stretched past it look flush on top of it here and sit behind it
+   everywhere else.) The studio treats the same line as an edge: a pane stops
+   flush on top of the player, and nothing comes to rest across it. The fold
+   -- the dashed rule and the wash below it -- marks the line. */
+body[data-theme="foreground"][data-composition-mode="edit"][data-canvas-theme-port][data-canvas-port-composition="archive-host"] .cw-canvas[data-cw-artboard][data-cw-zoom] .cw-root > .cw-split > .cw-dock[data-cw-anchored=".player"] {
+  position: relative;
+  z-index: 31;
+}
+body[data-theme="foreground"][data-composition-mode="edit"][data-canvas-theme-port][data-canvas-port-composition="archive-host"] .cw-canvas[data-cw-artboard][data-cw-zoom] > .cw-root::after {
+  top: min(var(--cw-port-band, var(--cw-artboard-height)), var(--cw-artboard-height));
+}
+body[data-theme="foreground"][data-composition-mode="edit"][data-canvas-theme-port][data-canvas-port-composition="archive-host"] .cw-canvas[data-cw-artboard][data-cw-zoom] > .cw-root {
+  background-image: linear-gradient(
+    to bottom,
+    transparent min(var(--cw-port-band, var(--cw-artboard-height)), var(--cw-artboard-height)),
+    color-mix(in srgb, #000 34%, transparent) min(var(--cw-port-band, var(--cw-artboard-height)), var(--cw-artboard-height))
+  );
+}
+
+/* Panning. Space arms it, middle-drag needs no arming; the cursor is the
+   only thing that says so, because a mode you cannot see is a mode you
+   forget you are in. */
+body[data-theme="foreground"][data-cw-pan-ready] .cw-canvas[data-cw-artboard][data-cw-zoom] { cursor: grab; }
+body[data-theme="foreground"] .cw-canvas[data-cw-artboard][data-cw-zoom][data-cw-panning] { cursor: grabbing; }
+body[data-theme="foreground"][data-cw-pan-ready] .cw-canvas[data-cw-artboard][data-cw-zoom] * { pointer-events: none; }
+
+body[data-theme="foreground"] .cw-studio-zoom-row { align-items: center; }
+body[data-theme="foreground"] .cw-studio-zoom-level {
+  flex: 0 0 auto;
+  min-width: 3.5em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  letter-spacing: .04em;
+  color: var(--dim, currentColor);
+}
+
+/* ---- Anchored panes ---------------------------------------------------
+   A pane that quietly refuses to move looks broken; a pane wearing a pin
+   looks deliberate. The mark only shows in Composition Mode, because
+   anchoring is an authoring concern and the player should not carry
+   editing furniture. */
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-node[data-cw-pin] {
+  outline: 1px dashed color-mix(in srgb, var(--gold) 46%, transparent);
+  outline-offset: -2px;
+}
+
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-node[data-cw-pin]::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg) 70%, transparent);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Held in one axis only, so the mark is hollow: something still gives. */
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-node[data-cw-pin="position"]::before,
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-node[data-cw-pin="size"]::before {
+  background: transparent;
+  border: 2px solid var(--gold);
+  width: 7px;
+  height: 7px;
+}
+
+/* The state a pane is already in is shown disabled, which by default reads
+   as unavailable rather than current. */
+body[data-theme="foreground"] :is(.cw-studio-anchor-row, .cw-module-context-group) [data-cw-pin-option][aria-pressed="true"] {
+  opacity: 1;
+  border-color: var(--gold);
+  color: var(--gold2);
+}
+
+/* ---- Panes sliding out of the way -------------------------------------
+   During a drag, a neighbour keeps the grid placement it was committed with
+   and is moved by transform instead. Rewriting its placement would be a
+   layout change, which lands instantly and costs a reflow per pane per
+   pointer frame; a transform is compositor work and can be transitioned,
+   which is the whole difference between panes teleporting and panes
+   sliding.
+
+   The transition is armed only while something is lifted, so nothing else
+   in the canvas inherits a transition it never asked for. */
+body[data-theme="foreground"] .cw-grid > .cw-node[data-cw-shifted] {
+  transform: translate(var(--cw-shift-x, 0px), var(--cw-shift-y, 0px));
+}
+
+body[data-theme="foreground"][data-cw-studio-lifted="true"] .cw-grid > .cw-node {
+  transition: transform 150ms var(--fg-ease);
+  will-change: transform;
+}
+
+/* The placeholder is the promise about where the drop lands, so it snaps to
+   whole cells rather than easing towards them -- easing would show it
+   somewhere the drop will not actually go. The pane under the pointer is a
+   separate floating proxy, which follows the cursor directly. */
+body[data-theme="foreground"][data-cw-studio-lifted="true"] .cw-grid > .cw-drag-placeholder {
+  transition: none;
+}
+
+/* Every existing way of asking for less motion, honoured. The shift itself
+   stays -- panes still end up in the right place -- it just happens at once
+   instead of over 150ms. */
+body[data-theme="foreground"][data-motion="off"] .cw-grid > .cw-node,
+body[data-theme="foreground"][data-performance="conserve"] .cw-grid > .cw-node,
+body[data-theme="foreground"][data-cw-studio-drag-conserve="true"] .cw-grid > .cw-node {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-theme="foreground"][data-cw-studio-lifted="true"] .cw-grid > .cw-node {
+    transition: none;
+  }
+}
+
+/* ---- Player-bar controls ------------------------------------------------
+   The mini player, queue, mute, volume, format and audio systems controls
+   move freely along the player bar (player-controls.js). While composing,
+   each shows the box it collides with -- exactly what its theme draws -- and
+   is picked up by pressing on it. A moved control is drawn above the bar's
+   other furniture, and the cluster it came from no longer clips it. */
+body[data-theme="foreground"] .cw-canvas .player :has([data-cw-control-placed]) { overflow: visible; }
+/* The composing canvas always overflows (the artboard plus the pasteboard
+   around it), but the scrollbar only appears once the artboard is applied --
+   after the artboard was measured without it. The first edit re-measured it
+   10px narrower and everything on the canvas shifted. Reserving the gutter
+   makes the two measurements the same, and reserving it on both edges keeps
+   an artboard that fits centred. */
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-canvas { scrollbar-gutter: stable both-edges; }
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-canvas [data-cw-control] {
+  cursor: grab;
+  outline: 1px dashed color-mix(in srgb, var(--gold) 60%, transparent) !important;
+  outline-offset: 1px !important;
+}
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-canvas [data-cw-control]:hover,
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-canvas [data-cw-control][data-cw-control-selected] {
+  outline: 2px solid var(--gold) !important;
+}
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-canvas [data-cw-control][data-cw-control-dragging] {
+  cursor: grabbing;
+  z-index: 40 !important;
+}
+body[data-theme="foreground"][data-composition-mode="edit"] .cw-canvas [data-cw-control][data-cw-control-colliding] {
+  outline: 2px solid #ff5d5d !important;
+}
+
+/* Theme-coloured application chrome; no reserved row above the artboard. */
+body[data-theme="foreground"] .cw-studio-chrome { display: flex; align-items: center; gap: 6px; margin-left: auto; -webkit-app-region: no-drag; }
+body[data-theme="foreground"] .cw-studio-chrome :is(.cw-studio-launcher, .cw-studio-legacy-launcher) { position: static; min-height: 30px; padding: 0 10px; box-shadow: none; background: color-mix(in srgb, var(--surface2) 90%, transparent); color: var(--text); border-color: var(--fg-hairline); border-radius: var(--canvas-port-radius, 9px); font-size: 9px; }
+body[data-theme="foreground"] .cw-studio-chrome .cw-studio-launcher { color: var(--gold); }
+body[data-theme="foreground"] .topbar .global-search { flex: 1 1 140px; min-width: 100px; width: auto; max-width: 420px; }
+body[data-theme="foreground"] .topbar { display: flex; gap: 8px; }
+body[data-theme="foreground"] .topbar :is(.settings-trigger, .top-quality, .jams-trigger) { position: static; flex-shrink: 0; }

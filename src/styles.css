@@ -1,0 +1,210 @@
+:root{--bg:#050607;--surface:#101112;--surface2:#181a1d;--surface3:#22252a;--line:#2b2e33;--text:#f5f3ef;--muted:#a2a5aa;--dim:#6f7379;--gold:#d8b66a;--gold2:#f1d497;--green:#65d6a1;--hero:#403117}
+*{box-sizing:border-box;scrollbar-width:thin;scrollbar-color:#4a4d52 transparent}*::-webkit-scrollbar{width:9px;height:9px}*::-webkit-scrollbar-track{background:transparent}*::-webkit-scrollbar-thumb{background:#44474c;border:2px solid transparent;border-radius:8px;background-clip:padding-box}*::-webkit-scrollbar-thumb:hover{background:#5a5e64;background-clip:padding-box}html,body{height:100%}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Segoe UI",Arial,sans-serif;overflow:hidden}button,input,select{font:inherit}button{border:0;color:inherit;cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}.hidden,[hidden]{display:none!important}.cw-production-workbench{display:none}
+
+/* Universal press feedback (2026-07-24). Diagnosis: :hover has 185
+   declarations across 31 files in this app; :active had only 23 across
+   12, almost entirely theme-specific (Cartridge Quest, Dead Signal, Meme
+   Machine, Frosted Void, the Poster Collection, Acid Tech Terminal) --
+   most controls in most themes had no press feedback at all. Nearly every
+   interactive control in this app is a real <button> (transport, chips,
+   filters, presets, panel handles, playlist items all confirmed via
+   direct template read), so one base rule covers the large majority of
+   the gap. Track rows are the one common exception (a styled <div>, not
+   a button) and get their own, gentler treatment since compressing a
+   full-width row doesn't read the same as compressing a compact control.
+   This is the shared default -- themes with their own :active treatment
+   continue to win via normal cascade, since theme files load after this
+   one. */
+button:not(:disabled) {
+  transition: transform 110ms cubic-bezier(.2,.8,.2,1), filter 110ms ease;
+}
+button:not(:disabled):not(.dragging):active {
+  transform: scale(.965);
+  filter: brightness(.93);
+}
+.track-row {
+  transition: filter 110ms ease;
+}
+.track-row:active {
+  filter: brightness(.93);
+}
+body[data-motion="off"] :is(button:not(:disabled), .track-row) {
+  transition: none;
+}
+body[data-motion="off"] :is(button:not(:disabled), .track-row):active {
+  transform: none;
+  filter: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(button:not(:disabled), .track-row) { transition: none; }
+  :is(button:not(:disabled), .track-row):active { transform: none; filter: none; }
+}
+/* Wired to the existing "Hover and press motion" toggle (2026-07-24) --
+   data-effect-hover was already how the 12 theme-specific :active rules
+   opt in (e.g. cartridge-quest, meme-machine), but this base rule wasn't
+   respecting it yet. Same off-treatment as data-motion="off" above. */
+body[data-effect-hover="false"] :is(button:not(:disabled), .track-row) {
+  transition: none;
+}
+body[data-effect-hover="false"] :is(button:not(:disabled), .track-row):active {
+  transform: none;
+  filter: none;
+}
+
+body[data-readiness="booting"] :is(.topbar,.workspace,.player){opacity:0;transform:translateY(6px)}
+body[data-readiness="interactive"] :is(.topbar,.workspace,.player),
+body[data-readiness="settled"] :is(.topbar,.workspace,.player){opacity:1;transform:none;transition:opacity .32s ease,transform .32s ease}
+body[data-readiness="settled"] :is(.playlist-hero,.library-rail,.inspector,.player){transition:background-color .24s ease,border-color .24s ease,box-shadow .24s ease}
+@media(prefers-reduced-motion:reduce){body[data-readiness] :is(.topbar,.workspace,.player){transition:none;transform:none}}
+.topbar{height:58px;display:flex;align-items:center;justify-content:center;gap:10px;background:#050607;padding:8px 24px;position:relative;-webkit-app-region:drag}
+body[data-platform="darwin"] .topbar,body.platform-darwin .topbar{padding-left:88px}
+.window-drag{position:absolute;inset:0;z-index:-1}
+.round-button,.global-search,.top-quality,.jams-trigger,.settings-trigger{-webkit-app-region:no-drag}.round-button{width:40px;height:40px;border-radius:50%;background:var(--surface2);font:22px Georgia;color:var(--gold)}.global-search{height:42px;width:min(510px,44vw);display:flex;align-items:center;gap:10px;background:#1d1f22;border:1px solid #33363a;border-radius:24px;padding:0 16px}.global-search input{border:0;background:transparent;color:white;outline:0;width:100%}.top-quality{position:absolute;right:22px;height:40px;border-radius:20px;background:#141619;display:grid;grid-template-columns:10px auto;column-gap:8px;text-align:left;padding:6px 14px}.top-quality small{grid-column:2;color:var(--green);font-size:9px}.top-quality b{font-size:11px;max-width:155px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px #65d6a188;margin-top:3px}
+.workspace{height:calc(100vh - 146px);display:grid;grid-template-columns:290px minmax(560px,1fr) 292px;gap:8px;padding:0 8px}.library-rail,.main-stage,.inspector{background:var(--surface);border-radius:8px;min-height:0;position:relative;isolation:isolate}.library-rail{display:flex;flex-direction:column;padding:20px 12px 12px}.rail-heading{display:flex;justify-content:space-between;align-items:center;padding:0 6px 16px}.rail-heading>div{display:flex;align-items:center;gap:9px}.brand-glyph{display:grid;place-items:center;width:27px;height:27px;border:1px solid #8a7446;color:var(--gold);font:17px Georgia;transform:rotate(45deg)}.rail-heading strong{font-size:14px}.create-button{background:#242629;border-radius:20px;padding:9px 14px;font-size:11px;font-weight:700}.library-filters{display:flex;gap:7px;padding:0 3px 15px}.chip{padding:7px 12px;background:#282a2d;border-radius:17px;font-size:11px}.chip.active{background:var(--gold);color:#17130b}.rail-tools{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;padding:6px 9px 12px}.playlist-list{overflow-y:auto;flex:1}.playlist-item{display:grid;grid-template-columns:48px 1fr 20px;gap:10px;align-items:center;padding:7px;border-radius:6px;text-align:left;width:100%;background:transparent}.playlist-item:hover,.playlist-item.active{background:#1d1f22}.playlist-thumb{width:48px;height:48px;background:linear-gradient(135deg,#6b5430,#191919);border-radius:3px;background-size:cover;background-position:center;display:grid;place-items:center;color:var(--gold2);font:20px Georgia}.playlist-copy{min-width:0}.playlist-copy strong,.playlist-copy span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.playlist-copy strong{font-size:12px}.playlist-copy span{font-size:10px;color:var(--muted);margin-top:5px}.playlist-dots{opacity:0;color:var(--muted)}.playlist-item:hover .playlist-dots{opacity:1}.rail-import{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding-top:10px;border-top:1px solid var(--line)}.rail-import button{background:#202226;border-radius:5px;padding:10px 4px;font-size:10px}.rail-import button:first-child{background:var(--gold);color:#17130b;font-weight:700}
+/* position+isolation added 2026-07-24: .main-stage had no position set, so
+   its ::after selection-sweep pseudo-element (theme-prep.css) escaped to
+   the nearest positioned ancestor, .workspace (panel-handles.css), which
+   spans the *entire* grid -- library rail, both resizers, and inspector,
+   not just the content pane. That's why the sweep looked like it crossed
+   the whole screen and painted over the sidebars. isolation:isolate scopes
+   its stacking context to .main-stage alone, so per-theme z-index tuning
+   (e.g. letting foreground content obstruct it) stays contained here too.
+   Extended to .library-rail and .inspector the same day: Bulkhead Modern's
+   ambient-weave reaction (graphite-loadout-theme.css) adds its own ::before
+   to all three panels, and neither of those two had position set either --
+   same escape-to-.workspace bug waiting to happen the moment anything used
+   them. */
+.main-stage{overflow-y:auto;background:#111;position:relative;isolation:isolate}.playlist-hero{height:390px;position:relative;background:linear-gradient(130deg,#644c24,#211d18 55%,#101112);background-size:cover;background-position:center;overflow:hidden}.hero-shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(12,12,13,.95),rgba(5,5,6,.05) 75%),linear-gradient(90deg,rgba(0,0,0,.45),transparent 70%)}.hero-content{position:absolute;left:28px;right:28px;bottom:28px;display:flex;align-items:end;gap:22px}.playlist-cover{width:174px;height:174px;flex:none;border-radius:5px;background:linear-gradient(145deg,#d8b66a,#2b2418);box-shadow:0 16px 40px #0009;display:grid;place-items:center;font:70px Georgia;color:#19140b;background-size:cover;background-position:center}.hero-copy p{font-size:10px;font-weight:800;letter-spacing:1.5px;margin:0 0 8px}.hero-copy h1{font-size:clamp(42px,5.2vw,78px);line-height:.95;letter-spacing:-3px;margin:0 0 13px}.hero-copy>span{display:block;color:#e0ddd7;font-size:13px;margin-bottom:10px}.hero-copy small{color:#c4c2bd}.hero-edit{position:absolute;top:20px;right:20px;background:#111b;border:1px solid #ffffff33;backdrop-filter:blur(12px);padding:10px 13px;border-radius:20px;font-size:10px;opacity:.5;transition:.2s}.playlist-hero:hover .hero-edit{opacity:1}.collection-body{min-height:420px;padding:20px 24px 60px;background:linear-gradient(var(--hero),#111 190px)}.collection-actions{height:62px;display:flex;align-items:center;gap:14px}.hero-play{width:50px;height:50px;background:var(--gold);color:#17130b;border-radius:50%;font-size:20px;padding-left:5px}.subtle-action{height:34px;padding:0 15px;border:1px solid #ffffff55;background:transparent;border-radius:18px;font-size:11px}.icon-action{background:transparent;color:var(--muted);font-size:20px}.filter-row{display:flex;gap:6px;margin-left:auto}.filter{background:#1f2124;border-radius:16px;padding:7px 13px;color:var(--muted);font-size:10px}.filter.active{background:#e7e2d7;color:#171717}.drop-zone{height:210px;border:1px dashed #4b4d50;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted)}.drop-zone>span{font-size:28px;color:var(--gold)}.drop-zone strong{color:white}.drop-zone small{font-size:10px}.drop-zone button{margin-top:8px;background:white;color:#111;padding:9px 15px;border-radius:18px;font-size:10px;font-weight:700}.track-table{margin-top:5px}.track-row{display:grid;grid-template-columns:28px minmax(180px,1fr) 68px 120px 75px 48px 24px;align-items:center;gap:12px;min-height:58px;padding:0 12px;border-radius:5px;color:#d1d0cc;font-size:11px}
+/* large
+   libraries pay full style/layout/paint cost for every mounted .track-row,
+   including ones scrolled far off screen, once the existing chunked-append
+   (see TRACK_RENDER_IMMEDIATE_LIMIT/TRACK_RENDER_CHUNK_SIZE in renderer.js)
+   finishes mounting them all. A hand-rolled scroll-position virtualizer was
+   deliberately not used here: #trackRows scrolls inside .main-stage, which
+   also contains the hero/collection-actions region above it, so the list's
+   effective scroll offset is not fixed; rows use min-height (not a locked
+   height) so text can wrap; and three themes (lo-fi-cafe, meme-machine,
+   graphite-loadout/acid-tech-terminal) style rows via :nth-child, which only
+   resolves correctly if every row stays a real DOM child in order. Manually
+   windowing rows (mounting/unmounting a subset) would need all of that
+   solved and visually re-verified across every theme to avoid breaking
+   something, which isn't verifiable without a real display.
+   content-visibility:auto gets most of the same win with almost none of that
+   risk: every row remains a real, correctly ordered DOM node -- :nth-child,
+   drag/keyboard/click delegation, and preserveCurrentTrackRowOrder() are
+   completely unaffected -- but the browser skips style/layout/paint for rows
+   currently far from the viewport. contain-intrinsic-size gives it a
+   placeholder size (matching the row's own min-height) so the scrollbar
+   doesn't jump before a row has ever been rendered; the "auto" keyword lets
+   the browser remember each row's real measured size once it has been. */
+.track-row:not(.track-header){content-visibility:auto;contain-intrinsic-size:auto 58px}.track-row:not(.track-header):hover{background:#ffffff0c}.track-row.playing{background:#ffffff12}.track-row.playing .track-title strong{color:var(--gold2)}.track-header{min-height:36px;border-bottom:1px solid #ffffff20;border-radius:0;color:#85878b;font-size:9px;letter-spacing:1px}.track-title strong,.track-title span{display:block}.track-title strong{font-size:12px;color:white}.track-title span{color:#8f9195;font-size:10px;margin-top:4px}.format{font-size:9px;color:var(--gold2);font-weight:800}.quality{color:#aaa}.tuned{color:var(--green)}.remove{opacity:0}.track-row:hover .remove{opacity:1}
+.inspector{padding:20px 16px;overflow-y:auto}.inspector-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.inspector-heading>div{display:flex;gap:9px;align-items:center}.inspector-heading strong{font-size:12px}.inspector-heading button{background:transparent;color:var(--muted)}.quality-card,.tuning-card{background:#1b1d20;border-radius:7px;padding:17px;margin-bottom:12px}.quality-card small,.tuning-card small{color:#92959a;letter-spacing:1px;font-size:8px}.quality-card h3,.tuning-card h3{margin:8px 0 5px;font-size:16px}.quality-card h3{color:var(--green)}.quality-card p{color:var(--muted);font-size:10px;line-height:1.5}.signal-path{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #ffffff18;padding-top:12px;margin-top:12px;color:var(--muted);font-size:8px}.signal-path b{color:var(--gold)}.panel-title{display:flex;justify-content:space-between;align-items:start}.text-button{background:transparent;color:var(--muted);font-size:9px}.eq-visual{height:80px;margin-top:12px}.eq-visual canvas{width:100%;height:100%}.eq-controls{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}.eq-control{text-align:center}.eq-control label{display:block;color:var(--muted);font-size:8px;letter-spacing:.8px}.eq-control input{writing-mode:vertical-lr;direction:rtl;width:18px;height:74px;accent-color:var(--gold);margin:7px 0}.eq-control strong{font-size:8px;color:var(--gold2)}.tuning-help{color:#85888e;font-size:9px;line-height:1.5;border-top:1px solid #ffffff14;padding-top:12px}.open-systems{width:100%;background:#22252a;border-radius:6px;padding:13px;text-align:left;font-size:10px}.open-systems span{float:right;color:var(--gold)}
+/* item 7: the Systems page's available width depends on the user's monitor,
+   window size, AND whether the library/inspector rails are open -- viewport
+   media queries can't see that last part. container-type turns .systems-view
+   into a query container so every grid below can react to its own real
+   width instead of the window's, then reflow (not just collapse/hide) as
+   that width changes. */
+.systems-view{container-type:inline-size;container-name:systems-view;padding:34px;min-height:100%}.back-button{background:transparent;color:var(--muted);padding:0 0 30px}.eyebrow{color:var(--gold);font-size:10px;letter-spacing:2px;font-weight:800}.systems-view>h1{font-size:45px;margin:8px 0}.lede{color:var(--muted)}.systems-grid{display:flex;flex-direction:column;gap:30px;margin-top:32px}
+/* the page
+   used to be one flat two-column grid of 12 panels, all fully expanded at
+   once. Grouped into three labeled tiers (Output & Tuning, Calibration &
+   Profiles, Advanced & Diagnostics) per docs/design/DESIGN_NORTH_STAR.md's own
+   "grouping, spacing, collapsible panels, and progressive disclosure"
+   guidance. No panel content, IDs, or behavior changed -- .systems-tier-panels
+   keeps the exact same two-column grid .systems-grid used to be. */
+.systems-tier-heading{display:flex;justify-content:space-between;align-items:start;margin-bottom:14px}
+.systems-tier-heading strong{display:block;color:var(--gold2);font-size:13px;letter-spacing:.4px}
+.systems-tier-heading small{display:block;color:var(--muted);font-size:10px;margin-top:4px}
+.systems-tier-panels{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+/* item 3: Calibration & Profiles and Advanced & Diagnostics reuse the existing
+   .collapsible-card/.card-collapse mechanic (same JS as the inspector's
+   quality-card/tuning-card) so they can be tucked away, collapsed by default,
+   while Output & Tuning (no .collapsible-card class) always stays expanded. */
+.systems-tier.collapsed .systems-tier-panels{display:none}
+.systems-tier.collapsed{padding-bottom:2px}
+.systems-tier.collapsed .systems-tier-heading{margin-bottom:0}
+/* item 5: page-level Simple/Advanced switch, mirroring the .eq-mode-toggle idiom
+   already used for track/output EQ. Simple mode shows only Output & Tuning --
+   the tier people came to this page for; Advanced reveals all three tiers,
+   each still governed by its own item-3 collapse state. Nothing in Calibration
+   & Profiles or Advanced & Diagnostics is deleted or reset by switching modes,
+   only its visibility toggles. */
+#systemsView[data-page-mode="simple"] .systems-tier[data-tier="calibration"],
+#systemsView[data-page-mode="simple"] .systems-tier[data-tier="advanced"]{display:none}
+/* quieter
+   treatment for the Advanced & Diagnostics tier only, so the eye lands on
+   Output & Tuning first. Flatter background, subtler heading, no border
+   accent -- nothing here is hidden or disabled, just visually de-emphasized. */
+.systems-tier[data-tier="advanced"] .systems-tier-heading strong{color:var(--muted);font-size:11px;font-weight:600}
+.systems-tier[data-tier="advanced"] .panel{background:#161719;box-shadow:none}
+.panel{background:#1b1d20;padding:20px;border-radius:8px}.panel.wide{grid-column:1/-1}.panel label{display:block;color:var(--gold2);font-size:10px;letter-spacing:1px;margin-bottom:10px}.panel select{width:100%;height:42px;background:#111;color:white;border:1px solid #333;border-radius:5px;padding:0 10px}.quiet-button{background:#282b30;border-radius:5px}.full{width:100%;height:38px;margin-top:10px}.preset-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:7px}.preset{background:#111315;border:1px solid #333;padding:12px;border-radius:5px;font-size:10px}.preset.active{border-color:var(--gold);color:var(--gold2)}.panel.wide .eq-controls{max-width:400px;margin:20px auto}
+.player{height:88px;display:grid;grid-template-columns:310px 1fr 310px;align-items:center;padding:0 16px;background:#070809;border-top:1px solid #24262a}.playing-info{display:flex;align-items:center;gap:11px;min-width:0}.mini-cover{width:54px;height:54px;background:linear-gradient(135deg,#6d542a,#24201a);display:grid;place-items:center;color:var(--gold2);font:22px Georgia;background-size:cover;background-position:center}.playing-info>div:last-child{min-width:0}.playing-info strong,.playing-info span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.playing-info strong{font-size:11px}.playing-info span{font-size:9px;color:var(--muted);margin-top:5px}.transport{text-align:center}.transport-buttons button{background:transparent;color:#bbb}.transport-buttons .play-button{width:36px;height:36px;background:#f4f1eb;color:#111;border-radius:50%;margin:0 14px}.timeline{display:grid;grid-template-columns:34px minmax(160px,430px) 34px;gap:7px;align-items:center;justify-content:center;font-size:8px;color:#96999d}.timeline input,.volume input{height:3px;accent-color:var(--gold)}.volume{display:flex;justify-content:flex-end;align-items:center;gap:10px}.volume input{width:90px}.volume #qualityBadge{font-size:8px;color:var(--green);border:1px solid #35634f;border-radius:3px;padding:5px 7px}
+.counterform-workspace-cabinet,.counterform-now-playing-resizer,.counterform-track-info-resizer{display:none}
+.playing-info>div:nth-child(2){min-width:0}
+.context-menu{position:fixed;z-index:20;width:190px;background:#242629;border:1px solid #3b3d42;border-radius:6px;padding:5px;box-shadow:0 12px 30px #000a}.context-menu button{display:block;width:100%;padding:10px;background:transparent;text-align:left;border-radius:4px;font-size:11px}.context-menu button:hover{background:#36393e}.context-menu .danger{color:#ff8e8e}.toast{position:fixed;z-index:30;left:50%;bottom:105px;transform:translateX(-50%);background:#eee;color:#151515;border-radius:5px;padding:10px 16px;font-size:11px;box-shadow:0 8px 25px #0008}
+@media(max-width:1180px){.workspace{grid-template-columns:245px 1fr}.inspector{display:none}.player{grid-template-columns:260px 1fr 210px}}@media(max-width:850px){.workspace{grid-template-columns:86px 1fr}.library-rail{padding:14px 8px}.rail-heading strong,.create-button,.library-filters,.rail-tools,.playlist-copy,.playlist-dots,.rail-import{display:none}.playlist-item{grid-template-columns:48px;justify-content:center}.player{grid-template-columns:190px 1fr}.volume{display:none}.playlist-cover{width:125px;height:125px}.playlist-hero{height:330px}}
+.shuffle-primary-switch,.flow-control-actions { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
+.shuffle-primary-switch { margin: 2px 0 4px; padding: 4px; background: color-mix(in srgb,var(--bg) 68%,transparent); border: 1px solid color-mix(in srgb,var(--line) 82%,transparent); }
+.shuffle-primary-switch button,.flow-control-actions button { min-height: 30px; padding: 7px 6px; color: var(--muted); background: color-mix(in srgb,var(--surface2) 62%,transparent); border: 1px solid color-mix(in srgb,var(--line) 82%,transparent); font: 7px var(--pixel-font); }
+.shuffle-primary-switch button.active { color: #111; background: var(--gold); border-color: var(--gold2); }
+.flow-control-actions { grid-template-columns: repeat(2,minmax(0,1fr)); margin-top: 9px; }
+.flow-control-actions button:disabled { cursor: not-allowed; opacity: .48; }
+.flow-tempo-lane { display: grid; gap: 8px; margin-top: 10px; padding: 10px; background: color-mix(in srgb,var(--gold) 7%,var(--bg)); border: 1px solid color-mix(in srgb,var(--gold) 34%,var(--line)); }
+.flow-tempo-readout { display: grid; grid-template-columns: 1fr 20px 1fr; gap: 8px; align-items: center; }
+.flow-tempo-readout span { display: grid; gap: 4px; min-width: 0; }
+.flow-tempo-readout small,.flow-tempo-help summary { color: var(--muted); font: 7px var(--pixel-font); letter-spacing: .12em; }
+.flow-tempo-readout b { color: var(--text); font: 13px/1.2 "Segoe UI",sans-serif; }
+.flow-tempo-readout i { height: 1px; background: color-mix(in srgb,var(--gold2) 68%,var(--line)); }
+.flow-tempo-lane p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.4; }
+.flow-tempo-help { border-top: 1px solid color-mix(in srgb,var(--line) 70%,transparent); padding-top: 7px; }
+.flow-tempo-help summary { cursor: pointer; list-style: none; }
+.flow-tempo-help summary::-webkit-details-marker { display: none; }
+.flow-tempo-help summary::before { content: '+ '; color: var(--gold2); }
+.flow-tempo-help[open] summary::before { content: '- '; }
+.flow-tempo-help p { margin-top: 7px; }
+/* The Flow Shuffle card is two columns only for its header: the title and
+   the 54px score beside it. Every section below the header takes the full
+   width. The shuffle switch, the transition, the tempo lane and the action
+   row did not say so, and the grid auto-placed them -- the tempo lane landed
+   in the 54px score column at every queue width, with its BPM readout and
+   text running out of the box. */
+.flow-shuffle-card > :is(.shuffle-primary-switch, .flow-why-transition, .flow-tempo-lane, .flow-control-actions) { grid-column: 1 / -1; min-width: 0; }
+.flow-tempo-readout b { min-width: 0; overflow-wrap: anywhere; }
+/* In Canvas the queue is a pane of any width, down to 180px, so the card
+   answers to its own width rather than the window's. Narrow, the button rows
+   go to two across and the tempo readout stacks NOW over NEXT; a label that
+   still does not fit wraps inside its button instead of leaving it. */
+.flow-shuffle-card { container-type: inline-size; }
+.flow-shuffle-card :is(.shuffle-primary-switch, .flow-mode-switch, .flow-control-actions) button { min-width: 0; overflow-wrap: anywhere; }
+@container (max-width: 180px) {
+  .flow-shuffle-card > :is(.shuffle-primary-switch, .flow-mode-switch) { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .flow-shuffle-card .flow-tempo-readout { grid-template-columns: minmax(0, 1fr) !important; }
+  .flow-shuffle-card .flow-tempo-readout i { display: none; }
+}
+.queue-intent { display: inline-block; margin-left: 5px; padding: 1px 3px; color: var(--gold2); border: 1px solid color-mix(in srgb,var(--gold) 42%,var(--line)); font: 6px var(--pixel-font); font-style: normal; letter-spacing: .08em; }
+@media (max-width: 420px) { .shuffle-primary-switch { grid-template-columns: 1fr; } }
+
+/* Collection artwork is reversible: choosing a local image never traps the
+   theme-owned empty-art treatment behind an inaccessible persisted path. */
+.background-cabinet{position:absolute;z-index:52;top:62px;right:20px;width:min(292px,calc(100% - 40px));padding:12px;color:var(--text);background:#16181bee;border:1px solid #ffffff38;border-radius:8px;box-shadow:0 18px 42px #000c;backdrop-filter:blur(14px)}
+.background-cabinet[hidden]{display:none}
+.background-cabinet-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.background-cabinet-head small{color:var(--gold);font-size:9px;font-weight:800;letter-spacing:.13em}
+.background-cabinet-head button{width:30px;height:30px;display:grid;place-items:center;background:transparent;border:1px solid #ffffff22;border-radius:5px}
+.background-cabinet>strong{display:block;margin-top:9px;font-size:13px}
+.background-cabinet>p{margin:5px 0 12px;color:var(--muted);font-size:10px;line-height:1.45}
+.background-cabinet-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.background-cabinet-actions button{min-height:38px;padding:8px 9px;border:1px solid #ffffff38;border-radius:5px;background:#23262a;color:var(--text);font-size:10px;font-weight:700}
+.background-cabinet-actions button:hover:not(:disabled){border-color:var(--gold)}
+.background-cabinet-actions .background-cabinet-remove{background:transparent}
+.background-cabinet-actions button:disabled{cursor:not-allowed;opacity:.42}
+
+/* Pixelody mark. One shape (assets/brand/pixelody-mark.svg) tinted through a
+   mask so its colour follows --brand-mark: the user's logo colour on base
+   Pixelody, or the active theme's accent when a theme recolours it. */
+:root { --brand-mark: #6a3dff; }
+.brand-mark { display: inline-block; flex: none; width: 24px; height: 24px; background: var(--brand-mark); -webkit-mask: url("assets/brand/pixelody-mark.svg") center / contain no-repeat; mask: url("assets/brand/pixelody-mark.svg") center / contain no-repeat; }
+.theme-load-brand-mark { width: 34px; height: 34px; margin-bottom: 10px; }
+
+.topbar-brand-mark { align-self: center; width: 24px; height: 24px; }

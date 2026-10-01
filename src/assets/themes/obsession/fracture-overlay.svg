@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-label="Original abstract fracture-line overlay for Obsession Mode">
+  <defs>
+    <linearGradient id="red" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff5865" stop-opacity=".72"/>
+      <stop offset=".45" stop-color="#c91527" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#f2ece8" stop-opacity=".38"/>
+    </linearGradient>
+    <filter id="soft">
+      <feGaussianBlur stdDeviation=".35"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="760" fill="none"/>
+  <g fill="none" stroke="url(#red)" stroke-linecap="square" stroke-linejoin="miter" filter="url(#soft)">
+    <path d="M72 126 252 188 438 162 580 246 754 224 912 332 1092 306" stroke-width="2.5"/>
+    <path d="M438 162 402 262 462 344 430 446 512 578" stroke-width="1.25" opacity=".76"/>
+    <path d="M754 224 706 312 732 414 658 512 674 668" stroke-width="1.5" opacity=".82"/>
+    <path d="M252 188 214 298 128 376 174 502" stroke-width="1" opacity=".66"/>
+    <path d="M912 332 840 420 884 530 824 650" stroke-width="1.15" opacity=".68"/>
+    <path d="M178 616 344 548 510 588 684 526 864 582 1048 502" stroke-width="1.8" opacity=".72"/>
+  </g>
+  <g fill="#f2ece8" opacity=".36">
+    <rect x="249" y="185" width="4" height="4"/>
+    <rect x="435" y="159" width="5" height="5"/>
+    <rect x="751" y="221" width="4" height="4"/>
+    <rect x="909" y="329" width="5" height="5"/>
+    <rect x="681" y="523" width="4" height="4"/>
+  </g>
+</svg>

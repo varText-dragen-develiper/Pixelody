@@ -1,0 +1,219 @@
+.rail-empty {
+  padding: 28px 14px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 9px;
+  line-height: 1.6;
+}
+
+.playlist-creator-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 75;
+}
+
+.playlist-creator-backdrop {
+  position: absolute;
+  inset: 0;
+  background: #000a;
+  backdrop-filter: blur(6px);
+}
+
+.playlist-creator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(390px, calc(100vw - 32px));
+  padding: 25px;
+  transform: translate(-50%, -50%);
+  color: var(--text);
+  background: color-mix(in srgb, var(--surface) 94%, var(--gold) 6%);
+  border: 1px solid var(--pixel-edge);
+  clip-path: var(--pixel-cut);
+  box-shadow: 0 24px 70px #000c;
+}
+
+.playlist-creator-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+}
+
+.playlist-creator-heading p {
+  margin: 0;
+  color: var(--gold);
+  font: 8px var(--pixel-font);
+  letter-spacing: .14em;
+}
+
+.playlist-creator-heading h2 {
+  margin: 6px 0 22px;
+  font: 25px var(--pixel-font);
+}
+
+.playlist-creator-heading button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: #ffffff08;
+}
+
+.playlist-creator > label {
+  display: block;
+  color: var(--muted);
+  font: 8px var(--pixel-font);
+}
+
+.playlist-creator > input {
+  width: 100%;
+  height: 42px;
+  margin-top: 7px;
+  padding: 0 11px;
+  color: var(--text);
+  background: #090a0b;
+  border: 1px solid #34373b;
+}
+
+.playlist-creator-error {
+  margin: 7px 0 0;
+  color: #ff8d7d;
+  font-size: 9px;
+}
+
+.playlist-creator-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.playlist-creator-actions button {
+  padding: 10px 13px;
+  background: #ffffff0b;
+  border: 1px solid #ffffff17;
+  font-size: 9px;
+}
+
+.playlist-creator-actions button:last-child {
+  color: #111;
+  background: var(--gold);
+  border-color: var(--gold);
+  font-weight: 700;
+}
+
+.playlist-picker-track-label {
+  margin: -10px 0 16px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playlist-picker-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 170px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  padding-right: 2px;
+}
+
+.playlist-picker-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 9px 12px;
+  color: var(--text);
+  background: #ffffff0a;
+  border: 1px solid #ffffff17;
+  font-size: 9px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.playlist-picker-item:hover,
+.playlist-picker-item:focus-visible {
+  background: #ffffff18;
+  border-color: var(--gold);
+  outline: none;
+}
+
+.playlist-picker-item.already-added {
+  opacity: 0.6;
+}
+
+.playlist-picker-item-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.playlist-picker-item-meta {
+  flex-shrink: 0;
+  margin-left: 8px;
+  color: var(--muted);
+  font-size: 8px;
+}
+
+.playlist-picker-empty {
+  padding: 16px 8px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.playlist-picker-new-section {
+  border-top: 1px solid #ffffff14;
+  padding-top: 14px;
+}
+
+.playlist-picker-new-section > label {
+  display: block;
+  color: var(--muted);
+  font: 8px var(--pixel-font);
+}
+
+.playlist-picker-new-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 7px;
+}
+
+.playlist-picker-new-row > input {
+  flex: 1;
+  min-width: 0;
+  height: 38px;
+  padding: 0 11px;
+  color: var(--text);
+  background: #090a0b;
+  border: 1px solid #34373b;
+  font-size: 10px;
+}
+
+.playlist-picker-create-button {
+  padding: 0 13px;
+  height: 38px;
+  white-space: nowrap;
+  color: #111;
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  font-size: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.playlist-picker-create-button:hover,
+.playlist-picker-create-button:focus-visible {
+  filter: brightness(1.1);
+  outline: none;
+}
+

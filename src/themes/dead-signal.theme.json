@@ -1,0 +1,13 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.dead-signal",
+  "name": "Dead Signal",
+  "author": "Pixelody",
+  "description": "An elegant haunted broadcast archive of bone-white instruments, dark machine surfaces, cyan wave motion, dried crimson signal lock, and restrained analog contamination.",
+  "palette": { "primary": "#1bd7d0", "secondary": "#d09a3a", "base": "#020202" },
+  "assets": { "backgroundTexture": "../assets/themes/dead-signal/scratched-metal-cc0.png", "heroOverlay": "../assets/themes/dead-signal/dead-tower.svg", "panelFrame": "../assets/themes/dead-signal/fracture-mask.svg", "iconSet": null },
+  "hud": { "layout": "cinematic", "controls": "technical", "corners": "square" },
+  "typography": { "profile": "display", "font": "../assets/themes/dead-signal/Oswald-Variable.ttf" },
+  "motion": { "profile": "signal", "intensity": "calm" }
+}

@@ -1,0 +1,91 @@
+.hero-edit,
+.metadata-toggle {
+  right: 20px;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: .78;
+  transform-origin: right center;
+  transition: width 280ms cubic-bezier(.2, .82, .2, 1), background 180ms ease, border-color 180ms ease, opacity 180ms ease;
+}
+
+.hero-edit {
+  --hero-action-width: 154px;
+}
+
+.metadata-toggle {
+  --hero-action-width: 108px;
+}
+
+.hero-edit:hover,
+.hero-edit:focus-visible,
+.metadata-toggle:hover,
+.metadata-toggle:focus-visible {
+  width: var(--hero-action-width);
+  opacity: 1;
+  background: color-mix(in srgb, var(--surface2) 90%, var(--gold) 10%);
+  border-color: color-mix(in srgb, var(--gold) 58%, transparent);
+}
+
+.hero-edit .pixel-icon,
+.metadata-toggle .public-icon {
+  width: 20px;
+  height: 20px;
+  margin: 0 9px !important;
+  flex: 0 0 20px;
+  color: var(--gold);
+}
+
+.hero-action-label {
+  display: block;
+  flex: none;
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+  transform: translateX(-4px);
+  font: 8px/1 var(--pixel-font);
+  letter-spacing: .035em;
+  transition: opacity 130ms ease, clip-path 250ms cubic-bezier(.2, .82, .2, 1), transform 250ms cubic-bezier(.2, .82, .2, 1);
+}
+
+.hero-edit:hover .hero-action-label,
+.hero-edit:focus-visible .hero-action-label,
+.metadata-toggle:hover .hero-action-label,
+.metadata-toggle:focus-visible .hero-action-label {
+  opacity: 1;
+  clip-path: inset(0 0 0 0);
+  transform: translateX(0);
+}
+
+body[data-effect-hover="false"] .hero-edit,
+body[data-effect-hover="false"] .metadata-toggle,
+body[data-effect-hover="false"] .hero-action-label {
+  transition: none;
+}
+
+.metadata-close {
+  padding: 0;
+  line-height: 0;
+}
+
+.metadata-close .icon-close {
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  vertical-align: 0;
+  mask-size: 24px 24px;
+  transform: translateX(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-edit,
+  .metadata-toggle,
+  .hero-action-label {
+    transition-duration: 1ms;
+  }
+}

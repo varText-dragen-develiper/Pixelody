@@ -1,0 +1,28 @@
+/* Final mini-player performance layer. Loaded after every theme stylesheet. */
+body[data-performance="balanced"] .mini-shell{backdrop-filter:none!important}
+body[data-performance="balanced"] :is(.mini-glow,.mini-art){filter:none!important}
+body[data-performance="balanced"].playing :is(.mini-art,.mini-play) .signal-orbit-ring{
+  animation:none!important;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--mini-signal-color) 22%,transparent),0 0 5px color-mix(in srgb,var(--mini-signal-glow) 24%,transparent)!important;
+}
+body[data-performance="balanced"].playing :is(.mini-art,.mini-play) .signal-orbit-ring::before{
+  filter:none!important;
+  box-shadow:0 0 5px color-mix(in srgb,var(--mini-signal-color) 50%,transparent)!important;
+}
+body[data-performance="balanced"].playing :is(.mini-art,.mini-play) .signal-orbit-ring::after,
+body[data-performance="balanced"].playing :is(.mini-art,.mini-play) .signal-orbit-ring>.signal-trace-cell:nth-child(n+3){
+  display:none!important;
+  animation:none!important;
+}
+body[data-performance="conserve"] *{transition-duration:70ms!important;transition-delay:0ms!important}
+body[data-performance="conserve"] .mini-shell{backdrop-filter:none!important}
+body[data-performance="conserve"] .signal-orbit-ring,
+body[data-performance="conserve"] .signal-orbit-ring::before,
+body[data-performance="conserve"] .signal-orbit-ring::after,
+body[data-performance="conserve"] .signal-trace-cell{animation-play-state:paused!important;filter:none!important;opacity:.16!important}
+
+body[data-visibility="hidden"] *,
+body[data-visibility="hidden"] *::before,
+body[data-visibility="hidden"] *::after{
+  animation-play-state:paused!important;
+}

@@ -1,0 +1,55 @@
+/* ASCII Social mini player. Converted onto mini-player.css's --mini-*
+   baseline for shell/art/copy/progress/play colors and geometry. Kept
+   bespoke: the emoticon watermark background layer, the online-status/face
+   pseudo-elements, and per-target button styling where mini-controls and
+   window-actions buttons deliberately use two different accent colors
+   (a case where the shared --mini-btn-color token would be wrong -- it
+   drives both at once by design, see docs/themes/THEME_SYSTEM.md). */
+body[data-theme="ascii-social"]{
+  --mini-accent:#d6b45d;
+  --mini-art:url("assets/themes/ascii-social/emoticon-wall.svg");
+  background:#07090c;
+  color:#e7e0d3;
+  font-family:Verdana,"Segoe UI",sans-serif;
+  --mini-shell-border:1px solid #3f4a52;
+  --mini-shell-radius:6px;
+  --mini-shell-bg:linear-gradient(180deg,#1d2730f7,#0b0f14fb),var(--mini-art) 105% 24%/190px no-repeat;
+  --mini-shell-shadow:inset 0 1px 0 #ffffff18,0 18px 44px #000a;
+  --mini-art-border:1px solid #6f7a83;
+  --mini-art-radius:5px;
+  --mini-art-bg:#0b0f14;
+  --mini-art-shadow:inset 0 0 20px #000b,0 8px 18px #0008;
+  --mini-copy-eyebrow-color:#79d8cf;
+  --mini-copy-eyebrow-font:700 8px Consolas,"Courier New",monospace;
+  --mini-copy-meta-color:#9ba6ad;
+  --mini-copy-time-color:#9ba6ad;
+  --mini-progress-height:5px;
+  --mini-progress-radius:3px;
+  --mini-progress-bg:#0b0f14;
+  --mini-progress-fill:linear-gradient(90deg,#d6b45d,#79d8cf);
+  --mini-play-radius:5px;
+  --mini-play-border:1px solid #8b7240;
+  --mini-play-bg:linear-gradient(180deg,#d6b45d,#8b6b34);
+  --mini-play-color:#0b0f14;
+  --mini-play-shadow:inset 0 1px 0 #fff5,0 7px 16px #0008;
+}
+body[data-theme="ascii-social"] .mini-shell::before{content:"AS2 / ONLINE";position:absolute;right:14px;top:9px;color:#d6b45d;font:800 10px Consolas,"Courier New",monospace;letter-spacing:.08em}
+body[data-theme="ascii-social"] .mini-shell::after{content:"(^_^)";position:absolute;left:15px;bottom:10px;color:#79d8cf;font:900 14px Consolas,"Courier New",monospace;text-shadow:0 0 8px #79d8cf66}
+body[data-theme="ascii-social"] .mini-shell>*{position:relative;z-index:1}
+body[data-theme="ascii-social"] .mini-glow{background:radial-gradient(circle,#79d8cf2b,transparent 68%);filter:blur(8px)}
+body[data-theme="ascii-social"] .mini-art.has-image{background-size:cover}
+body[data-theme="ascii-social"] .mini-art::after{content:"( o.o )";position:absolute;inset:0;display:grid;place-items:center;color:#79d8cf;font:900 13px Consolas,"Courier New",monospace}
+body[data-theme="ascii-social"] .mini-art.has-image::after{display:none}
+body[data-theme="ascii-social"] .mini-copy small::after{content:" / LOCAL";color:#d6b45d}
+body[data-theme="ascii-social"] .mini-copy strong{font-weight:800;text-shadow:0 2px 0 #000}
+body[data-theme="ascii-social"] .mini-copy>span,body[data-theme="ascii-social"] .mini-time{font-family:Consolas,"Courier New",monospace}
+body[data-theme="ascii-social"] .mini-progress{border:1px solid #3f4a52;box-shadow:inset 0 1px 5px #000c}
+body[data-theme="ascii-social"] .mini-progress i{border-radius:2px}
+body[data-theme="ascii-social"] .mini-controls{border:1px solid #3f4a52;border-radius:6px;background:#0b0f14;box-shadow:inset 0 1px 0 #ffffff12}
+body[data-theme="ascii-social"] .mini-controls button{border-radius:4px;color:#e7e0d3}
+body[data-theme="ascii-social"] .window-actions button{border-radius:4px;color:#d6b45d}
+body[data-theme="ascii-social"].playing .mini-shell::before{animation:mini-ascii-scan 2.8s steps(2,end) infinite}
+body[data-theme="ascii-social"].playing .mini-progress i{animation:mini-ascii-spark 2.4s ease-in-out infinite}
+@keyframes mini-ascii-scan{50%{color:#79d8cf;text-shadow:0 0 10px #79d8cf55}}
+@keyframes mini-ascii-spark{50%{filter:brightness(1.15)}}
+@media(prefers-reduced-motion:reduce){body[data-theme="ascii-social"].playing .mini-shell::before,body[data-theme="ascii-social"].playing .mini-progress i{animation:none}}

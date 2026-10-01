@@ -1,0 +1,55 @@
+/* Ghost Index mini-player: original compact process window. */
+body[data-theme="ghost-index"]{
+  color:#e8e7e2;
+  --mini-shell-columns:clamp(78px,25vw,102px) minmax(108px,1fr) auto;
+  --mini-shell-gap:15px;
+  --mini-shell-padding:28px 16px 14px;
+  --mini-shell-border:1px solid #e8e7e2;
+  --mini-shell-radius:0;
+  --mini-shell-bg:#020303;
+  --mini-shell-shadow:5px 5px 0 #303533;
+  --mini-art-border:1px solid #e8e7e2;
+  --mini-art-radius:50%;
+  --mini-art-bg:radial-gradient(circle,rgba(232,231,226,.16) 1px,transparent 1.4px),#080a0a;
+  --mini-art-glyph-color:#e8e7e2;
+  --mini-copy-eyebrow-color:#41ff68;
+  --mini-copy-eyebrow-font:7px Consolas,"Courier New",monospace;
+  --mini-copy-eyebrow-tracking:.14em;
+  --mini-copy-title-color:#e8e7e2;
+  --mini-copy-meta-color:#969c98;
+  --mini-copy-time-color:#969c98;
+  --mini-progress-bg:#303533;
+  --mini-progress-fill:#41ff68;
+  --mini-btn-radius:0;
+  --mini-play-border:1px solid #020303;
+  --mini-play-radius:50%;
+  --mini-play-bg:#020303;
+  --mini-play-color:#e8e7e2;
+  --mini-play-shadow:0 0 0 5px #020303,0 0 0 6px #656b67;
+}
+body[data-theme="ghost-index"] .mini-shell{position:relative;overflow:hidden;background-image:radial-gradient(circle at 72% 55%,rgba(232,231,226,.08) 1px,transparent 1.4px);background-size:10px 10px}
+body[data-theme="ghost-index"] .mini-shell::before{content:"File   Event   Field   Process   Help                 GI / LOCAL";position:absolute;left:1px;right:1px;top:1px;height:20px;padding:6px 7px;background:#e8e7e2;color:#020303;font:700 7px/1 Consolas,"Courier New",monospace;letter-spacing:.05em;box-sizing:border-box;white-space:nowrap;overflow:hidden}
+body[data-theme="ghost-index"] .mini-shell::after{content:none}
+body[data-theme="ghost-index"] .mini-art{position:relative;overflow:visible;margin-top:7px;background-size:10px 10px;box-shadow:0 0 0 7px #020303,0 0 0 8px #e8e7e2,0 0 0 15px #020303,0 0 0 16px #303533;filter:grayscale(1)}
+body[data-theme="ghost-index"] .mini-art::before,body[data-theme="ghost-index"] .mini-art::after{content:"";position:absolute;pointer-events:none}
+body[data-theme="ghost-index"] .mini-art::before{left:-16px;right:-16px;top:50%;height:1px;background:linear-gradient(90deg,#ff596d,transparent 28% 72%,#41ff68)}
+body[data-theme="ghost-index"] .mini-art::after{inset:12px;border:1px solid rgba(232,231,226,.7);border-radius:50%}
+body[data-theme="ghost-index"] .mini-copy{margin-top:8px}
+body[data-theme="ghost-index"] .mini-copy small,body[data-theme="ghost-index"] .mini-copy strong{text-transform:uppercase}
+body[data-theme="ghost-index"] .mini-copy strong{font-family:Georgia,"Times New Roman",serif;font-weight:500;letter-spacing:-.02em;text-transform:none}
+body[data-theme="ghost-index"] .mini-progress{border-radius:0;height:3px}
+body[data-theme="ghost-index"] .mini-controls button{color:#e8e7e2}
+body[data-theme="ghost-index"] .mini-controls button:hover{background:#ff596d;color:#020303}
+body[data-theme="ghost-index"] #miniPlay{border:1px solid #e8e7e2!important;background:#020303!important;color:#e8e7e2!important;clip-path:none}
+body[data-theme="ghost-index"] #miniPlay:hover{border-color:#41ff68!important;background:#41ff68!important}
+body[data-theme="ghost-index"] #miniPlay .signal-orbit-ring{display:none!important;visibility:hidden!important;opacity:0!important;animation:none!important}
+body[data-theme="ghost-index"] #miniPlayIcon{position:relative!important;z-index:2147483647!important;display:block!important;width:20px!important;height:20px!important;-webkit-mask:none!important;mask:none!important;background:#e8e7e2}
+body[data-theme="ghost-index"] #miniPlay:hover #miniPlayIcon{background:#020303}
+body[data-theme="ghost-index"] #miniPlayIcon.mini-play-icon{clip-path:polygon(24% 10%,88% 50%,24% 90%)}
+body[data-theme="ghost-index"] #miniPlayIcon.mini-pause-icon{clip-path:none;background:linear-gradient(90deg,#e8e7e2 0 32%,transparent 32% 62%,#e8e7e2 62% 100%)}
+body[data-theme="ghost-index"] #miniPlay:hover #miniPlayIcon.mini-pause-icon{background:linear-gradient(90deg,#020303 0 32%,transparent 32% 62%,#020303 62% 100%)}
+body[data-theme="ghost-index"] .mini-art .signal-orbit-ring{--mini-signal-color:#41ff68;--mini-signal-hot:#e8e7e2;--mini-signal-glow:#ff596d;opacity:.32!important}
+body[data-theme="ghost-index"] .mini-glow{height:2px;background:linear-gradient(90deg,transparent,#ff596d 24%,#e8e7e2 50%,#41ff68 76%,transparent)}
+body[data-theme="ghost-index"].playing:not([data-motion="off"]):not([data-performance="conserve"]) .mini-glow{animation:gi-mini-scan 4.6s steps(8,end) infinite}
+@keyframes gi-mini-scan{0%,100%{transform:translateX(-22%);opacity:.34}50%{transform:translateX(22%);opacity:.9}}
+body[data-theme="ghost-index"][data-motion="off"] *,body[data-theme="ghost-index"][data-performance="conserve"] *{animation:none!important;transition:none!important}

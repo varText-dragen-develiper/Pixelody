@@ -1,0 +1,196 @@
+@font-face{font-family:"Quest Pixel";src:url("assets/fonts/GeistPixel-Circle.woff2") format("woff2");font-weight:400 700;font-display:swap}
+
+/* Other development themes retain dormant bespoke roots in the shared mini
+   DOM. CQ-16 owns this window, so those roots must remain parked. */
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] :is(.counterform-mini-choir,.vv-mini-board,.vv-mini-bus,.axis-mini-breakline){display:none!important}
+
+/* Portable link deck: the default window shows the complete player without
+   requiring resize, while narrow layouts yield secondary metadata first. */
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"]{--mini-accent:#7b68c9;background:#080b15;color:#f0ece4;font-family:"Quest Pixel","Segoe UI",sans-serif;image-rendering:pixelated}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-shell{grid-template-columns:86px minmax(170px,1fr) 118px;gap:12px;align-items:center;overflow:hidden;padding:28px 14px 14px;clip-path:none;border:5px solid #34343d;border-radius:4px;background:linear-gradient(180deg,#b8b5b0 0 22px,#8f8d95 22px 100%);box-shadow:inset 3px 3px #d6d2ca,inset -4px -4px #5f5d66,6px 6px #10131f}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-shell::before{content:"CQ-16 // LINK DECK";position:absolute;left:18px;top:7px;width:auto;height:auto;background:none;color:#34343d;font:6px "Quest Pixel",sans-serif;letter-spacing:.08em}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-shell::after{content:"";position:absolute;z-index:2;right:64px;top:8px;width:7px;height:7px;border-radius:0;background:#55c98a;box-shadow:0 0 0 2px #34343d,0 0 7px #55c98a88}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-shell>*:not(.mini-glow):not(.mini-drag-strip):not(.mini-resize-grip){position:relative;z-index:1}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-glow{position:absolute;inset:22px 5px 5px;background:linear-gradient(90deg,transparent,#7b68c91f 48%,#f2c94c18 62%,transparent);pointer-events:none;filter:none}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-drag-strip{position:absolute;z-index:8;top:0;right:60px;left:0;height:24px}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-resize-grip{position:absolute;z-index:9;opacity:.9}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-resize-grip::before,body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-resize-grip::after{height:2px;background:#4d4b55;box-shadow:0 1px #b8b5b0}
+
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-art{
+  position:relative;
+  width:82px;
+  height:82px;
+  margin:0;
+  clip-path:none;
+  border:4px solid #4d4b55;
+  border-radius:2px;
+  background:#77727b url("assets/themes/cartridge-quest/music-cartridge.png") center/contain no-repeat;
+  box-shadow:inset 2px 2px #b8b5b0,inset -2px -2px #34343d,4px 4px #262a3b;
+}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-art::before{content:"";position:absolute;inset:-6px;padding:2px;border-radius:4px;pointer-events:none;background:conic-gradient(transparent 0deg,transparent 224deg,#55c98a44 276deg,#f2c94c 318deg,#fff7c4 334deg,#f2c94c 344deg,transparent 358deg);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.2;filter:drop-shadow(0 0 5px #f2c94c66)}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-art::after{content:"CART 01";position:absolute;right:5px;bottom:5px;left:5px;padding:3px 2px 2px;border:2px solid #4d4b55;background:#d6d2ca;color:#262a3b;font:5px "Quest Pixel",sans-serif;letter-spacing:.08em;text-align:center;pointer-events:none}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .mini-art{box-shadow:inset 2px 2px #b8b5b0,inset -2px -2px #34343d,4px 4px #262a3b,0 0 0 3px #f2c94ccc,0 0 18px #f2c94c88,0 0 32px #55c98a55}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .mini-art::after{background:#f2c94c;color:#10131f}
+
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-copy{
+  position:relative;
+  align-self:stretch;
+  min-width:0;
+  min-height:0;
+  margin:0;
+  padding:24px 9px 8px;
+  overflow:hidden;
+  border:4px solid #4d4b55;
+  background:#10162a;
+  color:#f0ece4;
+  box-shadow:inset 3px 3px #080b15,inset -2px -2px #262a3b,3px 3px #5f5d66;
+}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-copy::before{content:"NOW PLAYING // SAVE 01";position:absolute;top:6px;left:8px;color:#55c98a;font:5px "Quest Pixel",sans-serif;letter-spacing:.08em}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-copy::after{content:"";position:absolute;top:7px;right:8px;width:5px;height:5px;background:#34384b;box-shadow:-9px 0 #34384b}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .mini-copy::after{background:#f2c94c;box-shadow:-9px 0 #55c98a,0 0 6px #f2c94c88}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-copy small{color:#f2c94c;font-size:6px;line-height:1;letter-spacing:.08em}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-copy strong{margin-top:5px;color:#fff7c4;font-size:11px;line-height:1.15;text-transform:uppercase}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-copy>span{margin-top:4px;color:#b8b5b0;font-size:7px;line-height:1.2}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-time{margin-top:3px;color:#8c8990;font-size:6px}
+
+.mini-quest-stats{display:none}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-quest-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;margin-top:5px;color:#f2c94c;font-size:5px;letter-spacing:.04em;text-transform:uppercase}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-quest-stats span{position:relative;min-width:0;padding:3px 2px;overflow:hidden;border:2px solid #34384b;background:#262a3b;color:#f2c94c;text-align:center;box-shadow:inset 1px 1px #080b15;text-overflow:ellipsis;white-space:nowrap;font-variant-numeric:tabular-nums}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] #miniQuestXp{color:#fff7c4;text-shadow:1px 0 #7b68c9,-1px 0 #327d59}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] #miniQuestCombo{color:#55c98a;border-color:#7b68c9;text-shadow:1px 0 #403d68,-1px 0 #f2c94c}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] #miniQuestCombo[data-combo-tier="0"]{opacity:.78}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] #miniQuestCombo[data-combo-tier="2"],body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] #miniQuestCombo[data-combo-tier="3"],body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] #miniQuestCombo[data-combo-tier="4"]{box-shadow:inset 1px 1px #080b15,0 0 0 1px #55c98a66}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] #miniQuestXp::after{content:attr(data-reward);position:absolute;right:-9px;top:-16px;padding:3px 4px;border:2px solid #262a3b;background:#f2c94c;color:#10131f;box-shadow:2px 2px #403d68;opacity:0}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] #miniQuestXp.mini-quest-rewarding{animation:mini-quest-jackpot .88s steps(6,end) both!important}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] #miniQuestXp.mini-quest-rewarding::after{animation:mini-quest-reward-tag .88s steps(5,end) both}
+
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-progress{height:7px;margin-top:7px;border:2px solid #5f5d66;border-radius:0;background:#080b15;box-shadow:inset 1px 1px #000}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-progress i{background:repeating-linear-gradient(90deg,#7b68c9 0 8px,#a99ee2 8px 11px,#55c98a 11px 14px);box-shadow:0 0 6px #7b68c988}
+
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-controls{
+  position:relative;
+  z-index:6;
+  display:grid;
+  grid-template-columns:28px 44px 28px;
+  align-self:center;
+  justify-content:center;
+  width:118px;
+  min-width:118px;
+  height:78px;
+  padding:22px 6px 7px;
+  gap:4px;
+  border:4px solid #4d4b55;
+  background:linear-gradient(180deg,#d6d2ca,#8f8d95);
+  box-shadow:inset 3px 3px #f0ece4,inset -3px -3px #5f5d66,3px 3px #262a3b;
+  -webkit-app-region:no-drag;
+  pointer-events:auto;
+}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-controls::before{content:"TRANSPORT // P1";position:absolute;top:6px;left:8px;color:#34343d;font:5px "Quest Pixel",sans-serif;letter-spacing:.1em;pointer-events:none}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-controls::after{content:"";position:absolute;right:7px;bottom:5px;left:7px;height:3px;background:repeating-linear-gradient(90deg,#4d4b55 0 7px,transparent 7px 11px);opacity:.7;pointer-events:none}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-controls button{width:28px;height:34px;min-width:28px;clip-path:none;border:3px solid #4d4b55;border-radius:50%;background:#77727b;color:#f0ece4;box-shadow:inset 1px 1px #b8b5b0,inset -1px -1px #34343d,2px 2px #4d4b55;pointer-events:auto;-webkit-app-region:no-drag}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-controls .mini-play{position:relative;width:44px;height:44px;border:4px solid #403d68;border-radius:50%;background:#7b68c9;color:#fff;box-shadow:inset 2px 2px #a99ee2,inset -2px -2px #403d68,3px 3px #4d4b55}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-controls .mini-play::before{content:"";position:absolute;inset:-7px;padding:3px;border-radius:50%;pointer-events:none;background:conic-gradient(transparent 0deg,transparent 210deg,#55c98a33 250deg,#55c98a 286deg,#f2c94c 316deg,#fff7c4 334deg,#f2c94c 346deg,transparent 358deg);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.2;filter:drop-shadow(0 0 7px #f2c94c99)}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-controls .mini-play>*{position:relative;z-index:1}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] :is(.mini-controls,.window-actions) button:focus-visible{outline:3px solid #f2c94c;outline-offset:2px;filter:brightness(1.12)}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .mini-controls .mini-play{box-shadow:inset 2px 2px #a99ee2,inset -2px -2px #403d68,3px 3px #4d4b55,0 0 0 3px #f2c94ccc,0 0 18px #f2c94caa,0 0 30px #55c98a66}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-controls button:hover{transform:translateY(-2px);filter:brightness(1.14);transition:transform 140ms cubic-bezier(.16,.84,.24,1),filter 110ms ease-out}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-controls button:active{animation:mini-quest-impact .3s steps(2,end)}
+
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .window-actions{top:5px;right:7px;gap:2px}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .window-actions button{display:grid;width:24px!important;height:20px!important;padding:0;place-items:center;border:2px solid #4d4b55;background:#8f8d95;color:#262a3b;box-shadow:inset 1px 1px #d6d2ca,inset -1px -1px #5f5d66}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .window-actions .mini-public-icon{width:12px;height:12px;mask-size:12px 12px}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .window-actions button:hover{background:#7b68c9;color:#fff7c4}
+
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .mini-shell::after{animation:mini-quest-led .8s steps(2,end) infinite}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing :is(.mini-art,.mini-play){animation:mini-quest-visible-signal 2.4s steps(3,end) infinite}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .mini-art::before{opacity:.78;animation:mini-quest-orbit 5.4s linear infinite}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .mini-controls .mini-play::before{opacity:.95;animation:mini-quest-orbit 3.8s linear infinite}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .mini-progress i{animation:mini-quest-energy 1.4s steps(4,end) infinite}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .mini-quest-stats span:first-child{animation:mini-quest-score .9s steps(2,end) infinite}
+
+@keyframes mini-quest-led{50%{opacity:.3}}
+@keyframes mini-quest-visible-signal{50%{filter:brightness(1.13) saturate(1.18)}}
+@keyframes mini-quest-orbit{to{transform:rotate(360deg)}}
+@keyframes mini-quest-energy{50%{filter:brightness(1.45)}}
+@keyframes mini-quest-impact{20%{transform:translate(-3px,2px)}45%{transform:translate(3px,-2px)}70%{transform:translate(-2px,-1px)}100%{transform:translate(0)}}
+@keyframes mini-quest-score{50%{box-shadow:inset 1px 1px #080b15,0 0 0 2px #55c98a55}}
+@keyframes mini-quest-jackpot{0%{transform:translate(0);filter:brightness(1)}18%{transform:translate(-1px,1px);filter:brightness(1.8)}38%{transform:translate(1px,-1px)}62%{transform:translate(-1px,0);filter:brightness(1.35)}100%{transform:translate(0);filter:brightness(1)}}
+@keyframes mini-quest-reward-tag{0%{opacity:0;transform:translateY(5px) scale(.8)}22%,72%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-9px) scale(.9)}}
+
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-glow="false"] :is(.mini-art,.mini-play)::before{display:none!important}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-glow="false"].playing :is(.mini-art,.mini-play){animation:none!important;filter:none!important}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-glow="false"].playing .mini-art{box-shadow:inset 2px 2px #b8b5b0,inset -2px -2px #34343d,4px 4px #262a3b}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-glow="false"].playing .mini-play{box-shadow:inset 2px 2px #a99ee2,inset -2px -2px #403d68,3px 3px #4d4b55}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-performance="conserve"].playing :is(.mini-art,.mini-play)::before{animation-play-state:paused!important;filter:none!important}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-performance="conserve"].playing .mini-play::before{animation-play-state:paused!important}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-glow="false"][data-performance="conserve"].playing :is(.mini-art,.mini-play)::before{display:none!important;animation:none!important}
+
+/* Reconnect the archived stepped signal portal. mini-signal-orbit.css keeps
+   its original key fail-closed, so the Canvas mini owns an explicit alias. */
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"]{--mini-signal-color:#f2c94c;--mini-signal-hot:#55c98a;--mini-signal-glow:#7b68c9;--mini-signal-art-radius:2px}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing :is(.mini-art,.mini-play) .signal-orbit-ring{border-color:#f2c94ccc!important;border-radius:2px!important;background:linear-gradient(90deg,#f2c94c 0 7px,transparent 7px calc(100% - 7px),#55c98a calc(100% - 7px) 100%) top left/100% 3px no-repeat,linear-gradient(90deg,#55c98a 0 7px,transparent 7px calc(100% - 7px),#f2c94c calc(100% - 7px) 100%) bottom left/100% 3px no-repeat,linear-gradient(180deg,#f2c94c 0 7px,transparent 7px calc(100% - 7px),#7b68c9 calc(100% - 7px) 100%) top left/3px 100% no-repeat,linear-gradient(180deg,#7b68c9 0 7px,transparent 7px calc(100% - 7px),#55c98a calc(100% - 7px) 100%) top right/3px 100% no-repeat,repeating-conic-gradient(from 0deg,#f2c94c11 0 25%,transparent 0 50%) 0 0/8px 8px!important;box-shadow:inset 0 0 0 2px #10131fcc,0 0 0 2px #262a3b,0 0 10px #f2c94c77,0 0 18px #55c98a44!important;image-rendering:pixelated!important;animation:mini-signal-quest-gate-snap var(--mini-signal-ring-speed) steps(6,end) infinite!important}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing :is(.mini-art,.mini-play) .signal-orbit-ring::before{width:24px!important;height:7px!important;border-radius:0!important;background:linear-gradient(90deg,transparent 0 8%,#f2c94c 8% 34%,#fff7c4 34% 48%,#55c98a 48% 72%,#7b68c9 72% 88%,transparent 88%)!important;box-shadow:0 0 0 2px #10131f,0 0 8px #f2c94caa,3px 3px 0 #403d6888!important;image-rendering:pixelated!important}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing :is(.mini-art,.mini-play) .signal-orbit-ring::after{display:none!important;animation:none!important}
+@supports (offset-path:inset(0 round 16px)){
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing :is(.mini-art,.mini-play) .signal-orbit-ring::before{offset-path:inset(0 round 2px)!important;offset-rotate:0deg!important;animation:mini-signal-quest-block-run var(--mini-signal-ring-speed) steps(14,end) infinite!important}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing :is(.mini-art,.mini-play) .signal-orbit-ring>.signal-trace-cell{--quest-delay:0s;display:block!important;position:absolute!important;left:0!important;top:0!important;width:5px!important;height:5px!important;border-radius:0!important;pointer-events:none!important;background:#f2c94c!important;box-shadow:0 0 0 1px #10131f,0 0 7px #f2c94c99!important;opacity:.88!important;offset-path:inset(0 round 2px)!important;offset-anchor:center!important;offset-rotate:0deg!important;animation:mini-signal-quest-pixel-warp var(--mini-signal-ring-speed) steps(10,end) infinite!important;animation-delay:var(--quest-delay)!important}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing :is(.mini-art,.mini-play) .signal-orbit-ring>.signal-trace-cell:nth-child(1){--quest-delay:0s;background:#f2c94c!important}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing :is(.mini-art,.mini-play) .signal-orbit-ring>.signal-trace-cell:nth-child(2){--quest-delay:-.12s;background:#55c98a!important}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing :is(.mini-art,.mini-play) .signal-orbit-ring>.signal-trace-cell:nth-child(3){--quest-delay:-.24s;background:#7b68c9!important}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing :is(.mini-art,.mini-play) .signal-orbit-ring>.signal-trace-cell:nth-child(4){--quest-delay:-.36s;background:#fff7c4!important}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing :is(.mini-art,.mini-play) .signal-orbit-ring>.signal-trace-cell:nth-child(n+5){display:none!important}
+}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-performance="balanced"].playing :is(.mini-art,.mini-play) .signal-orbit-ring{animation:none!important;box-shadow:inset 0 0 0 2px #10131fcc,0 0 0 2px #262a3b,0 0 6px #f2c94c66!important}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-glow="false"] .signal-orbit-ring,
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-motion="off"].playing .signal-orbit-ring,
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-motion="off"].playing .signal-orbit-ring::before,
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-motion="off"].playing .signal-orbit-ring::after,
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-motion="off"].playing .signal-orbit-ring>.signal-trace-cell{display:none!important;animation:none!important}
+@media(prefers-reduced-motion:reduce){
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .signal-orbit-ring,
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .signal-orbit-ring::before,
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .signal-orbit-ring::after,
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .signal-orbit-ring>.signal-trace-cell{animation:none!important;filter:none!important}
+}
+@media(max-width:430px){
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-shell{grid-template-columns:66px minmax(108px,1fr) 100px;gap:7px;padding:25px 10px 10px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-art{width:62px;height:62px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-copy{padding:22px 7px 7px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-copy strong{font-size:9px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-controls{grid-template-columns:24px 40px 24px;width:100px;min-width:100px;height:68px;padding:18px 4px 5px;gap:2px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-controls button{width:24px;min-width:24px;height:30px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-controls .mini-play{width:40px;height:40px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-controls::after{display:none}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-quest-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-height:170px){
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-shell{padding-top:24px;padding-bottom:9px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-copy{padding-top:21px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-copy>span,body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-quest-stats{display:none}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-controls{height:64px;padding-top:17px}
+}
+@media(min-width:560px){
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-quest-stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(min-width:620px){
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-shell{grid-template-columns:112px minmax(280px,1fr) 132px;gap:16px;padding-inline:18px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-art{width:104px;height:104px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-controls{width:132px;min-width:132px}
+}
+@media(min-height:220px){
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-shell{padding-top:32px;padding-bottom:18px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-art{width:min(112px,100%);height:auto;aspect-ratio:1}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-copy{padding:12px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-controls{height:72px}
+}
+@media(prefers-reduced-motion:reduce){
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .mini-shell::after,
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .mini-art::before,
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .mini-controls .mini-play::before,
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .mini-progress i,
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .mini-quest-stats span:first-child,
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-controls button:active,
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] #miniQuestXp.mini-quest-rewarding,
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] #miniQuestXp.mini-quest-rewarding::after{animation:none}
+}
+

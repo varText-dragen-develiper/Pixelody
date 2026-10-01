@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" role="img" aria-label="Abstract damaged transmission reel">
+  <defs>
+    <radialGradient id="blood" cx="50%" cy="44%" r="52%"><stop offset="0" stop-color="#c31622" stop-opacity=".58"/><stop offset=".46" stop-color="#5e1014" stop-opacity=".28"/><stop offset="1" stop-color="#020202" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffaf0"/><stop offset=".44" stop-color="#8c8580"/><stop offset="1" stop-color="#e8e1d6"/></linearGradient>
+    <filter id="rough"><feTurbulence baseFrequency=".72" numOctaves="2" seed="18" result="noise"/><feComposite in="noise" in2="SourceGraphic" operator="in" result="cut"/><feBlend in="SourceGraphic" in2="cut" mode="screen"/></filter>
+    <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <circle cx="320" cy="320" r="292" fill="url(#blood)"/>
+  <g fill="none" stroke-linecap="square">
+    <circle cx="320" cy="320" r="218" stroke="#2a2525" stroke-width="34"/>
+    <path d="M135 208A218 218 0 0 1 490 162M523 213A218 218 0 0 1 498 498M454 530A218 218 0 0 1 160 486M126 430A218 218 0 0 1 112 281" stroke="#e8e1d6" stroke-width="3" filter="url(#rough)"/>
+    <path d="M154 171A242 242 0 0 1 511 188M551 297A242 242 0 0 1 493 502M396 551A242 242 0 0 1 171 479M94 365A242 242 0 0 1 119 244" stroke="#c31622" stroke-width="5" filter="url(#glow)"/>
+    <circle cx="320" cy="320" r="139" stroke="#5e1014" stroke-width="2" stroke-dasharray="2 13"/>
+  </g>
+  <g filter="url(#rough)">
+    <circle cx="253" cy="292" r="68" fill="#070505" stroke="url(#bone)" stroke-width="4"/>
+    <circle cx="387" cy="292" r="68" fill="#070505" stroke="url(#bone)" stroke-width="4"/>
+    <circle cx="253" cy="292" r="17" fill="#5e1014" stroke="#e8e1d6" stroke-width="3"/>
+    <circle cx="387" cy="292" r="17" fill="#5e1014" stroke="#e8e1d6" stroke-width="3"/>
+    <path d="M253 360C278 410 364 410 387 360M190 419C271 379 374 385 456 426" fill="none" stroke="#e8e1d6" stroke-width="4"/>
+  </g>
+  <path d="M74 333h72l13-11 13 25 17-53 18 76 21-46 17 17 16-9 17 8 19-59 22 107 23-76 17 37 23-23 19 19 16-8 16 8 22-67 18 101 19-69 18 26h83" fill="none" stroke="#c31622" stroke-width="4" filter="url(#glow)"/>
+  <g stroke="#8c8580" stroke-width="2" opacity=".72"><path d="M95 105l63 51M526 94l-54 75M91 529l77-59M539 521l-72-62"/><path d="M191 84l15 62M449 88l-18 65M87 444l68-20M555 419l-68-13"/></g>
+  <path d="M205 126l28 13-18 26 36 19-29 32M458 120l-25 31 19 21-35 32 24 24" fill="none" stroke="#e8e1d6" stroke-width="2" opacity=".55"/>
+</svg>

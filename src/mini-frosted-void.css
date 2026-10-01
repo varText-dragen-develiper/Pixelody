@@ -1,0 +1,46 @@
+@font-face{font-family:"Space Grotesk Void";src:url("assets/themes/cosmic-cinema/SpaceGrotesk-Variable.ttf") format("truetype");font-weight:300 700;font-display:swap}
+@font-face{font-family:"IBM Plex Mono Void";src:url("assets/themes/cosmic-cinema/IBMPlexMono-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
+body[data-theme="frosted-void"]{--mini-accent:#f4f4ef;background:#000;color:#f4f4ef;font-family:"Space Grotesk Void","Segoe UI",sans-serif}
+body[data-theme="frosted-void"] .mini-shell{overflow:hidden;border:1px solid #55595a;border-radius:0;background:#030303;box-shadow:inset 0 1px #ffffff0b,0 18px 55px #000}
+body[data-theme="frosted-void"] .mini-shell::before{content:"";position:absolute;right:30px;top:-18px;width:116px;height:108px;background:url("assets/themes/frosted-void/spectral-bubbles.svg") center/contain no-repeat;opacity:.24;filter:saturate(1.2)}
+body[data-theme="frosted-void"] .mini-shell>*{position:relative;z-index:1}
+body[data-theme="frosted-void"] .mini-glow{background:radial-gradient(circle,#fff3,transparent 66%);filter:blur(10px)}
+body[data-theme="frosted-void"] .mini-art{border:1px solid #e2e4e0;border-radius:1px;background:linear-gradient(145deg,#f4f4ef,#6b6f6e);filter:grayscale(.55);box-shadow:inset 0 0 18px #fff6,0 0 20px #fff2}
+body[data-theme="frosted-void"] .mini-copy small{color:#a9c8ff;font-family:"IBM Plex Mono Void",Consolas,monospace;letter-spacing:.14em}
+body[data-theme="frosted-void"] .mini-copy strong{font-weight:650;letter-spacing:.06em;text-transform:uppercase}
+body[data-theme="frosted-void"] .mini-copy>span,body[data-theme="frosted-void"] .mini-time{color:#7f8382;font-family:"IBM Plex Mono Void",Consolas,monospace}
+body[data-theme="frosted-void"] .mini-progress{height:2px;background:#2a2d2f}
+body[data-theme="frosted-void"] .mini-progress i{background:#f4f4ef;box-shadow:0 0 8px #fff8}
+body[data-theme="frosted-void"] .mini-controls .mini-play{border:1px solid #fff;background:radial-gradient(circle at 38% 30%,#fff,#c9cbc8 65%,#7f8382);color:#000;box-shadow:inset 0 0 9px #fff,0 0 18px #fff5}
+body[data-theme="frosted-void"] .mini-controls button:hover{color:#f4f4ef;text-shadow:0 0 8px #fff}
+body[data-theme="frosted-void"].playing .mini-shell::before{animation:mini-void-light 6s ease-in-out infinite}
+body[data-theme="frosted-void"].playing .mini-art{animation:mini-void-object 5s ease-in-out infinite}
+body[data-theme="frosted-void"] .mini-shell{border-color:rgba(244,244,239,.24);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.14),rgba(8,9,11,.66) 48%,rgba(0,0,0,.74));box-shadow:inset 0 1px rgba(255,255,255,.24),inset 0 -1px rgba(255,255,255,.035),0 20px 55px #0009;backdrop-filter:blur(28px) saturate(1.16)}
+body[data-theme="frosted-void"] .mini-art{border-radius:14px}
+body[data-theme="frosted-void"] .mini-controls .mini-play{box-shadow:inset 0 1px #fff,inset 0 -1px #7778,0 8px 22px #0005,0 0 18px #fff4}
+body[data-theme="frosted-void"] .mini-shell::after{content:"";position:absolute;z-index:2;left:12%;right:12%;top:0;height:1px;background:linear-gradient(90deg,transparent,#8cecffaa,#d9a8ffaa,#ffb2c8aa,#ffe0a399,transparent);opacity:.52;filter:drop-shadow(0 0 4px rgba(205,221,255,.3))}
+body[data-theme="frosted-void"].playing .mini-shell::after{animation:mini-void-refraction 4.8s ease-in-out infinite}
+body[data-theme="frosted-void"] .mini-shell{isolation:isolate}
+body[data-theme="frosted-void"] .mini-controls button{position:relative;overflow:hidden;isolation:isolate}
+body[data-theme="frosted-void"] .mini-controls button::after{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  border-radius:inherit;
+  pointer-events:none;
+  background:linear-gradient(110deg,transparent 0 24%,rgba(128,232,255,.3),rgba(216,168,255,.24),rgba(255,178,204,.18),rgba(255,224,163,.16),transparent 67%);
+  background-size:190% 100%;
+  background-position:120% 0;
+  mix-blend-mode:screen;
+  opacity:0;
+  transition:opacity 180ms ease,background-position 360ms ease,transform 180ms ease;
+}
+body[data-theme="frosted-void"] .mini-controls button:hover::after{opacity:.55;background-position:10% 0}
+body[data-theme="frosted-void"] .mini-controls button:active{transform:translateY(1px) scale(.96)}
+body[data-theme="frosted-void"] .mini-controls button:active::after{opacity:.8;background-position:-20% 0;transition-duration:100ms}
+body[data-theme="frosted-void"].playing .mini-controls .mini-play::after{animation:mini-void-control-caustic 2.4s ease-in-out infinite}
+@keyframes mini-void-light{50%{opacity:.24;filter:grayscale(1) brightness(1.18)}}
+@keyframes mini-void-object{50%{box-shadow:inset 0 0 20px #fff8,0 0 28px #fff4}}
+@keyframes mini-void-refraction{50%{opacity:.84;filter:hue-rotate(18deg) drop-shadow(0 0 7px rgba(205,221,255,.4));transform:scaleX(.9)}}
+@keyframes mini-void-control-caustic{50%{background-position:-14% 0;filter:hue-rotate(16deg) saturate(1.25)}}
+@media(prefers-reduced-motion:reduce){body[data-theme="frosted-void"].playing .mini-shell::before,body[data-theme="frosted-void"].playing .mini-shell::after,body[data-theme="frosted-void"].playing .mini-art,body[data-theme="frosted-void"].playing .mini-controls .mini-play::after{animation:none}}

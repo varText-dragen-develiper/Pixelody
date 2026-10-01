@@ -1,0 +1,19 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.axis-break",
+  "name": "Axis Break",
+  "author": "Pixelody",
+  "description": "C3 experiment: an open mineral field organized by one state-owned oblique signal seam, with oxide intent and vermilion/amber reserved for confirmed playback.",
+  "palette": { "builtIn": "axis-break" },
+  "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
+  "hud": { "layout": "cinematic", "controls": "technical", "corners": "square" },
+  "typography": { "profile": "display" },
+  "motion": { "profile": "mechanical", "intensity": "calm" },
+  "tokens": {
+    "accentPrimary": "#d83e2a", "accentSecondary": "#f25535", "accentState": "#ffae2c", "heroTone": "#eeece6",
+    "canvas": "#e7e4dc", "elevation1": "#f8f7f3", "elevation2": "#eeece6", "elevation3": "#171717",
+    "divider": "#aaa69e", "frame": "#171717", "foreground": "#171717", "foregroundMuted": "#68655f"
+  },
+  "navigation": { "trackBrowser": "linear-list" }
+}

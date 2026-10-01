@@ -1,0 +1,46 @@
+/* Acid Transit mini-player companion. Uses the shared --mini-* contract and
+   adds only the transit-tape and interference motifs that tokens cannot. */
+body[data-theme="acid-transit"]{
+  color:#f6f0ff;
+  --mini-shell-border:1px solid #5e4f79;
+  --mini-shell-radius:0;
+  --mini-shell-bg:#08060d;
+  --mini-shell-shadow:5px 5px 0 #7f0d57;
+  --mini-art-border:1px solid #a68cff;
+  --mini-art-radius:0;
+  --mini-art-bg:linear-gradient(135deg,rgba(166,140,255,.46),rgba(255,47,165,.2) 48%,rgba(183,255,57,.24)),#20152f;
+  --mini-art-glyph-color:#f6f0ff;
+  --mini-copy-eyebrow-color:#b7ff39;
+  --mini-copy-eyebrow-font:7px Consolas,"Courier New",monospace;
+  --mini-copy-eyebrow-tracking:.16em;
+  --mini-copy-title-color:#f6f0ff;
+  --mini-copy-meta-color:#b9add0;
+  --mini-copy-time-color:#a68cff;
+  --mini-progress-bg:#312245;
+  --mini-progress-fill:#b7ff39;
+  --mini-btn-radius:0;
+  --mini-play-border:1px solid #08060d;
+  --mini-play-radius:0;
+  --mini-play-bg:#b7ff39;
+  --mini-play-color:#08060d;
+  --mini-play-shadow:inset 0 -3px #4f7414,3px 3px 0 #4f7414;
+}
+body[data-theme="acid-transit"] .mini-shell{position:relative;overflow:hidden;background-image:linear-gradient(164deg,transparent 0 19%,rgba(255,47,165,.16) 19.5% 31%,transparent 31.5%),linear-gradient(110deg,rgba(166,140,255,.12),transparent 48%)}
+body[data-theme="acid-transit"] .mini-shell::before{content:"";position:absolute;left:-12px;right:38%;top:8px;height:8px;background:linear-gradient(90deg,#ff2fa5,#a68cff,#b7ff39);transform:skewX(-24deg);opacity:.9}
+body[data-theme="acid-transit"] .mini-shell::after{content:"AT / MINI / LOCAL";position:absolute;right:9px;bottom:6px;color:#a68cff;font:700 6px/1 Consolas,"Courier New",monospace;letter-spacing:.14em}
+body[data-theme="acid-transit"] .mini-art{position:relative;overflow:hidden;box-shadow:4px 4px 0 #7f0d57;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%)}
+body[data-theme="acid-transit"] .mini-art::after{content:"";position:absolute;inset:0;border:4px solid transparent;border-image:linear-gradient(135deg,#a68cff,#ff2fa5,#b7ff39) 1;pointer-events:none;opacity:.62}
+body[data-theme="acid-transit"] .mini-copy small,body[data-theme="acid-transit"] .mini-copy strong{text-transform:uppercase}
+body[data-theme="acid-transit"] .mini-copy strong{letter-spacing:-.02em;text-shadow:2px 2px 0 #7f0d57}
+body[data-theme="acid-transit"] .mini-progress{border-radius:0}
+body[data-theme="acid-transit"] .mini-controls button{color:#f6f0ff}
+body[data-theme="acid-transit"] .mini-controls button:hover{background:#ff2fa5;color:#08060d}
+body[data-theme="acid-transit"] #miniPlay{background:#b7ff39!important;color:#08060d!important;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,0 100%)}
+body[data-theme="acid-transit"] #miniPlay .signal-orbit-ring{display:none!important;visibility:hidden!important;opacity:0!important;animation:none!important}
+body[data-theme="acid-transit"] #miniPlayIcon{position:relative!important;z-index:2147483647!important;display:block!important;width:20px!important;height:20px!important;-webkit-mask:none!important;mask:none!important;background:#08060d}
+body[data-theme="acid-transit"] #miniPlayIcon.mini-play-icon{clip-path:polygon(24% 10%,88% 50%,24% 90%)}
+body[data-theme="acid-transit"] #miniPlayIcon.mini-pause-icon{clip-path:none;background:linear-gradient(90deg,#08060d 0 32%,transparent 32% 62%,#08060d 62% 100%)}
+body[data-theme="acid-transit"] .mini-glow{background:linear-gradient(90deg,transparent,#a68cff 25%,#ff2fa5 55%,#b7ff39,transparent)}
+body[data-theme="acid-transit"].playing:not([data-motion="off"]):not([data-performance="conserve"]) .mini-glow{animation:at-mini-shift 4.8s ease-in-out infinite alternate}
+@keyframes at-mini-shift{from{transform:translateX(-18%);opacity:.3}to{transform:translateX(18%);opacity:.72}}
+body[data-theme="acid-transit"][data-motion="off"] *,body[data-theme="acid-transit"][data-performance="conserve"] *{animation:none!important;transition:none!important}

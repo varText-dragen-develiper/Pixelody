@@ -1,0 +1,51 @@
+{
+  "packageFormatVersion": 1,
+  "type": "theme",
+  "version": "1.0.0",
+  "compatibility": {
+    "minAppVersion": "0.1.1"
+  },
+  "theme": {
+    "schemaVersion": 1,
+    "id": "creator.theme-name",
+    "name": "Theme Name",
+    "author": "Creator Name",
+    "description": "A local declarative Pixelody theme.",
+    "palette": {
+      "primary": "#d8b66a",
+      "secondary": "#65d6a1",
+      "base": "#050607"
+    },
+    "tokens": {
+      "foreground": "#f5f3ef",
+      "foregroundMuted": "#a2a5aa"
+    },
+    "assets": {
+      "backgroundTexture": null,
+      "heroOverlay": null,
+      "panelFrame": null,
+      "iconSet": null
+    },
+    "hud": {
+      "layout": "studio",
+      "controls": "technical",
+      "corners": "framed"
+    },
+    "typography": {
+      "profile": "technical",
+      "font": null
+    },
+    "motion": {
+      "profile": "signal",
+      "intensity": "calm"
+    },
+    "navigation": {
+      "trackBrowser": "linear-list"
+    }
+  },
+  "provenance": {
+    "origin": "original",
+    "license": "All rights reserved by the creator",
+    "notes": "No third-party assets are included."
+  }
+}

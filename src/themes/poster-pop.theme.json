@@ -1,0 +1,9 @@
+{
+  "$schema": "./theme.schema.json", "schemaVersion": 1, "id": "pixelody.poster-pop", "name": "Poster Pop", "author": "Pixelody",
+  "description": "A listening-party flyer turned into a player: loud sticker-sheet graphics, huge readable controls, ink-black outlines, and playful pop color blocking.",
+  "palette": { "primary": "#17151a", "secondary": "#35b7ff", "base": "#ff4f73" },
+  "assets": { "backgroundTexture": "../assets/themes/poster-pop/pop-sticker-sheet.svg", "heroOverlay": "../assets/themes/poster-pop/pop-sticker-sheet.svg", "panelFrame": null, "iconSet": null },
+  "hud": { "layout": "arcade", "controls": "oversized", "corners": "soft" },
+  "typography": { "profile": "display", "font": null },
+  "motion": { "profile": "pulse", "intensity": "expressive" }
+}

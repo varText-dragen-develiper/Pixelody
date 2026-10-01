@@ -1,0 +1,6 @@
+/* Dev Lab mini-player styling. Same reasoning
+   as dev-lab.css -- no geometry differences from the default mini player,
+   just the swapped accent pair plus a small badge confirming the sandbox
+   theme is active. */
+body[data-theme="dev-lab"]{position:relative}
+body[data-theme="dev-lab"]::after{content:"DEV";position:fixed;top:0;right:0;z-index:50;padding:2px 6px;color:#050607;background:#ff5fd1;font:7px "Geist Pixel Circle";letter-spacing:.12em;pointer-events:none;border-bottom-left-radius:5px}

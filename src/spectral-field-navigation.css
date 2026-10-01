@@ -1,0 +1,19 @@
+/* Shared geometry for the Spectral Field navigation mechanic. Theme files
+   own color/material treatment; this file owns perspective and behavior. */
+#trackRows.spectral-field-mounted{display:grid;grid-template-rows:minmax(300px,1fr) auto;height:430px;min-height:430px;padding:0;overflow:hidden}
+.spectral-field-stage{position:relative;min-height:0;overflow:hidden;perspective:900px;perspective-origin:50% 78%;isolation:isolate}
+.spectral-field-stage::before{content:"";position:absolute;left:8%;right:8%;bottom:-68px;height:255px;background:repeating-linear-gradient(90deg,transparent 0 54px,currentColor 55px 56px),repeating-linear-gradient(0deg,transparent 0 30px,currentColor 31px 32px);transform:perspective(430px) rotateX(66deg);transform-origin:bottom;opacity:.15;pointer-events:none}
+.spectral-field-card{position:absolute;left:50%;bottom:34px;display:grid;grid-template-columns:34px 76px minmax(0,1fr) auto;align-items:center;gap:12px;width:min(520px,70%);min-height:104px;padding:12px;cursor:pointer;outline:0;transform:translateX(-50%) translateX(calc(var(--field-direction,0) * (170px + var(--field-distance,0) * 28px))) translateY(calc(var(--field-distance,0) * -42px)) translateZ(calc(var(--field-distance,0) * -112px)) rotateY(calc(var(--field-direction,0) * -34deg)) scale(calc(1 - var(--field-distance,0) * .055));transform-origin:center;opacity:calc(1 - var(--field-distance,0) * .18);z-index:calc(20 - var(--field-distance,0));transition:transform 320ms cubic-bezier(.2,.8,.2,1),opacity 220ms ease,z-index 0ms}
+.spectral-field-card.is-centered{transform:translateX(-50%) translateY(0) translateZ(20px) rotateY(0) scale(1);opacity:1;z-index:30}
+.spectral-field-index{font-variant-numeric:tabular-nums}
+.spectral-field-art{position:relative;width:76px;aspect-ratio:1;background-position:center;background-size:cover;overflow:hidden}
+.spectral-field-art b{position:absolute;inset:0;display:grid;place-items:center}
+.spectral-field-copy{min-width:0}
+.spectral-field-copy strong,.spectral-field-copy span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spectral-field-permission{align-self:start;white-space:nowrap}
+.spectral-field-caption{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:5px 14px;align-items:end;min-height:82px;padding:13px 18px}
+.spectral-field-caption-code{grid-row:1/3;align-self:stretch}
+.spectral-field-caption strong,.spectral-field-caption>span:not(.spectral-field-caption-code){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spectral-field-caption small{grid-column:2/-1}
+body[data-motion="off"] .spectral-field-card,body[data-performance="conserve"] .spectral-field-card{transition:none}
+@media(max-width:780px){#trackRows.spectral-field-mounted{height:350px;min-height:350px}.spectral-field-card{grid-template-columns:26px 58px minmax(0,1fr);width:min(420px,86%);min-height:84px;transform:translateX(-50%) translateX(calc(var(--field-direction,0) * (105px + var(--field-distance,0) * 16px))) translateY(calc(var(--field-distance,0) * -34px)) translateZ(calc(var(--field-distance,0) * -95px)) rotateY(calc(var(--field-direction,0) * -28deg)) scale(calc(1 - var(--field-distance,0) * .06))}.spectral-field-art{width:58px}.spectral-field-permission{display:none}.spectral-field-caption{grid-template-columns:1fr;min-height:90px}.spectral-field-caption-code{grid-row:auto}.spectral-field-caption small{grid-column:auto}}

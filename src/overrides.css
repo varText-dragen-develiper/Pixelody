@@ -1,0 +1,138 @@
+.rail-import #downloadsButton {
+  grid-column: 1 / -1;
+  background: #17191c;
+  border: 1px solid #34373b;
+  color: #c6c8cb;
+}
+
+@font-face {
+  font-family: "Geist Pixel Circle";
+  src: url("assets/fonts/GeistPixel-Circle.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root {
+  --pixel-font: "Geist Pixel Circle", "Segoe UI", sans-serif;
+  --pixel-edge: #3a3935;
+}
+
+.hero-copy h1,
+.systems-view > h1,
+.playlist-cover,
+.playlist-thumb,
+.brand-glyph,
+.round-button,
+.mini-cover {
+  font-family: var(--pixel-font);
+  font-weight: 650;
+}
+
+button,
+.eyebrow,
+.hero-copy p,
+.track-header,
+.quality-card small,
+.tuning-card small,
+.eq-control label,
+.format,
+.signal-path,
+.top-quality,
+.playlist-copy span {
+  font-family: var(--pixel-font);
+  letter-spacing: 0.035em;
+}
+
+.library-rail,
+.inspector,
+.panel,
+.quality-card,
+.tuning-card,
+.playlist-item,
+.drop-zone,
+.context-menu {
+  border-radius: 0;
+}
+
+.library-rail,
+.inspector {
+  border: 1px solid var(--pixel-edge);
+  box-shadow: inset 3px 3px 0 #17191b, inset -3px -3px 0 #090a0b;
+}
+
+.playlist-item.active {
+  box-shadow: inset 3px 0 0 var(--gold), inset 0 0 0 1px #393831;
+}
+
+.playlist-cover,
+.playlist-thumb,
+.mini-cover {
+  image-rendering: pixelated;
+  border-radius: 0;
+  clip-path: polygon(5px 0, calc(100% - 5px) 0, calc(100% - 5px) 2px, 100% 2px, 100% calc(100% - 5px), calc(100% - 2px) calc(100% - 5px), calc(100% - 2px) 100%, 5px 100%, 5px calc(100% - 2px), 0 calc(100% - 2px), 0 5px, 2px 5px, 2px 2px, 5px 2px);
+}
+
+.hero-play,
+.create-button,
+.rail-import button,
+.subtle-action,
+.filter,
+.open-systems,
+.drop-zone button,
+.hero-edit {
+  border-radius: 0;
+  clip-path: polygon(4px 0, calc(100% - 4px) 0, calc(100% - 4px) 2px, 100% 2px, 100% calc(100% - 4px), calc(100% - 2px) calc(100% - 4px), calc(100% - 2px) 100%, 4px 100%, 4px calc(100% - 2px), 0 calc(100% - 2px), 0 4px, 2px 4px, 2px 2px, 4px 2px);
+}
+
+.hero-play {
+  display: grid;
+  place-items: center;
+  box-shadow: 4px 4px 0 #0b0c0d;
+}
+
+.playlist-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(#ffffff05 1px, transparent 1px), linear-gradient(90deg, #ffffff04 1px, transparent 1px);
+  background-size: 4px 4px;
+  mix-blend-mode: soft-light;
+}
+
+.hero-content,
+.hero-edit {
+  z-index: 1;
+}
+
+.pixel-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  flex: none;
+  vertical-align: -3px;
+  background: currentColor;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  image-rendering: pixelated;
+}
+
+.icon-play { mask-image: url("assets/icons/play.svg"); }
+.icon-music { mask-image: url("assets/icons/music.svg"); }
+.icon-image { mask-image: url("assets/icons/image.svg"); }
+.icon-folder { mask-image: url("assets/icons/folder.svg"); }
+.icon-download { mask-image: url("assets/icons/download.svg"); }
+.hero-play .pixel-icon { width: 24px; height: 24px; }
+.drop-icon { width: 32px; height: 32px; color: var(--gold); }
+.rail-import button .pixel-icon { width: 13px; height: 13px; margin-right: 4px; }
+.hero-edit .pixel-icon { margin-right: 6px; }
+
+.track-row:not(.track-header):hover {
+  box-shadow: inset 2px 0 0 var(--gold);
+}
+
+.eq-control input {
+  border-radius: 0;
+}

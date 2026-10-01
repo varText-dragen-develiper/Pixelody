@@ -1,0 +1,27 @@
+[
+  {
+    "key": "ultraviolet",
+    "name": "Ultraviolet",
+    "hex": "#6a3dff"
+  },
+  {
+    "key": "electric",
+    "name": "Electric",
+    "hex": "#7c5cff"
+  },
+  {
+    "key": "indigo",
+    "name": "Indigo",
+    "hex": "#5b5bff"
+  },
+  {
+    "key": "grape",
+    "name": "Grape",
+    "hex": "#8a3cf0"
+  },
+  {
+    "key": "lavender",
+    "name": "Lavender",
+    "hex": "#a98cff"
+  }
+]

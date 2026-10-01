@@ -1,0 +1,1003 @@
+/*
+ * Harmonic Registry — checkpoint C3 vertical slice
+ * Source references remain analytical only. All geometry below is original CSS.
+ */
+
+.harmonic-registry-hud,
+.harmonic-player-hud {
+  display: none;
+}
+
+.harmonic-registry-preview {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #141318;
+  background:
+    linear-gradient(90deg, transparent 0 25%, #141318 25% 26%, transparent 26% 76%, #141318 76% 77%, transparent 77%),
+    #f4f1e8;
+}
+.harmonic-registry-preview::before {
+  content: "";
+  position: absolute;
+  left: 34%;
+  top: 20%;
+  width: 42%;
+  aspect-ratio: 1;
+  border: 5px solid #141318;
+  border-right-color: #6844e7;
+  border-bottom-color: #f12d87;
+  border-radius: 46% 54% 43% 57%;
+}
+.harmonic-registry-preview::after {
+  content: "";
+  position: absolute;
+  left: 39%;
+  top: 29%;
+  width: 31%;
+  aspect-ratio: 1;
+  border: 3px solid #00b9cf;
+  border-top-color: transparent;
+  border-radius: 50%;
+}
+.harmonic-registry-preview i {
+  position: absolute;
+  left: 7%;
+  width: 15%;
+  height: 16%;
+  border: 1px solid #141318;
+  background: #f4f1e8;
+}
+.harmonic-registry-preview i:nth-child(1) { top: 18%; border-color: #00b9cf; }
+.harmonic-registry-preview i:nth-child(2) { top: 40%; border-color: #f12d87; }
+.harmonic-registry-preview i:nth-child(3) { top: 62%; }
+
+body[data-theme="harmonic-registry"] {
+  --hr-paper: #f4f1e8;
+  --hr-paper-low: #e9e7df;
+  --hr-paper-mid: #ebe8df;
+  --hr-ink: #141318;
+  --hr-ink-2: #242229;
+  --hr-muted: #66616c;
+  --hr-line: #aaa5a6;
+  --hr-intent: #f12d87;
+  --hr-confirmed: #00b9cf;
+  --hr-depth: #6844e7;
+  --hr-warning: #a64e28;
+  color: var(--hr-ink);
+  background: var(--hr-paper-low);
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body[data-theme="harmonic-registry"]::before {
+  content: "";
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  opacity: .11;
+  background-image: radial-gradient(#141318 0.55px, transparent .7px);
+  background-size: 4px 4px;
+  mix-blend-mode: multiply;
+}
+
+body[data-theme="harmonic-registry"] :is(.topbar,.library-rail,.main-stage,.inspector,.player) {
+  border: 1px solid var(--hr-ink);
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--hr-ink);
+}
+
+body[data-theme="harmonic-registry"] .topbar {
+  margin: 0 8px 8px;
+  background: var(--hr-paper);
+  border-top: 0;
+}
+body[data-theme="harmonic-registry"] :is(.profile-button,.settings-trigger,.jams-trigger,.top-quality) {
+  border-radius: 0;
+  border-color: var(--hr-ink);
+  background: transparent;
+  color: var(--hr-ink);
+}
+body[data-theme="harmonic-registry"] .global-search {
+  border: 0;
+  border-bottom: 1px solid var(--hr-ink);
+  border-radius: 0;
+  background: transparent;
+}
+body[data-theme="harmonic-registry"] .global-search input { color: var(--hr-ink); }
+
+body[data-theme="harmonic-registry"] .workspace {
+  gap: 0;
+  padding-inline: 8px;
+}
+body[data-theme="harmonic-registry"] :is(.panel-resizer,.library-rail,.main-stage,.inspector) {
+  border-radius: 0;
+}
+body[data-theme="harmonic-registry"] .panel-resizer { background: var(--hr-ink); }
+body[data-theme="harmonic-registry"] .main-stage {
+  overflow-y: auto;
+  background: var(--hr-paper);
+}
+body[data-theme="harmonic-registry"] :is(.library-rail,.inspector) {
+  background: var(--hr-paper);
+}
+
+body[data-theme="harmonic-registry"] .library-rail {
+  padding: 15px 10px 10px;
+}
+body[data-theme="harmonic-registry"] .rail-heading {
+  min-height: 55px;
+  padding: 0 4px 13px;
+  border-bottom: 1px solid var(--hr-ink);
+}
+body[data-theme="harmonic-registry"] .rail-heading::after {
+  content: "REGISTRY / LOCAL";
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  color: var(--hr-muted);
+  font: 700 7px/1 Consolas, "Courier New", monospace;
+  letter-spacing: .12em;
+}
+body[data-theme="harmonic-registry"] .rail-heading strong {
+  font-size: 13px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+body[data-theme="harmonic-registry"] .library-profile {
+  border: 1px solid var(--hr-ink);
+  border-radius: 0;
+  background: var(--hr-ink);
+  color: var(--hr-paper);
+}
+body[data-theme="harmonic-registry"] .create-button {
+  border: 1px solid var(--hr-ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--hr-ink);
+}
+body[data-theme="harmonic-registry"] .library-filters {
+  gap: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--hr-line);
+}
+body[data-theme="harmonic-registry"] .chip {
+  min-width: 0;
+  padding: 6px 7px;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--hr-muted);
+  font: 8px Consolas, "Courier New", monospace;
+  text-transform: uppercase;
+}
+body[data-theme="harmonic-registry"] .chip.active {
+  border-color: var(--hr-intent);
+  background: transparent;
+  color: var(--hr-ink);
+}
+body[data-theme="harmonic-registry"] .rail-tools {
+  padding-inline: 4px;
+  color: var(--hr-muted);
+  font-family: Consolas, "Courier New", monospace;
+  letter-spacing: .08em;
+}
+body[data-theme="harmonic-registry"] .playlist-list {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  align-content: start;
+  gap: 5px;
+  padding: 3px;
+}
+body[data-theme="harmonic-registry"] .playlist-item {
+  position: relative;
+  min-width: 0;
+  min-height: 104px;
+  grid-template-columns: 1fr;
+  grid-template-rows: 54px 1fr;
+  gap: 6px;
+  padding: 7px;
+  border: 1px solid var(--hr-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--hr-ink);
+}
+body[data-theme="harmonic-registry"] .playlist-item:hover {
+  border-color: var(--hr-ink);
+  background: #fff8;
+}
+body[data-theme="harmonic-registry"] .playlist-item.active {
+  border: 3px solid var(--hr-intent);
+  background: #fff;
+}
+body[data-theme="harmonic-registry"] .playlist-item.active::after {
+  content: "SELECTED";
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  color: var(--hr-intent);
+  font: 700 6px/1 Consolas, "Courier New", monospace;
+  letter-spacing: .08em;
+}
+body[data-theme="harmonic-registry"] .playlist-thumb {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  border: 0;
+  border-radius: 0;
+  overflow: hidden;
+  background-color: transparent;
+  background-size: cover;
+  color: transparent;
+}
+body[data-theme="harmonic-registry"] .playlist-copy strong {
+  color: var(--hr-ink);
+  font-size: 10px;
+}
+body[data-theme="harmonic-registry"] .playlist-copy > span {
+  color: var(--hr-muted);
+  font: 7px/1.3 Consolas, "Courier New", monospace;
+}
+body[data-theme="harmonic-registry"] .quest-save-slot,
+body[data-theme="harmonic-registry"] .quest-save-meta,
+body[data-theme="harmonic-registry"] .quest-collection-award {
+  display: none;
+}
+body[data-theme="harmonic-registry"] .playlist-dots {
+  position: absolute;
+  right: 5px;
+  bottom: 3px;
+  color: var(--hr-ink);
+}
+body[data-theme="harmonic-registry"] .rail-import {
+  grid-template-columns: 1fr;
+  border-color: var(--hr-ink);
+}
+body[data-theme="harmonic-registry"] .rail-import button {
+  min-height: 30px;
+  border: 1px solid var(--hr-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--hr-ink);
+  font: 8px Consolas, "Courier New", monospace;
+  text-align: left;
+}
+body[data-theme="harmonic-registry"] .rail-import button:first-child {
+  border-color: var(--hr-ink);
+  background: var(--hr-ink);
+  color: var(--hr-paper);
+}
+
+/* Deterministic proof glyphs: numeric descriptors are supplied by
+   theme-runtime/glyph.js. Artwork always wins when present. */
+body[data-theme="harmonic-registry"] :is(.playlist-thumb,.track-art):not([style*="background-image"])::before,
+body[data-theme="harmonic-registry"] .playlist-cover:not(.has-image)::before,
+body[data-theme="harmonic-registry"] .mini-cover:not(.has-image)::before {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  z-index: 1;
+  background: var(--hr-ink);
+  transform: rotate(calc(var(--hr-glyph-turn,0) * 90deg));
+  transform-origin: center;
+}
+body[data-theme="harmonic-registry"] :is(.playlist-thumb,.track-art):not([style*="background-image"])::after,
+body[data-theme="harmonic-registry"] .playlist-cover:not(.has-image)::after,
+body[data-theme="harmonic-registry"] .mini-cover:not(.has-image)::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  width: 26%;
+  height: 26%;
+  left: 37%;
+  top: 37%;
+  background: var(--hr-paper);
+  transform: rotate(45deg);
+}
+body[data-theme="harmonic-registry"] [data-theme-rotation="0"] { --hr-glyph-turn: 0; }
+body[data-theme="harmonic-registry"] [data-theme-rotation="1"] { --hr-glyph-turn: 1; }
+body[data-theme="harmonic-registry"] [data-theme-rotation="2"] { --hr-glyph-turn: 2; }
+body[data-theme="harmonic-registry"] [data-theme-rotation="3"] { --hr-glyph-turn: 3; }
+body[data-theme="harmonic-registry"] [data-theme-glyph="0"]:not([style*="background-image"])::before {
+  clip-path: polygon(0 0,44% 0,44% 72%,100% 28%,100% 100%,56% 100%,56% 28%,0 72%);
+}
+body[data-theme="harmonic-registry"] [data-theme-glyph="1"]:not([style*="background-image"])::before {
+  background: transparent;
+  border: max(5px,.18em) solid var(--hr-ink);
+  border-right-color: var(--hr-depth);
+  border-radius: 50%;
+  clip-path: polygon(0 0,100% 0,100% 42%,68% 42%,68% 58%,100% 58%,100% 100%,0 100%);
+}
+body[data-theme="harmonic-registry"] [data-theme-glyph="2"]:not([style*="background-image"])::before {
+  background: linear-gradient(90deg,var(--hr-ink) 0 28%,transparent 28% 39%,var(--hr-ink) 39% 67%,transparent 67% 78%,var(--hr-ink) 78%);
+  clip-path: polygon(0 12%,100% 0,100% 88%,0 100%);
+}
+body[data-theme="harmonic-registry"] [data-theme-glyph="3"]:not([style*="background-image"])::before {
+  background: linear-gradient(135deg,var(--hr-ink) 0 30%,transparent 30% 36%,var(--hr-depth) 36% 64%,transparent 64% 70%,var(--hr-ink) 70%);
+}
+body[data-theme="harmonic-registry"] [data-theme-glyph="4"]:not([style*="background-image"])::before {
+  clip-path: polygon(0 34%,34% 34%,34% 0,66% 0,66% 34%,100% 34%,100% 66%,66% 66%,66% 100%,34% 100%,34% 66%,0 66%);
+}
+body[data-theme="harmonic-registry"] [data-theme-glyph="5"]:not([style*="background-image"])::before {
+  background: transparent;
+  border: max(5px,.18em) solid var(--hr-ink);
+  border-left-color: var(--hr-depth);
+  border-radius: 48% 52% 42% 58%;
+}
+body[data-theme="harmonic-registry"] [data-theme-edition="0"]::after { border-radius: 0; }
+body[data-theme="harmonic-registry"] [data-theme-edition="1"]::after { border-radius: 50%; }
+body[data-theme="harmonic-registry"] [data-theme-edition="2"]::after { clip-path: polygon(50% 0,100% 100%,0 100%); }
+body[data-theme="harmonic-registry"] [data-theme-edition="3"]::after { transform: rotate(0); width: 42%; left: 29%; height: 14%; top: 43%; }
+body[data-theme="harmonic-registry"] [data-theme-edition="4"]::after { clip-path: polygon(0 0,100% 0,72% 100%,28% 100%); }
+body[data-theme="harmonic-registry"] [data-theme-edition="5"]::after { transform: rotate(45deg) skew(-18deg); }
+
+body[data-theme="harmonic-registry"] .playlist-hero {
+  height: 500px;
+  overflow: hidden;
+  background-color: var(--hr-paper)!important;
+  background-image: none!important;
+  color: var(--hr-ink);
+}
+body[data-theme="harmonic-registry"] .hero-shade {
+  opacity: 1;
+  background:
+    linear-gradient(90deg,transparent 0 7%,#14131812 7% calc(7% + 1px),transparent calc(7% + 1px) 76%,#14131818 76% calc(76% + 1px),transparent calc(76% + 1px)),
+    linear-gradient(#14131812 1px,transparent 1px);
+  background-size: 100% 100%,100% 76px;
+}
+body[data-theme="harmonic-registry"] .hero-content {
+  left: 36px;
+  right: 285px;
+  top: 66px;
+  bottom: 36px;
+  display: grid;
+  grid-template-columns: 250px minmax(0,1fr);
+  align-items: end;
+  gap: 38px;
+}
+body[data-theme="harmonic-registry"] .playlist-cover {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin: 30px 0 24px 18px;
+  overflow: visible;
+  border: 1px solid var(--hr-ink);
+  border-radius: 0;
+  background: var(--hr-paper-mid);
+  color: transparent;
+  box-shadow: none;
+  isolation: isolate;
+}
+body[data-theme="harmonic-registry"] .hero-content > .playlist-cover,
+body[data-theme="harmonic-registry"].is-playing .hero-content > .playlist-cover {
+  position: absolute!important;
+  left: 18px!important;
+  top: 105px!important;
+  bottom: auto!important;
+  margin: 0!important;
+}
+body[data-theme="harmonic-registry"] .playlist-cover > .signal-orbit-ring {
+  display: block!important;
+  inset: -31px -36px -25px -22px!important;
+  z-index: -1!important;
+  border: 0!important;
+  border-radius: 39% 61% 46% 54% / 57% 42% 58% 43%!important;
+  background: #141318!important;
+  box-shadow: 12px 15px 0 -7px #14131845!important;
+  opacity: 1!important;
+  transform: rotate(-9deg) skewX(-5deg)!important;
+  animation: none!important;
+  overflow: visible!important;
+  /* Original Registry construction: the cut aperture stays eccentric while
+     successive bands compress at the upper-right and open at lower-left.
+     This is not a decorative record ring: the contours are material planes
+     wrapped around a displaced, interrupted proof opening. */
+  -webkit-mask: radial-gradient(ellipse 45% 38% at 47% 52%, transparent 0 63%, #000 64%);
+  mask: radial-gradient(ellipse 45% 38% at 47% 52%, transparent 0 63%, #000 64%);
+}
+body[data-theme="harmonic-registry"] .playlist-cover > .signal-orbit-ring::before {
+  content: ""!important;
+  position: absolute!important;
+  inset: 29px 34px 24px 25px!important;
+  width: auto!important;
+  height: auto!important;
+  border: 4px solid var(--hr-line)!important;
+  border-top-color: transparent!important;
+  border-radius: 50%!important;
+  background: transparent!important;
+  box-shadow: none!important;
+  transform: rotate(23deg) skewX(7deg)!important;
+  z-index: 1!important;
+}
+body[data-theme="harmonic-registry"] .playlist-cover > .signal-orbit-ring::after {
+  content: ""!important;
+  display: block!important;
+  position: absolute!important;
+  inset: 9px 14px 8px 7px!important;
+  z-index: 0!important;
+  border-radius: 43% 57% 48% 52% / 60% 40% 59% 41%!important;
+  background:
+    repeating-radial-gradient(ellipse 51% 43% at 56% 43%,
+      transparent 0 9px,
+      #6844e7 10px 14px,
+      #242229 15px 18px,
+      #f12d87 19px 22px,
+      transparent 23px 29px),
+    linear-gradient(145deg, #6844e7 0 29%, #f12d87 30% 46%, #141318 47% 100%)!important;
+  clip-path: polygon(4% 16%, 50% 0, 95% 18%, 100% 62%, 77% 100%, 17% 89%, 0 48%)!important;
+  -webkit-mask: radial-gradient(ellipse 45% 38% at 47% 52%, transparent 0 62%, #000 63%);
+  mask: radial-gradient(ellipse 45% 38% at 47% 52%, transparent 0 62%, #000 63%);
+  opacity: .96!important;
+}
+body[data-theme="harmonic-registry"].is-playing .playlist-cover > .signal-orbit-ring::before {
+  border-right-color: var(--hr-confirmed)!important;
+  border-bottom-color: var(--hr-confirmed)!important;
+}
+body[data-theme="harmonic-registry"] .playlist-cover > .signal-orbit-ring::after,
+body[data-theme="harmonic-registry"] .playlist-cover .signal-trace-cell {
+  display: none!important;
+}
+/* playback-performance.css intentionally owns the generic live signal path
+   later in the cascade. The Registry's aperture is a distinct state-truth
+   translation, so the live variant needs one extra theme qualifier to keep
+   that generic traveler from replacing the contour. */
+body[data-theme="harmonic-registry"].is-playing .playlist-cover > .signal-orbit-ring {
+  inset: -31px -36px -25px -22px!important;
+  z-index: 3!important;
+  border: 0!important;
+  border-radius: 39% 61% 46% 54% / 57% 42% 58% 43%!important;
+  background: #141318!important;
+  box-shadow: 12px 15px 0 -7px #14131845!important;
+  opacity: 1!important;
+  contain: none!important;
+  transform: rotate(-9deg) skewX(-5deg)!important;
+  animation: none!important;
+}
+body[data-theme="harmonic-registry"].is-playing .playlist-cover > .signal-orbit-ring::before {
+  display: block!important;
+  visibility: visible!important;
+  left: 25px!important;
+  top: 29px!important;
+  right: 34px!important;
+  bottom: 24px!important;
+  width: auto!important;
+  height: auto!important;
+  border: 4px solid var(--hr-line)!important;
+  border-top-color: transparent!important;
+  border-right-color: var(--hr-confirmed)!important;
+  border-bottom-color: var(--hr-confirmed)!important;
+  border-radius: 50%!important;
+  background: transparent!important;
+  box-shadow: none!important;
+  opacity: 1!important;
+  offset-path: none!important;
+  transform: rotate(23deg) skewX(7deg)!important;
+  animation: none!important;
+}
+body[data-theme="harmonic-registry"].is-playing .playlist-cover:not(.has-image)::before {
+  content: ""!important;
+  display: block!important;
+}
+body[data-theme="harmonic-registry"] .playlist-cover.has-image::before,
+body[data-theme="harmonic-registry"] .playlist-cover.has-image::after { display:none; }
+body[data-theme="harmonic-registry"] .playlist-cover:not(.has-image) > span { display: none; }
+body[data-theme="harmonic-registry"] .hero-copy {
+  grid-column: 2;
+  align-self: start;
+  padding-top: 28px;
+  min-width: 0;
+}
+body[data-theme="harmonic-registry"] .hero-copy p {
+  color: var(--hr-muted);
+  font: 800 8px Consolas, "Courier New", monospace;
+  letter-spacing: .15em;
+}
+body[data-theme="harmonic-registry"] .hero-copy h1 {
+  max-width: 680px;
+  margin-top: 15px;
+  color: var(--hr-ink);
+  font-family: "Arial Narrow","Segoe UI",Arial,sans-serif;
+  font-size: clamp(34px,4.7vw,68px);
+  font-weight: 850;
+  line-height: .9;
+  letter-spacing: -.055em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+body[data-theme="harmonic-registry"] .hero-copy > span {
+  max-width: 540px;
+  color: var(--hr-ink);
+  font-size: 12px;
+}
+body[data-theme="harmonic-registry"] .hero-copy > small {
+  color: var(--hr-muted);
+  font: 9px Consolas, "Courier New", monospace;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+body[data-theme="harmonic-registry"] .harmonic-registry-hud {
+  display: block;
+  position: absolute;
+  z-index: 4;
+  top: 48px;
+  right: 22px;
+  bottom: 34px;
+  width: 238px;
+  border-left: 1px solid var(--hr-ink);
+  color: var(--hr-ink);
+  pointer-events: none;
+}
+body[data-theme="harmonic-registry"] .hr-proof-label {
+  position: absolute;
+  right: 0;
+  top: -24px;
+  font: 700 7px Consolas, "Courier New", monospace;
+  letter-spacing: .12em;
+}
+body[data-theme="harmonic-registry"] .hr-registry-rail {
+  margin-left: 15px;
+  display: grid;
+}
+body[data-theme="harmonic-registry"] .hr-registry-rail > span {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--hr-line);
+  font: 8px Consolas, "Courier New", monospace;
+}
+body[data-theme="harmonic-registry"] .hr-registry-rail small { color: var(--hr-muted); }
+body[data-theme="harmonic-registry"] .hr-edition-mark {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--hr-ink);
+  font: 8px Consolas, "Courier New", monospace;
+}
+body[data-theme="harmonic-registry"] :is(.hero-edit,.metadata-toggle) {
+  z-index: 8;
+  border: 1px solid var(--hr-ink);
+  border-radius: 0;
+  background: var(--hr-paper);
+  color: var(--hr-ink);
+  backdrop-filter: none;
+  opacity: 1;
+}
+body[data-theme="harmonic-registry"] .hero-edit { top: 12px; right: 22px; }
+body[data-theme="harmonic-registry"] .metadata-toggle { top: 12px; right: 168px; }
+
+body[data-theme="harmonic-registry"] .collection-body {
+  min-height: 460px;
+  padding: 15px 22px 72px;
+  border-top: 1px solid var(--hr-ink);
+  background: var(--hr-paper);
+  color: var(--hr-ink);
+}
+body[data-theme="harmonic-registry"] .collection-actions {
+  min-height: 58px;
+  border-bottom: 1px solid var(--hr-ink);
+}
+body[data-theme="harmonic-registry"] :is(.hero-play,.subtle-action,.icon-action,.filter,.sort-select) {
+  border: 1px solid var(--hr-ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--hr-ink);
+  box-shadow: none;
+}
+body[data-theme="harmonic-registry"] .hero-play {
+  background: var(--hr-intent);
+  color: var(--hr-ink);
+}
+body[data-theme="harmonic-registry"] .filter.active {
+  border-color: var(--hr-intent);
+  background: transparent;
+  color: var(--hr-intent);
+}
+body[data-theme="harmonic-registry"] .track-header {
+  border-color: var(--hr-ink);
+  color: var(--hr-muted);
+  font-family: Consolas, "Courier New", monospace;
+}
+body[data-theme="harmonic-registry"] .track-row {
+  position: relative;
+  min-height: 68px;
+  border-top: 1px solid var(--hr-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--hr-ink);
+}
+body[data-theme="harmonic-registry"] .track-row:not(.track-header):hover {
+  background: #fff9;
+}
+body[data-theme="harmonic-registry"] .track-row.playing {
+  border-top: 3px solid var(--hr-ink);
+  background: transparent;
+}
+body[data-theme="harmonic-registry"].is-playing .track-row.playing {
+  border-top-color: var(--hr-confirmed);
+  box-shadow: inset 6px 0 var(--hr-confirmed);
+}
+body[data-theme="harmonic-registry"] .track-row.playing::after {
+  content: "CURRENT / PAUSED";
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  color: var(--hr-muted);
+  font: 700 6px Consolas, "Courier New", monospace;
+  letter-spacing: .08em;
+}
+body[data-theme="harmonic-registry"].is-playing .track-row.playing::after {
+  content: "PLAYING / CONFIRMED";
+  color: var(--hr-confirmed);
+}
+body[data-theme="harmonic-registry"] .track-row.is-selected:not(.playing) {
+  border-top: 3px solid var(--hr-intent);
+  background: linear-gradient(90deg,#f12d8714,transparent 55%);
+  box-shadow: inset 6px 0 var(--hr-intent);
+}
+body[data-theme="harmonic-registry"] .track-row.is-selected:not(.playing)::after {
+  content: "FOCUS / INTENT";
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  color: var(--hr-intent);
+  font: 700 6px Consolas, "Courier New", monospace;
+  letter-spacing: .08em;
+}
+body[data-theme="harmonic-registry"] .track-title strong {
+  color: var(--hr-ink);
+  font-size: 11px;
+}
+body[data-theme="harmonic-registry"] .track-row.playing .track-title strong { color: var(--hr-ink); }
+body[data-theme="harmonic-registry"] .track-title > span:not(.track-art) {
+  color: var(--hr-muted);
+  font-size: 9px;
+}
+body[data-theme="harmonic-registry"] .track-art {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--hr-ink);
+  background-color: var(--hr-paper-mid);
+  image-rendering: auto;
+}
+body[data-theme="harmonic-registry"] .track-art[style*="background-image"]::before,
+body[data-theme="harmonic-registry"] .track-art[style*="background-image"]::after { display:none; }
+body[data-theme="harmonic-registry"] :is(.format,.quality,.track-row>span:nth-last-child(2)) {
+  color: var(--hr-muted);
+  font-family: Consolas, "Courier New", monospace;
+}
+body[data-theme="harmonic-registry"] .tuned { color: var(--hr-depth); }
+body[data-theme="harmonic-registry"] .track-actions button {
+  color: var(--hr-ink);
+}
+body[data-theme="harmonic-registry"] :is(button,input,select):focus-visible {
+  outline: 3px double var(--hr-intent);
+  outline-offset: 2px;
+}
+body[data-theme="harmonic-registry"] .track-row:focus-visible {
+  outline: 3px double var(--hr-intent);
+  outline-offset: -3px;
+}
+
+body[data-theme="harmonic-registry"] .drop-zone {
+  min-height: 230px;
+  border: 1px dashed var(--hr-ink);
+  border-radius: 0;
+  color: var(--hr-muted);
+  background:
+    linear-gradient(90deg,transparent 49.9%,#14131816 50%,transparent 50.1%),
+    linear-gradient(transparent 49.9%,#14131816 50%,transparent 50.1%);
+}
+body[data-theme="harmonic-registry"] .drop-zone strong { color: var(--hr-ink); }
+body[data-theme="harmonic-registry"] .drop-zone button {
+  border: 1px solid var(--hr-ink);
+  border-radius: 0;
+  background: var(--hr-ink);
+  color: var(--hr-paper);
+}
+body[data-theme="harmonic-registry"] .rail-empty {
+  grid-column: 1/-1;
+  padding: 24px 10px;
+  border: 1px dashed var(--hr-ink);
+  color: var(--hr-muted);
+  font: 9px/1.5 Consolas, "Courier New", monospace;
+}
+
+body[data-theme="harmonic-registry"] .hero-track-info {
+  z-index: 12;
+  top: 34px;
+  right: 20px;
+  bottom: 20px;
+  width: min(440px,calc(100% - 40px));
+  padding: 46px 18px 18px;
+  overflow-y: auto;
+  border: 1px solid var(--hr-ink);
+  border-radius: 0;
+  background: color-mix(in srgb,var(--hr-paper) 97%,transparent);
+  color: var(--hr-ink);
+  box-shadow: 10px 10px 0 #14131822;
+  backdrop-filter: none;
+}
+body[data-theme="harmonic-registry"] .hero-track-info::before {
+  content: "TRACK PROOF / TRUTHFUL LOCAL METADATA";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 28px;
+  padding: 9px 12px;
+  background: var(--hr-ink);
+  color: var(--hr-paper);
+  font: 700 7px Consolas, "Courier New", monospace;
+  letter-spacing: .1em;
+}
+body[data-theme="harmonic-registry"] .playlist-hero.track-info-open .hero-content { right: 470px; }
+body[data-theme="harmonic-registry"] .hero-track-info :is(h2,h3,.metadata-album) { color: var(--hr-ink); }
+body[data-theme="harmonic-registry"] .hero-track-info > p { color: var(--hr-confirmed); }
+body[data-theme="harmonic-registry"] .metadata-art {
+  border: 1px solid var(--hr-ink);
+  border-radius: 0;
+  background-color: var(--hr-paper-mid);
+  box-shadow: none;
+}
+body[data-theme="harmonic-registry"] .metadata-grid {
+  gap: 0;
+  border-top: 1px solid var(--hr-ink);
+  border-left: 1px solid var(--hr-ink);
+}
+body[data-theme="harmonic-registry"] .metadata-grid > span {
+  min-width: 0;
+  padding: 9px;
+  border-right: 1px solid var(--hr-ink);
+  border-bottom: 1px solid var(--hr-ink);
+}
+body[data-theme="harmonic-registry"] .metadata-grid small {
+  color: var(--hr-muted);
+  font-family: Consolas, "Courier New", monospace;
+}
+body[data-theme="harmonic-registry"] .metadata-grid b { color: var(--hr-ink); }
+
+body[data-theme="harmonic-registry"] .inspector {
+  padding: 18px 14px;
+  overflow-y: auto!important;
+  background: var(--hr-paper);
+}
+body[data-theme="harmonic-registry"] .inspector-heading {
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--hr-ink);
+}
+body[data-theme="harmonic-registry"] .inspector-heading strong {
+  color: var(--hr-ink);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+body[data-theme="harmonic-registry"] :is(.quality-card,.tuning-card,.technical-details,.signal-path,.panel) {
+  border: 1px solid var(--hr-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--hr-ink);
+  box-shadow: none;
+}
+body[data-theme="harmonic-registry"] :is(.quality-card,.tuning-card,.technical-details) small {
+  color: var(--hr-muted);
+  font-family: Consolas, "Courier New", monospace;
+}
+
+body[data-theme="harmonic-registry"] .player {
+  position: relative;
+  height: 88px;
+  border-inline: 0;
+  background: var(--hr-ink);
+  color: var(--hr-paper);
+}
+body[data-theme="harmonic-registry"] .playing-info {
+  padding-bottom: 18px;
+}
+body[data-theme="harmonic-registry"] .playing-info strong { color: var(--hr-paper); }
+body[data-theme="harmonic-registry"] .playing-info span { color: #c9c5bd; }
+body[data-theme="harmonic-registry"] .mini-cover {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--hr-paper);
+  border-radius: 0;
+  background-color: var(--hr-ink-2);
+  box-shadow: none;
+}
+body[data-theme="harmonic-registry"] .mini-cover.has-image::before,
+body[data-theme="harmonic-registry"] .mini-cover.has-image::after { display:none; }
+body[data-theme="harmonic-registry"] .mini-cover > .signal-orbit-ring { display:none!important; }
+body[data-theme="harmonic-registry"] .harmonic-player-hud {
+  display: flex;
+  position: absolute;
+  left: 82px;
+  bottom: 7px;
+  gap: 14px;
+  pointer-events: none;
+}
+body[data-theme="harmonic-registry"] .harmonic-player-hud span {
+  display: flex;
+  gap: 5px;
+  font: 6px Consolas, "Courier New", monospace;
+}
+body[data-theme="harmonic-registry"] .harmonic-player-hud small { color: #aaa5a6; }
+body[data-theme="harmonic-registry"] .harmonic-player-hud b { color: var(--hr-paper); }
+body[data-theme="harmonic-registry"][data-harmonic-state="live"] #hrPlayerState { color: var(--hr-confirmed); }
+body[data-theme="harmonic-registry"] .transport-buttons button { color: var(--hr-paper); }
+body[data-theme="harmonic-registry"] .transport-buttons .play-button {
+  border: 1px solid var(--hr-paper);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--hr-paper);
+}
+body[data-theme="harmonic-registry"].is-playing .transport-buttons .play-button {
+  border-color: var(--hr-confirmed);
+  background: var(--hr-confirmed);
+  color: var(--hr-ink);
+}
+body[data-theme="harmonic-registry"] .timeline { color: #aaa5a6; }
+body[data-theme="harmonic-registry"] .timeline input,
+body[data-theme="harmonic-registry"] .volume input { accent-color: var(--hr-confirmed); }
+body[data-theme="harmonic-registry"] .volume { color: var(--hr-paper); }
+body[data-theme="harmonic-registry"] :is(.mini-launch,.queue-button) {
+  border: 1px solid #aaa5a6;
+  border-radius: 0;
+  background: transparent;
+  color: var(--hr-paper);
+}
+body[data-theme="harmonic-registry"] .volume #qualityBadge {
+  border-color: var(--hr-confirmed);
+  border-radius: 0;
+  color: var(--hr-confirmed);
+}
+
+body[data-theme="harmonic-registry"] :is(.settings-drawer,.queue-drawer,.migration-drawer,.jams-drawer,.track-editor,.playlist-creator,.context-menu) {
+  border: 1px solid var(--hr-ink);
+  border-radius: 0;
+  background: var(--hr-paper);
+  color: var(--hr-ink);
+  box-shadow: -12px 0 32px #14131833;
+}
+body[data-theme="harmonic-registry"] :is(.settings-heading,.queue-heading,.migration-heading,.jams-heading,.track-editor-heading,.playlist-creator-heading) {
+  border-bottom: 1px solid var(--hr-ink);
+  background: var(--hr-ink);
+  color: var(--hr-paper);
+}
+body[data-theme="harmonic-registry"] :is(.settings-drawer,.queue-drawer,.migration-drawer,.jams-drawer,.track-editor,.playlist-creator) :is(input,select,textarea,button) {
+  border-radius: 0;
+}
+
+body[data-theme="harmonic-registry"][data-motion="calm"] .playlist-item.active,
+body[data-theme="harmonic-registry"][data-motion="expressive"] .playlist-item.active {
+  transition: transform 160ms ease;
+}
+body[data-theme="harmonic-registry"][data-motion="expressive"] .playlist-item.active {
+  transform: translateY(-2px);
+}
+body[data-theme="harmonic-registry"][data-motion="expressive"].is-playing .playlist-cover > .signal-orbit-ring::before {
+  animation: hr-confirmed-circuit 3.8s ease-in-out infinite;
+}
+@keyframes hr-confirmed-circuit {
+  50% { transform: rotate(-22deg) scale(1.025); }
+}
+
+body[data-theme="harmonic-registry"][data-motion="off"] *,
+body[data-theme="harmonic-registry"][data-motion="off"] *::before,
+body[data-theme="harmonic-registry"][data-motion="off"] *::after {
+  animation: none!important;
+  transition: none!important;
+}
+body[data-theme="harmonic-registry"][data-performance="conserve"]::before,
+body[data-theme="harmonic-registry"][data-detail="minimal"]::before {
+  display: none;
+}
+body[data-theme="harmonic-registry"][data-performance="conserve"] .playlist-cover > .signal-orbit-ring::before {
+  animation: none!important;
+}
+
+@media(max-width:1180px) {
+  body[data-theme="harmonic-registry"] .playlist-hero { height: 460px; }
+  body[data-theme="harmonic-registry"] .hero-content {
+    right: 215px;
+    grid-template-columns: 190px minmax(0,1fr);
+    gap: 24px;
+  }
+  body[data-theme="harmonic-registry"] .playlist-cover {
+    width: 170px;
+    height: 170px;
+    left: 10px!important;
+    top: 128px!important;
+  }
+  body[data-theme="harmonic-registry"] .harmonic-registry-hud { width: 178px; }
+  body[data-theme="harmonic-registry"] .hr-registry-rail > span { grid-template-columns: 1fr; gap: 4px; }
+  body[data-theme="harmonic-registry"] .hero-copy h1 { font-size: clamp(30px,4.8vw,52px); }
+}
+
+@media(max-width:850px) {
+  body[data-theme="harmonic-registry"] .workspace { grid-template-columns: 86px 1fr; }
+  body[data-theme="harmonic-registry"] .playlist-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  body[data-theme="harmonic-registry"] .playlist-item {
+    width: 64px;
+    min-height: 64px;
+    display: grid;
+    place-items: center;
+    padding: 4px;
+  }
+  body[data-theme="harmonic-registry"] .playlist-thumb { width: 54px; height: 54px; }
+  body[data-theme="harmonic-registry"] .playlist-hero {
+    height: auto;
+    min-height: 560px;
+  }
+  body[data-theme="harmonic-registry"] .hero-content {
+    position: relative;
+    inset: auto;
+    min-height: 560px;
+    padding: 82px 24px 190px;
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  body[data-theme="harmonic-registry"] .playlist-cover {
+    position: relative!important;
+    left: auto!important;
+    top: auto!important;
+    bottom: auto!important;
+    grid-column: 1;
+    width: 156px;
+    height: 156px;
+    margin: 18px 0 4px 28px;
+  }
+  body[data-theme="harmonic-registry"] .hero-copy { grid-column: 1; padding-top: 0; }
+  body[data-theme="harmonic-registry"] .hero-copy h1 {
+    max-width: 100%;
+    font-size: clamp(28px,8vw,46px);
+    line-height: .92;
+  }
+  body[data-theme="harmonic-registry"] .harmonic-registry-hud {
+    top: auto;
+    right: 20px;
+    bottom: 24px;
+    left: 24px;
+    width: auto;
+    height: 140px;
+    border-top: 1px solid var(--hr-ink);
+    border-left: 0;
+  }
+  body[data-theme="harmonic-registry"] .hr-registry-rail {
+    margin: 10px 64px 0 0;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+  body[data-theme="harmonic-registry"] .hr-registry-rail > span {
+    padding: 6px;
+    border-top: 0;
+    border-bottom: 1px solid var(--hr-line);
+  }
+  body[data-theme="harmonic-registry"] .hr-edition-mark { bottom: 0; }
+  body[data-theme="harmonic-registry"] .collection-body { padding-inline: 12px; }
+  body[data-theme="harmonic-registry"] .track-row {
+    grid-template-columns: 24px minmax(130px,1fr) 48px 42px;
+    gap: 7px;
+    padding-inline: 7px;
+  }
+  body[data-theme="harmonic-registry"] .track-row > :is(.quality,.tuned),
+  body[data-theme="harmonic-registry"] .track-row > span:nth-child(5) { display: none; }
+  body[data-theme="harmonic-registry"] .track-row::after { display: none; }
+  body[data-theme="harmonic-registry"] .player { grid-template-columns: 175px 1fr; }
+  body[data-theme="harmonic-registry"] .harmonic-player-hud { left: 72px; gap: 6px; }
+  body[data-theme="harmonic-registry"] .harmonic-player-hud span:nth-child(n+2) { display: none; }
+}
+
+@media(prefers-reduced-motion:reduce) {
+  body[data-theme="harmonic-registry"] *,
+  body[data-theme="harmonic-registry"] *::before,
+  body[data-theme="harmonic-registry"] *::after {
+    animation: none!important;
+    transition: none!important;
+  }
+}

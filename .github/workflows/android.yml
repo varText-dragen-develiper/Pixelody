@@ -1,0 +1,66 @@
+name: Android build
+
+# Builds the Android companion app whenever it (or this workflow) changes, and
+# on request. The debug APK is uploaded before the unit tests run, so a device
+# pass is never blocked on a red test; the tests still fail the job.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android/**'
+      - '.github/workflows/android.yml'
+  pull_request:
+    paths:
+      - 'android/**'
+      - '.github/workflows/android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    name: Android debug APK and unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      # AGP 9.2 and Gradle 9.4 need JDK 17 or newer; the app targets 17.
+      - name: Install JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      # Hosted Ubuntu runners ship the Android SDK (ANDROID_HOME). gradlew is
+      # tracked without the executable bit, so it is run through bash.
+      - name: Build debug APK
+        run: bash ./gradlew assembleDebug --stacktrace
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: pixelody-android-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Run unit tests
+        run: bash ./gradlew testDebugUnitTest --stacktrace
+
+      - name: Upload unit test reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pixelody-android-test-reports
+          path: android/app/build/reports/tests/
+          if-no-files-found: ignore
+          retention-days: 7

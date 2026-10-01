@@ -1,0 +1,14 @@
+{
+  "queueItemId": "queue-item-1",
+  "trackId": "public-track-1",
+  "title": "Moonlit Circuit",
+  "artist": "Local Signal",
+  "addedByDeviceId": "android-phone",
+  "sourceDeviceId": "studio-pc",
+  "sourceLibraryId": "studio-pc-library",
+  "availability": "available",
+  "cacheState": "none",
+  "cacheExpiresAt": null,
+  "playbackStatus": "queued",
+  "fallbackCandidates": []
+}

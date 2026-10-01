@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 220" role="img" aria-label="Original museum conservation label">
+  <rect width="520" height="220" rx="2" fill="#f4efe3"/>
+  <rect x="18" y="18" width="484" height="184" rx="1" fill="none" stroke="#17191c" stroke-opacity=".24"/>
+  <g fill="#17191c" font-family="Georgia, 'Times New Roman', serif">
+    <text x="36" y="62" font-size="24">Permanent Collection</text>
+    <text x="36" y="94" font-size="13" opacity=".62">LOCAL AUDIO WORK / PRIVATE LIBRARY</text>
+  </g>
+  <g fill="#596d7d" font-family="Consolas, 'Courier New', monospace" font-size="12" letter-spacing="2" opacity=".78">
+    <text x="36" y="142">FORMAT</text>
+    <text x="172" y="142">SIGNAL</text>
+    <text x="314" y="142">DURATION</text>
+  </g>
+  <g stroke="#17191c" stroke-opacity=".18">
+    <path d="M36 114h448M36 158h448"/>
+    <path d="M140 122v72M276 122v72"/>
+  </g>
+  <rect x="414" y="38" width="70" height="8" fill="#9f633d"/>
+</svg>

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "note": "Studio rebuild catalog. The pre-reset 33-theme catalog is intentionally detached from runtime selection.",
+  "themes": [
+    { "runtimeKey": "studio", "paletteKey": "gold", "name": "Pixelody Studio", "category": "core", "tags": ["original", "quiet", "rebuild"], "manifest": "studio.theme.json", "mainStyles": ["../styles.css", "../precision-pixel.css", "../studio-rebuild.css"], "miniStyles": ["../mini-player.css", "../mini-studio-rebuild.css"] }
+  ]
+}

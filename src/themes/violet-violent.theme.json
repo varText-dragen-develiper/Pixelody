@@ -1,0 +1,19 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.violet-violent",
+  "name": "Violet//Violent",
+  "author": "Pixelody",
+  "description": "A layered optical-memory instrument with transparent hardware anatomy, a dimensional media cascade, violet intent, and cyan confirmed signal.",
+  "palette": { "builtIn": "violet-violent" },
+  "assets": { "backgroundTexture": null, "heroOverlay": "../assets/themes/violet-violent/aura-gate.svg", "panelFrame": null, "iconSet": null },
+  "hud": { "layout": "cinematic", "controls": "technical", "corners": "framed" },
+  "typography": { "profile": "display" },
+  "motion": { "profile": "mechanical", "intensity": "expressive" },
+  "navigation": { "trackBrowser": "memory-cascade" },
+  "tokens": {
+    "accentPrimary": "#c54cff", "accentSecondary": "#ffb48f", "accentState": "#58f2ec", "heroTone": "#21162f",
+    "canvas": "#06040c", "elevation1": "#0d0916", "elevation2": "#151022", "elevation3": "#21162f",
+    "divider": "#463654", "frame": "#f5f2f8", "foreground": "#f5f2f8", "foregroundMuted": "#aaa2b5"
+  }
+}

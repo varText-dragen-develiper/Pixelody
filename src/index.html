@@ -1,0 +1,1155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' file: data: blob:; media-src 'self' file: blob:; font-src 'self' data:; connect-src 'self' http://127.0.0.1:* http://localhost:*; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; child-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Pixelody</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="overrides.css">
+  <link rel="stylesheet" href="settings.css">
+  <link rel="stylesheet" href="library-features.css">
+  <link rel="stylesheet" href="purchase-bridge.css">
+  <link rel="stylesheet" href="daily-curated.css">
+  <link rel="stylesheet" href="signal-orbit.css">
+  <link rel="stylesheet" href="metadata-player.css">
+  <link rel="stylesheet" href="layout-controls.css">
+  <link rel="stylesheet" href="stock-placeholders.css">
+  <link rel="stylesheet" href="precision-pixel.css">
+  <link rel="stylesheet" href="precision-overrides.css">
+  <link rel="stylesheet" href="public-icons.css">
+  <link rel="stylesheet" href="panel-handles.css">
+  <link rel="stylesheet" href="hero-controls.css">
+  <link rel="stylesheet" href="library-navigation.css">
+  <link rel="stylesheet" href="carousel-navigation.css">
+  <link rel="stylesheet" href="cover-flow-navigation.css">
+  <link rel="stylesheet" href="pass-deck-navigation.css">
+  <link rel="stylesheet" href="memory-cascade-navigation.css">
+  <link rel="stylesheet" href="spectral-field-navigation.css">
+  <link rel="stylesheet" href="pressure-stack-navigation.css">
+  <link rel="stylesheet" href="current-weave-navigation.css">
+  <link rel="stylesheet" href="chorus-fold-navigation.css">
+  <link rel="stylesheet" href="theme-prep.css">
+  <link rel="stylesheet" href="studio-rebuild.css">
+  <link rel="stylesheet" href="foreground.css" disabled>
+  <link rel="stylesheet" href="canvas-theme-ports.css" disabled>
+  <link rel="stylesheet" href="settings-streamlined.css">
+  <link rel="stylesheet" href="core-navigation.css">
+  <link rel="stylesheet" href="playback-performance.css">
+  <link rel="stylesheet" href="canvas-cartridge-quest.css" disabled>
+  <link rel="stylesheet" href="canvas-obsession.css" disabled>
+  <link rel="stylesheet" href="canvas-neon-burst.css" disabled>
+  <link rel="stylesheet" href="canvas-lo-fi-cafe.css" disabled>
+  <link rel="stylesheet" href="singularity-probe.css">
+</head>
+<body data-readiness="booting" data-performance="balanced" data-visibility="visible">
+  <div class="topbar">
+    <div class="window-drag"></div>
+    <span class="brand-mark topbar-brand-mark" aria-hidden="true"></span>
+    <button class="round-button profile-button" id="profileButton" title="Edit profile (opens Personal settings)" aria-label="Edit profile"><span id="profileInitial">P</span></button>
+    <div class="global-search"><span class="pixel-search" aria-hidden="true"></span><input id="search" type="search" aria-label="Search your music" placeholder="What do you want to hear?"></div>
+        <button class="jams-trigger" id="jamsButton" title="Open J.A.M."><span class="public-icon icon-list"></span><b>J.A.M.</b><small id="jamsButtonStatus">Off</small></button>
+    <button class="settings-trigger" id="settingsButton" title="Open Settings (Ctrl+,)" aria-haspopup="dialog"><span class="public-icon icon-settings"></span>Settings</button>
+    <button class="top-quality" id="systemsButton" title="Open audio systems (Ctrl+Shift+O)" aria-label="Open audio systems. Current output: System Default"><span class="status-dot"></span><b id="topOutput">System Default</b><small id="topQuality">Hi-res ready</small></button>
+  </div>
+  <aside class="meme-now-playing" id="memeNowPlaying" aria-hidden="true">
+    <div class="meme-now-playing-frame"><img id="memeNowPlayingImage" alt=""></div>
+    <div class="meme-now-playing-copy"><small id="memeNowPlayingCode">MEME CUE</small><strong id="memeNowPlayingLabel">No meme loaded</strong></div>
+  </aside>
+
+  <section class="cw-production-workbench dev-only" id="workspaceProductionWorkbench" aria-label="Pixelody Canvas development controls" hidden>
+    <div class="cw-production-identity"><small>DEV LAB / C8</small><strong id="workspaceProductionProfileName">Pixelody Canvas Alpha</strong><span id="workspaceProductionIdentity">Legacy adapters idle</span></div>
+    <label class="cw-production-module-picker"><span>Module</span><select id="workspaceProductionModule" aria-label="Selected workspace module"></select></label>
+    <div class="cw-production-actions" role="group" aria-label="Composition controls">
+      <button type="button" id="workspaceProductionMode" aria-pressed="false">Enter Composition Mode</button>
+      <button type="button" id="workspaceProductionUndo">Undo</button>
+      <button type="button" id="workspaceProductionRedo">Redo</button>
+      <button type="button" id="workspaceProductionRestore">Restore creator</button>
+      <button type="button" id="workspaceProductionCancel">Cancel and exit</button>
+      <button type="button" id="workspaceProductionLegacy">Return to Studio</button>
+    </div>
+    <p id="workspaceProductionStatus" role="status" aria-live="polite">Developer Canvas is waiting for its authoritative workspace.</p>
+  </section>
+
+  <div class="workspace">
+    <div class="main-stage-resizer" id="mainStageResizer" role="separator" aria-orientation="vertical" aria-label="Resize the middle section" aria-valuemin="600" aria-valuenow="600" tabindex="0" title="Drag left to shorten the middle section or right to expand it. Arrow keys also resize it."><span aria-hidden="true">&#8596;</span><small>MIDDLE WIDTH</small></div>
+    <button class="panel-handle library-panel-handle" id="toggleLibrary" title="Click to show or hide. Drag vertically to reposition." aria-label="Show or hide your library" aria-expanded="true">
+      <span class="public-icon icon-list" aria-hidden="true"></span>
+      <span class="panel-handle-copy"><b>Library</b><small id="libraryHandleState">HIDE</small></span>
+    </button>
+    <button class="panel-handle info-panel-handle" id="toggleInspector" title="Click to show or hide. Drag vertically to reposition." aria-label="Show or hide track information" aria-expanded="true">
+      <span class="public-icon icon-info" aria-hidden="true"></span>
+      <span class="panel-handle-copy"><b>Track Info</b><small id="infoHandleState">HIDE</small></span>
+    </button>
+    <aside class="library-rail" aria-label="Your Library" data-cw-product-root="library.browser">
+      <button class="library-compact-toggle" id="compactLibraryButton" type="button" aria-expanded="false" aria-controls="libraryFilters playlistList libraryImportActions" title="Open Library controls (Ctrl+Shift+L)"><span class="public-icon icon-list" aria-hidden="true"></span><span class="library-compact-label">Library</span></button>
+      <div class="rail-heading"><div><span class="library-profile" id="libraryProfile"><i class="public-icon icon-user"></i></span><strong>Your Library</strong></div><div class="rail-heading-actions"><button class="create-button" id="createPlaylist">+ Create</button></div></div>
+      <div class="library-filters" id="libraryFilters" role="group" aria-label="Library views"><button class="chip active" data-library-mode="playlists">Playlists</button><button class="chip" data-library-mode="albums">Albums</button><button class="chip" data-library-mode="artists">Artists</button><button class="chip" data-library-mode="smart">Smart</button></div>
+      <div class="rail-tools"><span class="pixel-search small" aria-hidden="true"></span><span>Recents &#8801;</span></div>
+      <div class="playlist-list" id="playlistList"></div>
+      <div class="rail-import" id="libraryImportActions" aria-label="Library import actions">
+        <button id="importButton"><span class="pixel-icon icon-download"></span>Import music</button>
+        <button id="folderButton"><span class="pixel-icon icon-folder"></span>Add folder</button>
+        <button id="downloadsButton"><span class="pixel-icon icon-music"></span>From Downloads</button>
+        <button id="migrationButton"><span class="public-icon icon-list"></span>Migrate</button>
+      </div>
+    </aside>
+    <div class="panel-resizer left-resizer" id="leftResizer" role="separator" aria-orientation="vertical" aria-label="Resize the library and middle section" aria-valuemin="190" aria-valuenow="290" tabindex="0" title="Drag to resize the library and middle section"></div>
+
+    <main class="main-stage" data-cw-product-root="tracks.browser">
+      <section class="cw-production-signal" id="workspaceSignalModule" data-cw-product-root="audio.visualizer" aria-label="Deterministic signal preview" aria-hidden="true"><small>SIGNAL / DETERMINISTIC</small><div aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></section>
+      <div class="tideplot-field-hud" aria-hidden="true"><i class="tideplot-depth-plane tideplot-depth-back"></i><i class="tideplot-depth-plane tideplot-depth-mid"></i><i class="tideplot-depth-plane tideplot-depth-edge"></i><span class="tideplot-field-axis">LOCAL SOURCE <b></b> CURRENT CLEARING <b></b> CONFIRMED OUTPUT</span><span class="tideplot-field-points"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <section id="libraryView">
+        <div class="playlist-hero" id="playlistHero" data-singularity-product-root="albums.collection">
+          <div class="hero-shade"></div>
+          <div class="abyssal-pressure-hud" aria-hidden="true">
+            <span class="ap-word ap-word-one">ABYSSAL</span><span class="ap-word ap-word-two">PRESS</span>
+            <div class="ap-gel-volume"><i></i><b></b></div>
+            <div class="ap-pressure-datum"><span>LOCAL SOURCE</span><i></i><span>PRESSURE FIELD</span><i></i><span>OUTPUT</span></div>
+            <div class="ap-utility-rail"><b>SIDE A</b><span>PRIVATE AUDIO</span><small>LOCAL / LOSSLESS</small></div>
+          </div>
+          <div class="violet-gate-hud" aria-hidden="true">
+            <div class="vv-core-back"><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
+            <div class="vv-core-film"><span>V//V</span><i></i><i></i><i></i></div>
+            <div class="vv-core-route"><span>LOCAL SOURCE</span><i></i><span>MEMORY CORE</span><i></i><span id="violetHeroRoute">OUTPUT READY</span></div>
+            <div class="vv-core-readout"><span><small>CAPSULES</small><b id="violetHeroCount">00</b></span><span><small>POSITION</small><b id="violetHeroPosition">00/00</b></span><span><small>STATE</small><b id="violetHeroState">READY</b></span></div>
+            <span class="violet-gate-mark">VIOLET // VIOLENT</span>
+            <span class="violet-gate-route">OPTICAL MEMORY INSTRUMENT</span>
+            <span class="violet-gate-coord">LOCAL ONLY &nbsp; / &nbsp; SIGNAL BUS</span>
+          </div>
+          <div class="ghost-aperture-hud" aria-hidden="true">
+            <span class="ghost-wordmark">GHOST</span>
+            <span class="ghost-aperture"><i></i><i></i><b></b></span>
+            <span class="ghost-horizon-label">EVENT &bull; HORIZON</span>
+            <span class="ghost-field-readout"><b id="ghostFieldCurrent">00</b>/<b id="ghostFieldTotal">00</b> &nbsp; LOCAL FIELD &nbsp; <em id="ghostFieldState">READY</em></span>
+          </div>
+          <div class="harmonic-registry-hud" aria-hidden="true">
+            <span class="hr-proof-label">SELECTED PROOF / LOCAL COLLECTION</span>
+            <div class="hr-registry-rail">
+              <span><small>TRACKS</small><b id="hrTrackCount">00</b></span>
+              <span><small>SOURCE</small><b id="hrSource">LOCAL</b></span>
+              <span><small>DEPTH / RATE</small><b id="hrDepthRate">-- / --</b></span>
+              <span><small>OUTPUT</small><b id="hrOutput">SYSTEM DEFAULT</b></span>
+              <span><small>NO ARTWORK</small><b id="hrMissingArt">00</b></span>
+            </div>
+            <span class="hr-edition-mark" id="hrEditionMark">ED. 00</span>
+          </div>
+          <div class="axis-break-hud" aria-hidden="true"><i></i><i></i><i></i><span>LOCAL / SIGNAL / FIELD</span></div>
+          <div class="creator-theme-studio" id="creatorThemeStudio" aria-label="Creator Layer room style">
+            <div class="creator-studio-head"><button class="creator-studio-toggle" id="creatorThemeToggle" type="button" aria-expanded="true" title="Collapse Room Style"><span>Room Style</span><b id="creatorThemeToggleState">Hide</b></button><button id="creatorThemeReset" title="Reset Creator Layer cosmetics">Reset</button></div>
+            <div class="creator-studio-row" data-creator-control="accent" aria-label="Accent color"><small>Accent</small><button data-creator-option="accent" data-creator-value="blurple"><i style="--swatch:#5865f2"></i>Blurple</button><button data-creator-option="accent" data-creator-value="emerald"><i style="--swatch:#23a55a"></i>Emerald</button><button data-creator-option="accent" data-creator-value="rose"><i style="--swatch:#eb459e"></i>Rose</button><button data-creator-option="accent" data-creator-value="ember"><i style="--swatch:#f0b232"></i>Ember</button><button data-creator-option="accent" data-creator-value="cyan"><i style="--swatch:#00a8fc"></i>Cyan</button></div>
+            <div class="creator-studio-row" data-creator-control="mood" aria-label="Room mood"><small>Mood</small><button data-creator-option="mood" data-creator-value="midnight">Midnight</button><button data-creator-option="mood" data-creator-value="amoled">AMOLED</button><button data-creator-option="mood" data-creator-value="soft">Soft</button></div>
+            <div class="creator-studio-row" data-creator-control="density" aria-label="Layout density"><small>Density</small><button data-creator-option="density" data-creator-value="cozy">Cozy</button><button data-creator-option="density" data-creator-value="compact">Compact</button><button data-creator-option="density" data-creator-value="showcase">Showcase</button></div>
+            <div class="creator-studio-row" data-creator-control="avatar" aria-label="Avatar shape"><small>Avatar</small><button data-creator-option="avatar" data-creator-value="squircle">Squircle</button><button data-creator-option="avatar" data-creator-value="round">Round</button><button data-creator-option="avatar" data-creator-value="tile">Tile</button></div>
+            <div class="creator-studio-row" data-creator-control="rows" aria-label="Track row style"><small>Rows</small><button data-creator-option="rows" data-creator-value="message">Message</button><button data-creator-option="rows" data-creator-value="compact">Compact</button><button data-creator-option="rows" data-creator-value="cards">Cards</button></div>
+            <div class="creator-studio-row" data-creator-control="decor" aria-label="Activity detail"><small>Detail</small><button data-creator-option="decor" data-creator-value="clean">Clean</button><button data-creator-option="decor" data-creator-value="status">Status</button><button data-creator-option="decor" data-creator-value="badges">Badges</button></div>
+          </div>
+          <div class="hero-content">
+            <div class="playlist-cover" id="playlistCover" data-cw-product-root="artwork.stage"><i class="signal-orbit-ring" aria-hidden="true"><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b></i><span class="axis-cutaway-mask" aria-hidden="true"><i></i><i></i><i></i></span><span>A</span></div>
+            <div class="hero-copy"><p id="collectionType">PLAYLIST</p><span class="quest-boot-message" id="questBootMessage" aria-hidden="true">PRESS PLAY</span><span class="quest-rare-cue" id="questHeroRareCue" aria-hidden="true"></span><h1 id="playlistTitle">All Music</h1><span id="playlistDescription">Your private, uncompromised listening library.</span><small id="playlistMeta">0 tracks</small>
+              <div class="ghost-record-cabinet" aria-label="Ghost Index collection evidence">
+                <span><small>ACCESS</small><b id="ghostAccess">r-- READY</b></span>
+                <span><small>RECORDS</small><b id="ghostRecordCount">00</b></span>
+                <span><small>SOURCE</small><b>LOCAL</b></span>
+                <span><small>DEPTH</small><b id="ghostDepth">00%</b></span>
+              </div>
+              <div class="quest-cabinet-stack">
+              <span class="quest-pause-menu quest-info-cabinet" data-quest-cabinet="pause" aria-label="Pause controls"><button class="quest-cabinet-handle" type="button" aria-expanded="false" aria-controls="questPauseCabinetBody"><b>PAUSE CONTROL</b><small>RESUME READY / 4 COMMANDS</small><i aria-hidden="true"></i></button><span class="quest-cabinet-body" id="questPauseCabinetBody"><span><b>RESUME</b><small>START BUTTON</small></span><span><b>QUEUE</b><small>PARTY LOADOUT</small></span><span><b>SAVE</b><small>SESSION READY</small></span><span><b>OPTIONS</b><small>CONSOLE BAY</small></span></span></span>
+              <span class="quest-collection-panel quest-info-cabinet" id="questCollectionPanel" data-quest-cabinet="save" aria-label="Collection save file details"><button class="quest-cabinet-handle" type="button" aria-expanded="false" aria-controls="questCollectionCabinetBody"><b>SAVE FILE</b><small id="questCollectionSummary">SLOT -- / 0 CARTS</small><i aria-hidden="true"></i></button><span class="quest-cabinet-body" id="questCollectionCabinetBody"><span><small>SLOT</small><b id="questCollectionSlot">--</b></span><span><small>CARTS</small><b id="questCollectionCount">0</b></span><span><small>TIME</small><b id="questCollectionTime">--</b></span><span><small>PLAYS</small><b id="questCollectionPlays">0</b></span><span><small>LAST</small><b id="questCollectionLast">NEVER</b></span><span><small>STATUS</small><b id="questCollectionStatus">READY</b></span></span></span>
+              <span class="quest-mini-map quest-info-cabinet" id="questMiniMap" data-quest-cabinet="route" aria-label="Playlist stage route"><button class="quest-cabinet-handle" type="button" aria-expanded="false" aria-controls="questMapCabinetBody"><b>STAGE ROUTE</b><small id="questMiniMapSummary">NO CART / ROUTE IDLE</small><i aria-hidden="true"></i></button><span class="quest-cabinet-body" id="questMapCabinetBody"><b>START</b><i></i><i></i><i></i><i></i><i></i><i></i><i></i><em id="questMiniMapLabel">NO CART</em></span></span>
+              <span class="quest-achievement-shelf quest-info-cabinet" id="questAchievementShelf" data-quest-cabinet="awards" aria-label="Collection achievement case"><button class="quest-cabinet-handle" type="button" aria-expanded="false" aria-controls="questAchievementCabinetBody"><b>AWARD CASE</b><small id="questAchievementSummary">0 / 5 UNLOCKED</small><i aria-hidden="true"></i></button><span class="quest-cabinet-body" id="questAchievementCabinetBody"></span></span>
+              </div>
+            </div>
+          </div>
+          <div class="counterform-workspace-cabinet" id="counterformWorkspaceCabinet">
+            <button class="counterform-workspace-cabinet-toggle" id="counterformWorkspaceCabinetToggle" type="button" aria-expanded="false" aria-controls="counterformWorkspaceCabinetPanel" title="Open workspace tools"><span class="public-icon icon-list" aria-hidden="true"></span><span>Workspace</span></button>
+            <div class="counterform-workspace-cabinet-panel" id="counterformWorkspaceCabinetPanel" hidden>
+              <span class="counterform-workspace-cabinet-title">Workspace cabinet</span>
+              <button type="button" data-counterform-cabinet-action="background"><span class="pixel-icon icon-image" aria-hidden="true"></span>Background</button>
+              <button type="button" data-counterform-cabinet-action="track-info"><span class="public-icon icon-info" aria-hidden="true"></span>Track info</button>
+              <button type="button" data-counterform-cabinet-action="reset-layout">Reset layout</button>
+            </div>
+          </div>
+          <button class="hero-edit" id="backgroundButton" type="button" title="Open collection artwork options" aria-haspopup="dialog" aria-expanded="false" aria-controls="backgroundCabinet"><span class="pixel-icon icon-image" aria-hidden="true"></span><span class="hero-action-label">Collection artwork</span></button>
+          <div class="background-cabinet" id="backgroundCabinet" role="dialog" aria-modal="false" aria-labelledby="backgroundCabinetTitle" hidden>
+            <div class="background-cabinet-head"><small id="backgroundCabinetTitle">COLLECTION ARTWORK</small><button id="closeBackgroundCabinet" type="button" aria-label="Close collection artwork options"><span class="public-icon icon-close" aria-hidden="true"></span></button></div>
+            <strong id="backgroundCabinetStatus" role="status" aria-live="polite" aria-atomic="true">Theme artwork is active</strong>
+            <p>Choose a local image, or remove it to reveal this theme's artwork and color treatment.</p>
+            <div class="background-cabinet-actions"><button id="chooseBackgroundImage" type="button"><span class="pixel-icon icon-image" aria-hidden="true"></span>Choose image...</button><button class="background-cabinet-remove" id="clearBackgroundImage" type="button">Use theme artwork</button></div>
+          </div>
+          <button class="metadata-toggle" id="metadataToggle" title="Toggle track details"><span class="public-icon icon-info" aria-hidden="true"></span><span class="hero-action-label">Track info</span></button>
+          <aside class="hero-track-info" id="heroTrackInfo">
+            <div class="counterform-track-info-resizer" id="counterformTrackInfoResize" role="separator" tabindex="0" aria-orientation="vertical" aria-controls="heroTrackInfo" aria-label="Resize collapsed track information width" aria-valuemin="210" aria-valuemax="480" aria-valuenow="248"><span aria-hidden="true"></span></div>
+            <button class="metadata-close" id="metadataClose" title="Collapse track details"><span class="public-icon icon-close"></span></button>
+            <div class="metadata-art" id="metadataArt"><span>&#9835;</span></div>
+            <p>NOW PLAYING</p>
+            <h2 id="metadataTitle">Choose a track</h2>
+            <h3 id="metadataArtist">Metadata will appear here</h3>
+            <div class="metadata-album" id="metadataAlbum">No album information</div>
+            <div class="metadata-grid"><span data-quest-label="TYPE"><small>FORMAT</small><b id="metadataFormat">--</b></span><span data-quest-label="RANK"><small>QUALITY</small><b id="metadataQuality">--</b></span><span data-quest-label="CHIP"><small>CODEC</small><b id="metadataCodec">--</b></span><span data-quest-label="TIME"><small>DURATION</small><b id="metadataDuration">--</b></span><span data-quest-label="CLASS"><small>GENRE</small><b id="metadataGenre">--</b></span><span data-quest-label="ERA"><small>YEAR</small><b id="metadataYear">--</b></span><span data-quest-label="PWR"><small>ENERGY</small><b id="metadataEnergy">--</b></span><span data-quest-label="ROLE"><small>ROLE</small><b id="metadataRole">--</b></span><span data-quest-label="ITEMS"><small>TAGS</small><b id="metadataSignalTags">--</b></span></div>
+            <section class="track-intelligence" id="trackIntelligencePanel">
+              <div class="track-intelligence-heading"><div><small>TRACK INTELLIGENCE</small><strong id="trackIntelRole">Unlearned</strong></div><span id="trackIntelConfidence">0%</span></div>
+              <p id="trackIntelSummary">Play this track to build a local signal profile.</p>
+              <div class="track-intel-tags" id="trackIntelTags"><span>No user signal tags yet.</span></div>
+              <div class="track-intel-grid">
+                <span data-quest-label="RUNS"><small>STARTS</small><b id="trackIntelStarts">0</b></span><span data-quest-label="CLEAR"><small>COMPLETE</small><b id="trackIntelCompletion">--</b></span><span data-quest-label="MISS"><small>SKIPS</small><b id="trackIntelSkips">0</b></span><span data-quest-label="HEARD"><small>AVG HEARD</small><b id="trackIntelAvgHeard">--</b></span><span data-quest-label="HOUR"><small>BEST HOUR</small><b id="trackIntelHour">--</b></span><span data-quest-label="SAVE"><small>LAST PLAYED</small><b id="trackIntelLastPlayed">--</b></span>
+              </div>
+              <div class="track-intel-actions"><button id="editTrackIntelligence">Edit</button><button id="resetTrackIntelligence">Reset signal</button></div>
+            </section>
+          </aside>
+        </div>
+
+        <div class="collection-body" data-singularity-product-root="tracks.collection">
+          <section class="daily-curated-panel hidden" id="dailyCuratedPanel" aria-labelledby="dailyCuratedTitle" aria-describedby="dailyCuratedPromise" data-state="idle" data-recipe="rediscovery">
+            <header class="daily-curated-heading">
+              <div class="daily-curated-cover" aria-hidden="true"><span class="daily-curated-orbit"></span><strong id="dailyCuratedDayNumber">--</strong><small>TODAY</small></div>
+              <div class="daily-curated-heading-copy">
+                <p class="daily-curated-kicker">ONE LISTEN, MADE FOR TODAY</p>
+                <h2 id="dailyCuratedTitle">Rediscovery</h2>
+                <p id="dailyCuratedDate">Ready from your local library until tomorrow.</p>
+              </div>
+              <span class="daily-curated-ready-mark" id="dailyCuratedReadyMark">READY TODAY</span>
+            </header>
+            <p class="daily-curated-promise" id="dailyCuratedPromise">A ready-to-play path through music you own. No setup, no choices to configure, and no reshuffle until tomorrow.</p>
+            <div class="daily-curated-start">
+              <div class="daily-curated-lead"><span>YOUR LISTEN STARTS WITH</span><strong id="dailyCuratedLeadTitle">Waiting for local music</strong><small id="dailyCuratedLeadMeta">Import music and tomorrow's path takes care of itself.</small></div>
+              <button class="primary" id="dailyCuratedPlay"><span class="pixel-icon icon-play" aria-hidden="true"></span><span>Start today's listen</span></button>
+            </div>
+            <dl class="daily-curated-facts" aria-label="Today's listen at a glance">
+              <div><dt>TIME</dt><dd id="dailyCuratedDuration">--</dd></div>
+              <div><dt>NEW TO YOU</dt><dd id="dailyCuratedUnheard">--</dd></div>
+              <div><dt>COMING BACK</dt><dd id="dailyCuratedReturning">--</dd></div>
+              <div><dt>TRACKS</dt><dd id="dailyCuratedTrackCount">--</dd></div>
+            </dl>
+            <div class="daily-curated-receipt"><span>TODAY'S SHAPE</span><p id="dailyCuratedSummary">Daily Curated is ready when your library has music to revisit.</p></div>
+            <div class="daily-curated-actions"><button id="dailyCuratedSave">Keep this day</button><small id="dailyCuratedSaveHint">Makes a normal, editable playlist. Today's listen stays unchanged.</small></div>
+            <details class="daily-curated-details"><summary>See how today was put together</summary><div class="daily-curated-provenance"><p id="dailyCuratedSource">Made privately from music on this device.</p><p id="dailyCuratedCoverage">Track information coverage: --</p></div><ul id="dailyCuratedReasons"></ul></details>
+          </section>
+
+          <div class="collection-actions" role="toolbar" aria-label="Collection and selected track controls">
+            <button class="hero-play" id="heroPlay" aria-label="Play or pause this collection"><span class="pixel-icon icon-play" aria-hidden="true"></span></button>
+            <button class="subtle-action" id="addToPlaylist">+ Add music</button>
+            <button class="icon-action" id="playlistMore" title="Playlist options" aria-label="Playlist options">...</button>
+            <button class="subtle-action track-actions-trigger" id="trackActionsButton" type="button" title="Actions for the selected track (Shift+F10)" aria-haspopup="menu" aria-controls="trackMenu" aria-expanded="false" disabled><span aria-hidden="true">...</span><span>Track actions</span></button>
+            <select class="sort-select" id="sortSelect" title="Sort tracks" aria-label="Sort tracks"><option value="playlist-order" hidden disabled>Playlist order</option><option value="added-desc">Recently added</option><option value="title-asc">Title A-Z</option><option value="artist-asc">Artist A-Z</option><option value="album-asc">Album A-Z</option><option value="quality-desc">Highest quality</option><option value="plays-desc">Most played</option></select>
+            <div class="filter-row" role="group" aria-label="Track quality filter"><button class="filter active" data-filter="all" data-quest-label="BAG">All</button><button class="filter" data-filter="lossless" data-quest-label="LOOT">Lossless</button><button class="filter" data-filter="hires" data-quest-label="RARE">Hi-Res</button></div>
+          </div>
+
+          <div class="drop-zone" id="dropZone"><span class="pixel-icon icon-music drop-icon"></span><strong>Bring your music into Pixelody</strong><small>Drop FLAC, WAV, AIFF, ALAC, MP3, AAC, OGG or OPUS files here</small><button id="emptyImport">Choose files</button></div>
+          <div class="daily-curated-sequence hidden" id="dailyCuratedSequence" aria-hidden="true"><span>TODAY'S ROUTE</span><strong id="dailyCuratedSequenceLabel">Play follows this order.</strong></div>
+          <div class="track-table hidden" id="trackTable">
+            <div class="track-row track-header"><span>#</span><span>TITLE</span><span>FORMAT</span><span>QUALITY</span><span>TUNING</span><span>&#9716;</span><span></span></div>
+            <div id="trackRows"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="systems-view hidden" id="systemsView">
+        <button class="back-button" id="backToLibrary"><span class="public-icon icon-back"></span>Back to library</button>
+        <p class="eyebrow">AUDIO SYSTEMS</p><h1>Shape the room, not the music.</h1><p class="lede">Build correction profiles for every output. Track tuning remains independent and follows the song.</p>
+        <div class="eq-mode-toggle systems-page-mode-toggle" role="group" aria-label="Audio Systems page detail level"><button data-page-mode-value="simple">Simple</button><button data-page-mode-value="advanced">Advanced</button></div>
+        <div class="systems-grid">
+          <div class="systems-tier" data-tier="everyday">
+            <div class="systems-tier-heading"><strong>Output &amp; tuning</strong><small>The controls you'll reach for most.</small></div>
+            <div class="systems-tier-panels">
+              <div class="panel system-output-panel"><label>Audio output</label><select id="outputSelect"><option value="">System Default</option></select><small id="outputStatus">System Default routed</small><button class="quiet-button full" id="refreshOutputs">Refresh outputs</button></div>
+              <div class="panel system-character-panel"><label>System character</label><div class="preset-grid"><button class="preset active" data-preset="reference">Reference</button><button class="preset" data-preset="small">Small speakers</button><button class="preset" data-preset="warm">Warm stereo</button><button class="preset" data-preset="bright">Tame bright</button></div></div>
+              <div class="panel wide system-correction-panel"><div class="panel-title"><div><label>System correction</label><small>Applied to every track through this output</small></div><button class="text-button" id="resetSystem">Reset</button></div><div class="eq-mode-toggle" role="group" aria-label="Output EQ mode"><button data-eq-mode-scope="system" data-eq-mode-value="simple">Simple</button><button data-eq-mode-scope="system" data-eq-mode-value="advanced">Advanced</button></div><div class="eq-controls" id="systemEq"></div><details class="advanced-eq-panel" id="systemAdvancedEqPanel"><summary>Advanced output parametric EQ</summary><small class="advanced-eq-hint">Per-band gain and frequency control for this output, applied on top of your Simple settings above.</small><div class="parametric-eq" id="systemParametricEq"></div></details></div>
+              <div class="panel system-image-panel"><div class="panel-title"><div><label>Stereo image</label><small id="spatialStatus">Centered stereo</small></div><button class="text-button" id="resetSpatial">Reset</button></div><label class="balance-control" for="balanceControl"><span>Balance</span><input id="balanceControl" type="range" min="-1" max="1" step="0.01" value="0"><output id="balanceValue" for="balanceControl">Center</output></label><label class="mono-toggle"><input id="monoToggle" type="checkbox"> Mono sum</label></div>
+              <div class="panel wide system-transition-panel"><div class="panel-title"><div><label>Playback transition</label><small id="transitionStatus">Gapless (0s seam-free)</small></div><button class="text-button" id="resetTransition">Reset</button></div><div class="eq-mode-toggle transition-mode-toggle" id="transitionModeSetting" role="group" aria-label="Playback transition mode"><button class="active" data-transition-mode="gapless">Gapless</button><button data-transition-mode="equal-power">Equal Power</button><button data-transition-mode="linear">Linear</button><button data-transition-mode="off">Off</button></div><div class="transition-duration-row" id="transitionDurationRow"><label for="crossfadeDuration"><span>Crossfade</span><input id="crossfadeDuration" type="range" min="1" max="12" step="0.5" value="5"><output id="crossfadeDurationValue" for="crossfadeDuration">5.0s</output></label></div><div class="transition-presets" id="transitionPresets" role="group" aria-label="Crossfade presets"><button class="preset" data-preset-duration="2">2s Smooth</button><button class="preset active" data-preset-duration="5">5s Equal Power</button><button class="preset" data-preset-duration="8">8s Club Blend</button><button class="preset" data-preset-duration="12">12s Extended</button></div></div>
+            </div>
+          </div>
+          <div class="systems-tier collapsible-card" data-tier="calibration" data-card="systems-tier-calibration">
+            <div class="systems-tier-heading"><div><strong>Calibration &amp; profiles</strong><small>Set these up once, then leave them alone.</small></div><button class="card-collapse" aria-label="Toggle Calibration &amp; profiles section">-</button></div>
+            <div class="systems-tier-panels">
+              <div class="panel device-profile-panel"><div class="panel-title"><div><label>Headphone/DAC library</label><small id="deviceProfileHint">Suggested from current output</small></div></div><select id="deviceProfileSelect" aria-label="Headphone or DAC profile"></select><p id="deviceProfileDescription">Choose a conservative output profile for this device.</p><div class="profile-actions"><button class="quiet-button" id="applyDeviceProfile">Apply profile</button><button class="quiet-button" id="suggestDeviceProfile">Use suggestion</button></div></div>
+              <div class="panel tuning-profile-panel"><label>Tuning profiles</label><small>Export or restore track EQ, output EQ, stereo-image, and device-library profiles.</small><div class="profile-actions"><button class="quiet-button" id="exportTuningProfiles">Export profiles</button><button class="quiet-button" id="importTuningProfiles">Import profiles</button></div></div>
+              <div class="panel wide calibration-panel"><div class="panel-title"><div><label>Guided calibration</label><small id="calibrationStatus">Ready for System Default.</small></div><button class="text-button" id="cancelCalibration" disabled>Cancel</button></div><div class="calibration-steps" id="calibrationSteps"><span data-calibration-step="source">Source</span><span data-calibration-step="audition">Audition</span><span data-calibration-step="save">Save</span></div><div class="calibration-readout"><span><small>TRACK</small><b id="calibrationTrack">No track selected</b></span><span><small>OUTPUT</small><b id="calibrationOutput">System Default</b></span><span><small>CLIP</small><b id="calibrationClip">--</b></span><span><small>RISK</small><b id="calibrationRisk">Safe</b></span></div><div class="calibration-grid" id="calibrationChoices"><button data-calibration-choice="reference"><strong>Reference</strong><small>Flat control</small></button><button data-calibration-choice="warm"><strong>Warm</strong><small>Fuller lows</small></button><button data-calibration-choice="clear"><strong>Clear</strong><small>Vocal focus</small></button><button data-calibration-choice="soft"><strong>Soft</strong><small>Less fatigue</small></button><button data-calibration-choice="detail"><strong>Detail</strong><small>Air and edge</small></button></div><div class="calibration-actions"><button class="quiet-button" id="startCalibration">Start wizard</button><button class="quiet-button" id="replayCalibrationClip" disabled>Replay clip</button><button class="quiet-button" id="saveCalibration" disabled>Save profile</button></div></div>
+              <div class="panel speaker-test-panel"><div class="panel-title"><div><label>Speaker test tones</label><small id="toneStatus">Idle</small></div><button class="text-button" id="stopTone" disabled>Stop</button></div><div class="tone-grid"><button data-tone-test="left"><strong>L</strong><small>Left</small></button><button data-tone-test="right"><strong>R</strong><small>Right</small></button><button data-tone-test="both"><strong>LR</strong><small>Both</small></button><button data-tone-test="bass"><strong>80</strong><small>Bass</small></button><button data-tone-test="sweep"><strong>Hz</strong><small>Sweep</small></button></div></div>
+            </div>
+          </div>
+          <div class="systems-tier collapsible-card" data-tier="advanced" data-card="systems-tier-advanced">
+            <div class="systems-tier-heading"><div><strong>Advanced &amp; diagnostics</strong><small>Grouped speaker rigs, experimental Windows-wide EQ, and low-level device readouts.</small></div><button class="card-collapse" aria-label="Toggle Advanced &amp; diagnostics section">-</button></div>
+            <div class="systems-tier-panels">
+              <div class="panel wide speaker-system-panel"><div class="panel-title"><div><label>Grouped speaker rig</label><small id="speakerSystemStatus">No grouped speaker system saved yet.</small></div><div class="panel-title-actions"><button class="text-button" id="recoverPrimaryOutput">Primary only</button><button class="text-button" id="runSpeakerRigSelfTest">Self-test</button><button class="text-button" id="copySpeakerCalibrationReport">Copy calibration</button><button class="text-button" id="copySpeakerSystemDiagnostics">Copy diagnostics</button></div></div>
+                <div class="panel-subsection">
+                  <div class="panel-subsection-heading">Rig setup</div>
+                  <div class="speaker-system-toolbar"><label><span>Rig</span><select id="speakerSystemSelect" aria-label="Grouped speaker system"><option value="">No saved rig</option></select></label><button class="quiet-button" id="createSpeakerSystem">New rig</button><button class="quiet-button" id="renameSpeakerSystem" disabled>Rename</button><button class="quiet-button" id="deleteSpeakerSystem" disabled>Delete</button><button class="quiet-button" id="addCurrentOutputToRig">Add current output</button><span class="hint hint-right" tabindex="0" aria-label="Adds the Windows output you're currently routed to as a member of this rig, so it gets its own delay and EQ inside the group.">?<span class="hint-bubble" aria-hidden="true">Adds the Windows output you're currently routed to as a member of this rig, so it gets its own delay and EQ inside the group.</span></span></div>
+                  <div class="speaker-system-members" id="speakerSystemMembers"><span class="speaker-system-empty">Create a rig, then add each Windows output you want to tune.</span></div>
+                </div>
+                <div class="panel-subsection">
+                  <div class="panel-subsection-heading">Live status</div>
+                  <div class="speaker-system-readout"><span><small>ENGINE</small><b id="speakerSystemEngineState">Setup saved / dual-output engine not armed</b></span><span><small>ROUTES</small><b id="speakerSystemRouteWarning">Refresh outputs to inspect routes.</b></span><span><small>STABILITY</small><b id="speakerSystemRouteStability">Unsupported</b></span><span><small>MEMBERS</small><b id="speakerSystemMemberCount">0 outputs</b></span></div>
+                  <label class="speaker-system-prototype-toggle"><input id="speakerSystemPrototypeEnable" type="checkbox"> Experimental browser dual-output prototype</label><small class="speaker-system-prototype-status" id="speakerSystemPrototypeStatus">Disabled by default. When enabled, guarded two-output routing prepares a processed secondary path and reports drift or route failure.</small><div class="speaker-system-drift-history" id="speakerSystemDriftHistory" data-drift-state="idle">Drift history appears while the browser prototype is armed.</div>
+                </div>
+                <section class="speaker-rig-validation collapsible-card" id="speakerRigValidation" data-validation-state="idle" data-card="speaker-rig-validation"><div class="speaker-rig-validation-heading"><div><strong>Physical validation</strong><span class="hint" tabindex="0" aria-label="Confirms two outputs stay in sync over a real 30-minute listening session. Bluetooth links need looser drift tolerances than two wired connections.">?<span class="hint-bubble" aria-hidden="true">Confirms two outputs stay in sync over a real 30-minute listening session. Bluetooth links need looser drift tolerances than two wired connections.</span></span></div><button class="card-collapse" aria-label="Toggle physical validation section">-</button></div><div class="speaker-rig-validation-head"><label><select id="speakerRigValidationType" aria-label="Physical route type"><option value="wired-wired">Wired + wired</option><option value="wired-bluetooth">Wired + Bluetooth</option></select></label><div class="speaker-rig-validation-actions"><button class="quiet-button" id="startSpeakerRigValidation">Start 30 min</button><button class="quiet-button" id="recordSpeakerRigAudible" disabled>Both audible</button><button class="quiet-button" id="recordSpeakerRigIssue" disabled>Report issue</button><button class="text-button" id="finishSpeakerRigValidation" disabled>Finish</button><button class="text-button" id="copySpeakerRigValidation" disabled>Copy evidence</button></div></div><div class="speaker-rig-validation-readout"><span><small>STATE</small><b id="speakerRigValidationState">Idle</b></span><span><small>TIME</small><b id="speakerRigValidationTime">0:00 / 30:00</b></span><span><small>SAMPLES</small><b id="speakerRigValidationSamples">0</b></span><span><small>EVIDENCE</small><b id="speakerRigValidationEvidence">No completed run</b></span></div><small class="speaker-rig-validation-status" id="speakerRigValidationStatus">Uses 5-second sanitized drift and route samples. Listener checkpoints remain required.</small></section>
+              </div>
+              <div class="panel wide system-eq-mode-panel" data-system-eq-status="off"><div class="panel-title"><div><label>Playback side / system side<span class="hint" tabindex="0" aria-label="Staging prepares an EQ profile for future Windows-wide routing. Until a supported native route ships, only Pixelody's own playback is affected -- other apps' audio is untouched.">?<span class="hint-bubble" aria-hidden="true">Staging prepares an EQ profile for future Windows-wide routing. Until a supported native route ships, only Pixelody's own playback is affected -- other apps' audio is untouched.</span></span></label><small id="systemEqRoute">In-app only</small></div><button class="text-button" id="copySystemEqStatus">Copy</button></div><div class="system-eq-split"><span><small>PLAYBACK EQ</small><b id="playbackEqState">Active inside Pixelody</b><em id="playbackEqDetail">Track and output profiles are applied in the player.</em></span><span><small>SYSTEM EQ</small><b id="systemEqState">In-app only</b><em id="systemEqDetail">External app audio is untouched until a supported Windows route exists.</em></span></div><div class="system-eq-actions"><label class="system-eq-toggle"><input id="systemEqEnable" type="checkbox"> Stage Windows-wide System EQ</label><label class="system-eq-engine"><span>Engine</span><select id="systemEqEngine" aria-label="System EQ engine"><option value="virtual-endpoint">Virtual endpoint</option><option value="wasapi-loopback">Loopback dev</option><option value="apo">APO later</option></select></label><button class="quiet-button" id="probeSystemEqRoute">Probe route</button><button class="quiet-button" id="runLoopbackPrototype">Dev capture</button></div><div class="system-eq-probe"><span><small>CAPABILITY</small><b id="systemEqCapability">Not probed</b></span><span><small>LOOPBACK</small><b id="systemEqLoopback">Not tested</b></span></div><small class="system-eq-caveat" id="systemEqCaveat">Requires a signed optional native route before it can affect other apps.</small></div>
+              <div class="panel device-diagnostics-panel"><div class="panel-title"><div><label>DAC/device diagnostics<span class="hint" tabindex="0" aria-label="A read-only snapshot of your current output path, useful for troubleshooting. Nothing here needs to be changed for normal listening.">?<span class="hint-bubble" aria-hidden="true">A read-only snapshot of your current output path, useful for troubleshooting. Nothing here needs to be changed for normal listening.</span></span></label><small>Browser-safe output path facts</small></div><button class="text-button" id="refreshDeviceDiagnostics">Refresh</button></div><div class="device-diagnostics-grid"><span><small>OUTPUT</small><b id="dacDiagOutput">System Default</b></span><span><small>SINK</small><b id="dacDiagSink">--</b></span><span><small>ENGINE</small><b id="dacDiagEngine">Idle</b></span><span><small>IMAGE</small><b id="dacDiagImage">Centered stereo</b></span><span><small>DEVICES</small><b id="dacDiagDevices">--</b></span><span><small>TONE</small><b id="dacDiagTone">Idle</b></span><span><small>NATIVE</small><b id="dacDiagNative">Not installed / not required</b></span><span><small>GAIN RISK</small><b id="dacDiagRisk">Safe</b></span></div></div>
+              <div class="panel wide latency-panel"><div class="panel-title"><div><label>Latency profiler</label><small id="latencyStatus">Not measured</small></div><button class="text-button" id="copyLatencyReport" disabled>Copy</button></div><div class="latency-grid"><span><small>ESTIMATE</small><b id="latencyEstimate">--</b></span><span><small>CONFIDENCE</small><b id="latencyConfidence">--</b></span><span><small>ENGINE</small><b id="latencyEngine">--</b></span><span><small>WASAPI</small><b id="latencyWasapi">--</b></span><span><small>JITTER</small><b id="latencyJitter">--</b></span><span><small>ROUTE</small><b id="latencyRoute">System Default</b></span></div><div class="latency-actions"><button class="quiet-button" id="runLatencyProfile">Run profiler</button><button class="quiet-button" id="runMicCalibration">Run mic calibration</button><label class="mic-select-control"><span>Mic input</span><select id="micInputSelect" aria-label="Microphone input for acoustic calibration"><option value="">System Default microphone</option></select></label><button class="quiet-button" id="refreshMicInputs">Refresh mics</button><small id="latencyCaveat">Software-path estimate. Mic calibration plays quiet chirps and listens for the acoustic return.</small></div><div class="latency-grid mic-latency-grid"><span><small>ACOUSTIC</small><b id="micLatencyEstimate">--</b></span><span><small>DELTA</small><b id="micLatencyDelta">--</b></span><span><small>MIC</small><b id="micLatencyNoise">--</b></span><span><small>CONFIDENCE</small><b id="micLatencyConfidence">--</b></span><span><small>PULSES</small><b id="micLatencyPulses">--</b></span><span><small>STATUS</small><b id="micLatencyStatus">Not measured</b></span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <div class="panel-resizer right-resizer" id="rightResizer" role="separator" aria-orientation="vertical" aria-label="Resize the middle section and track information" aria-valuemin="240" aria-valuenow="292" tabindex="0" title="Drag to resize the middle section and track information"></div>
+
+    <aside class="inspector" id="inspectorPanel" data-cw-product-root="track.information">
+      <div class="inspector-heading"><div><span class="status-dot"></span><strong id="sideOutput">System Default</strong></div><button id="closeInspector"><span class="public-icon icon-close"></span></button></div>
+      <div class="quality-card collapsible-card" data-card="quality"><i class="signal-edge-ring" aria-hidden="true"></i>
+        <div class="inspector-card-title"><small>NOW PLAYING QUALITY</small><button class="card-collapse" title="Collapse section">-</button></div><h3 id="signalFormat">No track loaded</h3>
+        <p id="sideQuality">Choose a track to inspect its source.</p>
+        <div class="activity-dots" aria-label="Playback activity"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="signal-path"><span id="sourceRate">SOURCE --</span><b>&#8594;</b><span id="outputRate">ENGINE --</span></div>
+        <div class="technical-details" id="technicalDetails"><span>CODEC --</span><span>CHANNELS --</span><span>BITRATE --</span><span>GAIN --</span><span>HEADROOM --</span><span>RISK --</span></div>
+      </div>
+      <div class="tuning-card collapsible-card" data-card="tuning">
+        <div class="panel-title"><div><small>TRACK TUNING</small><h3 id="tuningTitle">Nothing playing</h3></div><div><button class="text-button" id="bypassButton">A/B Bypass</button><button class="text-button" id="resetTrack">Reset</button><button class="card-collapse" title="Collapse section">-</button></div></div>
+        <div class="eq-visual"><canvas id="eqCanvas"></canvas></div>
+        <div class="eq-mode-toggle" role="group" aria-label="Track EQ mode"><button data-eq-mode-scope="track" data-eq-mode-value="simple">Simple</button><button data-eq-mode-scope="track" data-eq-mode-value="advanced">Advanced</button></div>
+        <div class="eq-controls" id="trackEq"></div>
+        <details class="advanced-eq-panel" id="trackAdvancedEqPanel"><summary>Advanced track parametric EQ</summary><div class="parametric-eq" id="trackParametricEq"></div></details>
+        <p class="tuning-help">Saved automatically for this track and layered over the active system profile.</p>
+      </div>
+      <button class="open-systems" id="openSystems">Open audio system settings <span>&#8594;</span></button>
+    </aside>
+  </div>
+
+  <div class="theme-action-overlay" id="themeActionOverlay" aria-hidden="true">
+    <div class="theme-action-mark"><i></i><i></i><i></i><i></i></div>
+    <div class="theme-action-copy"><small id="themeActionCode">ACQUIRE / 04</small><strong id="themeActionLabel">COLLECTION READY</strong></div>
+  </div>
+
+  <div class="ghost-reconstruction" id="ghostReconstruction" aria-hidden="true">
+    <div class="ghost-reconstruction-grid" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="ghost-reconstruction-copy"><small id="ghostReconstructionCode">EVENT / RESOLVE</small><strong id="ghostReconstructionLabel">RECONSTRUCTING LOCAL FIELD</strong></div>
+  </div>
+
+  <div class="theme-load-screen active" id="themeLoadScreen" role="status" aria-live="polite" aria-hidden="false" data-load-mode="startup" data-load-theme="studio" data-load-phase="preparing">
+    <div class="theme-load-ink" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <div class="theme-load-content">
+      <span class="brand-mark theme-load-brand-mark" aria-hidden="true"></span>
+      <small>PIXELODY</small>
+      <strong id="themeLoadTitle">Pixelody Studio</strong>
+      <span id="themeLoadMeta">Opening Pixelody</span>
+      <i aria-hidden="true"></i>
+    </div>
+  </div>
+
+  <span id="tideplotPlayerOrigin" hidden></span>
+  <footer class="player">
+    <div class="playing-info" id="nowPlayingSummary" tabindex="0" aria-label="Current track cartridge details" data-cw-product-root="now-playing">
+      <div class="mini-cover" id="miniCover" aria-hidden="true"><i class="signal-orbit-ring" aria-hidden="true"><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b></i></div>
+      <div><strong id="playerTitle">Choose a track</strong><span id="playerMeta">Your music stays on this computer</span><small class="quest-rare-cue" id="questPlayerRareCue" aria-hidden="true"></small></div>
+      <div class="counterform-now-playing-resizer" id="counterformNowPlayingResize" role="separator" tabindex="0" aria-orientation="vertical" aria-controls="nowPlayingSummary" aria-label="Resize collapsed Now Playing width" aria-valuemin="220" aria-valuemax="520" aria-valuenow="280"><span aria-hidden="true"></span></div>
+    </div>
+    <div class="harmonic-player-hud" aria-hidden="true">
+      <span><small>CONFIRMED SIGNAL</small><b id="hrPlayerState">READY</b></span>
+      <span><small>FORMAT</small><b id="hrPlayerFormat">LOCAL</b></span>
+      <span><small>QUEUE</small><b id="hrPlayerQueue">00</b></span>
+    </div>
+    <div class="ghost-evidence-hud" aria-label="Ghost Index playback evidence">
+      <span><small>EVENT</small><b id="ghostPlayerEvent">--/--</b></span>
+      <span><small>ACCESS</small><b id="ghostPlayerAccess">r-- READY</b></span>
+      <span><small>FIELD</small><b id="ghostPlayerField">LOCAL</b></span>
+    </div>
+    <div class="violet-player-hud" aria-label="Violet Violent signal route">
+      <span><small>SOURCE</small><b id="violetPlayerSource">LOCAL</b></span><i aria-hidden="true"></i>
+      <span><small>TRANSPORT</small><b id="violetPlayerTransport">READY</b></span><i aria-hidden="true"></i>
+      <span><small>OUTPUT</small><b id="violetPlayerOutput">SYSTEM DEFAULT</b></span>
+    </div>
+    <div class="quest-hotbar-hud" aria-label="Cartridge Quest hotbar status">
+      <button type="button" class="quest-hud-label" title="Show session quest log" aria-label="Show Cartridge Quest session recap">QUEST</button>
+      <div class="quest-status-lights" aria-label="Cartridge Quest console status"><span class="quest-led quest-led-power" title="POWER: Cartridge Quest console is active"><i aria-hidden="true"></i><b>POWER</b></span><span class="quest-led quest-led-read" title="READ: playback or import activity"><i aria-hidden="true"></i><b>READ</b></span><span class="quest-led quest-led-link" title="LINK: mini player or J.A.M. activity"><i aria-hidden="true"></i><b>LINK</b></span></div>
+      <div class="quest-stats" aria-label="Cartridge Quest listening stats"><span class="quest-xp-cell" id="questXpCell" data-reward="+10" tabindex="0"><b id="questXpCounter">0</b><small>XP</small><i aria-hidden="true"></i></span><span tabindex="0"><b id="questStreakCounter">0:00</b><small>RUN</small></span><span tabindex="0"><b id="questHighCounter">0:00</b><small>HI</small></span><span class="quest-combo-cell" id="questComboCell" tabindex="0"><b id="questComboCounter">x1</b><small>COMBO</small></span></div>
+      <div class="quest-log-recap" id="questLogRecap" aria-label="Cartridge Quest session recap"><span><small>LOG</small><b id="questLogRun">0:00</b></span><span><small>GAIN</small><b id="questLogXp">+0</b></span><span><small>TIER</small><b id="questLogCombo">x1</b></span><span><small>CUE</small><b id="questLogCue">NONE</b></span></div>
+    </div>
+    <div class="transport" data-cw-product-root="transport.controls">
+      <div class="transport-buttons"><button id="shuffleButton" title="Shuffle"><span class="quest-mode-label" aria-hidden="true">SHUF</span><span class="transport-icon transport-shuffle"></span><span class="quest-mode-readout" id="questShuffleReadout" aria-hidden="true">OFF</span></button><button id="prevButton" title="Previous"><span class="transport-icon transport-previous"></span></button><button class="play-button" id="playButton" title="Play"><span class="quest-mode-label" aria-hidden="true">START</span><i class="signal-orbit-ring" aria-hidden="true"><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b><b class="signal-trace-cell"></b></i><span class="transport-icon transport-play" id="mainPlayIcon"></span><span class="quest-mode-readout" id="questPlayReadout" aria-hidden="true">STBY</span></button><button id="nextButton" title="Next"><span class="transport-icon transport-next"></span></button><button id="repeatButton" title="Repeat: off"><span class="quest-mode-label" aria-hidden="true">LOOP</span><span class="transport-icon transport-repeat"></span><span class="quest-mode-readout" id="questRepeatReadout" aria-hidden="true">OFF</span></button></div>
+      <div class="timeline"><span id="elapsed">0:00</span><span class="quest-boss-bar" id="questBossBar"><i aria-hidden="true"></i><input type="range" id="seek" min="0" max="1000" value="0"><b aria-hidden="true">BOSS HP</b><em aria-hidden="true">TRACK</em></span><span id="duration">0:00</span></div>
+    </div>
+    <div class="volume" id="questOutputModule" aria-label="Listening controls"><button class="mini-launch" id="miniPlayerButton" title="Open always-on-top mini player" aria-label="Open mini player"><span class="quest-output-label" aria-hidden="true">BAY</span><span class="player-control-label">MINI</span><span class="quest-output-readout" id="questMiniReadout" aria-hidden="true">DOCK</span></button><button class="queue-button" id="queueButton" title="Open queue (Ctrl+Shift+Q)" aria-label="Open queue, 0 tracks" aria-haspopup="dialog" aria-controls="queueDrawer" aria-expanded="false"><span class="quest-output-label" aria-hidden="true">PARTY</span><span class="public-icon icon-list" aria-hidden="true"></span><span class="player-control-label">QUEUE</span> <b id="queueCount">0</b><span class="quest-output-readout" id="questQueueReadout" aria-hidden="true">0 CARTS</span></button><button class="mute-button" id="muteButton" type="button" title="Mute" aria-label="Mute" aria-pressed="false"><span class="public-icon icon-volume volume-icon" aria-hidden="true"></span></button><span class="quest-volume-meter" id="questVolumeMeter"><small aria-hidden="true">VOL</small><label class="visually-hidden" for="volume">Volume</label><input type="range" id="volume" min="0" max="1" step="0.01" value="0.85" aria-label="Volume"><b id="questVolumeReadout" aria-hidden="true">85%</b></span><span id="qualityBadge">READY</span><button class="player-systems-button" id="playerSystemsButton" type="button" title="Open audio systems (Ctrl+Shift+O)" aria-label="Open audio systems. Current output: System Default"><span class="status-dot" aria-hidden="true"></span><span id="playerOutputLabel">System Default</span></button><span class="quest-output-status" id="questOutputStatus" aria-hidden="true">SYS DEFAULT</span></div>
+  </footer>
+
+  <div class="context-menu hidden" id="playlistMenu">
+    <button data-action="background">Choose background...</button>
+    <button data-action="clear-background">Use theme artwork</button>
+    <button data-action="anchor">Keep on the shelf</button>
+    <button data-action="rename">Rename playlist</button>
+    <button data-action="export">Export playlist...</button>
+    <button data-action="delete" class="danger">Delete playlist</button>
+  </div>
+  <div class="context-menu hidden" id="trackMenu" role="menu" aria-label="Track actions">
+    <button role="menuitem" data-track-action="play">Play now</button>
+    <button role="menuitem" data-track-action="favorite">Add to favorites</button>
+    <button role="menuitem" data-track-action="add-to-playlist">Add to playlist...</button>
+    <button role="menuitem" data-track-action="move-up" class="hidden">Move up</button>
+    <button role="menuitem" data-track-action="move-down" class="hidden">Move down</button>
+    <button role="menuitem" data-track-action="next">Play next</button>
+    <button role="menuitem" data-track-action="not-session">Not this session</button>
+    <button role="menuitem" data-track-action="less-like">Less like this</button>
+    <button role="menuitem" data-track-action="queue">Add to queue</button>
+    <button role="menuitem" data-track-action="discover">Find / buy this track...</button>
+    <button role="menuitem" data-track-action="inspect">Re-inspect metadata</button>
+    <button role="menuitem" data-track-action="edit">Edit local details...</button>
+    <button role="menuitem" data-track-action="remove" class="danger">Remove from collection</button>
+  </div>
+  <aside class="queue-drawer hidden" id="queueDrawer" role="dialog" aria-modal="false" aria-labelledby="queueTitle" tabindex="-1" data-cw-product-root="queue.view">
+    <div class="queue-heading"><div><p>UP NEXT</p><h2 id="queueTitle">Play queue</h2></div><button id="closeQueue" title="Close queue" aria-label="Close queue"><span class="public-icon icon-close" aria-hidden="true"></span></button></div>
+    <div class="queue-summary"><span id="queueSummary">0 tracks</span><button id="clearQueue">Clear</button></div>
+    <section class="flow-shuffle-card" id="flowShuffleCard">
+      <div class="shuffle-primary-switch" aria-label="Shuffle choice">
+        <button data-shuffle-style="off">Off</button><button data-shuffle-style="standard">Standard</button><button data-shuffle-style="flow">Flow</button>
+      </div>
+      <div><small id="flowShuffleState">Flow Shuffle ready</small><strong id="flowShuffleWhyTitle">No shuffle pick yet</strong></div>
+      <span><small>SCORE</small><b id="flowShuffleWhyScore">--</b></span>
+      <div class="flow-mode-switch" aria-label="Flow Shuffle mode">
+        <button data-flow-mode="flow">Flow</button><button data-flow-mode="discovery">Discover</button><button data-flow-mode="comfort">Comfort</button><button data-flow-mode="energy">Energy</button><button data-flow-mode="genre-weave">Weave</button><button data-flow-mode="deep-library">Deep</button>
+      </div>
+      <p id="flowShuffleDetail">Turn on shuffle to see why Pixelody picked the next track.</p>
+      <div class="flow-why-meta">
+        <span><small>MODE</small><b id="flowShuffleWhyMode">Flow</b></span>
+        <span><small>FIT</small><b id="flowShuffleWhyConfidence">Waiting</b></span>
+        <span><small>PLAN</small><b id="flowShuffleWhyPlan">--</b></span>
+        <span><small>SOURCE</small><b id="flowShuffleWhySource">Local metadata and listening signal</b></span>
+      </div>
+      <div class="flow-why-transition"><small>TRANSITION</small><b id="flowShuffleWhyTransition">No shuffle decision yet</b></div>
+      <div class="flow-tempo-lane" id="flowTempoLane" aria-live="polite">
+        <div class="flow-tempo-readout"><span><small>NOW</small><b id="flowTempoCurrent">-- BPM</b></span><i aria-hidden="true"></i><span><small>NEXT</small><b id="flowTempoNext">-- BPM</b></span></div>
+        <p id="flowTempoDetail">Tempo matching is ready when your tracks include BPM.</p>
+        <details class="flow-tempo-help"><summary>How tempo affects Flow</summary><p>Pixelody gently favors tracks with a compatible pace. It never blocks a track, and missing BPM stays neutral. Audio analysis is optional and never runs during playback.</p></details>
+      </div>
+      <div class="flow-why-signals" id="flowShuffleSignalGrid"></div>
+      <div class="flow-why-learned" id="flowShuffleLearnedSignals"></div>
+      <div class="flow-why-alternates"><small>NEAR MISSES</small><div id="flowShuffleAlternates"><span><b>No near misses yet</b><small>--</small></span></div></div>
+      <ul id="flowShuffleReasons"><li>Flow Shuffle reasons will appear after the next shuffled pick.</li></ul>
+      <div class="flow-control-actions"><button id="flowPlaySooner">Play sooner</button><button id="flowNotThisSession">Not this session</button><button id="flowLessLike">Less like this</button><button id="flowUndoAction" disabled>Undo</button></div>
+    </section>
+    <div class="queue-list" id="queueList" role="list" aria-label="Queued tracks"></div>
+    <div class="queue-empty" id="queueEmpty"><span>&#9835;</span><strong>Your queue is empty</strong><small>Play a playlist or add tracks from their right-click menu.</small></div>
+  </aside>
+  <aside class="migration-drawer hidden" id="migrationDrawer" role="dialog" aria-modal="true" aria-labelledby="migrationTitle">
+    <div class="migration-heading"><div><p>LIBRARY CONCIERGE</p><h2 id="migrationTitle">Build library</h2></div><button id="closeMigration" title="Close migration"><span class="public-icon icon-close"></span></button></div>
+    <section class="migration-command">
+      <div>
+        <small>START</small>
+        <strong>Bring your music life over</strong>
+        <span>Import local files, scan folders, or reconstruct playlists from CSV, JSON, M3U, and text exports.</span>
+      </div>
+      <div class="migration-actions">
+        <button id="migrationImportPlaylist">Import playlist file</button>
+        <button id="migrationImportFiles">Choose music files</button>
+        <button id="migrationImportFolder">Scan folder</button>
+        <button id="migrationScanDownloads">Scan Downloads</button>
+      </div>
+    </section>
+    <section class="watched-folders-section" id="watchedFoldersSection">
+      <div class="watched-folders-head">
+        <div>
+          <small>AUTOMATIC FOLDER WATCHING</small>
+          <strong>Watched music folders</strong>
+          <span>Continuously monitor folders for newly added or removed songs in the background.</span>
+        </div>
+        <div class="watched-folders-actions">
+          <button class="quiet-button" id="rescanWatchedFolders" type="button">Rescan all</button>
+          <button id="addWatchedFolderButton" type="button">Add folder</button>
+        </div>
+      </div>
+      <div class="watched-folders-list" id="watchedFoldersList" role="list" aria-label="Watched music folders">
+        <p class="watched-folders-empty" id="watchedFoldersEmpty">No watched folders configured yet.</p>
+      </div>
+    </section>
+    <section class="migration-report hidden" id="migrationReport">
+      <div class="migration-report-head">
+        <div><small>LAST IMPORT</small><h3 id="migrationReportTitle">No import yet</h3><span id="migrationReportMeta">--</span></div>
+        <b id="migrationWantedCount">0</b>
+      </div>
+      <div class="migration-stats">
+        <span><small id="migrationImportedLabel">READ</small><b id="migrationImportedCount">0</b></span>
+        <span><small id="migrationMatchedLabel">MATCHED</small><b id="migrationMatchedCount">0</b></span>
+        <span><small id="migrationLikelyLabel">LIKELY</small><b id="migrationLikelyCount">0</b></span>
+        <span><small id="migrationMissingLabel">MISSING</small><b id="migrationMissingCount">0</b></span>
+      </div>
+      <div class="migration-created"><small id="migrationCreatedLabel">PLAYLIST CREATED</small><strong id="migrationPlaylistName">--</strong></div>
+      <div class="migration-missing-list" id="migrationMissingList"></div>
+    </section>
+    <section class="migration-empty" id="migrationEmpty">
+      <span class="pixel-icon icon-music"></span>
+      <strong>No migration report yet</strong>
+      <small>Import a playlist metadata file to match it against your local tracks. Missing songs become Wanted Music, not playable placeholders.</small>
+    </section>
+    <section class="wanted-panel">
+      <div class="wanted-heading"><small>WANTED MUSIC</small><span>Missing imported tracks</span></div>
+      <div class="wanted-list" id="wantedList"></div>
+    </section>
+    <p class="migration-policy">Pixelody imports playlist metadata only. It does not scrape, download, rip, or stream provider audio.</p>
+  </aside>
+  <div class="settings-overlay hidden" id="settingsOverlay">
+    <div class="settings-backdrop" data-close-settings></div>
+    <aside class="settings-drawer" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="settings-heading"><div><p id="settingsSectionLabel">THEMES</p><h2 id="settingsTitle">Settings</h2></div><button id="closeSettings" title="Close settings" aria-label="Close settings"><span class="public-icon icon-close" aria-hidden="true"></span></button></div>
+      <div class="settings-intro"><button id="openModuleShop" type="button">Modules — import or manage</button></div>
+      <div class="settings-intro"><span>Manage themes, style, motion, personal data, and diagnostics.</span><button class="shortcut-help-button" id="shortcutHelpButton" type="button" aria-haspopup="dialog">Keyboard shortcuts</button></div>
+      <nav class="settings-nav" id="settingsNav" role="tablist" aria-label="Settings sections">
+        <button class="active" role="tab" data-settings-tab="themes"><span class="public-icon icon-image"></span>Themes</button>
+        <button role="tab" data-settings-tab="style"><span class="public-icon icon-settings"></span>Style</button>
+        <button role="tab" data-settings-tab="motion"><span class="public-icon icon-info"></span>Motion</button>
+        <button role="tab" data-settings-tab="personal"><span class="public-icon icon-user"></span>Personal</button>
+        <button role="tab" data-settings-tab="diagnostics"><span class="public-icon icon-info"></span>Diagnostics</button>
+      </nav>
+
+      <section class="setting-group theme-setting" data-settings-panel="themes">
+        <div class="setting-label"><strong>Pixelody Studio rebuild</strong><span>Studio is the only active presentation while its shell, cabinet behavior, and visual hierarchy are rebuilt. Previous themes are preserved outside the runtime.</span></div>
+        <div class="studio-rebuild-notice" role="status"><small>FOUNDATION RESET</small><strong>One system. One visual authority.</strong><span>Theme switching and local package application return after Studio is approved.</span></div>
+        <div class="theme-browser-tools" hidden>
+          <label class="theme-search"><span class="pixel-search small" aria-hidden="true"></span><input id="themeSearch" type="search" placeholder="Find a theme" autocomplete="off"></label>
+          <div class="theme-filters" id="themeFilters"><button class="active" data-theme-filter="all">All</button><button data-theme-filter="original">Originals</button><button data-theme-filter="poster">Poster</button><button data-theme-filter="quiet">Quiet</button><button data-theme-filter="kinetic">Kinetic</button></div>
+        </div>
+        <div class="theme-grid" id="themeSetting">
+          <button class="theme-option active" data-theme-option="studio" data-theme-tags="original quiet rebuild"><span class="theme-preview studio-preview"><i></i><i></i><i></i></span><b>Pixelody Studio</b><small>Active foundation rebuild</small></button>
+        </div>
+        <div class="community-theme-manager" id="communityThemeManager" hidden>
+          <div class="community-theme-manager-head"><div><strong>My Themes</strong><span>Import local declarative packages. Installation never applies a theme automatically.</span></div><button id="importThemePackage" type="button">Import theme...</button></div>
+          <p class="community-theme-status" id="communityThemeStatus" role="status" aria-live="polite">Checking installed local themes...</p>
+          <div class="community-theme-grid" id="communityThemeGrid" aria-label="Installed local themes"></div>
+        </div>
+        <p class="theme-empty hidden" id="themeEmpty">No themes match that search.</p>
+        <p class="theme-credit">Pre-reset themes and their evidence are preserved in the development imprint vault.</p>
+      </section>
+
+      <section class="setting-group dev-lab-mechanics dev-only" data-settings-panel="themes" hidden>
+        <div class="setting-label"><strong>Development mechanics lab</strong><span>Dev Lab only. Switch presentation mechanics over the live UI without changing playback, queue, metadata, or audio behavior.</span></div>
+        <div class="dev-lab-bench" aria-live="polite">
+          <span><small>ACTIVE SPECIMEN</small><b id="devLabMechanicName">Neutral presentation</b></span>
+          <span><small>MECHANIC KEY</small><b id="devLabMechanicKey">NEUTRAL</b></span>
+          <span><small>BEHAVIOR CONTRACT</small><b>UNCHANGED</b></span>
+          <p id="devLabMechanicDetail">Core behavior is unchanged.</p>
+        </div>
+        <div class="dev-lab-mechanic-groups" id="devLabMechanicSetting" aria-label="Development mechanic prototypes">
+          <div class="dev-lab-mechanic-group"><small class="dev-lab-group-label">FOUNDATION / STATE + CONTROL</small><div class="dev-lab-mechanic-grid" role="group" aria-label="Foundation mechanic prototypes">
+            <button class="dev-lab-mechanic active" data-dev-mechanic="neutral" aria-pressed="true"><b>Neutral</b><small>Shared baseline</small></button>
+            <button class="dev-lab-mechanic" data-dev-mechanic="signal-state" aria-pressed="false"><b>Signal state</b><small>Playback and status language</small></button>
+            <button class="dev-lab-mechanic" data-dev-mechanic="control-deck" aria-pressed="false"><b>Control deck</b><small>Transport as hardware</small></button>
+            <button class="dev-lab-mechanic" data-dev-mechanic="progress-rail" aria-pressed="false"><b>Progress rail</b><small>Waveform/timeline treatment</small></button>
+          </div></div>
+          <div class="dev-lab-mechanic-group"><small class="dev-lab-group-label">INFORMATION / COLLECTION + SOUND</small><div class="dev-lab-mechanic-grid" role="group" aria-label="Information mechanic prototypes">
+            <button class="dev-lab-mechanic" data-dev-mechanic="queue-stack" aria-pressed="false"><b>Queue stack</b><small>Queue as physical items</small></button>
+            <button class="dev-lab-mechanic" data-dev-mechanic="metadata-dossier" aria-pressed="false"><b>Metadata dossier</b><small>Inspector as archive report</small></button>
+            <button class="dev-lab-mechanic" data-dev-mechanic="search-cockpit" aria-pressed="false"><b>Search cockpit</b><small>Search as an instrument</small></button>
+            <button class="dev-lab-mechanic" data-dev-mechanic="tuning-console" aria-pressed="false"><b>Tuning console</b><small>EQ as hardware</small></button>
+          </div></div>
+          <div class="dev-lab-mechanic-group"><small class="dev-lab-group-label">WORKFLOW / INPUT + RECOVERY</small><div class="dev-lab-mechanic-grid" role="group" aria-label="Workflow mechanic prototypes">
+            <button class="dev-lab-mechanic" data-dev-mechanic="intake-desk" aria-pressed="false"><b>Intake desk</b><small>Import as archive intake</small></button>
+            <button class="dev-lab-mechanic" data-dev-mechanic="output-route" aria-pressed="false"><b>Output route</b><small>Patch-bay device selection</small></button>
+            <button class="dev-lab-mechanic" data-dev-mechanic="repair-bench" aria-pressed="false"><b>Repair bench</b><small>Missing-file recovery</small></button>
+            <button class="dev-lab-mechanic" data-dev-mechanic="vault-backup" aria-pressed="false"><b>Archive vault</b><small>Backup and restore</small></button>
+          </div></div>
+          <div class="dev-lab-mechanic-group"><small class="dev-lab-group-label">EXPERIENCE / IDENTITY + TIME</small><div class="dev-lab-mechanic-grid" role="group" aria-label="Experience mechanic prototypes">
+            <button class="dev-lab-mechanic" data-dev-mechanic="theme-workshop" aria-pressed="false"><b>Theme workshop</b><small>Customization as a studio</small></button>
+            <button class="dev-lab-mechanic" data-dev-mechanic="playlist-object" aria-pressed="false"><b>Playlist object</b><small>Playlist as an artifact</small></button>
+            <button class="dev-lab-mechanic" data-dev-mechanic="session-map" aria-pressed="false"><b>Session map</b><small>Listening as a route</small></button>
+            <button class="dev-lab-mechanic" data-dev-mechanic="transition-language" aria-pressed="false"><b>Transition language</b><small>Loading and track changes</small></button>
+            <button class="dev-lab-mechanic" data-dev-mechanic="recovery-language" aria-pressed="false"><b>Recovery language</b><small>Feedback and next actions</small></button>
+          </div></div>
+        </div>
+        <div class="dev-lab-checklist" aria-label="Development mechanic test checklist"><span>GLANCE: locate core action</span><span>USE: preserve behavior</span><span>CLOSE: inspect edges</span><span>MOTION: verify static fallback</span></div>
+        <p class="dev-lab-mechanic-status" id="devLabMechanicStatus" role="status">Neutral presentation active. Core behavior is unchanged.</p>
+      </section>
+
+      <section class="setting-group profile-setting" data-settings-panel="personal">
+        <div class="setting-label"><strong>Profile image</strong><span>Personalize the identity button shown at the top of Pixelody.</span></div>
+        <div class="profile-editor"><div class="profile-preview" id="profilePreview"><span>P</span></div><div><button id="chooseProfileImage">Choose image</button><button id="removeProfileImage">Remove</button></div></div>
+      </section>
+
+      <section class="setting-group" data-settings-panel="style">
+        <div class="setting-label"><strong>Color palette</strong><span>Applied instantly throughout the player.</span></div>
+        <div class="palette-grid">
+          <button class="palette-option" data-palette="gold"><span><i style="--swatch:#d8b66a"></i><i style="--swatch:#403117"></i><i style="--swatch:#65d6a1"></i></span><b>Studio Gold</b></button>
+          <button class="palette-option" data-palette="aurora"><span><i style="--swatch:#65d9d1"></i><i style="--swatch:#192f3d"></i><i style="--swatch:#b99cff"></i></span><b>Aurora</b></button>
+          <button class="palette-option" data-palette="ember"><span><i style="--swatch:#ff9860"></i><i style="--swatch:#48201d"></i><i style="--swatch:#ffcf86"></i></span><b>Ember</b></button>
+          <button class="palette-option" data-palette="violet"><span><i style="--swatch:#c49bff"></i><i style="--swatch:#2e2048"></i><i style="--swatch:#7ce4c8"></i></span><b>Ultraviolet</b></button>
+          <button class="palette-option" data-palette="mono"><span><i style="--swatch:#e4e2dc"></i><i style="--swatch:#2a2b2d"></i><i style="--swatch:#9ca0a6"></i></span><b>Monochrome</b></button>
+          <button class="palette-option" data-palette="cobalt"><span><i style="--swatch:#64a8ff"></i><i style="--swatch:#10284e"></i><i style="--swatch:#63e6d4"></i></span><b>Cobalt Current</b></button>
+          <button class="palette-option" data-palette="sakura"><span><i style="--swatch:#ff9fc9"></i><i style="--swatch:#482638"></i><i style="--swatch:#ffd37a"></i></span><b>Sakura Night</b></button>
+          <button class="palette-option" data-palette="cafe-night"><span><i style="--swatch:#c58a4a"></i><i style="--swatch:#1e1815"></i><i style="--swatch:#7b866c"></i></span><b>Café Night</b></button>
+          <button class="palette-option" data-palette="verdant"><span><i style="--swatch:#79df8b"></i><i style="--swatch:#173b2a"></i><i style="--swatch:#d5c878"></i></span><b>Verdant Signal</b></button>
+          <div class="palette-option custom-palette">
+            <span class="custom-color-indexes">
+              <label title="Primary accent"><input type="color" id="customPrimary" data-custom-color="accent" value="#d8b66a"><i class="custom-primary-preview"></i><small>PRIMARY</small></label>
+              <label title="Secondary accent"><input type="color" id="customSecondary" data-custom-color="accentSecondary" value="#65d6a1"><i class="custom-secondary-preview"></i><small>SECONDARY</small></label>
+              <label title="Interface base"><input type="color" id="customBase" data-custom-color="accentBase" value="#050607"><i class="custom-base-preview"></i><small>BASE</small></label>
+            </span>
+            <b>Custom color mixer</b>
+          </div>
+        </div>
+      </section>
+
+      <section class="setting-group logo-color-setting" data-settings-panel="style">
+        <div class="setting-label"><strong>Logo color</strong><span>Recolors the Pixelody mark in the app and the window icon.</span></div>
+        <div class="logo-color-preview"><span class="brand-mark" aria-hidden="true"></span><small id="logoColorStatus" role="status">Ultraviolet logo.</small></div>
+        <div class="logo-color-grid" role="group" aria-label="Logo color"><button class="logo-color-option active" data-logo-color="ultraviolet" aria-pressed="true" title="Ultraviolet" style="--brand-mark:#6a3dff"><span class="brand-mark" aria-hidden="true"></span><b>Ultraviolet</b></button><button class="logo-color-option" data-logo-color="electric" aria-pressed="false" title="Electric" style="--brand-mark:#7c5cff"><span class="brand-mark" aria-hidden="true"></span><b>Electric</b></button><button class="logo-color-option" data-logo-color="indigo" aria-pressed="false" title="Indigo" style="--brand-mark:#5b5bff"><span class="brand-mark" aria-hidden="true"></span><b>Indigo</b></button><button class="logo-color-option" data-logo-color="grape" aria-pressed="false" title="Grape" style="--brand-mark:#8a3cf0"><span class="brand-mark" aria-hidden="true"></span><b>Grape</b></button><button class="logo-color-option" data-logo-color="lavender" aria-pressed="false" title="Lavender" style="--brand-mark:#a98cff"><span class="brand-mark" aria-hidden="true"></span><b>Lavender</b></button></div>
+        <label class="logo-follow-theme"><input type="checkbox" id="logoFollowsTheme" checked> Let other themes recolor the logo and window icon</label>
+      </section>
+
+      <section class="setting-group" data-settings-panel="style">
+        <div class="setting-label"><strong>Pixel detail</strong><span>Choose how strongly the visual language appears.</span></div>
+        <div class="segmented-setting" id="detailSetting">
+          <button data-detail="minimal">Minimal</button><button data-detail="balanced">Balanced</button><button data-detail="expressive">Expressive</button>
+        </div>
+      </section>
+
+      <section class="setting-group" data-settings-panel="motion">
+        <div class="setting-label"><strong>Interface motion</strong><span>Hover, transition, waveform, and press animation intensity.</span></div>
+        <div class="segmented-setting" id="motionSetting">
+          <button data-motion="off">Off</button><button data-motion="calm">Calm</button><button data-motion="expressive">Expressive</button>
+        </div>
+        <small class="motion-os-override-note hidden" id="motionOsOverrideNote" role="status">Windows has "Show animations" turned off system-wide (Settings &rarr; Accessibility &rarr; Visual effects). Pixelody respects that and stays static regardless of the choice above until it's turned back on in Windows.</small>
+        <div class="effect-toggles">
+          <label><input type="checkbox" data-effect="glow" checked><span>Border signal glow</span></label>
+          <label><input type="checkbox" data-effect="dots" checked><span>Playback wave dots</span></label>
+          <label><input type="checkbox" data-effect="hover" checked><span>Hover and press motion</span></label>
+          <label><input type="checkbox" data-effect="panels" checked><span>Panel transitions</span></label>
+          <label><input type="checkbox" data-effect="artwork" checked><span>Artwork pulse and lift</span></label>
+          <label><input type="checkbox" data-effect="reactions" checked><span>Selection feedback (screen reactions)</span></label>
+        </div>
+      </section>
+
+      <section class="setting-group" data-settings-panel="motion">
+        <div class="setting-label"><strong>Interaction sounds</strong><span>Hover, press, panel, and slider feedback.</span></div>
+        <div class="segmented-setting" id="soundSetting">
+          <button data-sound-mode="off" data-ui-sound-control>Off</button><button data-sound-mode="subtle" data-ui-sound-control>Subtle</button><button data-sound-mode="expressive" data-ui-sound-control>Expressive</button>
+        </div>
+        <div class="sound-setting">
+          <label for="interfaceSoundVolume"><span>Level</span><input type="range" id="interfaceSoundVolume" min="0" max="1" step="0.01" value="0.28" data-ui-sound-control></label>
+          <output id="interfaceSoundVolumeValue" for="interfaceSoundVolume">28%</output>
+          <button class="sound-preview" id="previewInterfaceSound" data-ui-sound-control>Preview</button>
+        </div>
+      </section>
+
+      <section class="setting-group" data-settings-panel="personal">
+        <div class="setting-label"><strong>Library backup</strong><span>Save or restore your playlists, tuning, history, queue, and appearance.</span></div>
+        <div class="backup-actions"><button id="exportBackup">Export backup</button><button id="importBackup">Import backup</button><button id="openMigrationFromSettings">Migration</button></div>
+      </section>
+
+      <section class="setting-group signal-journal-setting" data-settings-panel="personal">
+        <div class="setting-label"><strong>Signal Journal</strong><span>Local listening intelligence, analytics, shuffle reasoning, and exports.</span></div>
+        <div class="signal-live">
+          <span><small>LIVE</small><b id="signalLiveState">Listening signal ready</b></span>
+          <p id="signalLiveDetail">Local events will appear as you play, pause, complete, skip, favorite, or queue tracks.</p>
+        </div>
+        <div class="signal-stats-grid">
+          <span><small>EVENTS</small><b id="signalEventsCount">0</b></span>
+          <span><small>TRACKS</small><b id="signalTrackedTracks">0</b></span>
+          <span><small>TIME</small><b id="signalListenTime">0:00</b></span>
+          <span><small>COMPLETE</small><b id="signalCompletionRate">--</b></span>
+        </div>
+        <div class="shuffle-learning-panel">
+          <div class="shuffle-learning-head">
+            <div><small>SHUFFLE LEARNING</small><strong id="shuffleLearningStage">Warming up</strong></div>
+            <b id="shuffleLearningScore">0%</b>
+          </div>
+          <div class="shuffle-learning-meter" id="shuffleLearningMeter"><i></i></div>
+          <p id="shuffleLearningSummary">Import music and play tracks to teach Flow Shuffle your local listening patterns.</p>
+          <div class="shuffle-learning-factors" id="shuffleLearningFactors"></div>
+        </div>
+        <div class="signal-dashboard">
+          <div class="signal-dashboard-heading">
+            <div><small>DASHBOARD</small><strong id="signalDashboardTitle">Last 7 days</strong></div>
+            <div class="segmented-setting signal-range" id="signalRangeSetting">
+              <button data-signal-range="today">Today</button><button class="active" data-signal-range="7d">7d</button><button data-signal-range="30d">30d</button><button data-signal-range="all">All</button>
+            </div>
+          </div>
+          <p id="signalDashboardSummary">Listening trends will appear as Signal Journal gathers local events.</p>
+          <div class="signal-dashboard-grid">
+            <span><small>EVENTS</small><b id="signalRangeEvents">0</b></span>
+            <span><small>TIME</small><b id="signalRangeTime">0:00</b></span>
+            <span><small>COMPLETE</small><b id="signalRangeComplete">--</b></span>
+            <span><small>DISCOVERY</small><b id="signalRangeDiscovery">--</b></span>
+            <span><small>COVERAGE</small><b id="signalRangeCoverage">--</b></span>
+            <span><small>PEAK HOUR</small><b id="signalRangePeakHour">--</b></span>
+          </div>
+          <div class="signal-chart-block"><small>LISTENING TREND</small><div class="signal-trend-chart" id="signalTrendChart"></div></div>
+          <div class="signal-chart-block"><small>OUTCOME MIX</small><div class="signal-outcome-mix" id="signalOutcomeMix"></div></div>
+          <div class="signal-chart-block"><small>LISTENING BY HOUR</small><div class="signal-hour-chart" id="signalHourChart"></div></div>
+          <div class="signal-chart-block"><small>TOP GENRES</small><div class="signal-bar-list" id="signalGenreBars"></div></div>
+          <div class="signal-chart-block"><small>TOP MOODS</small><div class="signal-bar-list" id="signalMoodBars"></div></div>
+          <div class="signal-chart-block"><small>SHUFFLE MODE MEMORY</small><div class="signal-bar-list" id="signalModeBars"></div></div>
+          <div class="mode-analytics-panel">
+            <div class="mode-analytics-heading"><div><small>PER-MODE SHUFFLE ANALYTICS</small><strong>Mode comparison</strong></div><p id="modeAnalyticsSummary">Per-mode analytics will appear after Flow Shuffle makes local picks.</p></div>
+            <div class="mode-analytics-stats">
+              <span><small>BEST TRUST</small><b id="modeAnalyticsBest">--</b></span>
+              <span><small>MOST USED</small><b id="modeAnalyticsUsed">--</b></span>
+              <span><small>PICKS</small><b id="modeAnalyticsPicks">0</b></span>
+            </div>
+            <div class="mode-analytics-rows" id="modeAnalyticsRows"></div>
+          </div>
+          <div class="transition-memory-panel">
+            <div class="mode-analytics-heading"><div><small>SHUFFLE TRANSITION MEMORY</small><strong>Learned transitions</strong></div><p id="transitionMemorySummary">Transition memory will appear after linked shuffle outcomes collect.</p></div>
+            <div class="transition-memory-grid">
+              <div><small>STRONGEST</small><div id="transitionStrongList"></div></div>
+              <div><small>WEAKEST</small><div id="transitionWeakList"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="flow-mode-panel">
+          <div><small>FLOW SHUFFLE MODE</small><strong id="flowModeTitle">Flow</strong><p id="flowModeDescription">Balanced pacing, contrast, and learned fit.</p></div>
+          <div class="flow-mode-grid" aria-label="Flow Shuffle mode">
+            <button data-flow-mode="flow">Flow</button><button data-flow-mode="discovery">Discovery</button><button data-flow-mode="comfort">Comfort</button><button data-flow-mode="energy">Energy</button><button data-flow-mode="genre-weave">Genre Weave</button><button data-flow-mode="deep-library">Deep Library</button>
+          </div>
+        </div>
+        <div class="signal-toggles" aria-label="Flow session planning">
+          <label><span>Energy shape</span><select id="flowEnergyShape"><option value="auto">Auto</option><option value="steady">Steady</option><option value="rise">Rise</option><option value="wave">Wave</option><option value="wind-down">Wind-down</option></select></label>
+          <label><span>Shuffle scope</span><select id="flowAlbumPolicy"><option value="track">Tracks</option><option value="album">Albums</option></select></label>
+          <label><input id="flowPreserveAlbumRuns" type="checkbox"><span>Keep album runs together</span></label>
+        </div>
+        <div class="signal-toggles">
+          <label><input type="checkbox" data-signal-setting="enabled" checked><span>Collect local listening events</span></label>
+          <label><input type="checkbox" data-signal-setting="useForShuffle" checked><span>Allow history to guide Flow Shuffle</span></label>
+          <label><input type="checkbox" data-signal-setting="useTimeOfDay" checked><span>Use time-of-day patterns</span></label>
+          <label><input type="checkbox" data-signal-setting="useSkipBehavior" checked><span>Use skip and completion patterns</span></label>
+          <label><input type="checkbox" data-signal-setting="showRealtime" checked><span>Show real-time signal readout</span></label>
+        </div>
+        <div class="signal-actions"><button id="copySignalJournal">Copy Signal Report</button><button id="importSignalJournal">Import Signal Report</button><button id="resetFlowLearning">Reset Flow learning</button><button id="resetSignalJournal">Delete Signal Journal</button></div>
+        <div class="signal-import-preview hidden" id="signalImportPreview">
+          <div class="signal-import-preview-head">
+            <small>IMPORT PREVIEW</small>
+            <strong id="signalImportTitle">Signal report ready</strong>
+            <p id="signalImportSummary">Review what would be restored before applying it.</p>
+          </div>
+          <div class="signal-validation-panel">
+            <div class="signal-conflict-head"><small>VALIDATION</small><strong id="signalValidationTitle">Import validation will appear here.</strong></div>
+            <div class="signal-validation-grid">
+              <span><small>WARNINGS</small><b id="signalValidationWarnings">0</b></span>
+              <span><small>SKIPPED</small><b id="signalValidationSkipped">0</b></span>
+              <span><small>CAPPED</small><b id="signalValidationCapped">0</b></span>
+              <span><small>BROKEN LINKS</small><b id="signalValidationBroken">0</b></span>
+            </div>
+            <div class="signal-validation-list" id="signalValidationList"></div>
+          </div>
+          <div class="signal-recommendation-panel" id="signalRecommendationPanel">
+            <div class="signal-conflict-head"><small>RECOMMENDED MODE</small><strong id="signalRecommendationTitle">Recommendation will appear here.</strong></div>
+            <p id="signalRecommendationSummary">Pixelody compares validation quality, conflicts, overlap, newer local events, broken links, and undo status locally.</p>
+          </div>
+          <div class="signal-import-mode">
+            <button class="active" data-signal-import-mode="merge">Merge With Current</button>
+            <button data-signal-import-mode="replace">Replace Signal Data</button>
+          </div>
+          <div class="signal-merge-preview">
+            <div class="signal-conflict-head"><small>MERGE PREVIEW</small><strong id="signalMergeTitle">Merged learning result will appear here.</strong></div>
+            <div class="signal-merge-grid">
+              <span><small>ADDED</small><b id="signalMergeAdded">0</b></span>
+              <span><small>DEDUPED</small><b id="signalMergeDeduped">0</b></span>
+              <span><small>COMBINED</small><b id="signalMergeCombined">0</b></span>
+              <span><small>CAPPED</small><b id="signalMergeCapped">0</b></span>
+            </div>
+            <p id="signalMergeSummary">Merge keeps current local learning and adds new imported Signal Journal data where safe.</p>
+          </div>
+          <div class="signal-detail-drilldown">
+            <div class="signal-conflict-head"><small>DETAIL DRILLDOWN</small><strong id="signalDrilldownTitle">Before-vs-after examples will appear here.</strong></div>
+            <div class="signal-detail-list" id="signalDetailList"></div>
+          </div>
+          <div class="signal-import-grid">
+            <span><small>EVENTS</small><b id="signalImportEvents">0</b></span>
+            <span><small>TRACK STATS</small><b id="signalImportTracks">0</b></span>
+            <span><small>PICKS</small><b id="signalImportPicks">0</b></span>
+            <span><small>LINKED</small><b id="signalImportLinked">0</b></span>
+            <span><small>MODES</small><b id="signalImportModes">0</b></span>
+            <span><small>TRUST</small><b id="signalImportCalibration">0</b></span>
+            <span><small>TRANSITIONS</small><b id="signalImportTransitions">0</b></span>
+            <span><small>TRACK INTEL</small><b id="signalImportTrackIntel">0</b></span>
+          </div>
+          <div class="signal-conflict-review">
+            <div class="signal-conflict-head"><small>CONFLICT REVIEW</small><strong id="signalConflictTitle">Current local learning will be compared here.</strong></div>
+            <div class="signal-conflict-grid">
+              <span><small>REPLACED</small><b id="signalConflictReplaced">0</b></span>
+              <span><small>PRESERVED</small><b id="signalConflictPreserved">0</b></span>
+              <span><small>SKIPPED</small><b id="signalConflictSkipped">0</b></span>
+              <span><small>OVERLAP</small><b id="signalConflictOverlap">0</b></span>
+            </div>
+            <div class="signal-conflict-list" id="signalConflictList"></div>
+          </div>
+          <div class="signal-import-actions"><button id="applySignalImport">Apply Signal Report</button><button id="copySignalImportPreview">Copy Preview Report</button><button id="cancelSignalImport">Cancel</button></div>
+        </div>
+        <div class="signal-undo-panel hidden" id="signalUndoPanel">
+          <div><small>UNDO SNAPSHOT</small><strong id="signalUndoTitle">Last Signal import can be undone.</strong><p id="signalUndoSummary">Restore the Signal Journal state from before the last import.</p></div>
+          <button id="undoSignalImport">Undo Last Signal Import</button>
+        </div>
+        <div class="signal-import-audit hidden" id="signalImportAuditPanel" role="region" tabindex="-1" aria-labelledby="signalImportAuditTitle" aria-describedby="signalImportAuditSummary signalImportAuditA11ySummary">
+          <div class="signal-conflict-head"><small>LAST IMPORT AUDIT</small><strong id="signalImportAuditTitle">No Signal import has been applied yet.</strong></div>
+          <p class="visually-hidden" id="signalImportAuditA11ySummary" aria-live="polite">No Signal import audit timeline is available yet.</p>
+          <div class="signal-import-audit-grid" role="list" aria-label="Signal import audit summary">
+            <span role="listitem" aria-label="Selected import mode"><small>SELECTED</small><b id="signalAuditSelected">--</b></span>
+            <span role="listitem" aria-label="Recommended import mode"><small>RECOMMENDED</small><b id="signalAuditRecommended">--</b></span>
+            <span role="listitem" aria-label="Validation issues"><small>ISSUES</small><b id="signalAuditIssues">0</b></span>
+            <span role="listitem" aria-label="Applied import count"><small>APPLIED</small><b id="signalAuditApplied">0</b></span>
+          </div>
+          <p id="signalImportAuditSummary">Latest local import receipt will appear here after a Signal report is applied.</p>
+          <div class="signal-import-audit-detail" id="signalImportAuditDetail" role="list" aria-label="Signal import audit detail"></div>
+          <div class="signal-import-audit-filter" role="group" aria-label="Import audit timeline filter" aria-describedby="signalImportAuditA11ySummary">
+            <button class="active" data-signal-audit-filter="all" aria-pressed="true" aria-controls="signalImportAuditHistory">All</button>
+            <button data-signal-audit-filter="active" aria-pressed="false" aria-controls="signalImportAuditHistory">Active</button>
+            <button data-signal-audit-filter="undone" aria-pressed="false" aria-controls="signalImportAuditHistory">Undone</button>
+          </div>
+          <button class="signal-import-audit-copy" id="copySignalAuditTimeline" disabled aria-disabled="true" aria-label="Signal import audit timeline copy unavailable" aria-describedby="signalImportAuditA11ySummary">No Timeline To Copy</button>
+          <div class="signal-import-audit-history" id="signalImportAuditHistory" role="list" aria-label="Signal import audit timeline"></div>
+        </div>
+      </section>
+
+      <section class="setting-group diagnostics-panel" data-settings-panel="diagnostics">
+        <div class="setting-label"><strong>Runtime diagnostics</strong><span>Audio, output, cache, renderer, and storage state.</span></div>
+        <div class="diagnostics-grid">
+          <span><small>APP</small><b id="diagApp">--</b></span>
+          <span><small>CACHE</small><b id="diagCache">--</b></span>
+          <span><small>OUTPUT</small><b id="diagOutput">--</b></span>
+          <span><small>ENGINE</small><b id="diagEngine">--</b></span>
+          <span><small>SOURCE</small><b id="diagSource">--</b></span>
+          <span><small>RENDERER</small><b id="diagRenderer">--</b></span>
+          <span><small>STORAGE</small><b id="diagStorage">--</b></span>
+          <span><small>LIBRARY</small><b id="diagLibrary">--</b></span>
+          <span><small>DURABLE PERSIST</small><b id="diagPersist">--</b></span>
+        </div>
+        <div class="diagnostics-actions">
+          <button class="copy-diagnostics" id="copyDiagnostics">Copy diagnostics</button>
+          <button class="runtime-clean" id="cleanRuntimeState" title="Clear transient runtime caches and reload Pixelody">Clean restart</button>
+        </div>
+        <div class="diagnostics-dev-tools dev-only" title="Development-only tools for profiling large-library performance">
+          <div class="setting-label"><strong>Large-library profiling</strong><span>Development builds only. Adds fake tracks to measure render and persistence cost at scale; never bundled or shown in packaged builds.</span></div>
+          <div class="diagnostics-actions">
+            <select id="syntheticLibrarySize" aria-label="Synthetic track count">
+              <option value="100">+100 tracks</option>
+              <option value="1000" selected>+1,000 tracks</option>
+              <option value="5000">+5,000 tracks</option>
+              <option value="10000">+10,000 tracks</option>
+            </select>
+            <button class="quiet-button" id="generateSyntheticLibrary">Generate synthetic library</button>
+          </div>
+          <div class="diagnostics-actions">
+            <button class="runtime-clean" id="clearSyntheticLibrary">Clear synthetic tracks</button>
+            <span id="syntheticLibraryStatus" class="synthetic-library-status">No synthetic tracks added.</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="motion-preview" data-settings-panel="motion" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      <button class="reset-appearance" id="resetAppearance">Reset appearance</button>
+    </aside>
+  </div>
+  <div class="shortcuts-overlay hidden" id="shortcutsOverlay">
+    <div class="shortcuts-backdrop" data-close-shortcuts></div>
+    <section class="shortcuts-dialog" role="dialog" aria-modal="true" aria-labelledby="shortcutsTitle" tabindex="-1">
+      <div class="shortcuts-heading"><div><p>NAVIGATION</p><h2 id="shortcutsTitle">Keyboard shortcuts</h2></div><button id="closeShortcuts" type="button" title="Close keyboard shortcuts" aria-label="Close keyboard shortcuts"><span class="public-icon icon-close" aria-hidden="true"></span></button></div>
+      <dl class="shortcut-list"><div><dt>Search</dt><dd>Ctrl+F</dd></div><div><dt>Settings</dt><dd>Ctrl+,</dd></div><div><dt>Queue</dt><dd>Ctrl+Shift+Q</dd></div><div><dt>Audio systems</dt><dd>Ctrl+Shift+O</dd></div><div><dt>Library controls</dt><dd>Ctrl+Shift+L</dd></div><div><dt>Shortcut help</dt><dd>Ctrl+/</dd></div><div><dt>Play / pause</dt><dd>Space</dd></div><div><dt>Previous / next</dt><dd>Ctrl+Left / Ctrl+Right</dd></div><div><dt>Volume</dt><dd>Ctrl+Down / Ctrl+Up</dd></div><div><dt>Back / close</dt><dd>Escape</dd></div></dl>
+    </section>
+  </div>
+  <div class="jams-overlay hidden" id="jamsOverlay">
+    <div class="jams-backdrop" data-close-jams></div>
+    <aside class="jams-drawer" role="dialog" aria-modal="true" aria-labelledby="jamsTitle">
+      <div class="jams-heading">
+        <div><p>PIXELODY NETWORK</p><h2 id="jamsTitle">J.A.M.</h2></div>
+        <button id="closeJams" title="Close J.A.M."><span class="public-icon icon-close"></span></button>
+      </div>
+      <section class="jam-command">
+        <div class="jam-command-copy">
+          <span class="jam-state-pill" id="jamHostSignal">Offline</span>
+          <h3 id="jamHostBadge">No active J.A.M.</h3>
+          <p id="jamHostSummary">Start a private host when this PC is the music source.</p>
+        </div>
+        <div class="jam-command-actions">
+          <button class="jam-primary" id="startSharingHost" title="Start a smart host for this PC, private Wi-Fi, or private VPN"><span class="public-icon icon-list"></span>Start smart host</button>
+          <button id="stopSharingHost" disabled>Stop</button>
+        </div>
+      </section>
+
+      <section class="jam-session-panel">
+        <div class="jam-section-heading">
+          <div><small>SESSION</small><h3>Single-host J.A.M. V1</h3></div>
+          <span id="jamSessionStatus">Not started</span>
+        </div>
+        <div class="jam-session-policy" aria-label="J.A.M. guest policy">
+          <label><input type="checkbox" id="jamGuestsView" checked><span>Guests can view session state</span></label>
+          <label><input type="checkbox" id="jamGuestsSuggest" checked><span>Guests can suggest host tracks</span></label>
+          <label><input type="checkbox" id="jamGuestsQueue"><span>Guests can add host tracks</span></label>
+          <label><input type="checkbox" id="jamGuestsEditQueue"><span>Guests can edit the shared queue</span></label>
+          <label><input type="checkbox" id="jamGuestsControl"><span>Guests can control host playback</span></label>
+        </div>
+        <div class="jam-session-actions">
+          <button class="jam-primary" id="startJamSession" disabled>Start session</button>
+          <button id="saveJamPolicy" disabled>Save guest policy</button>
+          <button id="stopJamSession" disabled>Stop session</button>
+        </div>
+        <div class="jam-session-summary" id="jamSessionSummary">Start the Windows host, then create an explicit single-host session.</div>
+        <div class="jam-session-participants" id="jamSessionParticipants"><span>No participants.</span></div>
+        <div class="jam-session-queue" id="jamSessionQueue"><span>No shared queue.</span></div>
+      </section>
+
+      <details class="jam-advanced-cabinet" id="jamAdvancedCabinet">
+        <summary><span><strong>Pairing, connection, and diagnostics</strong><small>Reveal trusted-device tools and technical network detail</small></span><b aria-hidden="true">+</b></summary>
+      <div class="jam-flow" aria-label="J.A.M. workflow">
+        <section class="jam-step">
+          <small>HOST</small>
+          <strong>Library source</strong>
+          <span id="jamHostMode">Localhost gated</span>
+        </section>
+        <section class="jam-step">
+          <small>PAIR</small>
+          <strong>Trusted devices</strong>
+          <span id="jamTrustedSummary">None paired</span>
+        </section>
+        <section class="jam-step">
+          <small>STREAM</small>
+          <strong>Range audio</strong>
+          <span id="jamStreamSummary">Ready after host start</span>
+        </section>
+      </div>
+
+      <section class="jam-pairing">
+        <div class="jam-section-heading">
+          <div><small>PAIR</small><h3>Short-code pairing</h3></div>
+          <div class="jam-pairing-actions">
+            <label><input type="checkbox" id="jamPairController"><span>Allow playback + queue control</span></label>
+            <button id="startJamPairing" disabled>Create code</button>
+          </div>
+        </div>
+        <div class="jam-pairing-body">
+          <div class="jam-pairing-code">
+            <small>PAIRING CODE</small>
+            <strong id="jamPairingCode">------</strong>
+            <span id="jamPairingExpiry">Start host first</span>
+          </div>
+          <div class="jam-pairing-qr" id="jamPairingQr" aria-label="Pairing payload visual code">
+            <span>Create a code</span>
+          </div>
+          <div class="jam-pairing-payload">
+            <span id="jamPairingPayload">QR-ready payload appears here after a code is created.</span>
+            <button id="copyJamPairingPayload" disabled>Copy QR payload</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="jam-connect">
+        <div class="jam-section-heading">
+          <div><small>JOIN</small><h3>Connect to a host</h3></div>
+          <span id="jamConnectState">Desktop host tools ready</span>
+        </div>
+        <div class="jam-connect-grid">
+          <label><span>Host URL</span><input id="jamJoinUrl" placeholder="http://host:port"></label>
+          <label><span>Invite token</span><input id="jamJoinToken" placeholder="Paste token"></label>
+          <button id="previewJamConnection">Check details</button>
+        </div>
+      </section>
+
+      <section class="jam-details">
+        <div class="jam-section-heading">
+          <div><small>INVITE</small><h3>Connection details</h3></div>
+          <button id="copySharingDetails" disabled>Copy invite</button>
+        </div>
+        <div class="jam-copy-fields">
+          <label><span>URL</span><input id="jamCopyUrl" readonly placeholder="Start host first"><button id="copyJamUrl" disabled>Copy URL</button></label>
+          <label><span>Token</span><input id="jamCopyToken" readonly placeholder="Copy token to create invite"><button id="copyJamToken" disabled>Copy token</button></label>
+          <button id="copyJamUrlToken" disabled>Copy URL + token</button>
+        </div>
+        <div class="sharing-grid">
+          <span><small>STATUS</small><b id="sharingHostStatus">Off</b></span>
+          <span><small>MODE</small><b id="sharingHostMode">Off / localhost gated</b></span>
+          <span><small>URL</small><b id="sharingHostUrl">--</b></span>
+          <span><small>TOKEN</small><b id="sharingHostToken">--</b></span>
+          <span><small>SNAPSHOT</small><b id="sharingHostSnapshot">No snapshot</b></span>
+          <span><small>SELF-TEST</small><b id="sharingHostSelfTest">Not run</b></span>
+        </div>
+        <div class="sharing-actions">
+          <button id="refreshSharingHost">Refresh</button>
+          <button id="refreshJamDevices" disabled>Soft refresh devices</button>
+          <button id="runSharingSelfTest" disabled>Self-test</button>
+        </div>
+        <div class="jam-refresh-status" id="jamRefreshStatus" aria-label="J.A.M. device refresh status">
+          <span><small>REFRESH</small><b id="jamRefreshId">None</b></span>
+          <span><small>REQUESTED BY</small><b id="jamRefreshBy">--</b></span>
+          <span><small>WHEN</small><b id="jamRefreshAt">--</b></span>
+          <span><small>ACTION</small><b id="jamRefreshAction">Waiting</b></span>
+        </div>
+        <p class="jam-network-guidance" id="jamNetworkGuidance">Start the host to see LAN and private-network guidance.</p>
+        <div class="jam-network-diagnostics" id="jamNetworkDiagnostics">
+          <span><small>LISTENING</small><b>Off</b></span>
+          <span><small>PHONE</small><b>Waiting</b></span>
+          <span><small>FIREWALL</small><b>Idle</b></span>
+          <span><small>RISK</small><b>Off</b></span>
+        </div>
+        <div class="jam-network-list" id="jamNetworkList"><span>Network addresses appear after the host starts.</span></div>
+      </section>
+
+      <section class="sharing-devices collapsible-card" data-card="trusted-devices">
+        <div class="sharing-devices-heading"><div><small>TRUSTED DEVICES</small><span id="sharingDeviceCount">None paired</span></div><button class="card-collapse" type="button" aria-expanded="false" aria-controls="sharingDeviceList" title="Collapse trusted devices">-</button></div>
+        <div class="sharing-device-list" id="sharingDeviceList"><span class="sharing-device-empty">No trusted devices yet.</span></div>
+      </section>
+      </details>
+    </aside>
+  </div>
+  <div class="support-own-overlay hidden" id="supportOwnOverlay">
+    <div class="support-own-backdrop" data-close-support-own></div>
+    <section class="support-own-dialog" role="dialog" aria-modal="true" aria-labelledby="supportOwnTitle" aria-describedby="supportOwnPolicy" tabindex="-1">
+      <div class="support-own-heading"><div><p>DIRECT SUPPORT PILOT</p><h2 id="supportOwnTitle">Support &amp; Own</h2></div><button id="closeSupportOwn" type="button" title="Close Support &amp; Own" aria-label="Close Support &amp; Own"><span class="public-icon icon-close" aria-hidden="true"></span></button></div>
+      <div class="support-own-release"><small id="supportOwnKind">ALBUM</small><h3 id="supportOwnReleaseTitle">Choose a release</h3><p id="supportOwnArtist">No artist selected</p></div>
+      <dl class="support-own-truth">
+        <div><dt>CHECKOUT</dt><dd id="supportOwnCheckout">Handled by Bandcamp in your browser</dd></div>
+        <div><dt>PIXELODY</dt><dd id="supportOwnPrivacy">No store login or payment data collected</dd></div>
+        <div><dt>LOCAL STATUS</dt><dd id="supportOwnLocalStatus">Not checked</dd></div>
+      </dl>
+      <p class="support-own-copy" id="supportOwnCopy">Pixelody builds search suggestions from this local file. Change the words if its tags are incomplete or wrong.</p>
+      <div class="support-own-search">
+        <label for="supportOwnQuery">SEARCH BANDCAMP</label>
+        <div><input id="supportOwnQuery" type="search" maxlength="240" autocomplete="off" spellcheck="false" placeholder="Artist and track title"><button class="primary" id="openSupportStore" type="button">Search Bandcamp</button></div>
+        <div class="support-own-suggestions" id="supportOwnSuggestions" aria-label="Metadata search suggestions"></div>
+        <p id="supportOwnIdentity">No additional identity clues in this file.</p>
+      </div>
+      <div class="support-own-actions">
+        <button id="importSupportFiles" type="button">Import downloaded files</button>
+        <button id="scanSupportDownloads" type="button">Scan Downloads</button>
+      </div>
+      <p class="support-own-status" id="supportOwnStatus" role="status" aria-live="polite"></p>
+      <p class="support-own-policy" id="supportOwnPolicy">Pixelody does not verify that checkout completed. Opening the store never marks music as purchased or owned; local status changes only after supported audio is imported.</p>
+    </section>
+  </div>
+  <div class="track-editor-overlay hidden" id="trackEditorOverlay">
+    <div class="track-editor-backdrop" data-close-track-editor></div>
+    <section class="track-editor" role="dialog" aria-modal="true" aria-labelledby="trackEditorTitle">
+      <div class="track-editor-heading"><div><p>LOCAL DETAILS</p><h2 id="trackEditorTitle">Edit track</h2></div><button id="closeTrackEditor"><span class="public-icon icon-close"></span></button></div>
+      <div class="track-editor-art" id="trackEditorArt"><span>&#9835;</span></div>
+      <div class="track-art-actions"><button id="chooseTrackArtwork">Choose image</button><button id="removeTrackArtwork">Remove image</button></div>
+      <section class="track-discovery-callout" id="trackDiscoveryCallout">
+        <div><small>DISCOVERY LANE</small><strong id="trackDiscoverySummary">Find details, buy missing music, then import it.</strong></div>
+        <div class="track-discovery-actions track-discovery-actions-main">
+          <button data-discovery-link="musicbrainz">Fill info</button>
+          <button data-support-own>Support &amp; own</button>
+          <button data-discovery-link="discogs">Research</button>
+        </div>
+      </section>
+      <div class="track-editor-grid">
+        <label data-field-cue="title">Title<input id="editTrackTitle" type="text"></label>
+        <label data-field-cue="artist">Artist<input id="editTrackArtist" type="text"></label>
+        <label data-field-cue="album">Album<input id="editTrackAlbum" type="text"></label>
+        <label>Album artist<input id="editTrackAlbumArtist" type="text"></label>
+        <label data-field-cue="genre">Genre<input id="editTrackGenre" type="text"></label>
+        <label>Energy<input id="editTrackEnergy" type="number" min="0" max="100" placeholder="0-100"></label>
+        <label>Listening role<select id="editTrackRole"><option value="">Unassigned</option><option value="anchor">Anchor</option><option value="bridge">Bridge</option><option value="discovery">Discovery</option><option value="peak">Peak</option><option value="comfort">Comfort</option><option value="background">Background</option></select></label>
+        <label>User tags<input id="editTrackUserTags" type="text" placeholder="night drive, focus"></label>
+        <label>Mood tags<input id="editTrackMoodTags" type="text" placeholder="dark, warm, aggressive"></label>
+        <label>Context tags<input id="editTrackContextTags" type="text" placeholder="workout, late night"></label>
+        <label data-field-cue="year">Year<input id="editTrackYear" type="number" min="0" max="9999"></label>
+        <label>Track #<input id="editTrackNumber" type="number" min="0" max="999"></label>
+        <label>Disc #<input id="editTrackDiscNumber" type="number" min="0" max="99"></label>
+        <label>Composer<input id="editTrackComposer" type="text"></label>
+        <label>BPM<input id="editTrackBpm" type="number" min="0" max="400"></label>
+        <label>Key<input id="editTrackKey" type="text" maxlength="12" placeholder="e.g. Am"></label>
+        <label>ISRC<input id="editTrackIsrc" type="text"></label>
+        <label>Label<input id="editTrackLabel" type="text"></label>
+      </div>
+      <label class="track-editor-wide">Copyright<input id="editTrackCopyright" type="text"></label>
+      <label class="track-editor-wide">Notes<textarea id="editTrackComment" rows="3"></textarea></label>
+      <div class="track-discovery-actions track-discovery-actions-secondary">
+        <button data-discovery-link="musicbrainz">MusicBrainz</button>
+        <button data-discovery-link="bandcamp">Bandcamp</button>
+        <button data-discovery-link="discogs">Discogs</button>
+      </div>
+      <p>Changes are stored inside Pixelody and do not alter the original music file.</p>
+      <button class="save-track-details" id="saveTrackDetails">Save local details</button>
+    </section>
+  </div>
+  <div class="playlist-creator-overlay hidden" id="playlistCreatorOverlay">
+    <div class="playlist-creator-backdrop" data-close-playlist-creator></div>
+    <section class="playlist-creator" role="dialog" aria-modal="true" aria-labelledby="playlistCreatorTitle">
+      <div class="playlist-creator-heading"><div><p>NEW COLLECTION</p><h2 id="playlistCreatorTitle">Create playlist</h2></div><button id="closePlaylistCreator" title="Close"><span class="public-icon icon-close"></span></button></div>
+      <label for="newPlaylistName">Playlist name</label>
+      <input id="newPlaylistName" type="text" maxlength="80" autocomplete="off" placeholder="My playlist">
+      <p class="playlist-creator-error hidden" id="playlistCreatorError">Enter a playlist name.</p>
+      <div class="playlist-creator-actions"><button id="cancelPlaylistCreator">Cancel</button><button id="confirmPlaylistCreator">Create playlist</button></div>
+    </section>
+  </div>
+  <div class="playlist-creator-overlay playlist-picker-overlay hidden" id="playlistPickerOverlay">
+    <div class="playlist-creator-backdrop playlist-picker-backdrop" data-close-playlist-picker></div>
+    <section class="playlist-creator playlist-picker" role="dialog" aria-modal="true" aria-labelledby="playlistPickerTitle">
+      <div class="playlist-creator-heading"><div><p id="playlistPickerPreheading">ADD TO PLAYLIST</p><h2 id="playlistPickerTitle">Choose playlist</h2></div><button id="closePlaylistPicker" title="Close" aria-label="Close"><span class="public-icon icon-close" aria-hidden="true"></span></button></div>
+      <p class="playlist-picker-track-label" id="playlistPickerTrackLabel"></p>
+      <div class="playlist-picker-list" id="playlistPickerList" role="group" aria-label="Available playlists"></div>
+      <div class="playlist-picker-new-section">
+        <label for="newPlaylistPickerName" id="playlistPickerNewLabel">Or create new playlist</label>
+        <div class="playlist-picker-new-row">
+          <input id="newPlaylistPickerName" type="text" maxlength="80" autocomplete="off" placeholder="New playlist name">
+          <button id="confirmPlaylistPickerNew" class="playlist-picker-create-button">Create &amp; add</button>
+        </div>
+        <p class="playlist-creator-error hidden" id="playlistPickerError"></p>
+      </div>
+      <div class="playlist-creator-actions"><button id="cancelPlaylistPicker">Cancel</button></div>
+    </section>
+  </div>
+  <div class="toast hidden" id="toast"></div>
+  <audio id="audio"></audio>
+  <script src="ui-sounds.js"></script>
+  <script src="theme-prewarm.js"></script>
+  <script src="../node_modules/qrcode-generator/dist/qrcode.js"></script>
+  <script src="flow-shuffle-contract.js"></script>
+  <script src="flow-shuffle-engine.js"></script>
+  <script src="flow-shuffle-learning.js"></script>
+  <script src="jam-learning-contract.js"></script>
+  <script src="flow-shuffle-planner.js"></script>
+  <script src="flow-shuffle-acoustic.js"></script>
+  <script src="flow-shuffle-decision.js"></script>
+  <script src="daily-curated.js"></script>
+  <script src="purchase-bridge.js"></script>
+  <script src="calibration-dsp.js"></script>
+  <script src="renderer-domains/state-controller.js"></script>
+  <script src="renderer-domains/library-controller.js"></script>
+  <script src="renderer-domains/navigation-controller.js"></script>
+  <script src="renderer-domains/playback-controller.js"></script>
+  <script src="renderer-domains/diagnostics-controller.js"></script>
+  <script src="renderer-domains/jam-controller.js"></script>
+  <script src="brand-mark.js"></script>
+  <script src="renderer-domains/appearance-controller.js"></script>
+  <script src="renderer-domains/audio-controller.js"></script>
+  <script src="renderer-domains/confirmed-output-transition.js"></script>
+  <script src="theme-runtime/glyph.js"></script>
+  <script src="theme-runtime/canvas-theme-ports.js"></script>
+  <script src="theme-runtime/information/contract.js"></script>
+  <script src="theme-runtime/information/registry.js"></script>
+  <script src="theme-runtime/information/bundles.js"></script>
+  <script src="theme-runtime/information/runtime.js"></script>
+  <script src="theme-runtime/information/profiles/counterform-choir.js"></script>
+  <script src="theme-runtime/information/profiles/aftergarden.js"></script>
+  <script src="theme-runtime/information/profiles/vesperfold.js"></script>
+  <script src="theme-runtime/navigation/contract.js"></script>
+  <script src="theme-runtime/navigation/registry.js"></script>
+  <script src="theme-runtime/navigation/linear-list.js"></script>
+  <script src="theme-runtime/navigation/carousel.js"></script>
+  <script src="theme-runtime/navigation/cover-flow.js"></script>
+  <script src="theme-runtime/navigation/pass-deck.js"></script>
+  <script src="theme-runtime/navigation/memory-cascade.js"></script>
+  <script src="theme-runtime/navigation/spectral-field.js"></script>
+  <script src="theme-runtime/navigation/pressure-stack.js"></script>
+  <script src="theme-runtime/navigation/current-weave.js"></script>
+  <script src="theme-runtime/navigation/chorus-fold.js"></script>
+  <script src="theme-runtime/navigation/graftline.js"></script>
+  <script src="theme-runtime/navigation/shared-strata.js"></script>
+  <script src="theme-runtime/navigation/route-field.js"></script>
+  <script src="theme-runtime/navigation/dispatcher.js"></script>
+  <script src="workspace-composition/contract.js"></script>
+  <script src="workspace-composition/operations.js"></script>
+  <script src="workspace-composition/composition-session.js"></script>
+  <script src="workspace-composition/module-contract.js"></script>
+  <script src="workspace-composition/module-registry.js"></script>
+  <script src="workspace-composition/interaction-adapter.js"></script>
+  <script src="workspace-composition/first-party-modules.js"></script>
+  <script src="workspace-composition/module-effects.js"></script>
+  <script src="workspace-composition/player-controls.js"></script>
+  <script src="workspace-composition/canvas-painter.js"></script>
+  <script src="workspace-composition/canvas-studio-preset.js"></script>
+  <script src="workspace-composition/canvas-studio.js"></script>
+  <script src="workspace-composition/theme-experiment.js"></script>
+  <script src="workspace-composition/production-host.js"></script>
+  <script src="workspace-composition/singularity-contract.js"></script>
+  <script src="workspace-composition/singularity-profile.js"></script>
+  <script src="workspace-composition/singularity-panel-model.js"></script>
+  <script src="workspace-composition/singularity-proxy-portal-probe.js"></script>
+  <script src="workspace-composition/singularity-graph-projection-probe.js"></script>
+  <script src="workspace-composition/singularity-live-host.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+/* Current Weave: one semantic track tree moving through a compression-made clearing. */
+.current-weave-mounted {
+  position: relative;
+  min-width: 0;
+  min-height: 540px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.current-weave-stage {
+  position: relative;
+  min-width: 0;
+  min-height: 540px;
+  overflow: hidden;
+  outline: none;
+  isolation: isolate;
+}
+
+.current-weave-field {
+  position: absolute;
+  inset: 7% -7% 12%;
+  z-index: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 18px 0 color-mix(in srgb, var(--gold2) 7%, transparent));
+}
+
+.current-weave-plane {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 46%;
+  height: 104px;
+  transform-origin: center;
+  clip-path: polygon(0 20%, 13% 5%, 31% 22%, 48% 2%, 68% 24%, 85% 8%, 100% 25%, 96% 75%, 76% 61%, 57% 92%, 35% 68%, 15% 91%, 2% 72%);
+}
+
+.current-weave-plane.plane-back {
+  background: color-mix(in srgb, var(--gold2) 25%, transparent);
+  transform: translateY(-84px) rotate(-5deg) scaleX(1.05);
+  box-shadow: inset 0 2px color-mix(in srgb, var(--edge) 28%, transparent), 0 20px 0 color-mix(in srgb, var(--gold2) 8%, transparent);
+}
+
+.current-weave-plane.plane-carrier {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 30%, transparent), color-mix(in srgb, var(--gold2) 34%, transparent));
+  transform: translateY(-5px) rotate(2.2deg);
+  box-shadow: inset 0 2px color-mix(in srgb, var(--edge) 34%, transparent), inset 0 -1px color-mix(in srgb, var(--surface) 68%, transparent), 0 25px 0 color-mix(in srgb, var(--gold) 8%, transparent);
+}
+
+.current-weave-plane.plane-live {
+  height: 18px;
+  top: 59%;
+  background: color-mix(in srgb, var(--green) 45%, transparent);
+  transform: rotate(-3deg) scaleX(1.07);
+  clip-path: polygon(0 22%, 19% 0, 39% 34%, 60% 7%, 81% 44%, 100% 12%, 100% 72%, 78% 100%, 58% 64%, 37% 94%, 17% 58%, 0 84%);
+  opacity: .72;
+}
+
+.current-weave-particles {
+  position: absolute;
+  inset: 15% 2%;
+}
+
+.current-weave-particles > i {
+  --particle-size: 4px;
+  position: absolute;
+  left: calc(4% + (var(--particle) * 5.25%));
+  top: 50%;
+  width: var(--particle-size);
+  height: var(--particle-size);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--gold2) 70%, var(--surface));
+  transform: translateY(calc((var(--particle) - 8) * 11px));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--surface) 72%, transparent);
+}
+
+.current-weave-particles > i:nth-child(3n) { --particle-size: 11px; background: color-mix(in srgb, var(--green) 74%, var(--surface)); }
+.current-weave-particles > i:nth-child(4n) { --particle-size: 7px; transform: translateY(calc((var(--particle) - 11) * -9px)); }
+.current-weave-particles > i:nth-child(5n) { --particle-size: 3px; background: var(--edge); }
+
+.current-weave-handoff {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  top: 47%;
+  width: 48%;
+  border-top: 2px solid var(--gold);
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: opacity .16s ease;
+}
+
+.current-weave-handoff::before,
+.current-weave-handoff::after {
+  content: "";
+  position: absolute;
+  top: -7px;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--gold);
+  background: var(--surface);
+  transform: rotate(45deg);
+}
+
+.current-weave-handoff::before { left: -5px; }
+.current-weave-handoff::after { right: -5px; }
+.current-weave-handoff b { position: absolute; top: -20px; color: var(--gold); font: 700 7px/1 "Courier New", monospace; letter-spacing: .1em; }
+.current-weave-handoff b:first-child { left: 0; }
+.current-weave-handoff b:last-child { right: 0; }
+.current-weave-field.has-pending-route .current-weave-handoff { opacity: 1; }
+
+.current-weave-card {
+  position: absolute;
+  left: 50%;
+  top: 49%;
+  z-index: 2;
+  width: 214px;
+  min-width: 0;
+  min-height: 64px;
+  padding: 10px 12px 9px 44px;
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--edge) 42%, transparent);
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  color: var(--text);
+  box-shadow: 9px 12px 0 color-mix(in srgb, var(--gold2) 6%, transparent);
+  transform: translate(calc(-50% + var(--weave-x)), calc(-50% + var(--weave-lane-wide))) rotate(var(--weave-rot));
+  transition: transform .28s ease, width .22s ease, min-height .22s ease, color .16s ease, background-color .16s ease, opacity .16s ease;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.current-weave-card.is-far { display: none; }
+.current-weave-card.is-visible { opacity: var(--weave-alpha); }
+.current-weave-card:focus-visible { outline: 2px solid var(--gold); outline-offset: 5px; }
+
+.current-weave-index {
+  position: absolute;
+  left: 9px;
+  top: 10px;
+  color: var(--gold);
+  font: 700 9px/1 "Courier New", monospace;
+  letter-spacing: .08em;
+}
+
+.current-weave-art {
+  position: absolute;
+  left: 9px;
+  bottom: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--edge) 50%, transparent);
+  background: var(--surface2) center/cover no-repeat;
+}
+
+.current-weave-art.has-art { background-position: center; background-size: cover; }
+.current-weave-art i { position: absolute; inset: 4px; border: 1px solid color-mix(in srgb, var(--gold2) 60%, transparent); border-radius: 50%; border-left-color: transparent; }
+.current-weave-copy { display: block; min-width: 0; }
+.current-weave-copy strong,
+.current-weave-copy span,
+.current-weave-copy small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.current-weave-copy strong { font-size: 12px; line-height: 1.1; }
+.current-weave-copy span { margin-top: 4px; color: var(--muted); font-size: 9px; }
+.current-weave-copy small { margin-top: 5px; color: var(--muted); font: 8px/1 "Courier New", monospace; text-transform: uppercase; letter-spacing: .05em; }
+.current-weave-state { position: absolute; right: 9px; bottom: 7px; color: var(--muted); font: 700 7px/1 "Courier New", monospace; letter-spacing: .06em; }
+
+/* The selected object is a hole in the current, not an enlarged card. */
+.current-weave-card.is-selected:not(.is-current) {
+  z-index: 8;
+  width: min(470px, 43vw);
+  min-height: 128px;
+  padding: 25px 54px 27px 88px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: translate(-50%, -50%);
+  overflow: visible;
+  isolation: isolate;
+}
+
+.current-weave-card.is-selected:not(.is-current)::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -34px -60px;
+  background: radial-gradient(ellipse at center, color-mix(in srgb, var(--surface) 97%, var(--bg)) 0 54%, color-mix(in srgb, var(--surface) 88%, transparent) 55% 59%, transparent 60%);
+  filter: drop-shadow(0 1px 0 color-mix(in srgb, var(--gold) 55%, transparent));
+  pointer-events: none;
+}
+
+.current-weave-card.is-selected:not(.is-current)::after {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  left: -78px;
+  right: -78px;
+  top: 50%;
+  height: 176px;
+  border-top: 18px solid color-mix(in srgb, var(--gold2) 44%, transparent);
+  border-bottom: 12px solid color-mix(in srgb, var(--gold) 34%, transparent);
+  border-radius: 50%;
+  transform: translateY(-50%) rotate(-2deg);
+  clip-path: polygon(0 0, 28% 0, 28% 36%, 72% 36%, 72% 0, 100% 0, 100% 100%, 72% 100%, 72% 64%, 28% 64%, 28% 100%, 0 100%);
+  pointer-events: none;
+}
+
+.current-weave-card.is-selected:not(.is-current) .current-weave-index { left: 29px; top: 26px; font-size: 11px; }
+.current-weave-card.is-selected:not(.is-current) .current-weave-art { left: 27px; bottom: 28px; width: 45px; height: 45px; border-width: 2px; }
+.current-weave-card.is-selected:not(.is-current) .current-weave-copy strong { font-size: clamp(18px, 2vw, 25px); line-height: 1.02; white-space: normal; overflow-wrap: anywhere; }
+.current-weave-card.is-selected:not(.is-current) .current-weave-copy span { font-size: 11px; }
+.current-weave-card.is-selected:not(.is-current) .current-weave-copy small { font-size: 9px; }
+.current-weave-card.is-selected:not(.is-current) .current-weave-state { right: 34px; bottom: 25px; color: var(--gold); font-size: 8px; }
+
+.current-weave-card.is-pending:not(.is-current) .current-weave-state { color: var(--gold); }
+.current-weave-card.is-pending:not(.is-current)::before { filter: drop-shadow(0 1px 0 var(--gold)) drop-shadow(18px 0 0 color-mix(in srgb, var(--gold) 8%, transparent)); }
+
+/* Confirmation removes the browse clearing from the current and leaves a compact source notch; full identity is now owned by the aperture. */
+.current-weave-card.is-current {
+  z-index: 6;
+  width: 224px;
+  min-height: 68px;
+  border: 0;
+  border-left: 5px solid var(--green);
+  background: var(--surface3);
+  color: var(--bg);
+  box-shadow: 12px 14px 0 color-mix(in srgb, var(--edge) 16%, transparent);
+}
+
+.current-weave-card.is-selected.is-current {
+  transform: translate(calc(-50% + min(31vw, 390px)), calc(-50% + 118px)) rotate(-4deg);
+}
+
+.current-weave-card.is-current .current-weave-copy :is(span, small) { color: color-mix(in srgb, var(--bg) 72%, var(--green)); }
+.current-weave-card.is-current .current-weave-state { color: color-mix(in srgb, var(--green) 78%, white); }
+.current-weave-card.is-current:not(.is-live) { border-left-color: var(--gold2); }
+.current-weave-card.is-current:not(.is-live) .current-weave-state { color: color-mix(in srgb, var(--bg) 76%, var(--gold2)); }
+.current-weave-card.is-failed { border-left: 4px solid #d75662; }
+.current-weave-card.is-failed .current-weave-state { color: #c83b4a; }
+
+.current-weave-caption {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 12px;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 7px 18px;
+  padding: 9px 12px;
+  border-top: 1px solid var(--edge);
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  font: 9px/1.15 "Courier New", monospace;
+}
+
+.current-weave-caption-code { color: var(--gold); font-weight: 700; }
+.current-weave-caption strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.current-weave-caption > span:not(.current-weave-caption-code),
+.current-weave-caption small { color: var(--muted); }
+.current-weave-caption small { grid-column: 2 / 4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+body[data-motion="off"] .current-weave-card,
+body[data-performance="conserve"] .current-weave-card,
+body[data-motion="off"] .current-weave-handoff,
+body[data-performance="conserve"] .current-weave-handoff { transition: none !important; }
+
+@media (max-width: 960px) {
+  .current-weave-mounted,
+  .current-weave-stage { min-height: 760px; width: 100%; max-width: 100%; overflow: hidden; }
+  .current-weave-field { inset: 2% 3% 10%; }
+  .current-weave-plane { left: 37%; right: auto; top: 0; width: 116px; height: 100%; clip-path: polygon(18% 0, 79% 3%, 62% 17%, 92% 31%, 66% 46%, 87% 63%, 60% 79%, 76% 100%, 22% 98%, 37% 82%, 8% 67%, 32% 50%, 5% 34%, 31% 18%); }
+  .current-weave-plane.plane-back { transform: translateX(-92px) rotate(-3deg); }
+  .current-weave-plane.plane-carrier { transform: translateX(8px) rotate(2deg); }
+  .current-weave-plane.plane-live { left: 58%; top: 0; width: 18px; height: 100%; transform: rotate(1deg); }
+  .current-weave-particles > i { left: calc(17% + (var(--particle) * 3.5%)); transform: translateY(calc((var(--particle) - 8) * 19px)); }
+  .current-weave-handoff { left: 51%; top: 50%; width: 2px; height: 31%; border-top: 0; border-left: 2px solid var(--gold); }
+  .current-weave-handoff::before { left: -7px; top: -4px; }
+  .current-weave-handoff::after { left: -7px; right: auto; top: auto; bottom: -5px; }
+  .current-weave-handoff b { left: 9px !important; right: auto !important; top: 0; writing-mode: vertical-rl; }
+  .current-weave-handoff b:last-child { top: auto; bottom: 0; }
+  .current-weave-card { width: min(220px, calc(100% - 58px)); max-width: calc(100% - 36px); transform: translate(calc(-50% + var(--weave-lane-narrow)), calc(-50% + var(--weave-y))) rotate(0deg); }
+  .current-weave-card.is-selected:not(.is-current) { width: min(520px, calc(100% - 92px)); max-width: calc(100% - 48px); min-height: 138px; padding: 28px 42px 30px 78px; transform: translate(-50%, -50%); }
+  .current-weave-card.is-selected:not(.is-current)::before { inset: -28px -18px; }
+  .current-weave-card.is-selected:not(.is-current)::after { left: -24px; right: -24px; }
+  .current-weave-card.is-selected:not(.is-current) .current-weave-state { right: 24px; max-width: calc(100% - 110px); text-align: right; }
+  .current-weave-card.is-selected.is-current { transform: translate(-50%, 238px) rotate(0deg); }
+  .current-weave-caption { left: 14px; right: 14px; bottom: 8px; grid-template-columns: 1fr; }
+  .current-weave-caption > * { grid-column: auto !important; }
+}

@@ -1,0 +1,5 @@
+
+# Development art whose bytes are verified by SHA-256 in
+# scripts/check-workspace-composition.js. Store and check out exactly as
+# committed so Windows line-ending conversion cannot change the hashes.
+/Images/** -text

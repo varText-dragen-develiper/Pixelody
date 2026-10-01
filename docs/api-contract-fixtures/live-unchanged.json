@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "unchanged": true,
+  "revision": 3,
+  "revisions": {
+    "overall": 3,
+    "library": 1,
+    "playback": 2,
+    "queue": 1,
+    "favorites": 1,
+    "permissions": 1,
+    "deviceRefresh": 3
+  },
+  "checkedAt": "2026-07-02T00:00:02.000Z",
+  "pollAfterMs": 1000
+}

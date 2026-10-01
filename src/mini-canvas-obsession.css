@@ -1,0 +1,51 @@
+/* Obsession Mode mini deck for Canvas: a reduced poster, not a shrunken desktop. */
+
+/* The desktop mark travels because there are four surfaces competing for
+   attention. Here there is only ever one attended object -- the playing track
+   -- so the mark holds position at the plate edge and changes form instead:
+   open outline when paused, solid when playback is confirmed. Same rule, one
+   mark, no second mechanism. */
+
+body[data-theme="foreground"][data-canvas-theme-port="obsession"]{--mini-accent:#c91527;--ob-red:#c91527;--ob-hot:#ff5865;--ob-bone:#f2ece8;--ob-ink:#030203;background:#030203;color:#f2ece8;font-family:"Inter","Segoe UI",sans-serif}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-shell{position:relative;grid-template-columns:72px minmax(150px,1fr) 104px;gap:12px;align-items:center;overflow:hidden;padding:22px 14px 14px;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));border:1px solid #3d1118;border-radius:0;background:linear-gradient(162deg,#12080a,#050203 74%);box-shadow:inset 0 0 0 1px rgba(242,236,232,.03),8px 8px 0 rgba(0,0,0,.5)}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-shell::before{content:"OBSESSION";position:absolute;left:14px;top:6px;width:auto;height:auto;background:none;color:#6f5a59;font:700 7px Consolas,"Courier New",monospace;letter-spacing:.34em}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-shell::after{content:"";position:absolute;z-index:2;left:0;top:20px;bottom:10px;width:2px;background:var(--ob-red);opacity:.3;transition:opacity 160ms linear,width 160ms linear}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"].playing .mini-shell::after{opacity:1;width:4px}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-shell>*:not(.mini-glow):not(.mini-drag-strip):not(.mini-resize-grip){position:relative;z-index:1}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-glow{position:absolute;inset:20px 4px 4px;background:linear-gradient(90deg,rgba(201,21,39,.14),transparent 52%);pointer-events:none;filter:none}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-drag-strip{position:absolute;z-index:8;top:0;right:56px;left:0;height:20px}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-resize-grip{position:absolute;z-index:9;opacity:.6}
+
+/* Decorative furniture belonging to other themes' mini decks is suppressed
+   here rather than left to leak through the shared layer. */
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] :is(.vv-mini-board,.vv-mini-bus,.axis-mini-breakline,.counterform-mini-choir,.mini-quest-stats,.signal-orbit-ring,.axis-mini-mask){display:none}
+
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-art{clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));border:1px solid #6b1b27;border-radius:0;background-image:linear-gradient(135deg,var(--ob-red),#170609 58%,var(--ob-ink));box-shadow:6px 6px 0 rgba(0,0,0,.45)}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-copy small{color:#6f5a59;font:700 8px Consolas,"Courier New",monospace;letter-spacing:.22em;text-transform:uppercase}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-copy strong{font-size:16px;line-height:1.08;letter-spacing:-.018em;text-transform:uppercase;color:var(--ob-bone);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-copy span{color:#a8908f;letter-spacing:.02em}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-progress{height:2px;border-radius:0;background:rgba(61,17,24,.9)}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-progress i{border-radius:0;background:var(--ob-red)}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-time{color:#6f5a59;font:700 8px Consolas,"Courier New",monospace;letter-spacing:.14em}
+
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-controls button{border:1px solid #3d1118;border-radius:0;background:rgba(11,6,7,.86);color:#cbbab7}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-controls button:hover{border-color:var(--ob-red);color:var(--ob-bone)}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-play{clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));border:1px solid #6b1b27;background:rgba(201,21,39,.14)}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"].playing .mini-play{border-color:var(--ob-hot);background:linear-gradient(135deg,var(--ob-red),#7a0d19);color:#fff}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .window-actions button{border-radius:0;color:#6f5a59}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] :is(button,input,select):focus-visible{outline:none;box-shadow:inset 0 0 0 1px var(--ob-bone),inset 0 -2px 0 var(--ob-red)}
+
+body[data-theme="foreground"][data-canvas-theme-port="obsession"][data-motion="off"] .mini-shell::after{transition:none}
+@media (prefers-reduced-motion:reduce){
+  body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-shell::after{transition:none}
+}
+
+/* Narrowest compact width: the plate keeps the mark, the title and transport.
+   Secondary metadata yields first, as it does on the desktop plate. */
+@media (max-width:300px){
+  body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-shell{grid-template-columns:52px minmax(0,1fr) 92px;padding:18px 10px 10px}
+  body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-shell::before{display:none}
+  body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-copy small,
+  body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-time{display:none}
+  body[data-theme="foreground"][data-canvas-theme-port="obsession"] .mini-copy strong{font-size:13px}
+}

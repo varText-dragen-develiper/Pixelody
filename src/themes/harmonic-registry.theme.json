@@ -1,0 +1,18 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.harmonic-registry",
+  "name": "Harmonic Registry",
+  "author": "Pixelody",
+  "description": "C3 experiment: a daylight local-sound specimen book with deterministic proof glyphs, a broad selected-collection field, and separated magenta intent and cyan confirmed playback.",
+  "palette": { "builtIn": "harmonic-registry" },
+  "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
+  "hud": { "layout": "cinematic", "controls": "technical", "corners": "square" },
+  "typography": { "profile": "display" },
+  "motion": { "profile": "mechanical", "intensity": "calm" },
+  "tokens": {
+    "accentPrimary": "#f12d87", "accentSecondary": "#6844e7", "accentState": "#00b9cf", "heroTone": "#ebe8df",
+    "canvas": "#e9e7df", "elevation1": "#f4f1e8", "elevation2": "#ebe8df", "elevation3": "#242229",
+    "divider": "#aaa5a6", "frame": "#141318", "foreground": "#141318", "foregroundMuted": "#66616c"
+  }
+}
