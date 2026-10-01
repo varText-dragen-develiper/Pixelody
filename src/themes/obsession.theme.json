@@ -1,0 +1,14 @@
+{
+  "$schema": "./theme.schema.json", "schemaVersion": 1, "id": "pixelody.obsession", "name": "Obsession Mode", "author": "Pixelody",
+  "description": "A restrained psychological-thriller poster interface with licensed red abstract material, bone-white type, original fracture geometry, and crimson reserved for playback and selection.",
+  "palette": { "primary": "#c91527", "secondary": "#ff5865", "base": "#030203" },
+  "assets": {
+    "backgroundTexture": "../assets/themes/obsession/red-fluid-shreyansh-mishra-unsplash.jpg",
+    "heroOverlay": "../assets/themes/obsession/fracture-overlay.svg",
+    "panelFrame": null,
+    "iconSet": null
+  },
+  "hud": { "layout": "cinematic", "controls": "minimal", "corners": "pixel-cut" },
+  "typography": { "profile": "display", "font": null },
+  "motion": { "profile": "pulse", "intensity": "expressive" }
+}

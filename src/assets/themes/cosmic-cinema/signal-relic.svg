@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 480" fill="none">
+  <defs>
+    <linearGradient id="silver" x1="64" y1="38" x2="306" y2="421" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fffdf2" stop-opacity=".88"/>
+      <stop offset=".24" stop-color="#8fadeb" stop-opacity=".12"/>
+      <stop offset=".52" stop-color="#d8d8d2" stop-opacity=".5"/>
+      <stop offset=".78" stop-color="#070b14" stop-opacity=".15"/>
+      <stop offset="1" stop-color="#fffdf2" stop-opacity=".68"/>
+    </linearGradient>
+    <radialGradient id="core">
+      <stop stop-color="#030407"/>
+      <stop offset=".64" stop-color="#101a33" stop-opacity=".72"/>
+      <stop offset="1" stop-color="#fffdf2" stop-opacity=".32"/>
+    </radialGradient>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <ellipse cx="180" cy="438" rx="79" ry="7" fill="#fffdf2" opacity=".13" filter="url(#soft)"/>
+  <path d="M180 31 278 88l28 113-42 151-84 77-84-77-42-151L82 88 180 31Z" fill="url(#silver)" opacity=".36"/>
+  <path d="m180 31 11 116-11 282-23-195 23-203Z" fill="#fffdf2" opacity=".25"/>
+  <path d="m82 88 98 59 98-59-53 113-45-54-45 54L82 88Z" fill="#fffdf2" opacity=".18"/>
+  <path d="m54 201 81 33 45 195-84-77-42-151Zm252 0-81 33-45 195 84-77 42-151Z" fill="#8fadeb" opacity=".13"/>
+  <circle cx="180" cy="232" r="48" fill="url(#core)" stroke="#fffdf2" stroke-opacity=".34"/>
+  <circle cx="180" cy="232" r="68" stroke="#d8d8d2" stroke-opacity=".2" stroke-dasharray="2 9"/>
+  <ellipse cx="180" cy="232" rx="112" ry="38" transform="rotate(-12 180 232)" stroke="#fffdf2" stroke-opacity=".3"/>
+  <path d="M115 342 180 429l65-87-65 42-65-42Z" fill="#fffdf2" opacity=".2"/>
+  <g fill="#fffdf2" filter="url(#glow)">
+    <circle cx="82" cy="88" r="2" opacity=".8"/><circle cx="278" cy="88" r="2" opacity=".8"/>
+    <circle cx="54" cy="201" r="1.5" opacity=".6"/><circle cx="306" cy="201" r="1.5" opacity=".6"/>
+    <circle cx="180" cy="31" r="2"/><circle cx="180" cy="429" r="2"/>
+  </g>
+</svg>

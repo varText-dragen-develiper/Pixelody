@@ -1,0 +1,21 @@
+Analog Dossier: Library of Congress image credits
+
+The following source images are from the Library of Congress and are identified by LOC with no known restrictions on publication.
+
+1. Keeping up with science / Shari.
+   Source: https://www.loc.gov/item/98518267/
+   Rights advisory: No known restrictions on publication.
+   Bundled source: source/loc-keeping-up-with-science-shari-no-known-restrictions.jpg
+   Derived files:
+   - derived/analog-hero-loc-science-no-known-restrictions.webp
+   - derived/analog-mini-loc-science-no-known-restrictions.webp
+
+2. Rural Electrification Administration poster by Lester Beall
+   Source: https://www.loc.gov/resource/cph.3g01783/
+   Rights advisory: No known restrictions on publication. Published without copyright notice.
+   Bundled source: source/loc-beall-rural-electrification-no-known-restrictions.jpg
+   Derived files:
+   - derived/analog-panel-loc-beall-no-known-restrictions.webp
+   - derived/analog-preview-loc-beall-no-known-restrictions.webp
+
+Pixelody includes credit voluntarily. No endorsement by the Library of Congress is implied.

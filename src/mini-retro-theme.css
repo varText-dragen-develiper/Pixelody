@@ -1,0 +1,41 @@
+/* Orbital Retro-Future mini player. Converted onto mini-player.css's --mini-*
+   baseline (see the token list at the top of that file and the "Mini
+   player token baseline" note in docs/themes/THEME_SYSTEM.md): tokens cover the
+   colors/sizes that map 1:1 onto the shared shell, and bespoke selectors
+   stay for what tokens can't express -- the HUD clip-path silhouette, the
+   scanline overlay, and the non-square play button. */
+@font-face{font-family:"Kenney Future";src:url("assets/themes/orbital-retro/KenneyFuture.ttf") format("truetype");font-display:swap}
+body[data-theme="orbital"]{
+  padding:7px;
+  background:#061318;
+  font-family:"Kenney Future","Segoe UI",sans-serif;
+  --mini-shell-bg:linear-gradient(120deg,#09242b,#0d333c 60%,#061318);
+  --mini-shell-border:3px solid var(--mini-accent);
+  --mini-shell-shadow:inset 0 0 0 2px #0008;
+  --mini-art-border:3px solid #58e3e8;
+  --mini-art-shadow:7px 7px 0 #ff5a70;
+  --mini-copy-eyebrow-color:#58e3e8;
+  --mini-copy-title-color:#fff8df;
+  --mini-progress-height:5px;
+  --mini-progress-bg:#061318;
+  --mini-play-bg:var(--mini-accent);
+  --mini-play-shadow:4px 4px 0 #ff5a70;
+}
+/* Not tokenized: shell height/columns and the HUD clip-path silhouette
+   (the baseline grid is fluid, this theme wants a fixed console shape). */
+body[data-theme="orbital"] .mini-shell{
+  height:132px;
+  grid-template-columns:96px 1fr 82px;
+  clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);
+}
+body[data-theme="orbital"] .mini-shell::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.12;background:repeating-linear-gradient(0deg,transparent 0 3px,#58e3e8 3px 4px)}
+body[data-theme="orbital"] .mini-art{clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)}
+body[data-theme="orbital"] .mini-copy strong{font-family:"Kenney Future",sans-serif;text-transform:uppercase;letter-spacing:.04em}
+body[data-theme="orbital"] .mini-progress{border:1px solid #58e3e8}
+/* Play button isn't square, so it falls outside --mini-play-size; width/height
+   stay bespoke while background/shadow above are tokenized. Transport-button
+   color is scoped here rather than the shared --mini-btn-color token because
+   the original design only recolors the transport row, not the window-action
+   (close/restore) buttons -- --mini-btn-color drives both. */
+body[data-theme="orbital"] .mini-controls .mini-play{width:40px;height:38px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
+body[data-theme="orbital"] .mini-controls button{color:#58e3e8}

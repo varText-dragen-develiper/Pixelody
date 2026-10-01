@@ -1,0 +1,18 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.ascii-social",
+  "name": "ASCII Social",
+  "author": "Pixelody",
+  "description": "A cleaner AS2-era graphic-realistic media skin with tactile desktop panels, sparse character art, and prominent original ASCII emoticon identity marks.",
+  "palette": { "primary": "#d6b45d", "secondary": "#79d8cf", "base": "#07090c" },
+  "assets": {
+    "backgroundTexture": "../assets/themes/ascii-social/emoticon-wall.svg",
+    "heroOverlay": "../assets/themes/ascii-social/emoticon-wall.svg",
+    "panelFrame": null,
+    "iconSet": null
+  },
+  "hud": { "layout": "arcade", "controls": "ornamental", "corners": "framed" },
+  "typography": { "profile": "display", "font": null },
+  "motion": { "profile": "pulse", "intensity": "expressive" }
+}

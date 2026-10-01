@@ -1,0 +1,199 @@
+/* Lo-Fi Café for Canvas: a rainy walnut nook rebuilt on the live module graph. The room doesn't change. The paper on it does. */
+
+/* The archive's material fact is an inversion nothing else in the poster family
+   has: dark walnut chrome carrying light paper content. Wood is the room --
+   structural, fixed, dim. Paper is what you put on the room -- light, movable,
+   yours. So every surface below is one or the other, and only paper ever
+   responds to a choice or a play. Wood takes no marks. */
+
+.lo-fi-cafe-preview{position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(16,11,8,.82),rgba(41,28,20,.48)),url("assets/themes/lo-fi-cafe/cafe-interior-stocksnap-THXU08ODDE-cc0.jpg") center/cover,linear-gradient(135deg,#100b08 0 42%,#62452b 43% 68%,#445442 69% 100%)!important}
+.lo-fi-cafe-preview::after{content:"";position:absolute;left:14%;right:14%;bottom:20%;height:34%;border-radius:2px;background:linear-gradient(180deg,#ecdfc3,#d8c49e);box-shadow:0 5px 12px rgba(7,5,4,.5)}
+.lo-fi-cafe-preview i:nth-child(1){background:#c48a4a;border-radius:999px;transform:scale(.66)}
+.lo-fi-cafe-preview i:nth-child(2){background:#5d704f;transform:skewX(-12deg) scale(.9)}
+.lo-fi-cafe-preview i:nth-child(3){background:#71838a;border-radius:3px 999px 999px 3px;transform:rotate(-8deg) scale(.72)}
+
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"]{--cafe-hero-photo:url("assets/themes/lo-fi-cafe/cafe-interior-stocksnap-THXU08ODDE-cc0.jpg");--cafe-desk-photo:url("assets/themes/lo-fi-cafe/study-desk-stocksnap-XGXORJWZIX-cc0.jpg");--cafe-night:#100b08;--cafe-espresso:#1d130e;--cafe-walnut:#342216;--cafe-wood:#62452b;--cafe-amber:#c48a4a;--cafe-honey:#e1b775;--cafe-paper:#d8c49e;--cafe-paper-soft:#ecdfc3;--cafe-ink:#211812;--cafe-muted:#52422f;--cafe-muted-on-wood:#ab947e;--cafe-moss:#5d704f;--cafe-sage:#8b9875;--cafe-rain:#71838a;--cafe-line:rgba(43,29,20,.28);--cafe-lamp:0.5;--cafe-settle:260ms;margin:0;color:var(--cafe-paper-soft);background-color:var(--cafe-night);font-family:Georgia,"Iowan Old Style","Times New Roman",serif}
+
+/* The room. Fixed, dim, and structural: this layer never responds to anything
+   the listener chooses. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"]::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at 82% 14%,rgba(196,138,74,.14),transparent 24%),radial-gradient(circle at 14% 78%,rgba(93,112,79,.18),transparent 28%),linear-gradient(120deg,rgba(16,11,8,.98),rgba(29,19,14,.96) 38%,rgba(55,68,61,.78)),var(--cafe-desk-photo) center/cover,var(--cafe-night)}
+
+/* The lamp. Warmth only -- it is allowed into glow alphas and nowhere else, so
+   it can never move text or paper luminance. --cafe-lamp is written by the
+   renderer from the local hour at each confirmed track change: the lamp moves
+   when the music moves, which is the only clock this room keeps. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"]::after{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 72% 16%,rgba(225,183,117,calc(0.06 + var(--cafe-lamp) * 0.16)),transparent 30%),linear-gradient(180deg,rgba(113,131,138,.08),transparent 44%);transition:background var(--cafe-settle) linear}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"]>:is(.topbar,.workspace,.player){position:relative;z-index:2}
+
+/* Rain. Present only while audio actually is, behind the wood, never over paper
+   and never over type. Atmosphere that crosses content becomes decoration
+   competing with information. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .workspace::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;background-image:repeating-linear-gradient(97deg,rgba(113,131,138,.16) 0 1px,transparent 1px 13px),repeating-linear-gradient(97deg,rgba(236,223,195,.07) 0 1px,transparent 1px 31px);transition:opacity 900ms linear}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"].is-playing .workspace::before{opacity:.5}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .cw-module{position:relative;z-index:1}
+
+/* Canvas adapter: every module is paper laid on the room. */
+/* Opacity recession is safe for a theme whose content is darker than its room.
+   It is fatal here: the Canvas base layer runs modules at 58% alpha, which
+   drags light paper toward the dark room while the dark ink stays where it is,
+   and readable ink-on-paper collapses to unreadable ink-on-mud until you hover.
+   This room recesses the way a real one does -- by depth, not by fading the
+   paper -- so the opacity is pinned and focus changes the shadow instead. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .cw-module{opacity:1!important;border:1px solid var(--cafe-line);border-radius:7px;background:linear-gradient(178deg,var(--cafe-paper-soft),var(--cafe-paper));color:var(--cafe-ink);box-shadow:0 10px 22px rgba(7,5,4,.36),inset 0 1px rgba(255,252,244,.6);overflow:hidden;transition:box-shadow var(--cafe-settle) ease}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .cw-module:is(:hover,:focus-within){box-shadow:0 20px 42px rgba(7,5,4,.5),inset 0 1px rgba(255,252,244,.75)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(.library-rail,.main-stage,.inspector,.collection-body,.queue-drawer,.settings-drawer){border:0;border-radius:0;background:transparent;color:var(--cafe-ink)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(.muted,.track-row small,.playlist-meta,.panel small,.quality-card small,.tuning-card small,.metadata-grid small){color:var(--cafe-muted)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(.rail-tools,.library-rail .muted){color:var(--cafe-muted-on-wood)}
+
+/* Topbar: wood. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .topbar{height:62px;border:0;border-bottom:1px solid rgba(236,223,195,.12);color:var(--cafe-paper-soft);background:linear-gradient(135deg,rgba(16,11,8,.97),rgba(29,19,14,.96) 48%,rgba(46,56,42,.88)),var(--cafe-hero-photo) center/cover;background-blend-mode:normal,soft-light;box-shadow:0 18px 38px rgba(7,5,4,.42),inset 0 1px rgba(236,223,195,.08)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .profile-button{border:1px solid rgba(236,223,195,.24);border-radius:999px;background:linear-gradient(140deg,var(--cafe-wood),var(--cafe-walnut));color:var(--cafe-honey)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .global-search{height:34px;border:1px solid rgba(236,223,195,.16);border-radius:999px;background:rgba(16,11,8,.58);padding-inline:16px}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .global-search input{color:var(--cafe-paper-soft);font-family:Georgia,serif}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .global-search:focus-within{border-color:var(--cafe-honey)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(.settings-trigger,.top-quality,.jams-trigger){border:1px solid rgba(236,223,195,.16);border-radius:999px;background:rgba(16,11,8,.42);color:var(--cafe-paper-soft);letter-spacing:.04em}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .status-dot{background:var(--cafe-moss);box-shadow:0 0 10px rgba(93,112,79,.5)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .top-quality small{color:var(--cafe-sage)}
+
+/* Library rail: wood, carrying paper cards. The shelf is the top of this list
+   -- not a new container, because the furniture does not grow a new shelf when
+   you pin something. Anchored cards simply sort first and read as paper you
+   put there on purpose. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .library-rail{padding:18px 13px 12px;color:var(--cafe-paper-soft)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .cw-module[data-cw-module-key="library.browser"]{background:linear-gradient(150deg,rgba(29,19,14,.97),rgba(16,11,8,.96)),var(--cafe-hero-photo) center/cover;background-blend-mode:normal,soft-light;color:var(--cafe-paper-soft)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .rail-heading{padding:0 5px 14px;border-bottom:1px solid rgba(236,223,195,.14)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .rail-heading strong{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--cafe-honey);font-family:Georgia,serif}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .library-filters{gap:6px;padding:13px 0 11px}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .library-filters .chip{flex:1;min-width:0;padding:7px 3px;border:1px solid rgba(236,223,195,.14);border-radius:999px;background:rgba(16,11,8,.4);color:rgba(236,223,195,.62);font-size:10px;letter-spacing:.06em}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .library-filters .chip.active{border-color:var(--cafe-amber);background:rgba(196,138,74,.18);color:var(--cafe-honey)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .create-button{border:1px solid rgba(236,223,195,.2);border-radius:999px;background:rgba(98,69,43,.4);color:var(--cafe-paper-soft);letter-spacing:.05em}
+
+/* Collection cards: paper. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-item{position:relative;min-height:0;padding:10px 11px;margin-bottom:7px;border:1px solid var(--cafe-line);border-radius:6px;background:linear-gradient(176deg,rgba(236,223,195,.93),rgba(216,196,158,.9));color:var(--cafe-ink);box-shadow:0 5px 12px rgba(7,5,4,.3);transition:transform var(--cafe-settle) ease,box-shadow var(--cafe-settle) ease,background var(--cafe-settle) ease}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-item:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(7,5,4,.36)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-item.active{border-color:var(--cafe-amber);background:linear-gradient(176deg,#fff6e2,var(--cafe-paper-soft));box-shadow:0 8px 20px rgba(7,5,4,.4),inset 3px 0 var(--cafe-amber)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-item strong{font-family:Georgia,serif;font-size:14px;letter-spacing:.005em;color:var(--cafe-ink)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-item span{color:var(--cafe-muted)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-thumb{border-radius:4px;border:1px solid var(--cafe-line)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-dots{color:var(--cafe-muted)}
+
+/* The shelf. A card you chose to keep gets a turned corner and a moss thread --
+   quiet, permanent, and unmistakably different from the room's own memory. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-item[data-cafe-anchor="true"]{border-color:rgba(93,112,79,.6);box-shadow:0 7px 16px rgba(7,5,4,.34),inset 3px 0 var(--cafe-moss)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-item[data-cafe-anchor="true"]::after{content:"";position:absolute;right:0;top:0;width:15px;height:15px;background:linear-gradient(225deg,rgba(16,11,8,.34) 0 50%,transparent 50%),linear-gradient(225deg,transparent 0 50%,var(--cafe-sage) 50%);border-top-right-radius:5px}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-item[data-cafe-anchor="true"]+.playlist-item:not([data-cafe-anchor="true"]){margin-top:15px}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-item[data-cafe-anchor="true"]+.playlist-item:not([data-cafe-anchor="true"])::before{content:"";position:absolute;left:11px;right:11px;top:-9px;height:1px;background:rgba(236,223,195,.18)}
+
+/* Last set down. The room's own memory, and visibly quieter than your choice --
+   it must never outrank the shelf. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-item[data-cafe-recent="true"]:not([data-cafe-anchor="true"]){background:linear-gradient(176deg,rgba(236,223,195,.78),rgba(216,196,158,.74))}
+
+/* Paper wear. The card already carries real plays and a real last-played time;
+   this only sets it in the room's own voice. Where there is no history it says
+   so in words rather than falling back to something that looks like a number. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .quest-save-slot{display:none}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .quest-save-meta{display:block;margin-top:5px;color:var(--cafe-muted);font:italic 11px/1.4 Georgia,serif;letter-spacing:0;text-transform:none}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-item[data-cafe-wear="none"] .quest-save-meta{color:rgba(111,91,71,.72)}
+
+/* Stage: the lit paper. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-hero{position:relative;min-height:292px;border:0;border-radius:7px 7px 0 0;background-image:linear-gradient(180deg,rgba(16,11,8,.58),rgba(16,11,8,.95)),var(--cafe-hero-photo);background-size:cover;background-position:center;color:var(--cafe-paper-soft)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,transparent,rgba(196,138,74,calc(0.2 + var(--cafe-lamp) * 0.55)) 30%,rgba(225,183,117,calc(0.16 + var(--cafe-lamp) * 0.4)) 70%,transparent);transition:background var(--cafe-settle) linear}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .hero-shade{background:linear-gradient(0deg,rgba(16,11,8,.97),rgba(16,11,8,.1) 72%)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .hero-copy{position:relative;z-index:1}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .hero-copy::before{content:"";position:absolute;inset:-18px -24px;z-index:-1;pointer-events:none;background:radial-gradient(120% 140% at 12% 80%,rgba(16,11,8,.86),rgba(16,11,8,.52) 62%,transparent)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .hero-copy h1{font-family:Georgia,serif;font-size:clamp(28px,3.4vw,50px);line-height:1.04;letter-spacing:-.012em;color:var(--cafe-paper-soft)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .hero-copy>span{max-width:62ch;color:rgba(236,223,195,.82)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .hero-copy p{color:#f0d7ae;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-family:Georgia,serif}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .hero-play{border:1px solid var(--cafe-honey);border-radius:999px;background:rgba(196,138,74,.2);color:var(--cafe-paper-soft);letter-spacing:.06em}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .hero-play:hover{background:rgba(196,138,74,.34)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(.playlist-cover,.metadata-art,.track-editor-art):not(.has-image){border-radius:5px;border:1px solid var(--cafe-line);background-image:linear-gradient(150deg,var(--cafe-wood),var(--cafe-walnut) 62%,var(--cafe-espresso))}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .collection-body{background:linear-gradient(178deg,var(--cafe-paper-soft),var(--cafe-paper));color:var(--cafe-ink)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .collection-actions{border-bottom:1px solid var(--cafe-line)}
+
+/* Ink on paper. Moss owns confirmed playback, amber owns selection intent. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .track-header{color:var(--cafe-muted);background:transparent;border-bottom:1px solid var(--cafe-line);font:11px Georgia,serif;letter-spacing:.14em;text-transform:uppercase}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .track-row{border-left:3px solid transparent;border-radius:0;color:var(--cafe-ink);transition:background var(--cafe-settle) ease,border-color var(--cafe-settle) ease}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(.track-row .track-title strong,.track-row .track-title,.queue-item strong,.playlist-item strong){color:var(--cafe-ink)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(.track-row small,.track-row .track-title small){color:var(--cafe-muted)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .track-row:not(.track-header):hover{background:rgba(196,138,74,.14)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .track-row.is-selected:not(.playing){border-left-color:var(--cafe-amber);background:rgba(196,138,74,.22)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(.track-row.playing,.queue-item.playing){border-left:3px solid var(--cafe-moss)!important;background:rgba(93,112,79,.2)!important;color:var(--cafe-ink)!important}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .track-row.playing .track-title strong{color:#1f2619}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .track-row.missing{border-left-color:#9c5b3c;background:rgba(156,91,60,.14);color:#6a3a22}
+
+/* Setting down. One short acknowledgment, and each is a different gesture, not
+   a different length of the same one. On a room you leave open all day a
+   flourish you see four hundred times is an irritant, so nothing here repeats
+   and nothing here lasts. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .track-row .favorite-toggle.active{color:var(--cafe-moss)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-item[data-cafe-anchor="true"]{animation:none}
+
+/* Inspector: a smaller sheet of the same paper. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .inspector{padding:16px 14px}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .inspector-heading{border-bottom:1px solid var(--cafe-line);padding-bottom:11px}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(.panel,.quality-card,.tuning-card,.drop-zone,.track-editor,.profile-preview){border:1px solid var(--cafe-line);border-radius:6px;background:rgba(255,252,244,.5);color:var(--cafe-ink);box-shadow:inset 0 1px rgba(255,252,244,.7)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(.panel label,.quality-card h3,.tuned,.format,.metadata-grid b){color:#2c3823}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(.signal-path,.metadata-grid,.tuning-help,.rail-import){border-color:var(--cafe-line)}
+
+/* Order tickets. The queue is a spike of slips, honest about drag and focus. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .queue-heading h2{font:13px Georgia,serif;letter-spacing:.16em;text-transform:uppercase;color:var(--cafe-muted)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .queue-item{position:relative;margin:0 0 5px;padding:9px 11px 9px 15px;border:1px solid var(--cafe-line);border-left:0;border-radius:0 4px 4px 0;background:linear-gradient(92deg,rgba(255,252,244,.94),rgba(236,223,195,.86));color:var(--cafe-ink);box-shadow:0 3px 8px rgba(7,5,4,.22);transition:transform var(--cafe-settle) ease,box-shadow var(--cafe-settle) ease}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .queue-item::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:repeating-linear-gradient(180deg,var(--cafe-wood) 0 3px,transparent 3px 6px)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .queue-item:hover{transform:translateX(2px)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .queue-item.dragging{transform:rotate(-.6deg) translateY(-2px);box-shadow:0 10px 22px rgba(7,5,4,.44);opacity:.96}
+
+/* Player dock: wood again. The room's one fixed edge. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .cw-dock[data-cw-anchored=".player"]>.player{position:relative;color:var(--cafe-paper-soft);background:linear-gradient(135deg,rgba(16,11,8,.97),rgba(29,19,14,.96) 48%,rgba(46,56,42,.88)),var(--cafe-hero-photo) center/cover;background-blend-mode:normal,soft-light;border-top:1px solid rgba(236,223,195,.14);box-shadow:0 -14px 34px rgba(7,5,4,.44),inset 0 1px rgba(236,223,195,.08)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .cw-dock[data-cw-anchored=".player"]>.player::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,rgba(196,138,74,calc(0.14 + var(--cafe-lamp) * 0.5)) 42%,transparent);transition:background var(--cafe-settle) linear}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .transport-buttons button{color:rgba(236,223,195,.8);border-radius:999px}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .transport-buttons .play-button{border:1px solid var(--cafe-honey);border-radius:999px;background:linear-gradient(150deg,var(--cafe-amber),#9d6a33);color:#1b1109}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .timeline{color:var(--cafe-muted-on-wood);font-family:Georgia,serif}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(input[type="range"],.eq-control input){accent-color:var(--cafe-amber)}
+
+/* Menus and settings. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(.context-menu,.track-menu,.playlist-menu){border:1px solid var(--cafe-line);border-radius:7px;background:linear-gradient(178deg,var(--cafe-paper-soft),var(--cafe-paper));color:var(--cafe-ink);box-shadow:0 18px 36px rgba(7,5,4,.5)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(.context-menu button,.track-menu button){border-radius:4px;color:var(--cafe-ink);font-family:Georgia,serif}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(.context-menu button:hover,.track-menu button:hover){background:rgba(196,138,74,.22)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .settings-drawer .settings-nav button.active{border-radius:999px;background:rgba(196,138,74,.2);color:var(--cafe-honey)}
+
+/* Focus. Legible on wood and on paper both, because the room has surfaces of
+   two luminances and one ring cannot serve both. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(button,input,select,a,[tabindex]):focus-visible{outline:2px solid var(--cafe-honey);outline-offset:2px}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(.track-row,.playlist-item,.queue-item):focus-visible{outline:2px solid #4a5c3d;outline-offset:-2px}
+
+/* Motion off. The room is simply still: the lamp holds mid-warmth, rain does
+   not appear, and paper stops settling. Nothing here is a lesser version of
+   something -- a still room is what this theme was always describing. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"][data-motion="off"]{--cafe-settle:0ms;--cafe-lamp:0.45}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"][data-motion="off"] :is(.playlist-item,.queue-item,.track-row,.cw-module){transition:none}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"][data-motion="off"] .workspace::before{display:none}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"][data-motion="off"] .playlist-item:hover{transform:none;box-shadow:0 5px 12px rgba(7,5,4,.3);background:linear-gradient(176deg,#fff6e2,var(--cafe-paper-soft))}
+@media (prefers-reduced-motion:reduce){
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"]{--cafe-settle:0ms}
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(.playlist-item,.queue-item,.track-row,.cw-module){transition:none}
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .workspace::before{display:none}
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-item:hover{transform:none}
+}
+
+/* Conserve drops the photography, which is the expensive layer here. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"][data-performance="conserve"]::before{background:linear-gradient(120deg,var(--cafe-night),var(--cafe-espresso) 46%,#2b342a)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"][data-performance="conserve"] :is(.topbar,.playlist-hero,.cw-dock[data-cw-anchored=".player"]>.player,.cw-module[data-cw-module-key="library.browser"]){background-image:linear-gradient(135deg,var(--cafe-espresso),var(--cafe-night))}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"][data-performance="conserve"] .workspace::before{display:none}
+
+/* Narrow tiers. Wear goes before structure; the shelf outlives everything. */
+@media (max-width:1100px){
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .hero-copy{position:relative;z-index:1}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .hero-copy::before{content:"";position:absolute;inset:-18px -24px;z-index:-1;pointer-events:none;background:radial-gradient(120% 140% at 12% 80%,rgba(16,11,8,.86),rgba(16,11,8,.52) 62%,transparent)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .hero-copy h1{font-size:clamp(24px,3.6vw,38px)}
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-hero{min-height:232px}
+}
+@media (max-width:800px){
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-hero{min-height:186px}
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .quest-save-meta{display:none}
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .cw-module{box-shadow:0 8px 18px rgba(7,5,4,.4)}
+}
+@media (max-width:520px){
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .workspace::before{display:none}
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-hero{min-height:150px;background-image:linear-gradient(150deg,var(--cafe-walnut),var(--cafe-espresso))}
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .playlist-item{margin-bottom:5px}
+}

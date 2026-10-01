@@ -1,0 +1,160 @@
+/* Neon Burst for Canvas: blacklight print lab rebuilt on the live module graph. The press is out of register, and confirmation pulls it true. */
+
+/* The archive drew a misregistered print -- offset coral plates at a fixed 9px
+   and 12px, a fixed 13px halftone -- and none of it meant anything. Here every
+   offset in the theme resolves through one scalar, --nb-slip, and the halftone
+   pitch comes from the tempo Pixelody actually has on the playing track. No
+   surface below declares an offset distance of its own. */
+
+.neon-burst-preview{position:relative;overflow:hidden;background:#08060d!important}
+.neon-burst-preview::before{content:"";position:absolute;inset:16% 14% 24%;background:linear-gradient(135deg,rgba(215,198,255,.35),rgba(125,216,194,.18) 42%,rgba(255,135,103,.2)),#17111f;box-shadow:5px 5px 0 rgba(255,135,103,.5),-3px -3px 0 rgba(125,216,194,.42)}
+.neon-burst-preview::after{content:"";position:absolute;inset:16% 14% 24%;background-image:radial-gradient(circle,#f7f0de 0 1px,transparent 1.6px);background-size:7px 7px;opacity:.5;mix-blend-mode:screen}
+.neon-burst-preview i:nth-child(1){background:#f1ff8a}.neon-burst-preview i:nth-child(2){background:#7dd8c2}.neon-burst-preview i:nth-child(3){background:#ff8767}
+
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"]{--nb-ink:#08060d;--nb-panel:#141018;--nb-panel-2:#1e1824;--nb-panel-3:#2a2030;--nb-paper:#f7f0de;--nb-muted:#b8aebd;--nb-violet:#d7c6ff;--nb-pear:#f1ff8a;--nb-teal:#7dd8c2;--nb-coral:#ff8767;--nb-amber:#ffbf69;--nb-cut:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 5px),calc(100% - 5px) 100%,14px 100%,0 calc(100% - 14px));--nb-slip:3px;--nb-halftone:19px;--nb-press:160ms;margin:0;background-color:#08060d;color:#f7f0de;font-family:"Inter","Segoe UI",sans-serif}
+
+/* Registration. --nb-slip is the whole mechanic: it is how far the fluorescent
+   plates sit off the key plate. Confirmed playback is the only thing that
+   brings it to zero -- not hover, not focus, not a press. */
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"].is-playing{--nb-slip:0px}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .cw-module,
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.playlist-hero,.panel,.quality-card,.tuning-card,.drop-zone,.track-editor,.profile-preview),
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.playlist-cover,.metadata-art,.track-editor-art),
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.chip,.filter,.subtle-action,.quiet-button,.create-button,.open-systems,.settings-trigger,.queue-button,.mini-launch,.preset,.hero-play,.transport-buttons .play-button){transition:box-shadow var(--nb-press) ease,transform var(--nb-press) ease}
+
+/* Print field. A line screen is the default, because most local libraries are
+   largely untagged and that is the honest state. The dot screen has to be
+   earned: it appears only once the renderer confirms a real BPM tag on the
+   playing track, and its pitch band (8-15px) never overlaps the untagged
+   19px, so a measured screen can never be mistaken for an unmeasured one. */
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"]::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background-color:var(--nb-ink);background-image:radial-gradient(circle at 16% 22%,rgba(241,255,138,.13),transparent 24%),radial-gradient(circle at 84% 72%,rgba(125,216,194,.11),transparent 29%),linear-gradient(145deg,#08060d,#15101b 54%,#0b0711)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"]::after{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;background-image:repeating-linear-gradient(104deg,rgba(247,240,222,.4) 0 1px,transparent 1px var(--nb-halftone));mix-blend-mode:screen;opacity:.13}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"][data-nb-tempo="tagged"]::after{background-image:radial-gradient(circle,rgba(247,240,222,.5) 0 1px,transparent 1.6px);background-size:var(--nb-halftone) var(--nb-halftone);opacity:.16}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"]>:is(.topbar,.workspace,.player){position:relative;z-index:2}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] *{scrollbar-color:var(--nb-violet) transparent}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.hero-copy p,.eyebrow,.rail-tools,.track-header,.format,.quality,.technical-details,.signal-path,.metadata-grid small,.setting-label span,.timeline){font-family:Consolas,"Courier New",monospace;letter-spacing:.12em;text-transform:uppercase}
+
+/* Canvas ownership adapter. Every plate is the key plate plus two fluorescents
+   offset by the scalar, in opposite directions, the way a two-colour run slips. */
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .cw-module{clip-path:var(--nb-cut);border:1px solid rgba(215,198,255,.42);border-radius:0;background:linear-gradient(168deg,var(--nb-panel-2),var(--nb-panel) 74%);box-shadow:calc(var(--nb-slip) * 3) calc(var(--nb-slip) * 3) 0 rgba(255,135,103,.3),calc(var(--nb-slip) * -1.6) calc(var(--nb-slip) * -1.6) 0 rgba(125,216,194,.24),inset 0 0 0 1px rgba(247,240,222,.05);overflow:hidden}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.library-rail,.main-stage,.inspector,.collection-body,.queue-drawer,.settings-drawer,.context-menu){border:0;border-radius:0;background:transparent;color:var(--nb-paper)}
+
+/* Topbar. */
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .topbar{height:60px;border:0;border-bottom:1px solid rgba(215,198,255,.22);background:linear-gradient(180deg,var(--nb-panel-2),rgba(8,6,13,.9))}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .profile-button{clip-path:var(--nb-cut);border:1px solid var(--nb-violet);border-radius:0;background:linear-gradient(135deg,var(--nb-violet),#6f5ba0);color:var(--nb-ink);font-weight:800}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .global-search{height:34px;clip-path:var(--nb-cut);border:1px solid #594a62;border-radius:0;background:linear-gradient(180deg,#211a28,var(--nb-panel));padding-inline:14px}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .global-search input{color:var(--nb-paper)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .global-search:focus-within{border-color:var(--nb-pear)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .status-dot{border-radius:0;width:7px;height:7px;background:var(--nb-pear);box-shadow:0 0 12px rgba(241,255,138,.6)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.settings-trigger,.top-quality,.jams-trigger){clip-path:var(--nb-cut);border:1px solid #594a62;border-radius:0;background:linear-gradient(180deg,#211a28,var(--nb-panel));color:var(--nb-paper);text-transform:uppercase;letter-spacing:.14em;font-size:10px}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .top-quality small{color:var(--nb-pear)}
+
+/* Library rail. */
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .library-rail{padding:18px 12px 10px}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .rail-heading{padding:0 4px 14px;border-bottom:1px solid rgba(215,198,255,.24)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .rail-heading strong{font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--nb-violet)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .create-button{clip-path:var(--nb-cut);border:1px solid var(--nb-pear);border-radius:0;background:linear-gradient(135deg,var(--nb-pear),#fff6b3);color:var(--nb-ink);font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .library-filters{gap:5px;padding:12px 0 10px}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .library-filters .chip{flex:1;min-width:0;padding:7px 3px;clip-path:none;border:1px solid #594a62;border-radius:0;background:linear-gradient(180deg,#211a28,var(--nb-panel));color:var(--nb-muted);font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .library-filters .chip.active{border-color:var(--nb-pear);background:linear-gradient(135deg,var(--nb-pear),#fff6b3);color:var(--nb-ink);box-shadow:inset 0 -3px var(--nb-coral),calc(var(--nb-slip) * 1.4) calc(var(--nb-slip) * 1.4) 0 rgba(125,216,194,.32)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .playlist-item{min-height:0;padding:10px;clip-path:none;border:0;border-left:3px solid transparent;border-radius:0;background:none;color:var(--nb-muted);margin:0;transition:background var(--nb-press) ease,color var(--nb-press) ease}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .playlist-item:hover{background:linear-gradient(90deg,rgba(215,198,255,.16),transparent 62%);color:var(--nb-paper)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .playlist-item.active{border-left-color:var(--nb-paper);background:linear-gradient(90deg,rgba(247,240,222,.14),transparent 60%);color:var(--nb-paper)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .rail-tools{padding:8px 4px;color:#918699;font-size:9px}
+
+/* Stage: the printed plate. */
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .playlist-hero{position:relative;overflow:hidden;min-height:326px;clip-path:var(--nb-cut);border:1px solid rgba(215,198,255,.66);border-radius:0;background-image:linear-gradient(0deg,rgba(8,6,13,.96),rgba(8,6,13,.18) 68%),linear-gradient(126deg,rgba(241,255,138,.68) 0 10px,transparent 10px 37%,rgba(215,198,255,.26) 37.4% 39%,transparent 39.4% 70%,rgba(255,135,103,.32) 70.4% 72%,transparent 72.4%),radial-gradient(circle at 18% 20%,rgba(241,255,138,.2),transparent 25%),radial-gradient(circle at 82% 76%,rgba(125,216,194,.18),transparent 30%),linear-gradient(145deg,var(--nb-panel-3),var(--nb-panel) 56%,var(--nb-ink));box-shadow:inset 8px 0 rgba(215,198,255,.38),inset 0 0 0 1px rgba(247,240,222,.07),calc(var(--nb-slip) * 4) calc(var(--nb-slip) * 4) 0 rgba(255,135,103,.32),0 24px 58px rgba(0,0,0,.34)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .playlist-hero::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(90deg,transparent 0 19%,rgba(247,240,222,.16) 19.2% 19.5%,transparent 19.8%),repeating-linear-gradient(104deg,rgba(247,240,222,.4) 0 1px,transparent 1px var(--nb-halftone));mix-blend-mode:screen;opacity:.36}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"][data-nb-tempo="tagged"] .playlist-hero::before{background-image:linear-gradient(90deg,transparent 0 19%,rgba(247,240,222,.16) 19.2% 19.5%,transparent 19.8%),radial-gradient(circle,#f7f0de 0 1px,transparent 1.6px);background-size:auto,var(--nb-halftone) var(--nb-halftone)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .playlist-hero::after{content:"OVERPRINT / LIVE AUDIO";position:absolute;right:16px;bottom:16px;color:var(--nb-pear);font:800 10px Consolas,"Courier New",monospace;letter-spacing:.2em;text-transform:uppercase;opacity:.8}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"].is-playing .playlist-hero::after{content:"OVERPRINT / IN REGISTER"}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .hero-shade{background:linear-gradient(0deg,rgba(8,6,13,.98),rgba(8,6,13,.18) 72%),linear-gradient(90deg,rgba(8,6,13,.82),transparent 68%)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .hero-copy h1{font-size:clamp(32px,4.2vw,62px);line-height:.94;letter-spacing:-.02em;text-transform:uppercase;color:var(--nb-paper);text-shadow:calc(var(--nb-slip) * 0.8) 0 0 rgba(255,135,103,.55),calc(var(--nb-slip) * -0.8) 0 0 rgba(125,216,194,.45);overflow:hidden;max-height:2.9em}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .hero-copy>span{max-width:60ch;color:var(--nb-muted)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .hero-copy p{color:var(--nb-violet);font-size:10px}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .hero-play{clip-path:var(--nb-cut);border:1px solid var(--nb-pear);border-radius:0;background:linear-gradient(135deg,var(--nb-pear),#fff6b3);color:var(--nb-ink);font-weight:800;letter-spacing:.16em;text-transform:uppercase;box-shadow:calc(var(--nb-slip) * 1.6) calc(var(--nb-slip) * 1.6) 0 rgba(255,135,103,.42)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.playlist-cover,.metadata-art,.track-editor-art):not(.has-image){clip-path:polygon(0 0,calc(100% - 11px) 0,100% 11px,100% 100%,11px 100%,0 calc(100% - 11px));border:1px solid rgba(215,198,255,.7);border-radius:0;background-image:radial-gradient(circle at 28% 22%,rgba(241,255,138,.26),transparent 28%),linear-gradient(135deg,rgba(215,198,255,.33),rgba(125,216,194,.18) 42%,rgba(255,135,103,.2)),linear-gradient(#17111f,#17111f);box-shadow:calc(var(--nb-slip) * 3) calc(var(--nb-slip) * 3) 0 rgba(255,135,103,.26),0 0 0 1px rgba(247,240,222,.06)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.playlist-thumb,.track-art):not([style*="background-image"]){clip-path:none;border-radius:0;background:linear-gradient(135deg,rgba(215,198,255,.3),#17111f)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .collection-actions{border-bottom:1px solid rgba(215,198,255,.18)}
+
+/* Track browser. Paper owns intent, pear owns confirmed playback, coral owns failure. */
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .track-header{color:#918699;background:transparent;border-bottom:1px solid rgba(215,198,255,.24);font-size:9px;letter-spacing:.18em}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.track-row .track-title strong,.queue-item strong,.playlist-item strong){color:var(--nb-paper)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .track-row{border-left:3px solid transparent;border-radius:0;transition:background var(--nb-press) ease,border-color var(--nb-press) ease,transform var(--nb-press) ease}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .track-row:not(.track-header):hover{background:linear-gradient(90deg,rgba(215,198,255,.2),rgba(125,216,194,.05) 58%,transparent);border-left-color:var(--nb-violet)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .track-row.is-selected:not(.playing){border-left-color:var(--nb-paper);background:linear-gradient(90deg,rgba(247,240,222,.14),transparent 60%);color:var(--nb-paper)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.track-row.playing,.queue-item.playing){border-left:3px solid var(--nb-pear)!important;background:linear-gradient(90deg,rgba(241,255,138,.26),rgba(30,24,36,.86) 48%,rgba(20,16,24,.94))!important;color:#fff!important}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .track-row.playing .track-title strong{color:var(--nb-pear)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .track-row.missing{border-left-color:var(--nb-coral);background:rgba(255,135,103,.1);color:var(--nb-coral)}
+
+/* Pressure print. Four kinds of handling, four kinds of slip -- not one offset
+   at four magnitudes. Hover nudges the sheet sideways, focus splits the plates
+   vertically, a drag lifts and spreads them, a press strikes them flat. */
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(button,.chip,.filter,.preset,.playlist-item,.track-row:not(.track-header),.queue-item):hover{box-shadow:calc(var(--nb-slip) * 2 + 2px) 0 0 rgba(255,135,103,.34),calc(var(--nb-slip) * -2 - 2px) 0 0 rgba(125,216,194,.28)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(button,input,select,a,[tabindex],.track-row,.playlist-item,.queue-item):focus-visible{outline:none;box-shadow:0 calc(var(--nb-slip) * 2 + 2px) 0 rgba(241,255,138,.6),0 calc(var(--nb-slip) * -2 - 2px) 0 rgba(215,198,255,.5)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .dragging{box-shadow:calc(var(--nb-slip) * 3 + 5px) calc(var(--nb-slip) * 3 + 5px) 0 rgba(255,135,103,.42),calc(var(--nb-slip) * -3 - 5px) calc(var(--nb-slip) * -3 - 5px) 0 rgba(125,216,194,.38),0 0 0 1px rgba(247,240,222,.14);opacity:.94}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] button:active{transform:translate(2px,2px);box-shadow:-2px -2px 0 var(--nb-teal),3px 3px 0 var(--nb-coral)}
+
+/* Inspector. */
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .inspector{padding:14px 12px}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .inspector-heading{border-bottom:1px solid rgba(215,198,255,.24);padding-bottom:10px}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.panel,.quality-card,.tuning-card,.drop-zone,.track-editor,.profile-preview){clip-path:var(--nb-cut);border:1px solid #594a62;border-radius:0;background:linear-gradient(172deg,var(--nb-panel-2),var(--nb-panel) 78%);box-shadow:calc(var(--nb-slip) * 2) calc(var(--nb-slip) * 2) 0 rgba(255,135,103,.22)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.panel label,.quality-card h3,.tuned,.top-quality small,.format,.metadata-grid b){color:var(--nb-pear)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.signal-path,.metadata-grid,.tuning-help,.rail-import){border-color:rgba(215,198,255,.24)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .metadata-grid small{color:#918699}
+
+/* Queue. */
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .queue-heading h2{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--nb-violet)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .queue-item{border-left:3px solid transparent;border-radius:0;background:none;transition:background var(--nb-press) ease}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .queue-item:hover{background:linear-gradient(90deg,rgba(215,198,255,.16),transparent 62%)}
+
+/* Player deck. */
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .cw-dock[data-cw-anchored=".player"]>.player{position:relative;background:linear-gradient(180deg,var(--nb-panel-2),var(--nb-ink));border-top:1px solid rgba(215,198,255,.3);box-shadow:inset 0 1px rgba(247,240,222,.06),0 -12px 40px rgba(0,0,0,.4)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .cw-dock[data-cw-anchored=".player"]>.player::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,var(--nb-pear),var(--nb-teal) 38%,var(--nb-violet) 68%,var(--nb-coral))}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .transport-buttons button{color:var(--nb-muted);border-radius:0}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .transport-buttons .play-button{clip-path:var(--nb-cut);border:1px solid var(--nb-pear);border-radius:0;background:linear-gradient(135deg,var(--nb-pear),#fff6b3);color:var(--nb-ink);box-shadow:calc(var(--nb-slip) * 1.6) calc(var(--nb-slip) * 1.6) 0 rgba(255,135,103,.44)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .timeline{font-size:9px;color:#918699}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(input[type="range"],.eq-control input){accent-color:var(--nb-pear)}
+
+/* Menus and settings. */
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.context-menu,.track-menu,.playlist-menu){clip-path:var(--nb-cut);border:1px solid rgba(215,198,255,.5);border-radius:0;background:linear-gradient(172deg,var(--nb-panel-2),var(--nb-ink) 80%);box-shadow:calc(var(--nb-slip) * 3) calc(var(--nb-slip) * 3) 0 rgba(255,135,103,.3)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.context-menu button,.track-menu button){border-radius:0;color:var(--nb-muted);letter-spacing:.05em}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.context-menu button:hover,.track-menu button:hover){background:linear-gradient(90deg,rgba(215,198,255,.24),transparent 70%);color:var(--nb-paper)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .settings-drawer .settings-nav button.active{border-radius:0;border-left:3px solid var(--nb-pear);background:linear-gradient(90deg,rgba(241,255,138,.18),transparent 64%);color:var(--nb-paper)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.chip,.filter,.subtle-action,.quiet-button,.open-systems,.sort-select,.preset,.panel select){border-radius:0;text-transform:uppercase;letter-spacing:.1em}
+
+/* Quiet mode. The press is stopped mid-run, not cleaned up: the slip is larger
+   and fixed, so the fluorescent plates stay separated and the ink contrast
+   survives with nothing moving. */
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"][data-motion="off"]{--nb-slip:5px;--nb-press:0ms}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"][data-motion="off"].is-playing{--nb-slip:0px}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"][data-motion="off"] :is(.cw-module,.track-row,.playlist-item,.queue-item,button,.chip,.filter,.preset,.playlist-hero){transition:none}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"][data-motion="off"] button:active{transform:none;box-shadow:-3px -3px 0 var(--nb-teal),4px 4px 0 var(--nb-coral)}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"][data-motion="off"] .playlist-hero{min-height:360px}
+@media (prefers-reduced-motion:reduce){
+  body[data-theme="foreground"][data-canvas-theme-port="neon-burst"]{--nb-slip:5px;--nb-press:0ms}
+  body[data-theme="foreground"][data-canvas-theme-port="neon-burst"].is-playing{--nb-slip:0px}
+  body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.cw-module,.track-row,.playlist-item,.queue-item,button,.chip,.filter,.preset,.playlist-hero){transition:none}
+  body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] button:active{transform:none;box-shadow:-3px -3px 0 var(--nb-teal),4px 4px 0 var(--nb-coral)}
+}
+
+/* Conserve mode drops the halftone, which is the most expensive layer here. */
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"][data-performance="conserve"]::after{display:none}
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"][data-performance="conserve"] .playlist-hero::before{background-image:none}
+
+/* Narrow tiers. The halftone yields before anything structural does. */
+@media (max-width:1100px){
+  body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .hero-copy h1{font-size:clamp(26px,4.6vw,44px)}
+  body[data-theme="foreground"][data-canvas-theme-port="neon-burst"]{--nb-slip:2px}
+  body[data-theme="foreground"][data-canvas-theme-port="neon-burst"].is-playing{--nb-slip:0px}
+}
+@media (max-width:800px){
+  body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .playlist-hero{min-height:220px}
+  body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .playlist-hero::after{display:none}
+  body[data-theme="foreground"][data-canvas-theme-port="neon-burst"]::after{opacity:.1}
+}
+@media (max-width:520px){
+  body[data-theme="foreground"][data-canvas-theme-port="neon-burst"]::after{display:none}
+  body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .playlist-hero{min-height:168px}
+  body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .hero-copy h1{text-shadow:none}
+}

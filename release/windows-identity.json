@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "appId": "io.pixelody.desktop",
+  "productName": "Pixelody",
+  "executableName": "Pixelody",
+  "publisherDisplayName": "Pixelody",
+  "appUserModelId": "io.pixelody.desktop",
+  "installerGuid": "df122149-511d-4684-b109-b8df7214441f",
+  "installerDirectoryName": "pixelody-lossless-player",
+  "installScope": "perUser",
+  "architecture": ["x64"],
+  "userDataDirectoryName": "Pixelody",
+  "artifactName": "Pixelody-Setup-${version}-${arch}.${ext}"
+}

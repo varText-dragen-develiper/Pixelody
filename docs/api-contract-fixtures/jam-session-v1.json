@@ -1,0 +1,58 @@
+{
+  "ok": true,
+  "version": 1,
+  "sessionId": "jam-v1-session",
+  "mode": "single-host",
+  "status": "active",
+  "roles": {
+    "libraryHostDeviceId": "studio-pc",
+    "coordinatorDeviceId": "studio-pc",
+    "playbackDeviceId": "studio-pc"
+  },
+  "permissions": {
+    "guestsCanView": true,
+    "guestsCanSuggest": true,
+    "guestsCanQueue": false,
+    "guestsCanEditQueue": false,
+    "guestsCanControlPlayback": false,
+    "federatedSourcesEnabled": false,
+    "temporaryContributionCache": false
+  },
+  "participants": [
+    {
+      "deviceId": "studio-pc",
+      "name": "Studio PC",
+      "role": "owner",
+      "status": "active",
+      "permissions": ["view", "suggest", "add", "editQueue", "controlPlayback"],
+      "lastSeenAt": "2026-07-03T12:00:00.000Z"
+    },
+    {
+      "deviceId": "android-phone",
+      "name": "Pixelody Android",
+      "role": "controller",
+      "status": "active",
+      "permissions": ["view", "suggest"],
+      "lastSeenAt": "2026-07-03T12:00:01.000Z"
+    }
+  ],
+  "queue": [
+    {
+      "queueItemId": "queue-1",
+      "trackId": "public-track-1",
+      "addedByDeviceId": "studio-pc",
+      "sourceDeviceId": "studio-pc",
+      "sourceLibraryId": "studio-pc-library",
+      "availability": "available",
+      "cacheState": "host-owned",
+      "playbackStatus": "playing",
+      "fallbackCandidates": []
+    }
+  ],
+  "diagnostics": {
+    "lastRefreshId": "refresh_1",
+    "lastRefreshAt": "2026-07-03T12:00:02.000Z",
+    "lastIssue": "",
+    "recommendedAction": "none"
+  }
+}

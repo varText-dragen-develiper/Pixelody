@@ -1,0 +1,25 @@
+{
+  "schema": "pixelody.virtual-audio-driver-scaffold/v1",
+  "status": "source-scaffold-only",
+  "buildable": false,
+  "installable": false,
+  "driverBinaryName": "PixelodyVirtualAudio.sys",
+  "endpoints": {
+    "render": "Pixelody Virtual Output",
+    "capture": "Pixelody Virtual Monitor"
+  },
+  "firstDriver": {
+    "channels": 2,
+    "sampleRateHz": 48000,
+    "mode": "shared-mode-pcm"
+  },
+  "excluded": [
+    "apo",
+    "kernel-eq",
+    "offload",
+    "bluetooth",
+    "keyword-detector",
+    "sample-extras",
+    "automatic-default-device-change"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "revision": 3,
+  "revisions": {
+    "overall": 3,
+    "library": 1,
+    "playback": 2,
+    "queue": 1,
+    "favorites": 1,
+    "permissions": 1,
+    "deviceRefresh": 3
+  },
+  "tracks": [
+    {
+      "id": "public-track-1",
+      "title": "Moonlit Circuit",
+      "artist": "Local Signal",
+      "album": "Private Library Tests",
+      "duration": 264.0,
+      "format": "FLAC",
+      "codec": "FLAC",
+      "lossless": true,
+      "sampleRate": 96000,
+      "bitDepth": 24,
+      "artworkUrl": "/api/v1/tracks/public-track-1/artwork",
+      "streamUrl": "/api/v1/tracks/public-track-1/stream",
+      "favorite": true,
+      "missing": false
+    }
+  ],
+  "page": {
+    "offset": 0,
+    "limit": 1,
+    "returned": 1,
+    "total": 2,
+    "nextOffset": 1
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.aftergarden",
+  "name": "Aftergarden",
+  "author": "Pixelody",
+  "description": "C3 field-test candidate: browsed cuttings inhabit a luminous possibility field; host-confirmed playback alone crosses the graftline and opens a signal bloom shared with the mini cutting.",
+  "palette": { "builtIn": "aftergarden" },
+  "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
+  "hud": { "layout": "cinematic", "controls": "technical", "corners": "square" },
+  "typography": { "profile": "display" },
+  "motion": { "profile": "mechanical", "intensity": "calm" },
+  "tokens": {
+    "accentPrimary": "#7b2cff",
+    "accentSecondary": "#ffbd3d",
+    "accentState": "#f54bc9",
+    "heroTone": "#d9d4ff",
+    "canvas": "#f0f4e4",
+    "elevation1": "#f9f7f1",
+    "elevation2": "#d9d4ff",
+    "elevation3": "#08070a",
+    "divider": "#6d6477",
+    "frame": "#17131d",
+    "foreground": "#17131d",
+    "foregroundMuted": "#655d6b"
+  },
+  "navigation": { "trackBrowser": "graftline" },
+  "information": { "profile": "aftergarden" }
+}

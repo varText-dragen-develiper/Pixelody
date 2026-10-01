@@ -1,0 +1,654 @@
+.workspace {
+  position: relative;
+}
+
+.panel-handle {
+  position: absolute;
+  top: var(--panel-handle-y, 76px);
+  z-index: 14;
+  min-width: 104px;
+  height: 43px;
+  padding: 0 11px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  background: color-mix(in srgb, var(--surface2) 92%, var(--gold) 8%);
+  border: 1px solid color-mix(in srgb, var(--line) 65%, var(--gold) 35%);
+  clip-path: var(--pixel-cut);
+  box-shadow: 0 5px 14px rgba(0, 0, 0, .3), inset 0 0 0 1px rgba(255, 255, 255, .035);
+  transition: left .22s ease, right .22s ease, transform .14s ease, background .18s ease, color .18s ease;
+  cursor: ns-resize;
+  touch-action: none;
+  user-select: none;
+}
+
+.panel-handle:hover {
+  transform: translateY(-2px);
+  background: color-mix(in srgb, var(--surface2) 82%, var(--gold) 18%);
+}
+
+.panel-handle:active {
+  transform: translateY(0) scale(.97);
+}
+
+.panel-handle.dragging {
+  transform: scale(1.02);
+  transition: left .22s ease, right .22s ease, background .18s ease, color .18s ease;
+  filter: brightness(1.12);
+}
+
+.panel-handle .public-icon {
+  width: 19px;
+  height: 19px;
+  flex: 0 0 19px;
+  color: var(--gold);
+}
+
+.panel-handle-copy {
+  display: grid;
+  gap: 2px;
+  text-align: left;
+}
+
+.panel-handle b {
+  font: 9px/1 var(--pixel-font);
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+
+.panel-handle small {
+  color: var(--gold);
+  font: 6px/1 var(--pixel-font);
+  letter-spacing: .12em;
+}
+
+.library-panel-handle {
+  left: calc(var(--library-width) + 9px);
+  --panel-handle-y: var(--library-handle-y, 76px);
+}
+
+.info-panel-handle {
+  right: calc(var(--inspector-width) + 9px);
+  --panel-handle-y: var(--info-handle-y, 76px);
+}
+
+.metadata-close {
+  z-index: 5;
+  top: 14px;
+  right: 14px;
+  border: 1px solid #ffffff24;
+  background: color-mix(in srgb, var(--surface2) 88%, transparent);
+}
+
+:root {
+  --panel-untuck-duration: 240ms;
+  --panel-tuck-duration: 220ms;
+  --panel-untuck-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --panel-tuck-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --theme-untuck-shadow-left: 16px 0 36px rgba(0, 0, 0, 0.55);
+  --theme-untuck-shadow-right: -16px 0 36px rgba(0, 0, 0, 0.55);
+  --theme-untuck-edge-left: rgba(255, 255, 255, 0.1);
+  --theme-untuck-edge-right: rgba(255, 255, 255, 0.1);
+}
+
+body.library-collapsed .library-panel-handle {
+  left: 8px;
+  z-index: 43;
+  transition: left var(--panel-tuck-duration) var(--panel-tuck-ease),
+              transform .14s ease, background .18s ease, color .18s ease, box-shadow .18s ease;
+}
+
+body.library-collapsed:is(.library-untucked, :has(.library-rail:is(:hover, :focus-within, .is-untucked)), :has(.library-panel-handle:is(:hover, .is-untucked))) .library-panel-handle,
+body.library-collapsed.library-untucked .library-panel-handle {
+  left: calc(var(--library-width) + 9px);
+  transition: left var(--panel-untuck-duration) var(--panel-untuck-ease),
+              transform .14s ease, background .18s ease, color .18s ease, box-shadow .18s ease;
+}
+
+body.inspector-collapsed .info-panel-handle {
+  right: 8px;
+  z-index: 43;
+  transition: right var(--panel-tuck-duration) var(--panel-tuck-ease),
+              transform .14s ease, background .18s ease, color .18s ease, box-shadow .18s ease;
+}
+
+body.inspector-collapsed:is(.inspector-untucked, :has(.inspector:is(:hover, :focus-within, .is-untucked)), :has(.info-panel-handle:is(:hover, .is-untucked))) .info-panel-handle,
+body.inspector-collapsed.inspector-untucked .info-panel-handle {
+  right: calc(var(--inspector-width) + 9px);
+  transition: right var(--panel-untuck-duration) var(--panel-untuck-ease),
+              transform .14s ease, background .18s ease, color .18s ease, box-shadow .18s ease;
+}
+
+body.library-collapsed .library-panel-handle,
+body.inspector-collapsed .info-panel-handle {
+  color: #111;
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, .45), 0 5px 18px color-mix(in srgb, var(--gold) 32%, transparent);
+}
+
+body.library-collapsed .library-panel-handle .public-icon,
+body.library-collapsed .library-panel-handle small,
+body.inspector-collapsed .info-panel-handle .public-icon,
+body.inspector-collapsed .info-panel-handle small {
+  color: #111;
+}
+
+/* Base Panel Tuck and Untuck Overlay Rules (Zero layout shift on main stage) */
+body.library-collapsed .library-rail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--library-width);
+  z-index: 42;
+  transform: translateX(-100%);
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 0 0 transparent;
+  transition: transform var(--panel-tuck-duration) var(--panel-tuck-ease),
+              opacity var(--panel-tuck-duration) var(--panel-tuck-ease),
+              box-shadow var(--panel-tuck-duration) var(--panel-tuck-ease),
+              filter var(--panel-tuck-duration) var(--panel-tuck-ease);
+}
+
+body.library-collapsed .library-rail::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -24px;
+  width: 24px;
+  pointer-events: auto;
+  background: transparent;
+}
+
+body.library-collapsed:is(.library-untucked, :has(.library-rail:is(:hover, :focus-within, .is-untucked)), :has(.library-panel-handle:is(:hover, .is-untucked))) .library-rail,
+body.library-collapsed .library-rail:is(:hover, :focus-within, .is-untucked),
+body.library-collapsed.library-untucked .library-rail {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+  box-shadow: var(--theme-untuck-shadow-left);
+  border-right: 1px solid var(--theme-untuck-edge-left);
+  transition: transform var(--panel-untuck-duration) var(--panel-untuck-ease),
+              opacity var(--panel-untuck-duration) var(--panel-untuck-ease),
+              box-shadow var(--panel-untuck-duration) var(--panel-untuck-ease),
+              border-color var(--panel-untuck-duration) var(--panel-untuck-ease),
+              filter var(--panel-untuck-duration) var(--panel-untuck-ease);
+}
+
+body.library-collapsed .library-rail:is(:hover, :focus-within, .is-untucked)::after,
+body.library-collapsed.library-untucked .library-rail::after {
+  display: none;
+}
+
+body.inspector-collapsed .inspector {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--inspector-width);
+  z-index: 42;
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 0 0 transparent;
+  transition: transform var(--panel-tuck-duration) var(--panel-tuck-ease),
+              opacity var(--panel-tuck-duration) var(--panel-tuck-ease),
+              box-shadow var(--panel-tuck-duration) var(--panel-tuck-ease),
+              filter var(--panel-tuck-duration) var(--panel-tuck-ease);
+}
+
+body.inspector-collapsed .inspector::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -24px;
+  width: 24px;
+  pointer-events: auto;
+  background: transparent;
+}
+
+body.inspector-collapsed:is(.inspector-untucked, :has(.inspector:is(:hover, :focus-within, .is-untucked)), :has(.info-panel-handle:is(:hover, .is-untucked))) .inspector,
+body.inspector-collapsed .inspector:is(:hover, :focus-within, .is-untucked),
+body.inspector-collapsed.inspector-untucked .inspector {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+  box-shadow: var(--theme-untuck-shadow-right);
+  border-left: 1px solid var(--theme-untuck-edge-right);
+  transition: transform var(--panel-untuck-duration) var(--panel-untuck-ease),
+              opacity var(--panel-untuck-duration) var(--panel-untuck-ease),
+              box-shadow var(--panel-untuck-duration) var(--panel-untuck-ease),
+              border-color var(--panel-untuck-duration) var(--panel-untuck-ease),
+              filter var(--panel-untuck-duration) var(--panel-untuck-ease);
+}
+
+body.inspector-collapsed .inspector:is(:hover, :focus-within, .is-untucked)::after,
+body.inspector-collapsed.inspector-untucked .inspector::after {
+  display: none;
+}
+
+/* =========================================================================
+   Theme-Specific Tuck & Untuck Animation Profiles (32 Distinct Built-ins)
+   ========================================================================= */
+
+/* 1. Studio: pro-audio console calibrated glide */
+body[data-theme="studio"] {
+  --panel-untuck-duration: 230ms;
+  --panel-tuck-duration: 200ms;
+  --panel-untuck-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --panel-tuck-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --theme-untuck-shadow-left: 18px 0 38px rgba(0, 0, 0, 0.65), 6px 0 16px rgba(229, 169, 59, 0.12);
+  --theme-untuck-shadow-right: -18px 0 38px rgba(0, 0, 0, 0.65), -6px 0 16px rgba(229, 169, 59, 0.12);
+  --theme-untuck-edge-left: rgba(229, 169, 59, 0.25);
+  --theme-untuck-edge-right: rgba(229, 169, 59, 0.25);
+}
+
+/* 2. Orbital: zero-g celestial drift */
+body[data-theme="orbital"] {
+  --panel-untuck-duration: 270ms;
+  --panel-tuck-duration: 230ms;
+  --panel-untuck-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --panel-tuck-ease: cubic-bezier(0.32, 0, 0.67, 0);
+  --theme-untuck-shadow-left: 20px 0 44px rgba(4, 8, 24, 0.85), 0 0 20px rgba(66, 236, 220, 0.16);
+  --theme-untuck-shadow-right: -20px 0 44px rgba(4, 8, 24, 0.85), 0 0 20px rgba(66, 236, 220, 0.16);
+  --theme-untuck-edge-left: rgba(66, 236, 220, 0.3);
+  --theme-untuck-edge-right: rgba(66, 236, 220, 0.3);
+}
+
+/* 3. Bulkhead: high-cadence athletic snap */
+body[data-theme="bulkhead"] {
+  --panel-untuck-duration: 190ms;
+  --panel-tuck-duration: 170ms;
+  --panel-untuck-ease: cubic-bezier(0.1, 0.9, 0.2, 1);
+  --panel-tuck-ease: cubic-bezier(0.4, 0, 0.7, 0.2);
+  --theme-untuck-shadow-left: 14px 0 28px rgba(0, 0, 0, 0.75), 4px 0 12px rgba(255, 170, 0, 0.2);
+  --theme-untuck-shadow-right: -14px 0 28px rgba(0, 0, 0, 0.75), -4px 0 12px rgba(255, 170, 0, 0.2);
+  --theme-untuck-edge-left: rgba(255, 170, 0, 0.35);
+  --theme-untuck-edge-right: rgba(255, 170, 0, 0.35);
+}
+
+/* 4. Graphite-Loadout: aerodynamic carbon cockpit slide */
+body[data-theme="graphite-loadout"] {
+  --panel-untuck-duration: 210ms;
+  --panel-tuck-duration: 190ms;
+  --panel-untuck-ease: cubic-bezier(0.25, 1, 0.5, 1);
+  --panel-tuck-ease: cubic-bezier(0.3, 0, 0.6, 1);
+  --theme-untuck-shadow-left: 16px 0 32px rgba(10, 12, 16, 0.8), 0 0 16px rgba(180, 255, 50, 0.15);
+  --theme-untuck-shadow-right: -16px 0 32px rgba(10, 12, 16, 0.8), 0 0 16px rgba(180, 255, 50, 0.15);
+  --theme-untuck-edge-left: rgba(180, 255, 50, 0.28);
+  --theme-untuck-edge-right: rgba(180, 255, 50, 0.28);
+}
+
+/* 5. Obsession: magnetic tension latch */
+body[data-theme="obsession"] {
+  --panel-untuck-duration: 240ms;
+  --panel-tuck-duration: 210ms;
+  --panel-untuck-ease: cubic-bezier(0.18, 0.92, 0.32, 1.12);
+  --panel-tuck-ease: cubic-bezier(0.55, 0.05, 0.67, 0.19);
+  --theme-untuck-shadow-left: 20px 0 40px rgba(20, 0, 5, 0.75), 0 0 18px rgba(230, 30, 60, 0.22);
+  --theme-untuck-shadow-right: -20px 0 40px rgba(20, 0, 5, 0.75), 0 0 18px rgba(230, 30, 60, 0.22);
+  --theme-untuck-edge-left: rgba(230, 30, 60, 0.35);
+  --theme-untuck-edge-right: rgba(230, 30, 60, 0.35);
+}
+
+/* 6. Crystal: prismatic facet refraction */
+body[data-theme="crystal"] {
+  --panel-untuck-duration: 250ms;
+  --panel-tuck-duration: 220ms;
+  --panel-untuck-ease: cubic-bezier(0.14, 0.96, 0.38, 1);
+  --panel-tuck-ease: cubic-bezier(0.35, 0, 0.25, 1);
+  --theme-untuck-shadow-left: 16px 0 36px rgba(15, 25, 45, 0.65), inset -1px 0 0 rgba(180, 230, 255, 0.35);
+  --theme-untuck-shadow-right: -16px 0 36px rgba(15, 25, 45, 0.65), inset 1px 0 0 rgba(180, 230, 255, 0.35);
+  --theme-untuck-edge-left: rgba(180, 230, 255, 0.4);
+  --theme-untuck-edge-right: rgba(180, 230, 255, 0.4);
+}
+
+/* 7. Neon-Burst: electric cyberpunk surge */
+body[data-theme="neon-burst"] {
+  --panel-untuck-duration: 180ms;
+  --panel-tuck-duration: 160ms;
+  --panel-untuck-ease: cubic-bezier(0.05, 0.9, 0.1, 1.06);
+  --panel-tuck-ease: cubic-bezier(0.4, 0, 0.8, 0.2);
+  --theme-untuck-shadow-left: 18px 0 32px rgba(255, 0, 128, 0.28), 24px 0 48px rgba(0, 0, 0, 0.8);
+  --theme-untuck-shadow-right: -18px 0 32px rgba(255, 0, 128, 0.28), -24px 0 48px rgba(0, 0, 0, 0.8);
+  --theme-untuck-edge-left: rgba(255, 0, 180, 0.5);
+  --theme-untuck-edge-right: rgba(255, 0, 180, 0.5);
+}
+
+/* 8. Monument: monolithic architectural stone glide */
+body[data-theme="monument"] {
+  --panel-untuck-duration: 290ms;
+  --panel-tuck-duration: 250ms;
+  --panel-untuck-ease: cubic-bezier(0.2, 0.8, 0.25, 1);
+  --panel-tuck-ease: cubic-bezier(0.35, 0, 0.3, 1);
+  --theme-untuck-shadow-left: 22px 0 48px rgba(0, 0, 0, 0.82), 6px 0 18px rgba(215, 195, 160, 0.14);
+  --theme-untuck-shadow-right: -22px 0 48px rgba(0, 0, 0, 0.82), -6px 0 18px rgba(215, 195, 160, 0.14);
+  --theme-untuck-edge-left: rgba(215, 195, 160, 0.25);
+  --theme-untuck-edge-right: rgba(215, 195, 160, 0.25);
+}
+
+/* 9. Analog-Dossier: mechanical cassette bay latch */
+body[data-theme="analog-dossier"] {
+  --panel-untuck-duration: 260ms;
+  --panel-tuck-duration: 230ms;
+  --panel-untuck-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --panel-tuck-ease: cubic-bezier(0.5, 0, 0.5, 0.5);
+  --theme-untuck-shadow-left: 16px 0 32px rgba(18, 14, 10, 0.72), 4px 0 12px rgba(190, 155, 95, 0.2);
+  --theme-untuck-shadow-right: -16px 0 32px rgba(18, 14, 10, 0.72), -4px 0 12px rgba(190, 155, 95, 0.2);
+  --theme-untuck-edge-left: rgba(190, 155, 95, 0.3);
+  --theme-untuck-edge-right: rgba(190, 155, 95, 0.3);
+}
+
+/* 10. Cosmic-Cinema: anamorphic widescreen pan */
+body[data-theme="cosmic-cinema"] {
+  --panel-untuck-duration: 300ms;
+  --panel-tuck-duration: 260ms;
+  --panel-untuck-ease: cubic-bezier(0.19, 1, 0.22, 1);
+  --panel-tuck-ease: cubic-bezier(0.4, 0, 0.3, 1);
+  --theme-untuck-shadow-left: 24px 0 54px rgba(0, 0, 0, 0.9), 0 0 24px rgba(216, 216, 210, 0.14);
+  --theme-untuck-shadow-right: -24px 0 54px rgba(0, 0, 0, 0.9), 0 0 24px rgba(216, 216, 210, 0.14);
+  --theme-untuck-edge-left: rgba(216, 216, 210, 0.22);
+  --theme-untuck-edge-right: rgba(216, 216, 210, 0.22);
+}
+
+/* 11. Frosted-Void: acoustic frost boundary thaw */
+body[data-theme="frosted-void"] {
+  --panel-untuck-duration: 260ms;
+  --panel-tuck-duration: 230ms;
+  --panel-untuck-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --panel-tuck-ease: cubic-bezier(0.3, 0, 0.4, 1);
+  --theme-untuck-shadow-left: 18px 0 40px rgba(0, 10, 20, 0.65), 0 0 20px rgba(130, 210, 255, 0.2);
+  --theme-untuck-shadow-right: -18px 0 40px rgba(0, 10, 20, 0.65), 0 0 20px rgba(130, 210, 255, 0.2);
+  --theme-untuck-edge-left: rgba(130, 210, 255, 0.28);
+  --theme-untuck-edge-right: rgba(130, 210, 255, 0.28);
+}
+
+/* 12. Obsidian-Glass: polished obsidian bevel slide */
+body[data-theme="obsidian-glass"] {
+  --panel-untuck-duration: 240ms;
+  --panel-tuck-duration: 210ms;
+  --panel-untuck-ease: cubic-bezier(0.2, 0.9, 0.3, 1);
+  --panel-tuck-ease: cubic-bezier(0.4, 0, 0.3, 1);
+  --theme-untuck-shadow-left: 20px 0 42px rgba(0, 0, 0, 0.85), inset -1px 0 0 rgba(255, 255, 255, 0.18);
+  --theme-untuck-shadow-right: -20px 0 42px rgba(0, 0, 0, 0.85), inset 1px 0 0 rgba(255, 255, 255, 0.18);
+  --theme-untuck-edge-left: rgba(255, 255, 255, 0.2);
+  --theme-untuck-edge-right: rgba(255, 255, 255, 0.2);
+}
+
+/* 13. Dead-Signal: cathode ray gun raster settle */
+body[data-theme="dead-signal"] {
+  --panel-untuck-duration: 200ms;
+  --panel-tuck-duration: 180ms;
+  --panel-untuck-ease: cubic-bezier(0.15, 0.85, 0.35, 1.08);
+  --panel-tuck-ease: cubic-bezier(0.6, 0.04, 0.98, 0.33);
+  --theme-untuck-shadow-left: 16px 0 30px rgba(0, 0, 0, 0.8), 0 0 16px rgba(40, 255, 80, 0.2);
+  --theme-untuck-shadow-right: -16px 0 30px rgba(0, 0, 0, 0.8), 0 0 16px rgba(40, 255, 80, 0.2);
+  --theme-untuck-edge-left: rgba(40, 255, 80, 0.35);
+  --theme-untuck-edge-right: rgba(40, 255, 80, 0.35);
+}
+
+/* 14. Meme-Machine: punchy comic spring overshoot */
+body[data-theme="meme-machine"] {
+  --panel-untuck-duration: 230ms;
+  --panel-tuck-duration: 180ms;
+  --panel-untuck-ease: cubic-bezier(0.34, 1.35, 0.64, 1);
+  --panel-tuck-ease: cubic-bezier(0.4, 0, 0.7, 0.1);
+  --theme-untuck-shadow-left: 14px 14px 0 rgba(0, 0, 0, 0.6), 0 0 14px rgba(255, 220, 0, 0.3);
+  --theme-untuck-shadow-right: -14px 14px 0 rgba(0, 0, 0, 0.6), 0 0 14px rgba(255, 220, 0, 0.3);
+  --theme-untuck-edge-left: rgba(255, 220, 0, 0.4);
+  --theme-untuck-edge-right: rgba(255, 220, 0, 0.4);
+}
+
+/* 15. Sakura-Bloom: gentle cherry blossom petal drift */
+body[data-theme="sakura-bloom"] {
+  --panel-untuck-duration: 290ms;
+  --panel-tuck-duration: 240ms;
+  --panel-untuck-ease: cubic-bezier(0.25, 0.8, 0.25, 1);
+  --panel-tuck-ease: cubic-bezier(0.35, 0, 0.45, 1);
+  --theme-untuck-shadow-left: 18px 0 38px rgba(30, 10, 20, 0.5), 0 0 18px rgba(255, 180, 205, 0.25);
+  --theme-untuck-shadow-right: -18px 0 38px rgba(30, 10, 20, 0.5), 0 0 18px rgba(255, 180, 205, 0.25);
+  --theme-untuck-edge-left: rgba(255, 180, 205, 0.35);
+  --theme-untuck-edge-right: rgba(255, 180, 205, 0.35);
+}
+
+/* 16. Lo-Fi-Cafe: warm turntable tonearm swing */
+body[data-theme="lo-fi-cafe"] {
+  --panel-untuck-duration: 270ms;
+  --panel-tuck-duration: 230ms;
+  --panel-untuck-ease: cubic-bezier(0.33, 1, 0.68, 1);
+  --panel-tuck-ease: cubic-bezier(0.4, 0, 0.3, 1);
+  --theme-untuck-shadow-left: 16px 0 34px rgba(25, 15, 8, 0.72), 4px 0 14px rgba(215, 175, 120, 0.2);
+  --theme-untuck-shadow-right: -16px 0 34px rgba(25, 15, 8, 0.72), -4px 0 14px rgba(215, 175, 120, 0.2);
+  --theme-untuck-edge-left: rgba(215, 175, 120, 0.3);
+  --theme-untuck-edge-right: rgba(215, 175, 120, 0.3);
+}
+
+/* 17. ASCII-Social: monospace terminal buffer feed */
+body[data-theme="ascii-social"] {
+  --panel-untuck-duration: 170ms;
+  --panel-tuck-duration: 150ms;
+  --panel-untuck-ease: cubic-bezier(0, 0, 0.2, 1);
+  --panel-tuck-ease: cubic-bezier(0.3, 0, 0.7, 0);
+  --theme-untuck-shadow-left: 12px 0 0 rgba(0, 255, 100, 0.15), 18px 0 30px rgba(0, 0, 0, 0.85);
+  --theme-untuck-shadow-right: -12px 0 0 rgba(0, 255, 100, 0.15), -18px 0 30px rgba(0, 0, 0, 0.85);
+  --theme-untuck-edge-left: rgba(0, 255, 100, 0.4);
+  --theme-untuck-edge-right: rgba(0, 255, 100, 0.4);
+}
+
+/* 18. Poster-Pop: silk-screen mechanical press kiss */
+body[data-theme="poster-pop"] {
+  --panel-untuck-duration: 220ms;
+  --panel-tuck-duration: 190ms;
+  --panel-untuck-ease: cubic-bezier(0.17, 0.89, 0.32, 1.1);
+  --panel-tuck-ease: cubic-bezier(0.5, 0, 0.6, 0.2);
+  --theme-untuck-shadow-left: 16px 0 28px rgba(0, 0, 0, 0.65), 0 0 16px rgba(0, 220, 255, 0.22);
+  --theme-untuck-shadow-right: -16px 0 28px rgba(0, 0, 0, 0.65), 0 0 16px rgba(0, 220, 255, 0.22);
+  --theme-untuck-edge-left: rgba(0, 220, 255, 0.35);
+  --theme-untuck-edge-right: rgba(0, 220, 255, 0.35);
+}
+
+/* 19. Creator-Layer: stream deck broadcast control slide */
+body[data-theme="creator-layer"] {
+  --panel-untuck-duration: 210ms;
+  --panel-tuck-duration: 180ms;
+  --panel-untuck-ease: cubic-bezier(0.2, 0.9, 0.4, 1);
+  --panel-tuck-ease: cubic-bezier(0.4, 0, 0.4, 1);
+  --theme-untuck-shadow-left: 16px 0 34px rgba(88, 101, 242, 0.25), 20px 0 40px rgba(0, 0, 0, 0.75);
+  --theme-untuck-shadow-right: -16px 0 34px rgba(88, 101, 242, 0.25), -20px 0 40px rgba(0, 0, 0, 0.75);
+  --theme-untuck-edge-left: rgba(88, 101, 242, 0.38);
+  --theme-untuck-edge-right: rgba(88, 101, 242, 0.38);
+}
+
+/* 20. Modular-Signal: eurorack patch bay glide */
+body[data-theme="modular-signal"] {
+  --panel-untuck-duration: 230ms;
+  --panel-tuck-duration: 200ms;
+  --panel-untuck-ease: cubic-bezier(0.18, 0.9, 0.25, 1);
+  --panel-tuck-ease: cubic-bezier(0.4, 0, 0.3, 1);
+  --theme-untuck-shadow-left: 18px 0 36px rgba(0, 0, 0, 0.78), 4px 0 14px rgba(255, 180, 40, 0.2);
+  --theme-untuck-shadow-right: -18px 0 36px rgba(0, 0, 0, 0.78), -4px 0 14px rgba(255, 180, 40, 0.2);
+  --theme-untuck-edge-left: rgba(255, 180, 40, 0.32);
+  --theme-untuck-edge-right: rgba(255, 180, 40, 0.32);
+}
+
+/* 21. Cut-Sheet: architectural drafting vellum sheet unfurl */
+body[data-theme="cut-sheet"] {
+  --panel-untuck-duration: 230ms;
+  --panel-tuck-duration: 200ms;
+  --panel-untuck-ease: cubic-bezier(0.25, 1, 0.5, 1);
+  --panel-tuck-ease: cubic-bezier(0.4, 0, 0.35, 1);
+  --theme-untuck-shadow-left: 16px 0 32px rgba(10, 20, 30, 0.6), 0 0 14px rgba(70, 160, 240, 0.22);
+  --theme-untuck-shadow-right: -16px 0 32px rgba(10, 20, 30, 0.6), 0 0 14px rgba(70, 160, 240, 0.22);
+  --theme-untuck-edge-left: rgba(70, 160, 240, 0.35);
+  --theme-untuck-edge-right: rgba(70, 160, 240, 0.35);
+}
+
+/* 22. Acid-Transit: pneumatic transit rail door glide */
+body[data-theme="acid-transit"] {
+  --panel-untuck-duration: 200ms;
+  --panel-tuck-duration: 180ms;
+  --panel-untuck-ease: cubic-bezier(0.12, 0.95, 0.3, 1.08);
+  --panel-tuck-ease: cubic-bezier(0.5, 0, 0.8, 0.2);
+  --theme-untuck-shadow-left: 16px 0 32px rgba(160, 255, 0, 0.24), 22px 0 44px rgba(0, 0, 0, 0.85);
+  --theme-untuck-shadow-right: -16px 0 32px rgba(160, 255, 0, 0.24), -22px 0 44px rgba(0, 0, 0, 0.85);
+  --theme-untuck-edge-left: rgba(160, 255, 0, 0.4);
+  --theme-untuck-edge-right: rgba(160, 255, 0, 0.4);
+}
+
+/* 23. Ghost-Index: ethereal aperture horizon phase */
+body[data-theme="ghost-index"] {
+  --panel-untuck-duration: 270ms;
+  --panel-tuck-duration: 240ms;
+  --panel-untuck-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --panel-tuck-ease: cubic-bezier(0.3, 0, 0.5, 1);
+  --theme-untuck-shadow-left: 20px 0 46px rgba(0, 0, 0, 0.85), 0 0 18px rgba(235, 95, 75, 0.2);
+  --theme-untuck-shadow-right: -20px 0 46px rgba(0, 0, 0, 0.85), 0 0 18px rgba(235, 95, 75, 0.2);
+  --theme-untuck-edge-left: rgba(235, 95, 75, 0.3);
+  --theme-untuck-edge-right: rgba(235, 95, 75, 0.3);
+}
+
+/* 24. Violet-Violent: ultraviolet optical gate shutter */
+body[data-theme="violet-violent"] {
+  --panel-untuck-duration: 210ms;
+  --panel-tuck-duration: 180ms;
+  --panel-untuck-ease: cubic-bezier(0.15, 1, 0.3, 1.05);
+  --panel-tuck-ease: cubic-bezier(0.45, 0, 0.7, 0.2);
+  --theme-untuck-shadow-left: 18px 0 38px rgba(165, 40, 255, 0.32), 24px 0 48px rgba(0, 0, 0, 0.9);
+  --theme-untuck-shadow-right: -18px 0 38px rgba(165, 40, 255, 0.32), -24px 0 48px rgba(0, 0, 0, 0.9);
+  --theme-untuck-edge-left: rgba(165, 40, 255, 0.45);
+  --theme-untuck-edge-right: rgba(165, 40, 255, 0.45);
+}
+
+/* 25. Abyssal-Press: hydraulic benthic pressure bulkhead */
+body[data-theme="abyssal-press"] {
+  --panel-untuck-duration: 310ms;
+  --panel-tuck-duration: 270ms;
+  --panel-untuck-ease: cubic-bezier(0.15, 0.85, 0.25, 1);
+  --panel-tuck-ease: cubic-bezier(0.4, 0, 0.3, 1);
+  --theme-untuck-shadow-left: 26px 0 56px rgba(2, 6, 12, 0.94), 0 0 20px rgba(40, 180, 220, 0.18);
+  --theme-untuck-shadow-right: -26px 0 56px rgba(2, 6, 12, 0.94), 0 0 20px rgba(40, 180, 220, 0.18);
+  --theme-untuck-edge-left: rgba(40, 180, 220, 0.28);
+  --theme-untuck-edge-right: rgba(40, 180, 220, 0.28);
+}
+
+/* 26. Harmonic-Registry: ceremonial ledger vault slide */
+body[data-theme="harmonic-registry"] {
+  --panel-untuck-duration: 260ms;
+  --panel-tuck-duration: 230ms;
+  --panel-untuck-ease: cubic-bezier(0.25, 0.8, 0.25, 1);
+  --panel-tuck-ease: cubic-bezier(0.35, 0, 0.3, 1);
+  --theme-untuck-shadow-left: 18px 0 38px rgba(12, 10, 8, 0.75), 0 0 16px rgba(220, 180, 90, 0.24);
+  --theme-untuck-shadow-right: -18px 0 38px rgba(12, 10, 8, 0.75), 0 0 16px rgba(220, 180, 90, 0.24);
+  --theme-untuck-edge-left: rgba(220, 180, 90, 0.35);
+  --theme-untuck-edge-right: rgba(220, 180, 90, 0.35);
+}
+
+/* 27. Axis-Break: brutalist structural girder shift */
+body[data-theme="axis-break"] {
+  --panel-untuck-duration: 200ms;
+  --panel-tuck-duration: 180ms;
+  --panel-untuck-ease: cubic-bezier(0.08, 0.82, 0.17, 1);
+  --panel-tuck-ease: cubic-bezier(0.5, 0, 0.6, 0.2);
+  --theme-untuck-shadow-left: 18px 0 34px rgba(0, 0, 0, 0.85), 4px 0 14px rgba(255, 205, 30, 0.2);
+  --theme-untuck-shadow-right: -18px 0 34px rgba(0, 0, 0, 0.85), -4px 0 14px rgba(255, 205, 30, 0.2);
+  --theme-untuck-edge-left: rgba(255, 205, 30, 0.35);
+  --theme-untuck-edge-right: rgba(255, 205, 30, 0.35);
+}
+
+/* 28. Tideplot: bathymetric ocean tidal surge */
+body[data-theme="tideplot"] {
+  --panel-untuck-duration: 280ms;
+  --panel-tuck-duration: 250ms;
+  --panel-untuck-ease: cubic-bezier(0.25, 0.8, 0.5, 1);
+  --panel-tuck-ease: cubic-bezier(0.3, 0, 0.4, 1);
+  --theme-untuck-shadow-left: 22px 0 46px rgba(3, 15, 28, 0.88), 0 0 18px rgba(60, 220, 200, 0.2);
+  --theme-untuck-shadow-right: -22px 0 46px rgba(3, 15, 28, 0.88), 0 0 18px rgba(60, 220, 200, 0.2);
+  --theme-untuck-edge-left: rgba(60, 220, 200, 0.3);
+  --theme-untuck-edge-right: rgba(60, 220, 200, 0.3);
+}
+
+/* 29. Counterform-Choir: typographic Swiss editorial unfold */
+body[data-theme="counterform-choir"] {
+  --panel-untuck-duration: 250ms;
+  --panel-tuck-duration: 220ms;
+  --panel-untuck-ease: cubic-bezier(0.25, 1, 0.35, 1);
+  --panel-tuck-ease: cubic-bezier(0.4, 0, 0.3, 1);
+  --theme-untuck-shadow-left: 16px 0 34px rgba(33, 21, 83, 0.22), 20px 0 40px rgba(0, 0, 0, 0.6);
+  --theme-untuck-shadow-right: -16px 0 34px rgba(33, 21, 83, 0.22), -20px 0 40px rgba(0, 0, 0, 0.6);
+  --theme-untuck-edge-left: rgba(235, 60, 40, 0.25);
+  --theme-untuck-edge-right: rgba(235, 60, 40, 0.25);
+}
+
+/* 30. Aftergarden: twilight botanical nightshade unfurl */
+body[data-theme="aftergarden"] {
+  --panel-untuck-duration: 290ms;
+  --panel-tuck-duration: 250ms;
+  --panel-untuck-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --panel-tuck-ease: cubic-bezier(0.35, 0, 0.4, 1);
+  --theme-untuck-shadow-left: 20px 0 44px rgba(10, 18, 12, 0.82), 0 0 20px rgba(130, 230, 110, 0.2);
+  --theme-untuck-shadow-right: -20px 0 44px rgba(10, 18, 12, 0.82), 0 0 20px rgba(130, 230, 110, 0.2);
+  --theme-untuck-edge-left: rgba(130, 230, 110, 0.3);
+  --theme-untuck-edge-right: rgba(130, 230, 110, 0.3);
+}
+
+/* 31. Vesperfold: geometric origami paper crease unfold */
+body[data-theme="vesperfold"] {
+  --panel-untuck-duration: 240ms;
+  --panel-tuck-duration: 210ms;
+  --panel-untuck-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --panel-tuck-ease: cubic-bezier(0.4, 0, 0.35, 1);
+  --theme-untuck-shadow-left: 18px 0 36px rgba(15, 10, 18, 0.75), 0 0 16px rgba(255, 60, 146, 0.25);
+  --theme-untuck-shadow-right: -18px 0 36px rgba(15, 10, 18, 0.75), 0 0 16px rgba(255, 60, 146, 0.25);
+  --theme-untuck-edge-left: rgba(255, 60, 146, 0.35);
+  --theme-untuck-edge-right: rgba(255, 60, 146, 0.35);
+}
+
+/* 32. Dev-Lab: calibrated oscilloscope rack insertion */
+body[data-theme="dev-lab"] {
+  --panel-untuck-duration: 200ms;
+  --panel-tuck-duration: 180ms;
+  --panel-untuck-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --panel-tuck-ease: cubic-bezier(0.4, 0, 0.3, 1);
+  --theme-untuck-shadow-left: 16px 0 32px rgba(0, 0, 0, 0.8), 0 0 14px rgba(70, 240, 130, 0.22);
+  --theme-untuck-shadow-right: -16px 0 32px rgba(0, 0, 0, 0.8), 0 0 14px rgba(70, 240, 130, 0.22);
+  --theme-untuck-edge-left: rgba(70, 240, 130, 0.32);
+  --theme-untuck-edge-right: rgba(70, 240, 130, 0.32);
+}
+
+/* Accessibility & Motion Suppression */
+body[data-motion="off"] .library-rail,
+body[data-motion="off"] .inspector,
+body[data-motion="off"] .panel-handle {
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body .library-rail,
+  body .inspector,
+  body .panel-handle {
+    transition: none !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  .info-panel-handle {
+    display: none;
+  }
+}
+
+@media (max-width: 850px) {
+  .panel-handle {
+    display: none;
+  }
+}
+
+
+/* Clicking Hide takes priority over a handle's hover preview. Keyboard focus
+   stays on the recovery control without reopening the cabinet. */
+body.library-collapsed[data-library-collapse-click="true"] .library-rail { transform: translateX(-100%) !important; opacity: 0 !important; pointer-events: none !important; }
+body.inspector-collapsed[data-inspector-collapse-click="true"] .inspector { transform: translateX(100%) !important; opacity: 0 !important; pointer-events: none !important; }

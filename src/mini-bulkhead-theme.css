@@ -1,0 +1,40 @@
+/* Bulkhead Terminal mini player. Converted onto mini-player.css's --mini-*
+   baseline -- tokens for shell/art/copy/progress/play colors and geometry,
+   bespoke selectors kept only for the hazard-stripe header, scanline
+   overlay, and non-rectangular clip-path silhouette. Transport-button
+   background/border stay bespoke (no shared token for those yet); color is
+   scoped directly rather than via --mini-btn-color since the original only
+   recolors the transport row, not the window-action buttons. */
+body[data-theme="bulkhead"]{
+  padding:6px;
+  background:#090c0b;
+  font-family:"Kenney Future","Arial Narrow",sans-serif;
+  --mini-shell-bg:linear-gradient(#414844,#171c19 48%,#0a0d0c);
+  --mini-shell-border:5px solid #626a65;
+  --mini-shell-shadow:inset 3px 3px 0 #838b86,inset -4px -4px 0 #050706;
+  --mini-art-border:4px solid #737b76;
+  --mini-art-shadow:inset 3px 3px 0 #0009,6px 6px 0 #090c0b;
+  --mini-copy-eyebrow-color:#78f09a;
+  --mini-copy-title-color:#e7ede8;
+  --mini-progress-height:6px;
+  --mini-progress-bg:#07110b;
+  --mini-progress-fill:#78f09a;
+  --mini-progress-fill-shadow:0 0 5px #78f09a;
+  --mini-play-bg:#f6c945;
+  --mini-play-color:#090c0b;
+  --mini-play-border:3px solid #fff0a3;
+  --mini-play-shadow:inset -3px -3px 0 #a67d19,4px 4px 0 #090c0b;
+}
+body[data-theme="bulkhead"] .mini-shell{
+  height:134px;
+  grid-template-columns:96px 1fr 82px;
+  clip-path:polygon(7px 0,calc(100% - 7px) 0,100% 7px,100% calc(100% - 7px),calc(100% - 7px) 100%,7px 100%,0 calc(100% - 7px),0 7px);
+}
+body[data-theme="bulkhead"] .mini-shell::before{content:"";position:absolute;left:0;right:0;top:0;height:7px;background:repeating-linear-gradient(135deg,#f6c945 0 8px,#111513 8px 16px)}
+body[data-theme="bulkhead"] .mini-shell::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.1;background:repeating-linear-gradient(0deg,transparent 0 2px,#78f09a 2px 3px)}
+body[data-theme="bulkhead"] .mini-art{clip-path:polygon(5px 0,calc(100% - 5px) 0,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0 calc(100% - 5px),0 5px)}
+body[data-theme="bulkhead"] .mini-copy small{text-shadow:0 0 6px #78f09a88}
+body[data-theme="bulkhead"] .mini-copy strong{font-family:"Kenney Future",sans-serif;text-transform:uppercase}
+body[data-theme="bulkhead"] .mini-progress{border:2px solid #59605c;box-shadow:inset 2px 2px 0 #000}
+body[data-theme="bulkhead"] .mini-controls button{color:#78f09a;background:#111513;border:2px solid #535b56}
+body[data-theme="bulkhead"] .mini-controls .mini-play{width:42px;height:38px;border-radius:0;clip-path:polygon(5px 0,calc(100% - 5px) 0,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0 calc(100% - 5px),0 5px)}

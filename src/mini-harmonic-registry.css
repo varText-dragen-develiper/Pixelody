@@ -1,0 +1,190 @@
+body[data-theme="harmonic-registry"] {
+  --mini-shell-columns: 86px minmax(140px,1fr) auto;
+  --mini-shell-gap: 14px;
+  --mini-shell-padding: 15px;
+  --mini-shell-radius: 0;
+  --mini-shell-border: 1px solid #141318;
+  --mini-shell-bg: #f4f1e8;
+  --mini-shell-shadow: 8px 8px 0 #14131824;
+  --mini-art-size: 76px;
+  --mini-art-radius: 0;
+  --mini-art-border: 1px solid #141318;
+  --mini-art-bg: #ebe8df;
+  --mini-art-shadow: none;
+  --mini-copy-eyebrow-color: #66616c;
+  --mini-copy-eyebrow-font: 7px Consolas,"Courier New",monospace;
+  --mini-copy-title-font: 700 12px "Segoe UI",Arial,sans-serif;
+  --mini-copy-title-color: #141318;
+  --mini-copy-meta-color: #66616c;
+  --mini-copy-meta-size: 8px;
+  --mini-copy-time-color: #66616c;
+  --mini-progress-height: 5px;
+  --mini-progress-radius: 0;
+  --mini-progress-bg: #14131822;
+  --mini-progress-fill: #00b9cf;
+  --mini-btn-color: #141318;
+  --mini-btn-hover-color: #f12d87;
+  --mini-btn-radius: 0;
+  --mini-play-radius: 50%;
+  --mini-play-border: 1px solid #141318;
+  --mini-play-bg: transparent;
+  --mini-play-color: #141318;
+  color: #141318;
+  background: #e9e7df;
+}
+
+body[data-theme="harmonic-registry"] .mini-shell {
+  overflow: hidden;
+  isolation: isolate;
+  background: #f4f1e8;
+  color: #141318;
+}
+body[data-theme="harmonic-registry"] .mini-shell::before {
+  content: "REGISTRY / LOCAL";
+  position: absolute;
+  left: 108px;
+  top: 7px;
+  color: #66616c;
+  font: 6px Consolas,"Courier New",monospace;
+  letter-spacing: .12em;
+}
+body[data-theme="harmonic-registry"] .mini-shell::after {
+  content: "";
+  position: absolute;
+  left: 99px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #141318;
+  pointer-events: none;
+}
+body[data-theme="harmonic-registry"] .mini-glow,
+body[data-theme="harmonic-registry"] .vv-mini-board,
+body[data-theme="harmonic-registry"] .vv-mini-bus,
+body[data-theme="harmonic-registry"] .mini-quest-stats {
+  display: none;
+}
+body[data-theme="harmonic-registry"] .mini-shell > :not(.mini-drag-strip):not(.mini-resize-grip):not(.window-actions) {
+  position: relative;
+  z-index: 2;
+}
+body[data-theme="harmonic-registry"] .mini-art {
+  position: relative;
+  overflow: visible;
+  isolation: isolate;
+}
+body[data-theme="harmonic-registry"] .mini-art > .signal-orbit-ring {
+  display: block!important;
+  inset: -10px -12px -8px -6px!important;
+  z-index: -1!important;
+  border: 0!important;
+  border-radius: 39% 61% 46% 54% / 57% 42% 58% 43%!important;
+  background: #141318!important;
+  box-shadow: 5px 6px 0 -3px #14131845!important;
+  opacity: 1!important;
+  transform: rotate(-9deg) skewX(-5deg)!important;
+  animation: none!important;
+  -webkit-mask: radial-gradient(ellipse 45% 38% at 47% 52%, transparent 0 63%, #000 64%);
+  mask: radial-gradient(ellipse 45% 38% at 47% 52%, transparent 0 63%, #000 64%);
+}
+body[data-theme="harmonic-registry"] .mini-art > .signal-orbit-ring::before {
+  content: ""!important;
+  position: absolute!important;
+  inset: 11px 13px 10px 9px!important;
+  width: auto!important;
+  height: auto!important;
+  border: 2px solid #aaa5a6!important;
+  border-top-color: transparent!important;
+  border-radius: 50%!important;
+  background: transparent!important;
+  box-shadow: none!important;
+  transform: rotate(23deg) skewX(7deg)!important;
+  opacity: 1!important;
+  animation: none!important;
+  z-index:1!important;
+}
+body[data-theme="harmonic-registry"] .mini-art > .signal-orbit-ring::after {
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  inset:4px 6px 4px 3px!important;
+  z-index:0!important;
+  border-radius:43% 57% 48% 52% / 60% 40% 59% 41%!important;
+  background:repeating-radial-gradient(ellipse 51% 43% at 56% 43%,transparent 0 3px,#6844e7 4px 5px,#242229 6px 7px,#f12d87 8px 9px,transparent 10px 12px),linear-gradient(145deg,#6844e7 0 29%,#f12d87 30% 46%,#141318 47% 100%)!important;
+  clip-path:polygon(4% 16%,50% 0,95% 18%,100% 62%,77% 100%,17% 89%,0 48%)!important;
+  -webkit-mask:radial-gradient(ellipse 45% 38% at 47% 52%,transparent 0 62%,#000 63%);
+  mask:radial-gradient(ellipse 45% 38% at 47% 52%,transparent 0 62%,#000 63%);
+}
+body[data-theme="harmonic-registry"].playing .mini-art > .signal-orbit-ring::before {
+  border-right-color: #00b9cf!important;
+  border-bottom-color: #00b9cf!important;
+}
+body[data-theme="harmonic-registry"] .mini-art .signal-trace-cell { display:none!important; }
+
+body[data-theme="harmonic-registry"] .mini-art:not(.has-image)::before,
+body[data-theme="harmonic-registry"] .mini-art:not(.has-image)::after {
+  content: "";
+  position: absolute;
+}
+body[data-theme="harmonic-registry"] .mini-art:not(.has-image)::before {
+  inset: 14%;
+  z-index: 1;
+  background: #141318;
+  transform: rotate(calc(var(--hr-mini-turn,0) * 90deg));
+}
+body[data-theme="harmonic-registry"] .mini-art:not(.has-image)::after {
+  z-index: 2;
+  width: 24%;
+  height: 24%;
+  left: 38%;
+  top: 38%;
+  background: #f4f1e8;
+  transform: rotate(45deg);
+}
+body[data-theme="harmonic-registry"] [data-theme-rotation="0"] { --hr-mini-turn: 0; }
+body[data-theme="harmonic-registry"] [data-theme-rotation="1"] { --hr-mini-turn: 1; }
+body[data-theme="harmonic-registry"] [data-theme-rotation="2"] { --hr-mini-turn: 2; }
+body[data-theme="harmonic-registry"] [data-theme-rotation="3"] { --hr-mini-turn: 3; }
+body[data-theme="harmonic-registry"] .mini-art[data-theme-glyph="0"]::before { clip-path:polygon(0 0,44% 0,44% 72%,100% 28%,100% 100%,56% 100%,56% 28%,0 72%); }
+body[data-theme="harmonic-registry"] .mini-art[data-theme-glyph="1"]::before { background:transparent;border:8px solid #141318;border-right-color:#6844e7;border-radius:50%; }
+body[data-theme="harmonic-registry"] .mini-art[data-theme-glyph="2"]::before { background:linear-gradient(90deg,#141318 0 28%,transparent 28% 39%,#141318 39% 67%,transparent 67% 78%,#141318 78%);clip-path:polygon(0 12%,100% 0,100% 88%,0 100%); }
+body[data-theme="harmonic-registry"] .mini-art[data-theme-glyph="3"]::before { background:linear-gradient(135deg,#141318 0 30%,transparent 30% 36%,#6844e7 36% 64%,transparent 64% 70%,#141318 70%); }
+body[data-theme="harmonic-registry"] .mini-art[data-theme-glyph="4"]::before { clip-path:polygon(0 34%,34% 34%,34% 0,66% 0,66% 34%,100% 34%,100% 66%,66% 66%,66% 100%,34% 100%,34% 66%,0 66%); }
+body[data-theme="harmonic-registry"] .mini-art[data-theme-glyph="5"]::before { background:transparent;border:8px solid #141318;border-left-color:#6844e7;border-radius:48% 52% 42% 58%; }
+body[data-theme="harmonic-registry"] .mini-art.has-image::before,
+body[data-theme="harmonic-registry"] .mini-art.has-image::after { display:none; }
+
+body[data-theme="harmonic-registry"] .mini-copy { padding-top: 8px; }
+body[data-theme="harmonic-registry"] .mini-copy strong { margin-top: 5px; }
+body[data-theme="harmonic-registry"] .mini-progress { margin-top: 10px; }
+body[data-theme="harmonic-registry"] .mini-controls button { color: #141318; }
+body[data-theme="harmonic-registry"] .mini-controls .mini-play { width: 36px; height: 36px; }
+body[data-theme="harmonic-registry"].playing .mini-controls .mini-play {
+  border-color: #00b9cf;
+  background: #00b9cf;
+}
+body[data-theme="harmonic-registry"] .mini-play > .signal-orbit-ring { display:none!important; }
+body[data-theme="harmonic-registry"] .window-actions button {
+  border: 1px solid #141318;
+  border-radius: 0;
+  color: #141318;
+}
+body[data-theme="harmonic-registry"] .mini-resize-grip::before,
+body[data-theme="harmonic-registry"] .mini-resize-grip::after { background:#141318; }
+
+body[data-theme="harmonic-registry"][data-performance="conserve"] *::before,
+body[data-theme="harmonic-registry"][data-performance="conserve"] *::after,
+body[data-theme="harmonic-registry"][data-motion="off"] *,
+body[data-theme="harmonic-registry"][data-motion="off"] *::before,
+body[data-theme="harmonic-registry"][data-motion="off"] *::after {
+  animation: none!important;
+  transition: none!important;
+}
+@media(prefers-reduced-motion:reduce) {
+  body[data-theme="harmonic-registry"] *,
+  body[data-theme="harmonic-registry"] *::before,
+  body[data-theme="harmonic-registry"] *::after {
+    animation: none!important;
+    transition: none!important;
+  }
+}

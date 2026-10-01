@@ -1,0 +1,20 @@
+/* Functional geometry for the globally assignable Memory Cascade mechanic. */
+#trackRows.memory-cascade-mounted{display:flex;flex-direction:column;height:520px;min-height:420px;padding:0}
+.memory-cascade-stage{position:relative;flex:1;min-height:0;overflow:hidden;perspective:1500px;transform-style:preserve-3d}
+.memory-cascade-card{position:absolute;left:50%;top:50%;width:min(780px,82vw);height:208px;z-index:calc(40 - var(--memory-distance,0));outline:0;cursor:pointer;transform-style:preserve-3d;transform:translate3d(calc(-50% + var(--memory-side,0) * var(--memory-distance,0) * 28px),calc(-50% + var(--memory-offset,0) * 88px),calc(var(--memory-distance,0) * -128px)) rotateX(calc(var(--memory-offset,0) * -8deg)) rotateZ(calc(var(--memory-side,0) * -1.2deg)) scale(calc(1 - var(--memory-distance,0) * .055));opacity:calc(1 - var(--memory-distance,0) * .14);transition:transform .48s cubic-bezier(.16,.78,.18,1),opacity .34s ease}
+.memory-cascade-card.is-centered{z-index:50}
+.memory-cascade-cast{position:absolute;inset:13px -18px -22px 20px;transform:translateZ(-40px);pointer-events:none}
+.memory-cascade-shell{position:absolute;inset:0;display:grid;grid-template-columns:156px minmax(0,1fr) 124px;overflow:hidden;transform-style:preserve-3d}
+.memory-cascade-optic{position:relative;z-index:3;margin:24px;background:var(--memory-art) center/cover no-repeat}
+.memory-cascade-optic>span{position:absolute;left:7px;bottom:6px}
+.memory-cascade-board{position:absolute;z-index:1;inset:15px 84px 15px 90px;pointer-events:none}
+.memory-cascade-copy{position:relative;z-index:4;display:flex;min-width:0;flex-direction:column;justify-content:center;gap:7px;padding:25px 28px}
+.memory-cascade-copy strong,.memory-cascade-copy span,.memory-cascade-copy em{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.memory-cascade-copy em{font-style:normal}
+.memory-cascade-bus{position:absolute;z-index:2;inset:0;pointer-events:none}
+.memory-cascade-stub{position:relative;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.memory-cascade-edge{position:absolute;z-index:6;inset:0;pointer-events:none}
+.memory-cascade-status{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:18px;min-height:44px;padding:7px 12px}
+.memory-cascade-status b{overflow:hidden;text-align:center;text-overflow:ellipsis;white-space:nowrap}
+body[data-motion="off"] .memory-cascade-card,body[data-performance="conserve"] .memory-cascade-card{transition:none}
+@media(max-width:760px){#trackRows.memory-cascade-mounted{height:430px;min-height:390px}.memory-cascade-card{width:calc(100% - 16px);height:174px;transform:translate3d(-50%,calc(-50% + var(--memory-offset,0) * 70px),calc(var(--memory-distance,0) * -90px)) rotateX(calc(var(--memory-offset,0) * -7deg)) scale(calc(1 - var(--memory-distance,0) * .06))}.memory-cascade-shell{grid-template-columns:108px minmax(0,1fr) 74px}.memory-cascade-optic{margin:20px}.memory-cascade-copy{padding:18px 12px}.memory-cascade-status{grid-template-columns:1fr auto}.memory-cascade-status span{display:none}}

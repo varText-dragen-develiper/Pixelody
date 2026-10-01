@@ -1,0 +1,54 @@
+/* Lo-Fi Café mini deck for Canvas: one order ticket, taken out of the room. */
+
+/* The mini is a single slip of the same paper on a small walnut base. It
+   carries the lamp and the transport and nothing else -- it is the piece of
+   paper you took with you when you left the room, not a smaller room. */
+
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"]{--mini-accent:#c48a4a;--cafe-night:#100b08;--cafe-espresso:#1d130e;--cafe-walnut:#342216;--cafe-wood:#62452b;--cafe-amber:#c48a4a;--cafe-honey:#e1b775;--cafe-paper:#d8c49e;--cafe-paper-soft:#ecdfc3;--cafe-ink:#211812;--cafe-muted:#6f5b47;--cafe-moss:#5d704f;--cafe-line:rgba(43,29,20,.28);--cafe-lamp:0.5;background:#100b08;color:#ecdfc3;font-family:Georgia,"Iowan Old Style","Times New Roman",serif}
+
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-shell{position:relative;grid-template-columns:62px minmax(150px,1fr) 104px;gap:13px;align-items:center;overflow:hidden;padding:13px 14px;border:1px solid rgba(236,223,195,.16);border-radius:8px;background:linear-gradient(140deg,rgba(29,19,14,.98),rgba(16,11,8,.97) 56%,rgba(46,56,42,.9));box-shadow:0 16px 34px rgba(7,5,4,.54),inset 0 1px rgba(236,223,195,.1)}
+/* The ticket itself: paper laid over the walnut base, left-torn like the ones
+   on the spike in the main window. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-copy{position:relative;padding:8px 11px 8px 14px;border:1px solid var(--cafe-line);border-left:0;border-radius:0 5px 5px 0;background:linear-gradient(92deg,rgba(255,252,244,.95),rgba(236,223,195,.88));color:var(--cafe-ink);box-shadow:0 4px 10px rgba(7,5,4,.36)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-copy::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:repeating-linear-gradient(180deg,var(--cafe-wood) 0 3px,transparent 3px 6px)}
+/* The lamp reaches the ticket too, as warmth on its upper edge and nowhere
+   near its text. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-copy::after{content:"";position:absolute;left:6px;right:6px;top:0;height:2px;background:linear-gradient(90deg,transparent,rgba(196,138,74,calc(0.14 + var(--cafe-lamp) * 0.5)),transparent)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-shell>*:not(.mini-glow):not(.mini-drag-strip):not(.mini-resize-grip){position:relative;z-index:2}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 70% 10%,rgba(225,183,117,calc(0.05 + var(--cafe-lamp) * 0.12)),transparent 34%);pointer-events:none;filter:none}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-drag-strip{position:absolute;z-index:8;top:0;right:56px;left:0;height:18px}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-resize-grip{position:absolute;z-index:9;opacity:.5}
+
+/* Other themes' mini furniture stays out of this room. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(.vv-mini-board,.vv-mini-bus,.axis-mini-breakline,.counterform-mini-choir,.mini-quest-stats,.signal-orbit-ring,.axis-mini-mask){display:none}
+
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-art{border-radius:5px;border:1px solid rgba(236,223,195,.2);background-image:linear-gradient(150deg,var(--cafe-wood),var(--cafe-walnut) 62%,var(--cafe-espresso));box-shadow:0 5px 12px rgba(7,5,4,.44)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-copy small{color:var(--cafe-muted);font:italic 10px Georgia,serif;letter-spacing:.04em;text-transform:none}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-copy strong{font:15px/1.15 Georgia,serif;letter-spacing:-.006em;color:var(--cafe-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-copy span{color:var(--cafe-muted)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-progress{height:2px;border-radius:999px;background:rgba(43,29,20,.22)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-progress i{border-radius:999px;background:var(--cafe-moss)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-time{color:var(--cafe-muted);font:11px Georgia,serif;letter-spacing:.02em}
+
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-controls button{border:1px solid rgba(236,223,195,.18);border-radius:999px;background:rgba(98,69,43,.34);color:rgba(236,223,195,.82)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-controls button:hover{border-color:var(--cafe-honey);color:var(--cafe-paper-soft)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-play{border:1px solid rgba(225,183,117,.5);background:rgba(98,69,43,.5)}
+/* Moss owns confirmed playback here exactly as it does in the room. */
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"].playing .mini-play{border-color:var(--cafe-moss);background:linear-gradient(150deg,#6b8059,#44523a);color:#f2efe4}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .window-actions button{border-radius:999px;color:rgba(236,223,195,.56)}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] :is(button,input,select):focus-visible{outline:2px solid var(--cafe-honey);outline-offset:2px}
+
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"][data-motion="off"]{--cafe-lamp:0.45}
+body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"][data-motion="off"] .mini-copy{transition:none}
+@media (prefers-reduced-motion:reduce){
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-copy{transition:none}
+}
+
+/* Narrowest compact width: the ticket keeps its title and the transport. */
+@media (max-width:300px){
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-shell{grid-template-columns:44px minmax(0,1fr) 92px;gap:9px;padding:10px}
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-copy{padding:6px 8px 6px 11px}
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-copy small,
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-time{display:none}
+  body[data-theme="foreground"][data-canvas-theme-port="lo-fi-cafe"] .mini-copy strong{font-size:13px}
+}

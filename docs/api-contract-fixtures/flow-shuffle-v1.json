@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "enabled": true,
+  "mode": "flow",
+  "session": { "horizon": 6, "energyShape": "steady", "albumPolicy": "track", "preserveAlbumRuns": false },
+  "plan": {
+    "style": "standard",
+    "seed": "android-golden-v1",
+    "generation": 1,
+    "cursor": 0,
+    "sourceQueueIds": ["alpha", "bravo", "charlie", "delta", "echo"],
+    "order": ["alpha", "delta", "charlie", "echo", "bravo"],
+    "future": [],
+    "priorityIds": []
+  }
+}

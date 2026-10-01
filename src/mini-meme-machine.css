@@ -1,0 +1,245 @@
+@font-face{font-family:"Meme Grotesk";src:url("assets/themes/cosmic-cinema/SpaceGrotesk-Variable.ttf") format("truetype");font-weight:300 700;font-display:swap}
+@font-face{font-family:"Meme Mono";src:url("assets/themes/cosmic-cinema/IBMPlexMono-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
+body[data-theme="meme-machine"]{--mini-accent:#5865f2;background:#111214;color:#f2f3f5;font-family:"Meme Grotesk","Segoe UI",sans-serif}
+body[data-theme="meme-machine"] .mini-shell{overflow:hidden;border:1px solid #111214;border-radius:15px;background:#2b2d31;box-shadow:0 18px 50px #0008}
+body[data-theme="meme-machine"] .mini-shell::before{content:"";position:absolute;right:24px;top:-22px;width:135px;height:135px;background:url("assets/themes/meme-machine/crying.svg") center/contain no-repeat;opacity:.15;filter:drop-shadow(0 10px 10px #0004)}
+body[data-theme="meme-machine"] .mini-shell::after{content:"";position:absolute;z-index:2;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#5865f2,#eb459e,#fee75c,#23a55a,#5865f2);background-size:200% 100%}
+body[data-theme="meme-machine"] .mini-shell>*{position:relative;z-index:1}
+body[data-theme="meme-machine"] .mini-glow{background:radial-gradient(circle,#5865f244,transparent 68%);filter:blur(10px)}
+body[data-theme="meme-machine"] .mini-art{border:4px solid #23a55a;border-radius:50%;background:#5865f2 url("assets/themes/meme-machine/moai.svg") center/72% no-repeat;box-shadow:0 0 0 4px #2b2d31,0 9px 20px #0005}
+body[data-theme="meme-machine"] .mini-copy small{color:#23a55a;font:7px "Meme Mono",monospace;letter-spacing:.11em}
+body[data-theme="meme-machine"] .mini-copy strong{font-weight:700}
+body[data-theme="meme-machine"] .mini-copy>span,body[data-theme="meme-machine"] .mini-time{color:#949ba4;font-family:"Meme Mono",monospace}
+body[data-theme="meme-machine"] .mini-progress{height:4px;border-radius:9px;background:#1e1f22}
+body[data-theme="meme-machine"] .mini-progress i{border-radius:9px;background:#5865f2;box-shadow:none}
+body[data-theme="meme-machine"] .mini-controls .mini-play{border:0;border-radius:50%;background:#5865f2;color:#fff;box-shadow:0 7px 16px #0005}
+body[data-theme="meme-machine"] .mini-controls button:hover{color:#fee75c}
+body[data-theme="meme-machine"].playing .mini-shell::before{animation:mini-meme-float 5s ease-in-out infinite}
+body[data-theme="meme-machine"].playing .mini-shell::after{animation:mini-meme-rainbow 3.2s linear infinite}
+@keyframes mini-meme-float{50%{transform:translateY(5px) rotate(3deg);opacity:.22}}
+@keyframes mini-meme-rainbow{to{background-position:200% 0}}
+@media(prefers-reduced-motion:reduce){body[data-theme="meme-machine"].playing .mini-shell::before,body[data-theme="meme-machine"].playing .mini-shell::after{animation:none}}
+
+/* Meme Machine mini upgrade: original sticker deck and bot-status details. */
+body[data-theme="meme-machine"]{
+  --mini-meme-sticker:url("assets/themes/meme-machine/reaction-deck.svg");
+  --mini-meme-chaos:url("assets/themes/meme-machine/chaos-cards.svg");
+}
+body[data-theme="meme-machine"] .mini-shell{
+  background:
+    linear-gradient(180deg,#2b2d31f2,#202126f7),
+    var(--mini-meme-sticker) 92% 16%/170px no-repeat;
+}
+body[data-theme="meme-machine"] .mini-shell::before{
+  right:18px;
+  top:-18px;
+  width:150px;
+  height:132px;
+  background:var(--mini-meme-sticker) center/contain no-repeat;
+  opacity:.13;
+}
+body[data-theme="meme-machine"] .mini-art{
+  position:relative;
+  background:#5865f2 var(--mini-meme-sticker) center/125% no-repeat;
+  box-shadow:0 0 0 4px #2b2d31,0 9px 20px #0005,7px 7px 0 #fee75c;
+}
+body[data-theme="meme-machine"] .mini-art.has-image{
+  background-size:cover;
+}
+body[data-theme="meme-machine"] .mini-copy small::after{
+  content:" / BOT ONLINE";
+  color:#23a55a;
+}
+body[data-theme="meme-machine"] .mini-progress{
+  box-shadow:inset 0 0 0 1px #111214;
+}
+body[data-theme="meme-machine"] .mini-progress i{
+  background:linear-gradient(90deg,#5865f2,#eb459e,#fee75c);
+}
+body[data-theme="meme-machine"] .mini-controls{
+  border-radius:999px;
+  background:#1e1f22;
+  box-shadow:inset 0 0 0 1px #111214;
+}
+body[data-theme="meme-machine"] .mini-controls .mini-play{
+  box-shadow:0 7px 16px #0005,0 0 0 3px #fee75c22;
+}
+body[data-theme="meme-machine"].playing .mini-art{
+  animation:mini-meme-pulse 2.4s ease-in-out infinite;
+}
+@keyframes mini-meme-pulse{50%{box-shadow:0 0 0 4px #2b2d31,0 9px 20px #0005,7px 7px 0 #fee75c,0 0 24px #23a55a55}}
+@media(prefers-reduced-motion:reduce){body[data-theme="meme-machine"].playing .mini-art{animation:none}}
+
+/* Tiny fake-GIF energy for the always-on-top chaos window. */
+body[data-theme="meme-machine"] .mini-shell::before{
+  transform-origin:58% 48%;
+}
+body[data-theme="meme-machine"] .mini-copy strong::after{
+  content:"  +1";
+  display:inline-block;
+  margin-left:6px;
+  padding:1px 5px;
+  border-radius:999px;
+  background:#fee75c;
+  color:#111214;
+  font:900 8px "Meme Grotesk",Arial,sans-serif;
+  vertical-align:middle;
+}
+body[data-theme="meme-machine"].playing .mini-shell::before{
+  animation:mini-meme-channel-cycle 10s steps(1,end) infinite,mini-meme-float 5s ease-in-out infinite;
+}
+body[data-theme="meme-machine"].playing .mini-copy strong::after{
+  animation:mini-meme-badge 1.4s ease-in-out infinite;
+}
+@keyframes mini-meme-channel-cycle{
+  0%,32%{background:var(--mini-meme-sticker) center/contain no-repeat}
+  33%,65%{background:var(--mini-meme-chaos) center/contain no-repeat}
+  66%,100%{background:url("assets/themes/meme-machine/fire.svg") center/70% no-repeat}
+}
+@keyframes mini-meme-badge{50%{transform:translateY(-2px) rotate(-4deg);background:#23a55a;color:#fff}}
+@media(prefers-reduced-motion:reduce){
+  body[data-theme="meme-machine"].playing .mini-shell::before,
+  body[data-theme="meme-machine"].playing .mini-copy strong::after{animation:none}
+}
+
+/* Release-safe meme Easter egg pack for mini player. */
+body[data-theme="meme-machine"]{
+  --mini-meme-real-doge:url("assets/themes/meme-machine/chaos-cards.svg");
+  --mini-meme-real-fine:url("assets/themes/meme-machine/reaction-deck.svg");
+  --mini-meme-real-gif:url("assets/themes/meme-machine/licensed-memes/webdriver-torso-public-domain.gif");
+  --mini-meme-real-plato-gif:url("assets/themes/meme-machine/moai.svg");
+  --mini-meme-real-ominous-gif:url("assets/themes/meme-machine/skull.svg");
+  --mini-meme-real-memes-matter-gif:url("assets/themes/meme-machine/reaction-deck.svg");
+  --mini-meme-real-true:url("assets/themes/meme-machine/fire.svg");
+  --mini-meme-template-replaying:url("assets/themes/meme-machine/chaos-cards.svg");
+  --mini-meme-template-battery:url("assets/themes/meme-machine/reaction-deck.svg");
+}
+body[data-theme="meme-machine"] .mini-shell{
+  background:
+    linear-gradient(180deg,#2b2d31e8,#202126f8),
+    var(--mini-meme-real-doge) 100% 30%/190px no-repeat,
+    var(--mini-meme-real-memes-matter-gif) 18px 18px/92px no-repeat,
+    var(--mini-meme-real-gif) 18px 110px/114px 40px no-repeat;
+}
+body[data-theme="meme-machine"] .mini-shell::before{
+  background:var(--mini-meme-real-ominous-gif) center/cover no-repeat;
+  opacity:.24;
+}
+body[data-theme="meme-machine"] .mini-shell::after{
+  background:
+    var(--mini-meme-real-memes-matter-gif) 10px 3px/48px no-repeat,
+    var(--mini-meme-real-gif) 68px 3px/114px 40px no-repeat,
+    linear-gradient(90deg,#5865f2,#eb459e,#fee75c,#23a55a,#5865f2);
+}
+body[data-theme="meme-machine"] .mini-art:not(.has-image){
+  background:
+    linear-gradient(180deg,#11121444,#11121488),
+    var(--mini-meme-real-doge) center/cover no-repeat;
+}
+body[data-theme="meme-machine"] .mini-time::after{
+  content:"";
+  display:inline-block;
+  width:28px;
+  height:16px;
+  margin-left:6px;
+  border-radius:3px;
+  background:#111214 var(--mini-meme-real-memes-matter-gif) center/cover no-repeat;
+  vertical-align:-4px;
+  opacity:.84;
+}
+body[data-theme="meme-machine"].playing .mini-shell{
+  animation:mini-meme-real-bg 14s steps(1,end) infinite;
+}
+@keyframes mini-meme-real-bg{
+  0%,19%{background:linear-gradient(180deg,#2b2d31e8,#202126f8),var(--mini-meme-real-doge) 100% 30%/190px no-repeat,var(--mini-meme-real-memes-matter-gif) 18px 18px/92px no-repeat}
+  20%,39%{background:linear-gradient(180deg,#2b2d31e8,#202126f8),var(--mini-meme-real-fine) 100% 34%/190px no-repeat,var(--mini-meme-real-gif) 18px 18px/114px 40px no-repeat}
+  40%,59%{background:linear-gradient(180deg,#2b2d31e8,#202126f8),var(--mini-meme-real-plato-gif) 100% 36%/170px no-repeat,var(--mini-meme-real-ominous-gif) 18px 18px/58px 100px no-repeat}
+  60%,79%{background:linear-gradient(180deg,#2b2d31e8,#202126f8),var(--mini-meme-real-true) 100% 36%/165px no-repeat,var(--mini-meme-real-memes-matter-gif) 18px 18px/92px no-repeat}
+  80%,100%{background:linear-gradient(180deg,#2b2d31e8,#202126f8),var(--mini-meme-template-replaying) 100% 36%/190px no-repeat,var(--mini-meme-real-gif) 18px 18px/114px 40px no-repeat}
+}
+@media(prefers-reduced-motion:reduce){body[data-theme="meme-machine"].playing .mini-shell{animation:none}body[data-theme="meme-machine"] .mini-time::after{display:none}}
+
+/* Mini blank-space reclamation: GIFs fill the quiet corners and controls. */
+body[data-theme="meme-machine"] .mini-glow{
+  background:
+    radial-gradient(circle at 40% 50%,#5865f244,transparent 68%),
+    var(--mini-meme-real-memes-matter-gif) center/110px no-repeat;
+  filter:blur(8px) saturate(1.25);
+  opacity:.72;
+}
+body[data-theme="meme-machine"] .mini-controls button{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  border-radius:50%;
+}
+body[data-theme="meme-machine"] .mini-controls button::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:
+    linear-gradient(90deg,#11121470,#11121420),
+    var(--mini-meme-real-gif) center/96px 34px no-repeat;
+  opacity:.3;
+}
+body[data-theme="meme-machine"] .mini-controls .mini-play::before{
+  background:
+    linear-gradient(90deg,#5865f277,#eb459e44),
+    var(--mini-meme-real-memes-matter-gif) center/68px no-repeat;
+  opacity:.58;
+}
+body[data-theme="meme-machine"] .mini-copy{
+  position:relative;
+  isolation:isolate;
+}
+body[data-theme="meme-machine"] .mini-copy::after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  right:-18px;
+  bottom:-8px;
+  width:88px;
+  height:52px;
+  border-radius:9px;
+  background:
+    linear-gradient(180deg,#11121490,#11121440),
+    var(--mini-meme-real-ominous-gif) center/cover no-repeat;
+  opacity:.48;
+  transform:rotate(4deg);
+}
+body[data-theme="meme-machine"] .mini-copy::before{
+  content:"NO SKIPS / ONLY LORE";
+  position:absolute;
+  z-index:-1;
+  right:-28px;
+  top:-28px;
+  width:108px;
+  height:60px;
+  display:flex;
+  align-items:flex-end;
+  padding:5px;
+  border-radius:8px;
+  background:
+    linear-gradient(180deg,#11121405 0 38%,#111214e8 78%),
+    var(--mini-meme-template-battery) center/cover no-repeat;
+  color:#fee75c;
+  font:900 8px "Meme Grotesk",Arial,sans-serif;
+  line-height:1;
+  text-shadow:0 1px 0 #000;
+  transform:rotate(-5deg);
+  opacity:.5;
+}
+body[data-theme="meme-machine"].playing .mini-controls button::before,
+body[data-theme="meme-machine"].playing .mini-copy::before,
+body[data-theme="meme-machine"].playing .mini-copy::after,
+body[data-theme="meme-machine"].playing .mini-glow{
+  animation:mini-meme-control-leak 2.4s steps(2,end) infinite;
+}
+@keyframes mini-meme-control-leak{50%{filter:hue-rotate(20deg) saturate(1.35);opacity:.72}}
+@media(prefers-reduced-motion:reduce){
+  body[data-theme="meme-machine"].playing .mini-controls button::before,
+  body[data-theme="meme-machine"].playing .mini-copy::before,
+  body[data-theme="meme-machine"].playing .mini-copy::after,
+  body[data-theme="meme-machine"].playing .mini-glow{animation:none}
+}

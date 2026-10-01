@@ -1,0 +1,13 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.obsidian-glass",
+  "name": "Obsidian Glass",
+  "author": "Pixelody",
+  "description": "A premium default theme with black glass panels, rounded mobile-like controls, large glossy artwork, and soft prism/x-ray audio light.",
+  "palette": { "primary": "#f7f7f2", "secondary": "#9fdcff", "base": "#020306" },
+  "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
+  "hud": { "layout": "cinematic", "controls": "minimal", "corners": "soft" },
+  "typography": { "profile": "display", "font": "../assets/themes/cosmic-cinema/SpaceGrotesk-Variable.ttf" },
+  "motion": { "profile": "drift", "intensity": "calm" }
+}

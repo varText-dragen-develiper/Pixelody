@@ -1,0 +1,29 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.vesperfold",
+  "name": "Vesperfold",
+  "author": "Pixelody",
+  "description": "C3 vertical slice: an irregular collection mass becomes shared track strata; chromatic focus remains distinct from an amber host-confirmed suture across main and mini.",
+  "palette": { "builtIn": "vesperfold" },
+  "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
+  "hud": { "layout": "cinematic", "controls": "technical", "corners": "square" },
+  "typography": { "profile": "display" },
+  "motion": { "profile": "signal", "intensity": "calm" },
+  "tokens": {
+    "accentPrimary": "#ff3c92",
+    "accentSecondary": "#a846ff",
+    "accentState": "#ffc84b",
+    "heroTone": "#19171d",
+    "canvas": "#0b0a0d",
+    "elevation1": "#f0dfb0",
+    "elevation2": "#19171d",
+    "elevation3": "#08070a",
+    "divider": "#817881",
+    "frame": "#f7f0dd",
+    "foreground": "#f7f0dd",
+    "foregroundMuted": "#aaa2aa"
+  },
+  "navigation": { "trackBrowser": "shared-strata" },
+  "information": { "profile": "vesperfold" }
+}

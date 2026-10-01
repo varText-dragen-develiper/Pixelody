@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420">
+  <defs>
+    <linearGradient id="wash" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8cecff" stop-opacity=".14"/>
+      <stop offset=".46" stop-color="#d5c7ff" stop-opacity=".08"/>
+      <stop offset="1" stop-color="#ff9bd8" stop-opacity=".12"/>
+    </linearGradient>
+    <filter id="soft">
+      <feGaussianBlur stdDeviation="1.2"/>
+    </filter>
+  </defs>
+  <rect width="720" height="420" fill="none"/>
+  <g fill="none" stroke-linecap="round" filter="url(#soft)">
+    <path d="M-40 84C86 18 156 166 278 96S468 42 760 118" stroke="#8cecff" stroke-opacity=".34" stroke-width="2"/>
+    <path d="M-50 152C88 86 184 230 330 158s256-76 448 2" stroke="#fff" stroke-opacity=".20" stroke-width="1.4"/>
+    <path d="M-30 240c118-88 206 62 348-6s238-34 454 72" stroke="#d5c7ff" stroke-opacity=".28" stroke-width="1.8"/>
+    <path d="M-60 318c136-78 236 48 356-12s244-62 492 10" stroke="#ff9bd8" stroke-opacity=".22" stroke-width="1.5"/>
+  </g>
+  <g fill="url(#wash)" opacity=".85">
+    <path d="M74 30l122 28-74 104-86-36z"/>
+    <path d="M414 36l204 44-144 112-98-76z"/>
+    <path d="M208 238l126 40-92 88-96-54z"/>
+    <path d="M520 242l160 26-84 92-126-48z"/>
+  </g>
+  <g fill="#fff" opacity=".26">
+    <circle cx="116" cy="98" r="1.4"/>
+    <circle cx="288" cy="64" r="1"/>
+    <circle cx="456" cy="138" r="1.2"/>
+    <circle cx="612" cy="210" r="1.1"/>
+    <circle cx="364" cy="332" r="1.3"/>
+  </g>
+</svg>

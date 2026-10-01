@@ -1,0 +1,185 @@
+PIXELODY PRODUCT ROADMAP
+========================
+
+Status legend
+-------------
+[x] Implemented and verified
+[~] Practical substitute implemented or partially complete
+[ ] Not implemented yet
+[N] Requires a future native Windows audio engine
+
+CORE PLAYBACK
+-------------
+[x] Local FLAC, WAV, MP3, AAC/M4A, OGG and Opus playback where Chromium supports the codec
+[~] AIFF and ALAC playback where the installed Chromium decoder supports them
+[x] Honest source format, bit depth and sample-rate reporting for FLAC and WAV
+[x] Per-track and per-output three-band EQ
+[x] Audio output switching
+[x] Persistent volume, track tuning and output profiles
+[x] Embedded metadata and album-art reading
+[x] Gapless playback
+[x] Configurable crossfade
+[x] ReplayGain tag application with transparent peak limiting
+[x] Editable queue, shuffle and repeat modes
+[x] Restore previous queue, track, volume and playback position
+[x] Windows media-key and lock-screen metadata integration
+[N] WASAPI exclusive-mode bit-perfect playback
+[N] Native decoder fallback for every advertised codec
+
+LIBRARY AND PLAYLISTS
+---------------------
+[x] Multi-file import, drag-and-drop and recursive folder import
+[x] Direct Downloads scan that avoids slow Explorer thumbnail loading
+[x] Persistent playlists
+[x] Custom playlist backgrounds
+[x] Playlist create, rename and delete actions
+[x] Search and lossless/hi-res filters
+[x] Duplicate-path prevention
+[x] Favorites
+[x] Playback history and recently played
+[x] Recently added and most-played sorting
+[x] Sort by title, artist, album, quality, date added and play count
+[x] Expanded editable local metadata overrides for title, artist, album, album artist, genre, year, track/disc number, composer, BPM, ISRC, label, copyright, notes and custom artwork
+[~] Missing-file detection is complete; guided repair remains
+[x] Automatic folder watching
+[~] Smart Favorites, Recently Played, cleanup and rediscovery collections exist; rule builder remains
+[ ] Playlist folders
+[ ] Drag tracks between playlists and queue positions
+[ ] Multi-select and batch editing
+[~] Duplicate-content detection has local title/artist/duration smart collection; deeper file fingerprinting remains
+[~] Embedded track artwork is complete; user-selected track artwork remains
+[ ] Lyrics display
+[~] External artist/album/track discovery link-outs exist for MusicBrainz, Bandcamp and Discogs with prominent editor callouts, cleanup badges, wanted-list buy/info actions and import handoff; hosted/catalog discovery remains future work
+[~] Library Concierge guided first-run/migration flow with scan summary and match report; drawer, playlist reports and local import reports exist
+[~] CSV/JSON/m3u playlist metadata import with local track matching; basic file import, relative M3U paths and confidence matching exist
+[~] Missing From Library and Wanted Music workflows for unmatched imported tracks; wanted records, report surface and import-time resolution exist
+[ ] MusicBrainz-backed metadata repair with preview, confidence scoring and rate limiting
+[~] Local rediscovery smart collections exist for cleanup, duplicates, unplayed tracks, forgotten favorites, hi-res deep cuts and missing files; richer shelves remain
+[x] Daily Curated: local-first dated Rediscovery mix with stable same-day generation, Flow planning adapter, explanation receipt, and Save as Playlist
+[ ] Optional provider metadata import after product/legal review, without provider audio scraping
+
+SOUND AND SYSTEM MECHANICS
+--------------------------
+[x] Track EQ layered over output-system EQ
+[x] Output-specific correction profiles
+[x] Small-speaker, warm-stereo and bright-system presets
+[x] EQ bypass through zeroed profiles
+[x] Safe combined track/system EQ gain staging with automatic headroom diagnostics
+[x] Guided output-system calibration wizard with source, audition, replay, and saved-profile provenance
+[x] Simple/Advanced EQ mode architecture with gated parametric frequency/Q controls for per-track and per-output profiles
+[x] ReplayGain compensation and peak limiting
+[x] Left/right balance and mono mode
+[x] Channel and speaker test tones
+[x] Instant A/B bypass between tuned and untouched audio
+[x] Importable/exportable tuning profiles
+[x] Browser-safe DAC/device diagnostics and output profile library
+[x] Visible gain-risk diagnostics based on EQ headroom and combined gain staging
+[x] Headphone and DAC profile library
+[~] Guarded two-output browser prototype with per-secondary EQ, trim, delay, polarity, mute/solo, drift correction and diagnostics; physical validation, member-isolated calibration and a release-quality native-mixer decision remain
+[~] System Tuning Mode status/data foundation, native capability probe, EQ payload handoff, and non-audible native EQ dry-run processing exist; signed Windows-wide external-app EQ render route, feedback prevention, bypass reporting and clean off switch remain
+[~] Native Windows/WASAPI helper bridge, diagnostics source and dev loopback prototype with EQ payload echo and captured-sample EQ analysis exist; signed bundle and hardware validation remain
+[~] Microphone-assisted acoustic speaker/latency calibration; physical-device validation and deeper room EQ remain
+[~] Reliable latency profiler for software/output and microphone acoustic paths; physical-device validation remains
+
+NETWORKING AND DEVICE HOSTING
+-----------------------------
+[x] Localhost-only personal server core that starts only when requested
+[x] Validated Electron IPC controls for server start, stop, status, snapshot update and self-test
+[x] Sanitized library snapshot API that omits desktop file paths and uses public hashed track IDs
+[x] Token-protected track, artwork and library routes
+[x] Seekable HTTP range streaming for local media files
+[x] Dedicated J.A.M. connection drawer with host, private-network, invite, join-detail, diagnostics and trusted-device controls
+[x] Repeatable server audit for auth, snapshot sanitation and range streaming
+[x] Persistent paired-device records and revocable tokens
+[x] Owner-editable trusted-device permissions, explicit controller pairing, durable mutation errors, batched last-seen writes, structured auth states, and bounded LAN abuse controls
+[x] Short-code pairing API, standards-compliant desktop QR rendering, and Android QR scanning/parsing
+[x] Explicit LAN/private-network hosting with structured adapter reachability and Windows Firewall guidance
+[x] Server audit covers default-off state, empty-library self-test, stopped-socket closure and stale connection invalidation
+[x] Stable persisted desktop host identity, per-run owner credential rotation, stopped-session pairing invalidation, bounded active-client shutdown, and honest capability flags
+[~] Polling live-state route exists for playback, queue, library events and universal networkSession metadata; WebSocket push remains
+[x] Stable domain revisions, projected playback timing anchors, conditional unchanged polling, and metadata-plus-paged Android library loading
+[x] Foreground-aware Android polling cancellation/resume, bounded reconnect backoff, and structured credential/network/host connection states
+[x] Remote playback and queue command routes with per-device permissions and renderer dispatch
+[x] Paged and filtered public track browsing endpoint for large-library clients
+[x] Android client proof of concept against the Windows host API; pairing, QR scanning, paged/live sync, Keystore-protected credentials, exact-origin authenticated Media3/artwork requests, background MediaSession wiring, debug APK build, install and real-device LAN/media verification complete
+[ ] Single-host LAN J.A.M. V1
+[~] Federated J.A.M. source-device queue model has fixtures and Android fields; server queue responses and stream handoff remain
+[x] Android real-device LAN streaming verification with seek, background playback, lock-screen controls, host shutdown, token revocation, missing media and Wi-Fi reconnect
+[ ] Remote-access identity, broker, relay and end-to-end encryption contracts
+[ ] WebSocket push for live/networkSession updates
+
+VISUAL SYSTEM
+-------------
+[x] Contemporary Geist Pixel display typography
+[x] MIT-licensed pixel interface icons
+[x] Pixel-cut borders, artwork frames and interaction highlights
+[x] Eight palettes and a three-index custom color mixer
+[x] Creator-facing theme schema, template and four starter directions
+[x] First alternate HUD theme: Orbital Retro-Future
+[x] Third HUD theme: Bulkhead Terminal, an unofficial original homage
+[x] Fourth HUD theme: Graphite Loadout, an original graphic-future direction
+[x] Cartridge Quest original 8/16-bit console theme with cartridge library, RPG track menu, game-stat audio panels and handheld mini player
+[x] Cartridge Quest layered console-material pass with graphite housings, recessed gray bays and pale raised control panels
+[x] Cartridge Quest listening XP, no-skip run timer and high-score display in main and mini players
+[x] Expanded Poster Collection including Obsession, Crystal Audio, Neon Burst, Monument, Analog Dossier, Cosmic Cinema, Frosted Void, Dead Signal, Meme Machine, Poster Pop and Creator Layer
+[x] Poster modes include distinct layout density, type hierarchy, panel geometry, track feedback, motion and mini-player styling
+[x] Streamlined tabbed Appearance drawer with remembered sections, theme search and mood-family filters
+[x] Development theme explorer: Studio as ready to use, Canvas Studio, Singularity by status, restart-based switching, and isolated sessions that leave Studio's appearance and layout untouched
+[x] Graphite Loadout interaction choreography, panel deployment and collision audit
+[x] Graphite Loadout system-control deck with layered large-format EQ controls
+[x] Graphite Loadout acid-tech minimalism brief and neutral-first visual pass
+[x] Minimal, Balanced and Expressive pixel-detail modes
+[x] Calm, Expressive and Off motion modes
+[x] Adaptive playback performance governor, compositor-only signal borders, bounded artwork previews, coalesced progress updates and combined three-filter EQ graph
+[x] Perceived-instant startup shell with staged readiness reveal, chunked large-library row rendering, idle metadata hydration and render diagnostics
+[x] On-demand track-list rows near the viewport with a full-length scroll spacer and in-place refresh on track change
+[x] First-interaction latency guard with input-aware idle task backoff and prewarmed Settings, J.A.M., Queue, Migration, playlist creation and track editor surfaces
+[x] Idle theme asset prewarming and transition-state cleanup for faster theme switching during playback
+[x] Theme-aware startup loading animation and dynamic old-to-new theme transition wash
+[x] Theme-specific loading-screen exit animation foundation
+[x] Post-loading theme arrival settle animation with stronger pre-reveal asset preparation
+[x] Reduced-motion accessibility support
+[x] Animated playback dots, hover feedback, click compression and view transitions
+[x] Synthesized interaction sound foundation for hover, press, section, swipe and slider feedback
+[x] Licensed theme-specific interaction sound accents with CC0/CC-BY attribution records
+[x] Playback-driven directional signal-orbit glow on selected borders
+[x] Independently toggleable glow, dots, hover, panel and artwork animations
+[x] Collapsible and drag-resizable library and details panels with automatic center expansion
+[x] Collapsible settings groups and inspector cards
+[x] Pixel-native search iconography
+[x] Direct local track editor for title, artist, album and custom artwork
+[x] Profile identity replaces the former angled library glyph
+[x] Symmetrical 24x24 pixel-vector transport system shared by main and mini players
+[x] Mirrored stepped-corner geometry across pixel-cut surfaces
+[x] History-aware X, Escape, and native window-close navigation
+[x] MIT Pixelarticons replacements for search, close, settings, user, edit, queue, info, back, and favorite controls
+[x] User-selected playlist backgrounds
+[x] Expandable in-hero now-playing metadata and artwork panel
+[x] Always-on-top synchronized mini-player with playback controls
+[x] User-selectable profile image cached locally
+[ ] Pixel waveform and spectrum visualizers
+[ ] Automatic palette extraction from playlist artwork
+[~] Windows-local declarative theme import/apply/remove is implemented; bounded assets, preview/revert, creator export, signatures, and community delivery remain planned
+[ ] Scalable text and high-contrast accessibility modes
+
+RELIABILITY AND PROFESSIONAL TOOLS
+----------------------------------
+[x] Local-only library and settings storage
+[x] Decoder/source/engine status display
+[x] Development runtime cache cleanup and diagnostics clean-restart control
+[x] Licensed third-party assets stored with their license texts
+[~] Atomic, schema-versioned durable state store with fsync, previous-file fallback, quarantine and crash recovery; two development-only keys remain on localStorage
+[~] Manual portable library/settings backup and restore; automatic scheduling remains
+[~] Codec, channel, bitrate, gain and signal-path diagnostics; event log remains
+[ ] Shared/exclusive mode indicator
+[ ] File integrity checks
+[~] Import, metadata, artwork, playback, pause/resume, favorites, queue, shuffle, repeat and restart restoration verified in isolated Electron integration runs; persistent CI suite remains
+
+IMPLEMENTATION ORDER
+--------------------
+1. Metadata, artwork, favorites, history and library resilience.
+2. Queue, shuffle, repeat, gain staging, media keys and session restoration.
+3. Gapless/crossfade playback, ReplayGain and advanced EQ.
+4. Folder watching, smart collections, metadata editing and backup.
+5. Visualizers, theme export and accessibility expansion.
+6. Native WASAPI engine and calibration tools.

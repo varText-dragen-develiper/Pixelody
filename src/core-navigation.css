@@ -1,0 +1,127 @@
+/* Shared Windows navigation and access invariants.
+   Theme files load before this layer so a built-in theme may restyle these
+   product-owned routes, but it may not remove every route to a P0 job. */
+
+.library-compact-toggle{display:none}
+.track-actions-trigger{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.track-actions-trigger>span:first-child{font-weight:900;letter-spacing:.12em}
+.track-actions-trigger:disabled{cursor:not-allowed;opacity:.48}
+.mute-button,.player-systems-button{min-width:34px;min-height:32px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted);background:color-mix(in srgb,var(--surface2) 82%,transparent);border:1px solid color-mix(in srgb,var(--line) 88%,transparent)}
+.mute-button::before{content:none}
+.mute-button.active,.mute-button[aria-pressed="true"]{color:var(--gold2);border-color:color-mix(in srgb,var(--gold) 65%,var(--line));background:color-mix(in srgb,var(--gold) 16%,var(--surface2))}
+.player-systems-button{max-width:138px;gap:7px;padding:0 9px;text-align:left}
+.player-systems-button>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:8px}
+.player-systems-button .status-dot{flex:none;margin:0}
+.context-menu[role="menu"]{z-index:70}
+.context-menu[role="menu"] button:focus-visible{outline:2px solid var(--gold);outline-offset:-2px;background:#36393e}
+
+.settings-intro{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.settings-intro>span{min-width:0}
+.shortcut-help-button{flex:none;min-height:34px;padding:7px 10px;color:var(--text);background:color-mix(in srgb,var(--gold) 12%,var(--surface2));border:1px solid color-mix(in srgb,var(--gold) 42%,var(--line));font-size:9px}
+.shortcuts-overlay{position:fixed;inset:0;z-index:72}
+.shortcuts-backdrop{position:absolute;inset:0;background:#000b;backdrop-filter:blur(4px)}
+.shortcuts-dialog{position:absolute;left:50%;top:50%;width:min(520px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;transform:translate(-50%,-50%);padding:24px;color:#f4efe4;background:color-mix(in srgb,#080b10 88%,var(--surface));border:1px solid color-mix(in srgb,var(--line) 72%,#ffffff);box-shadow:0 24px 70px #000c}
+.shortcuts-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
+.shortcuts-heading p{margin:0 0 6px;color:var(--gold);font:8px var(--pixel-font);letter-spacing:.16em}
+.shortcuts-heading h2{margin:0;font:25px var(--pixel-font)}
+.shortcuts-heading h2{color:#f4efe4}
+.shortcuts-heading button{width:34px;height:34px;color:#f4efe4;background:#ffffff0a}
+.shortcut-list{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:0}
+.shortcut-list>div{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:42px;padding:9px 11px;background:#ffffff08;border:1px solid #ffffff14}
+.shortcut-list dt{color:#f4efe4;font-size:11px}
+.shortcut-list dd{margin:0;color:var(--gold2);font:9px var(--pixel-font);text-align:right}
+.jam-advanced-cabinet{margin-top:14px;border:1px solid color-mix(in srgb,var(--green) 30%,var(--line));background:color-mix(in srgb,var(--surface2) 48%,transparent)}
+.jam-advanced-cabinet>summary{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:54px;padding:12px 14px;cursor:pointer;list-style:none}
+.jam-advanced-cabinet>summary::-webkit-details-marker{display:none}
+.jam-advanced-cabinet>summary span{min-width:0}
+.jam-advanced-cabinet>summary strong,.jam-advanced-cabinet>summary small{display:block}
+.jam-advanced-cabinet>summary strong{font-size:11px}
+.jam-advanced-cabinet>summary small{margin-top:4px;color:var(--muted);font-size:9px;line-height:1.35}
+.jam-advanced-cabinet>summary b{color:var(--green);font-size:18px}
+.jam-advanced-cabinet[open]>summary{border-bottom:1px solid color-mix(in srgb,var(--green) 24%,var(--line))}
+.jam-advanced-cabinet[open]>summary b{transform:rotate(45deg)}
+.jam-advanced-cabinet>:not(summary){margin-inline:12px}
+.jam-advanced-cabinet>:last-child{margin-bottom:12px}
+
+@media(max-width:980px){
+  /* Output remains a one-step P0 route even when the full label cannot fit. */
+  body .top-quality{display:grid!important;right:114px!important;width:42px!important;min-width:42px!important;padding:6px 12px!important;grid-template-columns:10px!important;place-content:center!important}
+  body .top-quality b,body .top-quality small{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important}
+  body .settings-trigger{right:18px!important}
+
+  /* Keep the listening controls together as a product-owned compact dock.
+     Absolute placement removes the dock from theme-specific player grids. */
+  body .player{position:relative;padding-right:300px!important}
+  body .player>.volume{position:absolute!important;z-index:8;right:8px;top:50%;width:284px;min-width:0;height:54px;display:grid!important;grid-template-columns:42px 50px 34px minmax(60px,1fr) 78px!important;align-items:center;gap:5px!important;padding:5px!important;transform:translateY(-50%);overflow:visible;background:color-mix(in srgb,var(--surface) 94%,transparent);border:1px solid color-mix(in srgb,var(--line) 90%,transparent);box-shadow:0 8px 24px #0007;color:var(--text)}
+  body .player>.volume :is(#miniPlayerButton,#queueButton,#muteButton,#playerSystemsButton){display:flex!important;min-width:0!important;min-height:38px!important;height:38px!important;margin:0!important;padding:0 7px!important;align-items:center!important;justify-content:center!important}
+  body .player>.volume #queueButton{gap:3px!important}
+  body .player>.volume .player-control-label,body .player>.volume .quest-output-label,body .player>.volume .quest-output-readout,body .player>.volume #qualityBadge,body .player>.volume .quest-output-status{display:none!important}
+  body .player>.volume .quest-volume-meter{display:grid!important;grid-template-columns:1fr!important;place-items:center!important;min-width:0!important;width:auto!important;margin:0!important;padding:0!important}
+  body .player>.volume .quest-volume-meter input{display:block!important;width:100%!important;min-width:0!important;margin:0!important}
+  body .player>.volume .quest-volume-meter :is(small,b){display:none!important}
+  body .player>.volume #playerSystemsButton{display:grid!important;grid-template-columns:8px minmax(0,1fr)!important;text-align:left!important}
+  body .player>.volume #playerSystemsButton>span:last-child{display:block!important}
+}
+
+@media(max-width:850px){
+  .workspace{grid-template-columns:86px minmax(0,1fr)!important;overflow:hidden!important}
+  .library-compact-toggle{display:flex;align-items:center;justify-content:center;gap:7px;min-height:42px;width:100%;margin-bottom:8px;padding:7px;color:var(--text);background:color-mix(in srgb,var(--gold) 12%,var(--surface2));border:1px solid color-mix(in srgb,var(--gold) 45%,var(--line));font-size:9px}
+  .library-compact-toggle .library-compact-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  body.compact-library-open .library-compact-toggle{justify-content:flex-start;padding-inline:12px}
+  body.compact-library-open .library-compact-toggle .library-compact-label{position:static;width:auto;height:auto;overflow:visible;clip:auto;white-space:normal}
+  body.compact-library-open .library-compact-toggle::after{content:"Close";margin-left:auto;color:var(--muted);font-size:8px}
+  /* Themes may turn the rail into a horizontal presentation at their own
+     breakpoints. At the supported compact width the shared rail owns the
+     closed geometry so Library is a stable, narrow route instead of a blank
+     theme strip. */
+  body:not(.compact-library-open):not(.library-collapsed) .library-rail{position:relative!important;inset:auto!important;grid-column:1!important;grid-row:1!important;width:86px!important;height:auto!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;padding:8px!important;overflow:hidden!important;background:color-mix(in srgb,#080b10 88%,var(--surface))!important;border:1px solid color-mix(in srgb,var(--line) 82%,#ffffff)!important;clip-path:none!important;transform:none!important}
+  body:not(.compact-library-open) .library-rail .library-compact-toggle{flex:none!important;width:100%!important;height:44px!important;margin:0 0 8px!important}
+  body:not(.compact-library-open) .library-rail .playlist-list{order:initial!important;display:block!important;flex:1 1 auto!important;width:100%!important;padding:0!important;overflow-x:hidden!important;overflow-y:auto!important}
+  body:not(.compact-library-open) .library-rail .playlist-item{display:grid!important;grid-template-columns:48px!important;justify-content:center!important;flex:none!important;width:100%!important;height:auto!important;min-height:58px!important;margin:0 0 5px!important;padding:5px!important}
+  body:not(.compact-library-open) .library-rail .rail-import{display:none!important}
+  body:not(.compact-library-open) .main-stage{grid-column:2!important;grid-row:1!important;width:auto!important;min-width:0!important;max-width:100%!important;margin-top:0!important;overflow-x:clip!important}
+  body.compact-library-open .main-stage{grid-column:1/-1!important;grid-row:1!important;width:auto!important;min-width:0!important;max-width:100%!important;margin-top:0!important;overflow-x:clip!important}
+
+  body.compact-library-open .library-rail{position:absolute!important;z-index:64!important;left:8px!important;right:auto!important;top:0!important;bottom:0!important;width:min(330px,calc(100vw - 28px))!important;height:auto!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;padding:14px 12px 12px!important;overflow:hidden!important;color:#f4efe4!important;background:color-mix(in srgb,#080b10 88%,var(--surface))!important;border:1px solid color-mix(in srgb,var(--line) 72%,#ffffff)!important;box-shadow:18px 0 54px #000b!important;clip-path:none!important;transform:none!important}
+  body.compact-library-open .library-rail .rail-heading{display:flex!important;padding-bottom:12px!important}
+  body.compact-library-open .library-rail :is(.rail-heading strong,.create-button,.library-filters,.rail-tools,.playlist-copy,.playlist-dots,.rail-import){display:flex!important;color:inherit!important}
+  body.compact-library-open .library-rail :is(.rail-heading,.library-filters,.rail-tools,.playlist-list,.rail-import){order:initial!important;flex:none!important;width:100%!important}
+  body.compact-library-open .library-rail .rail-heading{align-items:center!important;background:transparent!important;border:0!important;border-bottom:1px solid #ffffff22!important}
+  body.compact-library-open .library-rail .rail-heading>div{display:flex!important;align-items:center!important;gap:8px!important}
+  body.compact-library-open .library-rail .library-profile{display:grid!important}
+  body.compact-library-open .library-rail .create-button{min-height:34px!important;padding:7px 10px!important;background:#ffffff0e!important;border:1px solid #ffffff33!important}
+  body.compact-library-open .library-rail .library-filters{flex-wrap:wrap!important;gap:5px!important;padding:10px 0!important;background:transparent!important;border:0!important}
+  body.compact-library-open .library-rail .library-filters button{flex:1 1 64px!important;min-height:34px!important;padding:7px!important;color:#f4efe4!important;background:#ffffff0a!important;border:1px solid #ffffff2d!important}
+  body.compact-library-open .library-rail .library-filters button.active{color:#17130b!important;background:var(--gold)!important;border-color:var(--gold)!important}
+  body.compact-library-open .library-rail .rail-tools{justify-content:space-between!important;padding:6px 3px 9px!important;color:#bbb5aa!important;background:transparent!important;border:0!important}
+  body.compact-library-open .library-rail .playlist-list{display:block!important;flex:1 1 auto!important;padding:0!important;overflow-x:hidden!important;overflow-y:auto!important}
+  body.compact-library-open .library-rail .playlist-item{display:grid!important;grid-template-columns:48px minmax(0,1fr) 20px!important;justify-content:stretch!important;align-items:center!important;flex:none!important;width:100%!important;height:auto!important;min-height:62px!important;margin:0 0 5px!important;padding:6px!important;color:#f4efe4!important;background:#ffffff07!important;border:1px solid #ffffff12!important}
+  body.compact-library-open .library-rail .playlist-item:is(:hover,:focus-visible,.active){background:#ffffff14!important;border-color:color-mix(in srgb,var(--gold) 60%,#ffffff)!important}
+  body.compact-library-open .library-rail .playlist-thumb{display:grid!important;width:48px!important;height:48px!important}
+  body.compact-library-open .library-rail .playlist-copy{display:block!important;min-width:0!important;color:#f4efe4!important}
+  body.compact-library-open .library-rail .playlist-copy :is(strong,span){display:block!important;color:inherit!important;opacity:1!important}
+  body.compact-library-open .library-rail .playlist-copy span{margin-top:4px!important;color:#bbb5aa!important}
+  body.compact-library-open .library-rail .playlist-dots{display:flex!important;align-items:center!important;justify-content:center!important;opacity:1!important;color:#bbb5aa!important}
+  body.compact-library-open .library-rail .rail-import{display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px!important;padding-top:9px!important;background:transparent!important;border-top:1px solid #ffffff22!important}
+  body.compact-library-open .library-rail .rail-import button{display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;min-height:38px!important;padding:7px 5px!important;color:#f4efe4!important;background:#ffffff0a!important;border:1px solid #ffffff2d!important}
+  body.compact-library-open .library-rail .rail-import button:first-child{color:#17130b!important;background:var(--gold)!important;border-color:var(--gold)!important}
+  /* 800px is a supported window width. Collapse identity-bearing footer
+     readouts before allowing playback or output jobs to leave the viewport. */
+  body .player{display:grid!important;grid-template-columns:minmax(150px,190px) minmax(250px,1fr)!important;grid-template-rows:1fr!important;grid-template-areas:"identity playback"!important;padding-right:286px!important}
+  body .player>.playing-info{grid-area:identity!important;min-width:0!important}
+  body .player>.transport{grid-area:playback!important;min-width:0!important}
+  body .player>:is(.harmonic-player-hud,.ghost-evidence-hud,.violet-player-hud,.quest-hotbar-hud,.counterform-player-hud,.aftergarden-player-confirmed,.vesperfold-player-receipt){display:none!important}
+  body .player>.volume{right:5px;width:276px}
+  .collection-actions{gap:8px}
+  .track-actions-trigger>span:last-child{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .track-actions-trigger{width:36px;justify-content:center;padding:0}
+  .shortcut-list{grid-template-columns:1fr}
+}
+
+@media(max-width:760px){
+  body .player{padding-right:258px!important}
+  body .player>.volume{width:250px;grid-template-columns:38px 44px 32px minmax(48px,1fr) 70px!important}
+}
+
+@media(prefers-reduced-motion:reduce){.shortcuts-dialog,.library-rail{animation:none!important;transition:none!important}}
+body[data-motion="off"] :is(.shortcuts-dialog,.library-rail){animation:none!important;transition:none!important}

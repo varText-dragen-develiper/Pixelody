@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+  <g fill="none" stroke="#e8e1d6" stroke-linecap="square">
+    <path d="M420 380L799 112M420 380l237 420M420 380L63 800M420 380L0 201M420 380L310 0" stroke-width="2" opacity=".48"/>
+    <path d="M420 380l67-118 74-18 33-86M420 380l-104 58-48 108-116 41M420 380l-87-91-102-23-49-72M420 380l85 80 31 109 80 67M420 380l-23-130 31-87-21-90" stroke-width="1.4" opacity=".35"/>
+    <circle cx="420" cy="380" r="9" stroke="#c31622" stroke-width="3" opacity=".7"/>
+  </g>
+</svg>

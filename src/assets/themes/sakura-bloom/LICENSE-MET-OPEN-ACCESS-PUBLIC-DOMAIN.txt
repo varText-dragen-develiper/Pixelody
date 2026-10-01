@@ -1,0 +1,23 @@
+Sakura Bloom: The Met Open Access public-domain image credits
+
+The following source images are from The Metropolitan Museum of Art collection and are identified by The Met as public domain Open Access image resources.
+
+1. Cherry Blossom Viewing at Itsukushima and Yoshino
+   Source: https://www.metmuseum.org/art/collection/search/53429
+   Bundled source: source/met-cherry-blossom-viewing-itsukushima-yoshino-public-domain.jpg
+   Derived files:
+   - derived/sakura-hero-met-hanami-public-domain.webp
+   - derived/sakura-hero-met-hanami-public-domain-small.webp
+
+2. Robe (Kosode) with Cherry Blossoms and Cypress Fence
+   Source: https://www.metmuseum.org/art/collection/search/53610
+   Bundled source: source/met-kosode-cherry-blossoms-cypress-fence-public-domain.jpg
+   Derived files:
+   - derived/sakura-kosode-panel-texture-public-domain.webp
+   - derived/sakura-kosode-panel-texture-thumb-public-domain.webp
+   - derived/sakura-lacquer-textile-wash-public-domain.webp
+
+The Met image resources policy:
+https://www.metmuseum.org/policies/image-resources
+
+Pixelody includes credit voluntarily. No endorsement by The Metropolitan Museum of Art is implied.

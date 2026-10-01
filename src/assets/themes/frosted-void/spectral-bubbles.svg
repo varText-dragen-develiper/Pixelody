@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 520" fill="none">
+  <defs>
+    <radialGradient id="filmA" cx="0" cy="0" r="1" gradientTransform="translate(168 126) rotate(48) scale(294)">
+      <stop stop-color="#fff" stop-opacity=".42"/><stop offset=".28" stop-color="#8cecff" stop-opacity=".14"/>
+      <stop offset=".58" stop-color="#ff9bd8" stop-opacity=".12"/><stop offset=".82" stop-color="#ffd58a" stop-opacity=".16"/><stop offset="1" stop-color="#fff" stop-opacity=".04"/>
+    </radialGradient>
+    <radialGradient id="filmB" cx="0" cy="0" r="1" gradientTransform="translate(396 130) rotate(124) scale(250)">
+      <stop stop-color="#fff4bd" stop-opacity=".35"/><stop offset=".3" stop-color="#ff83c5" stop-opacity=".14"/>
+      <stop offset=".62" stop-color="#858cff" stop-opacity=".13"/><stop offset="1" stop-color="#7af4ff" stop-opacity=".08"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="56" y1="74" x2="502" y2="444" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff" stop-opacity=".9"/><stop offset=".19" stop-color="#a9ecff" stop-opacity=".62"/>
+      <stop offset=".42" stop-color="#d9a8ff" stop-opacity=".58"/><stop offset=".66" stop-color="#ffb2c8" stop-opacity=".7"/>
+      <stop offset=".84" stop-color="#ffe0a3" stop-opacity=".66"/><stop offset="1" stop-color="#fff" stop-opacity=".88"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7"/></filter>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.4"/></filter>
+  </defs>
+  <g opacity=".42" filter="url(#glow)">
+    <circle cx="177" cy="282" r="142" stroke="#9beaff" stroke-width="7"/>
+    <circle cx="370" cy="172" r="126" stroke="#ffd890" stroke-width="7"/>
+    <circle cx="353" cy="344" r="134" stroke="#ffa4df" stroke-width="7"/>
+  </g>
+  <circle cx="177" cy="282" r="142" fill="url(#filmA)" stroke="url(#rim)" stroke-width="3"/>
+  <circle cx="370" cy="172" r="126" fill="url(#filmB)" stroke="url(#rim)" stroke-width="3"/>
+  <circle cx="353" cy="344" r="134" fill="url(#filmA)" stroke="url(#rim)" stroke-width="3"/>
+  <circle cx="290" cy="260" r="151" fill="url(#filmB)" stroke="url(#rim)" stroke-width="4"/>
+  <g fill="#fff" filter="url(#soft)">
+    <ellipse cx="221" cy="169" rx="24" ry="9" transform="rotate(-34 221 169)" opacity=".78"/>
+    <ellipse cx="421" cy="95" rx="19" ry="7" transform="rotate(22 421 95)" opacity=".72"/>
+    <ellipse cx="101" cy="242" rx="14" ry="5" transform="rotate(-56 101 242)" opacity=".62"/>
+    <circle cx="405" cy="300" r="5" opacity=".72"/><circle cx="245" cy="365" r="4" opacity=".62"/>
+  </g>
+  <path d="M138 392c77 45 189 52 286-4" stroke="#fff" stroke-opacity=".18" stroke-width="2"/>
+</svg>

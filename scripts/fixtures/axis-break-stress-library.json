@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "fixtureId": "axis-break-stress-v1",
+  "evidenceClass": "injected fixture only",
+  "collection": {
+    "id": "axis-break-hostile-collection",
+    "title": "Morning Signals / 夜の回廊 — A Complete Local Collection Identity That Must Never Be Sliced Away",
+    "description": "Arbitrary local files for containment, contrast, state, and recovery checks.",
+    "trackCount": 8,
+    "privacy": "private / local files"
+  },
+  "states": {
+    "selectedTrackId": "ab-track-02",
+    "currentTrackId": "ab-track-03",
+    "confirmedPlayingTrackId": "ab-track-03",
+    "pausedCurrentTrackId": "ab-track-03",
+    "focusedTrackId": "ab-track-04"
+  },
+  "tracks": [
+    { "id": "ab-track-01", "title": "Aperture Weather", "artist": "North Window", "format": "FLAC", "quality": "24 / 96", "duration": "05:42", "artRole": "bright" },
+    { "id": "ab-track-02", "title": "Long Title — 測定のための完全な文字列 / Résistance Across the Quiet Field", "artist": "Literal Recovery Ensemble", "format": "ALAC", "quality": "24 / 48", "duration": "11:08", "artRole": "dark" },
+    { "id": "ab-track-03", "title": "Glass Transit", "artist": "Contour Signal", "format": "FLAC", "quality": "24 / 192", "duration": "03:57", "artRole": "near-black" },
+    { "id": "ab-track-04", "title": "No Artwork / Neutral Field", "artist": "Unknown Local Artist", "format": "WAV", "quality": "16 / 44.1", "duration": "00:49", "artRole": "missing" },
+    { "id": "ab-track-05", "title": "Paper Voltage", "artist": "High Key Assembly", "format": "AIFF", "quality": "24 / 96", "duration": "07:13", "artRole": "high-key" },
+    { "id": "ab-track-06", "title": "Middle Gray Is Still Content", "artist": "Neutral Study", "format": "MP3", "quality": "320K", "duration": "04:20", "artRole": "neutral" },
+    { "id": "ab-track-07", "title": "Hard Graphic Collision", "artist": "Edge Condition", "format": "FLAC", "quality": "24 / 88.2", "duration": "09:31", "artRole": "graphic" },
+    { "id": "ab-track-08", "title": "Low Contrast, Complete Identity", "artist": "Quiet Failure Test", "format": "AAC", "quality": "256K", "duration": "02:16", "artRole": "low-contrast" }
+  ],
+  "systemStates": {
+    "empty": "No local tracks in this collection.",
+    "loading": "Loading local metadata…",
+    "error": "Could not read this local file."
+  },
+  "viewports": [
+    { "id": "wide", "width": 1600, "height": 1000 },
+    { "id": "intermediate", "width": 1100, "height": 800 },
+    { "id": "narrow", "width": 720, "height": 900 },
+    { "id": "mini", "width": 430, "height": 150 }
+  ],
+  "motionModes": ["expressive", "off", "reduced-motion", "performance-conserve"]
+}

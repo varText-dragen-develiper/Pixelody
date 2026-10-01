@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 460" role="img" aria-label="Original catalog card frame">
+  <rect width="720" height="460" fill="#eee8db"/>
+  <g fill="none" stroke="#1d1d1b" stroke-opacity=".62">
+    <rect x="34" y="34" width="652" height="392" stroke-width="2"/>
+    <path d="M34 98h652M34 154h652M34 210h652M34 266h652M34 322h652M34 378h652" stroke-dasharray="6 7"/>
+    <path d="M168 34v392M472 34v392" stroke-width="1.5"/>
+  </g>
+  <g fill="#bf5726">
+    <rect x="34" y="34" width="134" height="64"/>
+    <rect x="586" y="378" width="100" height="48"/>
+  </g>
+  <g fill="#1d1d1b" font-family="Consolas, 'Courier New', monospace" font-weight="700">
+    <text x="52" y="74" font-size="22" fill="#eee8db" letter-spacing="3">PX</text>
+    <text x="192" y="74" font-size="18" letter-spacing="3">LOCAL AUDIO ARCHIVE</text>
+    <text x="54" y="132" font-size="12" letter-spacing="4" opacity=".72">FILE / SOURCE / FORMAT / SIGNAL</text>
+    <text x="54" y="188" font-size="12" letter-spacing="4" opacity=".42">CATALOG ENTRY</text>
+    <text x="54" y="244" font-size="12" letter-spacing="4" opacity=".42">PLAYBACK TRACE</text>
+    <text x="54" y="300" font-size="12" letter-spacing="4" opacity=".42">PERSONAL LIBRARY</text>
+    <text x="602" y="408" font-size="13" fill="#eee8db" letter-spacing="3">STAMP</text>
+  </g>
+  <g opacity=".24">
+    <circle cx="630" cy="72" r="30" fill="none" stroke="#1d1d1b" stroke-width="2"/>
+    <circle cx="630" cy="72" r="21" fill="none" stroke="#1d1d1b" stroke-width="1"/>
+    <path d="M610 72h40M630 52v40" stroke="#1d1d1b" stroke-width="1"/>
+  </g>
+</svg>

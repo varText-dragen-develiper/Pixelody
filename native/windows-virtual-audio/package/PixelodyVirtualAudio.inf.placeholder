@@ -1,0 +1,7 @@
+NOT AN INF FILE
+
+Future package identity only: PixelodyVirtualAudio.inf
+Expected driver binary name only: PixelodyVirtualAudio.sys
+
+This placeholder has no INF sections, no hardware IDs, no service entry, no
+catalog reference, and no install directives. It cannot be staged or installed.

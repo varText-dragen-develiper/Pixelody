@@ -1,0 +1,42 @@
+/* Pixelody Foreground mini-player companion. Built on mini-player.css's
+   --mini-* token baseline, following mini-cut-sheet.css as the pattern:
+   token declarations on the body[data-theme] rule, plus a small number of
+   bespoke selectors for motifs the tokens do not express.
+
+   The mini window is a deliberate reduction of the theme's thesis rather
+   than a shrunken copy of the canvas. When Pixelody is this small there is
+   only ever one thing in the foreground -- the current track -- so the art
+   and title carry the full accent and everything else recedes to the same
+   margin tone the main window uses. Per THEME_SYSTEM.md, the transport row
+   is recolored with a scoped selector rather than --mini-btn-color, so the
+   window-action buttons keep their default treatment. */
+body[data-theme="foreground"]{
+  --mini-cut:none;
+  --mini-shell-bg:linear-gradient(150deg,#12151c,#0a0c11 68%);
+  --mini-shell-border:1px solid #2a2f3a;
+  --mini-shell-radius:10px;
+  --mini-shell-shadow:0 16px 38px #01020585;
+  --mini-art-border:1px solid #ffb45459;
+  --mini-art-radius:8px;
+  --mini-art-bg:linear-gradient(160deg,#241a10,#0f1116);
+  --mini-art-glyph-color:#ffb454;
+  --mini-copy-eyebrow-color:#ffb454;
+  --mini-copy-eyebrow-font:7px Consolas,"Courier New",monospace;
+  --mini-copy-eyebrow-tracking:.16em;
+  --mini-copy-title-color:#f3f4f7;
+  --mini-copy-meta-color:#9aa1ae;
+  --mini-copy-time-color:#666d7b;
+  --mini-progress-bg:#1e222b;
+  --mini-progress-fill:#ffb454;
+  --mini-progress-radius:2px;
+  --mini-play-border:1px solid #ffb454;
+  --mini-play-bg:#ffb454;
+  --mini-play-color:#08090c;
+  --mini-play-radius:7px;
+}
+body[data-theme="foreground"] .mini-shell{position:relative;overflow:hidden}
+body[data-theme="foreground"] .mini-shell::after{content:none;position:absolute;right:10px;top:6px;font:7px Consolas,"Courier New",monospace;letter-spacing:.18em;color:#3a4150}
+body[data-theme="foreground"] .mini-copy small{text-transform:uppercase}
+body[data-theme="foreground"] .mini-controls button{color:#9aa1ae}
+body[data-theme="foreground"] .mini-controls button:hover{color:#f3f4f7}
+body[data-theme="foreground"] .mini-glow{background:none}

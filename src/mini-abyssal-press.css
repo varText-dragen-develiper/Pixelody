@@ -1,0 +1,21 @@
+body[data-theme="abyssal-press"]{
+  --mini-shell-radius:0;--mini-shell-border:1px solid #f3ead1;--mini-shell-bg:linear-gradient(90deg,#f3ead1 0 32px,#ff2d83 32px 35px,#130b12 35px);--mini-shell-shadow:10px 12px 0 #000b;
+  --mini-art-size:82px;--mini-art-radius:47% 40% 55% 39%;--mini-art-border:2px solid #f3ead1;--mini-art-bg:linear-gradient(145deg,#ffafd0,#ff2d83 48%,#442151 72%,#76e9f2);--mini-art-glyph:#f3ead1;
+  --mini-copy-eyebrow:#ff78ab;--mini-copy-title:#f3ead1;--mini-copy-meta:#b9a8b2;--mini-copy-time:#76e9f2;
+  --mini-progress-height:4px;--mini-progress-track:#442735;--mini-progress-fill:linear-gradient(90deg,#ff2d83,#76e9f2);
+  --mini-btn-radius:0;--mini-btn-border:1px solid #633f50;--mini-btn-bg:#1c0d18;--mini-btn-color:#f3ead1;--mini-btn-hover-bg:#f3ead1;--mini-btn-hover-color:#08060a;
+  --mini-play-size:46px;--mini-play-radius:48% 40% 55% 39%;--mini-play-border:2px solid #f3ead1;--mini-play-bg:linear-gradient(145deg,#ff94bd,#ff2d83 58%,#73143f);--mini-play-color:#08060a;--mini-play-shadow:inset 4px 3px #fff3,4px 5px #000a;
+}
+body[data-theme="abyssal-press"] .mini-shell{padding-left:46px;overflow:hidden}
+body[data-theme="abyssal-press"] .mini-shell::before{content:"SIDE A / LOCAL AUDIO";position:absolute;z-index:4;left:6px;top:12px;bottom:12px;color:#08060a;font:900 7px Consolas,monospace;letter-spacing:.13em;writing-mode:vertical-rl}
+body[data-theme="abyssal-press"] .mini-shell::after{content:"PRESSURE RECORD / PRIVATE SOURCE";position:absolute;z-index:2;right:70px;top:9px;color:#8d7280;font:700 6px Consolas,monospace;letter-spacing:.12em;pointer-events:none}
+body[data-theme="abyssal-press"] .mini-art{position:relative;box-shadow:inset 8px 7px #fff2,inset -11px -9px #16051188,5px 6px #000b}
+body[data-theme="abyssal-press"] .mini-art::after{content:"";position:absolute;inset:13%;border:1px solid #fff5;border-radius:42% 56% 45% 55%;background:#fff1;pointer-events:none}
+body[data-theme="abyssal-press"] .mini-copy{border-left:1px solid #ff2d8377;padding-left:14px}
+body[data-theme="abyssal-press"] .mini-copy strong{font-family:"Arial Black",Arial,sans-serif;letter-spacing:-.045em;text-transform:uppercase}
+body[data-theme="abyssal-press"] .mini-quality{font-family:Consolas,monospace;letter-spacing:.08em;text-transform:uppercase}
+body[data-theme="abyssal-press"].playing .mini-controls .mini-play{border-color:#c7ffff;background:linear-gradient(145deg,#c8ffff,#76e9f2 58%,#207b82);box-shadow:inset 4px 3px #fff4,4px 5px #000a,0 0 15px #76e9f244}
+body[data-theme="abyssal-press"] .window-actions button{color:#8d7280}
+body[data-theme="abyssal-press"] .window-actions button:hover{color:#f3ead1}
+body[data-theme="abyssal-press"][data-performance="conserve"] .mini-shell,body[data-theme="abyssal-press"][data-motion="off"] .mini-shell{transition:none!important;animation:none!important}
+@media(max-width:500px){body[data-theme="abyssal-press"] .mini-shell{padding-left:38px}body[data-theme="abyssal-press"] .mini-shell::before{left:4px}body[data-theme="abyssal-press"] .mini-shell::after{display:none}}

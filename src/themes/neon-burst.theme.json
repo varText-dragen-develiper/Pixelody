@@ -1,0 +1,9 @@
+{
+  "$schema": "./theme.schema.json", "schemaVersion": 1, "id": "pixelody.neon-burst", "name": "Neon Burst", "author": "Pixelody",
+  "description": "Blacklight print-lab energy: dark ink, overprint marks, off-axis phosphor, and kinetic pressure-glow selection states.",
+  "palette": { "primary": "#f1ff8a", "secondary": "#7dd8c2", "base": "#08060d" },
+  "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
+  "hud": { "layout": "arcade", "controls": "ornamental", "corners": "pixel-cut" },
+  "typography": { "profile": "display", "font": null },
+  "motion": { "profile": "mechanical", "intensity": "expressive" }
+}

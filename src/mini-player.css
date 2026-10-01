@@ -1,0 +1,326 @@
+@font-face {
+  font-family: "Geist Pixel Circle";
+  src: url("assets/fonts/GeistPixel-Circle.woff2") format("woff2");
+}
+
+/*
+ * Mini player token baseline
+ * ---------------------------------------------------------------------
+ * Every theme's mini-player stylesheet (mini-<theme>.css) scopes its rules
+ * under body[data-theme="<key>"] and, historically, has had to re-declare
+ * whole property blocks (shell radius+border+background+shadow, art
+ * size+radius+border, button shape, progress bar geometry, etc.) just to
+ * change one or two things, because the baseline below only ever exposed
+ * --mini-accent as a variable. That's the "not modular enough" problem:
+ * a theme author can't nudge one knob without copy-pasting the entire
+ * declaration and every future baseline tweak silently stops reaching
+ * that theme.
+ *
+ * These custom properties are the actual surface area a theme is meant to
+ * flex. Set only the ones a theme needs to change on its
+ * body[data-theme="key"] rule; the rest inherit these defaults. Themes
+ * that need bespoke shapes/motifs beyond what a token expresses (pseudo-
+ * element overlays, gradients, animations) still add their own selectors
+ * as before -- tokens replace duplicated *geometry and color* rules, not
+ * a theme's decorative identity.
+ */
+:root {
+  --mini-accent: #d8b66a;
+
+  /* shell */
+  --mini-shell-columns: clamp(64px, 24vw, 94px) minmax(110px, 1fr) auto;
+  --mini-shell-gap: 12px;
+  --mini-shell-padding: 17px;
+  --mini-shell-radius: 0px;
+  --mini-shell-border: 1px solid color-mix(in srgb, var(--mini-accent) 50%, #333);
+  --mini-shell-bg: #101214;
+  --mini-shell-shadow: inset 3px 3px #ffffff06, inset -3px -3px #0008;
+
+  /* artwork */
+  --mini-art-size: 82px;
+  --mini-art-radius: 0px;
+  --mini-art-border: 1px solid color-mix(in srgb, var(--mini-accent) 55%, transparent);
+  --mini-art-bg: linear-gradient(135deg, color-mix(in srgb, var(--mini-accent) 30%, #17191b), #17191b);
+  --mini-art-shadow: 5px 5px #0008;
+  --mini-art-glyph-font: 31px "Geist Pixel Circle";
+  --mini-art-glyph-color: var(--mini-accent);
+
+  /* copy */
+  --mini-copy-eyebrow-color: #75d6ad;
+  --mini-copy-eyebrow-font: 7px "Geist Pixel Circle";
+  --mini-copy-eyebrow-tracking: .12em;
+  --mini-copy-title-font: 14px "Geist Pixel Circle";
+  --mini-copy-title-color: inherit;
+  --mini-copy-meta-color: #9b9fa5;
+  --mini-copy-meta-size: 9px;
+  --mini-copy-time-color: #777b80;
+  --mini-copy-time-size: 7px;
+
+  /* progress */
+  --mini-progress-height: 3px;
+  --mini-progress-radius: 0px;
+  --mini-progress-bg: #33363a;
+  --mini-progress-fill: var(--mini-accent);
+  --mini-progress-fill-shadow: none;
+
+  /* transport controls + window actions */
+  --mini-btn-color: #b9bbc0;
+  --mini-btn-hover-color: var(--mini-accent);
+  --mini-btn-size: 22px;
+  --mini-btn-height: 28px;
+  --mini-btn-radius: 0px;
+  --mini-btn-gap: 4px;
+  --mini-play-size: 34px;
+  --mini-play-radius: 50%;
+  --mini-play-border: 0;
+  --mini-play-bg: #f2efe8;
+  --mini-play-color: #111;
+  --mini-play-shadow: none;
+  --mini-window-btn-size: 23px;
+  --mini-window-btn-height: 22px;
+  --mini-window-btn-font-size: 9px;
+}
+
+* { box-sizing: border-box; }
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 8px;
+  background: #050607;
+  color: #f5f3ef;
+  font-family: "Segoe UI", sans-serif;
+  overflow: hidden;
+}
+
+.mini-shell {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: var(--mini-shell-columns);
+  gap: var(--mini-shell-gap);
+  align-items: center;
+  padding: var(--mini-shell-padding);
+  position: relative;
+  background: var(--mini-shell-bg);
+  border: var(--mini-shell-border);
+  border-radius: var(--mini-shell-radius);
+  box-shadow: var(--mini-shell-shadow);
+  -webkit-app-region: no-drag;
+}
+
+.mini-drag-strip {
+  position: absolute;
+  z-index: 8;
+  top: 0;
+  right: 62px;
+  left: 0;
+  height: 26px;
+  -webkit-app-region: drag;
+}
+
+.mini-resize-grip {
+  position: absolute;
+  z-index: 9;
+  width: 13px;
+  height: 13px;
+  pointer-events: none;
+  opacity: .55;
+}
+
+.mini-resize-grip::before,
+.mini-resize-grip::after {
+  content: "";
+  position: absolute;
+  width: 7px;
+  height: 1px;
+  background: color-mix(in srgb, var(--mini-accent) 62%, #777);
+}
+
+.mini-resize-nw { top: 2px; left: 2px; }
+.mini-resize-ne { top: 2px; right: 2px; transform: rotate(90deg); }
+.mini-resize-sw { bottom: 2px; left: 2px; transform: rotate(-90deg); }
+.mini-resize-se { right: 2px; bottom: 2px; transform: rotate(180deg); }
+.mini-resize-grip::before { top: 3px; left: 1px; }
+.mini-resize-grip::after { top: 7px; left: 1px; width: 4px; }
+
+/* A still wash under the shell, for the themes that paint one. It used to be
+   a band that swept back and forth across the whole player every five
+   seconds in every theme -- the one motion nobody asked for -- and a theme
+   that tinted it (Foreground's was solid amber) made it a stripe sliding over
+   the controls. It no longer moves, and it is clear unless a theme gives it
+   a background of its own. */
+.mini-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Furniture that belongs to one theme each: Cartridge Quest's XP/run/combo
+   readout, Counterform Choir's previous/current/next line, Violet Violent's
+   board and SOURCE / TRANSPORT / OUTPUT bus, Axis Break's break-lines. The
+   markup is shared, so each used to render as raw text in every theme that
+   did not hide it -- which was every theme but Studio and the ones that
+   listed them one by one. Hidden here; the theme it belongs to shows it. */
+:is(.mini-quest-stats, .counterform-mini-choir, .vv-mini-board, .vv-mini-bus, .axis-mini-breakline, .axis-mini-mask) {
+  display: none;
+}
+
+.mini-art {
+  width: var(--mini-art-size);
+  height: var(--mini-art-size);
+  display: grid;
+  place-items: center;
+  background: var(--mini-art-bg);
+  background-size: cover;
+  background-position: center;
+  border: var(--mini-art-border);
+  border-radius: var(--mini-art-radius);
+  box-shadow: var(--mini-art-shadow);
+  font: var(--mini-art-glyph-font);
+  color: var(--mini-art-glyph-color);
+}
+
+.mini-art.has-image span { display: none; }
+
+.mini-copy { min-width: 0; }
+
+.mini-copy small,
+.mini-copy strong,
+.mini-copy > span {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mini-copy small {
+  color: var(--mini-copy-eyebrow-color);
+  font: var(--mini-copy-eyebrow-font);
+  letter-spacing: var(--mini-copy-eyebrow-tracking);
+}
+
+.mini-copy strong {
+  margin-top: 7px;
+  font: var(--mini-copy-title-font);
+  color: var(--mini-copy-title-color);
+}
+
+.mini-copy > span {
+  margin-top: 5px;
+  color: var(--mini-copy-meta-color);
+  font-size: var(--mini-copy-meta-size);
+}
+
+.mini-progress {
+  height: var(--mini-progress-height);
+  border-radius: var(--mini-progress-radius);
+  margin-top: 14px;
+  background: var(--mini-progress-bg);
+  overflow: hidden;
+}
+
+.mini-progress i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--mini-progress-fill);
+  box-shadow: var(--mini-progress-fill-shadow);
+  transition: width .2s linear;
+}
+
+.mini-time {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  color: var(--mini-copy-time-color);
+  font-size: var(--mini-copy-time-size);
+}
+
+.mini-controls {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: var(--mini-btn-gap);
+  -webkit-app-region: no-drag;
+  pointer-events: auto;
+}
+
+.mini-controls button,
+.window-actions button {
+  border: 0;
+  background: transparent;
+  color: var(--mini-btn-color);
+  cursor: pointer;
+}
+
+.mini-controls button {
+  width: var(--mini-btn-size);
+  height: var(--mini-btn-height);
+  border-radius: var(--mini-btn-radius);
+  padding: 0;
+}
+
+.mini-controls .mini-play {
+  width: var(--mini-play-size);
+  height: var(--mini-play-size);
+  border-radius: var(--mini-play-radius);
+  border: var(--mini-play-border);
+  background: var(--mini-play-bg);
+  color: var(--mini-play-color);
+  box-shadow: var(--mini-play-shadow);
+}
+
+.window-actions {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  display: flex;
+  -webkit-app-region: no-drag;
+  z-index: 10;
+}
+
+.window-actions button {
+  width: var(--mini-window-btn-size);
+  height: var(--mini-window-btn-height);
+  font-size: var(--mini-window-btn-font-size);
+}
+
+.window-actions button:hover,
+.mini-controls button:hover { color: var(--mini-btn-hover-color); }
+
+.mini-controls button,
+.window-actions button { position: relative; z-index: 11; pointer-events: auto; -webkit-app-region: no-drag; }
+
+.playing .mini-art { animation: art-pulse 3s ease-in-out infinite; }
+
+body[data-glow="false"] .mini-glow { display: none; }
+body[data-artwork="false"] .mini-art { animation: none!important; }
+
+@keyframes art-pulse {
+  50% { box-shadow: 5px 5px #0008, 0 0 16px color-mix(in srgb, var(--mini-accent) 25%, transparent); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none!important;
+    transition: none!important;
+  }
+}
+
+body[data-performance="conserve"] *,
+body[data-performance="conserve"] *::before,
+body[data-performance="conserve"] *::after {
+  animation-play-state: paused!important;
+  transition: none!important;
+}
+
+body[data-performance="conserve"] .mini-shell { backdrop-filter: none!important; }
+body[data-performance="conserve"] :is(.mini-art, .mini-glow) { filter: none!important; }
