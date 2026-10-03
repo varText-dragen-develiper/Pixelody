@@ -1,0 +1,36 @@
+/* Selection, batch edit, MusicBrainz repair review and drag-and-drop. Uses the
+   shared theme tokens only, so every theme inherits a readable default. */
+.selection-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 10px;padding:8px 10px;background:color-mix(in srgb,var(--surface,#1b1d20) 88%,var(--gold,#e4b84d) 12%);border:1px solid color-mix(in srgb,var(--gold,#e4b84d) 55%,transparent)}
+.selection-bar.hidden{display:none}
+.selection-bar strong{margin-right:auto;color:var(--text,#f3f4f3);font-size:11px}
+.selection-bar button{min-height:28px;padding:0 10px;color:var(--text,#f3f4f3);background:transparent;border:1px solid color-mix(in srgb,var(--text,#f3f4f3) 28%,transparent);font-size:10px;cursor:pointer}
+.selection-bar button:hover,.selection-bar button:focus-visible{border-color:var(--gold,#e4b84d);outline:2px solid color-mix(in srgb,var(--gold,#e4b84d) 60%,transparent);outline-offset:1px}
+.selection-bar button.hidden{display:none}
+.track-row.is-multi-selected{background:color-mix(in srgb,var(--gold,#e4b84d) 15%,transparent);box-shadow:inset 3px 0 var(--gold,#e4b84d)}
+.track-row.is-multi-selected>span:first-of-type::before{content:"\2713\00a0";color:var(--gold,#e4b84d);font-weight:800}
+.track-row.drop-before{box-shadow:inset 0 2px 0 var(--gold,#e4b84d)}
+.track-row.drop-after{box-shadow:inset 0 -2px 0 var(--gold,#e4b84d)}
+.playlist-item.drop-target,.queue-button.drop-target,.queue-drawer.drop-target{outline:2px dashed var(--gold,#e4b84d);outline-offset:-2px}
+body.is-dragging-tracks .track-row[draggable="true"]{cursor:grabbing}
+.batch-editor-hint,.repair-privacy{margin:0 0 12px;color:var(--muted,#9aa0a6);font-size:10px;line-height:1.5}
+.batch-field-note{display:block;min-height:12px;margin-top:3px;color:var(--muted,#9aa0a6);font-size:9px}
+.batch-field-note.is-active{color:var(--gold,#e4b84d)}
+.repair-list{display:grid;gap:8px;margin:10px 0;padding:0;list-style:none;max-height:46vh;overflow-y:auto}
+.repair-item{padding:10px;background:#00000026;border:1px solid #ffffff14}
+.repair-track{display:grid;gap:2px;margin-bottom:6px}
+.repair-track strong{font-size:11px}
+.repair-track span,.repair-status,.repair-level{color:var(--muted,#9aa0a6);font-size:10px}
+.repair-status.is-error{color:#ff9a8d}
+.repair-level[data-level="low"]{color:#ffb86b}
+.repair-level[data-level="high"]{color:#8be28b}
+.repair-candidate{display:block;margin:4px 0;font-size:10px}
+.repair-candidate select{width:100%;margin-top:3px}
+.repair-fields{display:grid;gap:4px;margin:6px 0 0;padding:0;list-style:none}
+.repair-fields label{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;font-size:10px}
+.repair-field-name{min-width:78px;color:var(--muted,#9aa0a6)}
+.repair-diff b{color:var(--text,#f3f4f3)}
+.repair-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.repair-actions button{min-height:30px;padding:0 12px}
+.repair-actions button:disabled{opacity:.5;cursor:not-allowed}
+.repair-actions button.hidden{display:none}
+@media (prefers-reduced-motion:no-preference){.track-row.drop-before,.track-row.drop-after{transition:box-shadow .08s linear}}

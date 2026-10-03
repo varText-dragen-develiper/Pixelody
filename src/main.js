@@ -29,6 +29,7 @@ const {
 const releaseIdentity = require('./release-identity');
 const builtInThemeRegistry = require('./themes/built-in-themes.json');
 const brandMark = require('./brand-mark');
+const musicBrainz = require('./musicbrainz');
 
 app.enableSandbox();
 // Low-memory & V8 size optimization switches to constrain idle heap and GPU texture allocations
@@ -1539,6 +1540,32 @@ registerHandle('app:open-external', async (event, url) => {
     return true;
   } catch {
     return false;
+  }
+});
+// MusicBrainz metadata repair. The renderer sends only track text and a
+// duration; the URL is built here, limited to one request per MusicBrainz's
+// rate policy, and never accepts a URL from the renderer.
+const musicBrainzLimiter = musicBrainz.createRateLimiter();
+registerHandle('metadata:musicbrainz-search', async (event, query) => {
+  if (!isMainWindowSender(event)) return { ok: false, code: 'unauthorized', candidates: [] };
+  const url = musicBrainz.buildSearchUrl(query);
+  if (!url || !musicBrainz.isAllowedSearchUrl(url)) return { ok: false, code: 'bad-query', candidates: [] };
+  try {
+    return await musicBrainzLimiter.schedule(async () => {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 12000);
+      try {
+        const response = await fetch(url, { headers: { 'User-Agent': musicBrainz.userAgent(app.getVersion()), Accept: 'application/json' }, signal: controller.signal, redirect: 'error' });
+        if (response.status === 503 || response.status === 429) return { ok: false, code: 'rate-limited', candidates: [] };
+        if (!response.ok) return { ok: false, code: 'http-error', status: response.status, candidates: [] };
+        const payload = await response.json();
+        return { ok: true, candidates: musicBrainz.parseSearchResponse(payload) };
+      } finally {
+        clearTimeout(timer);
+      }
+    });
+  } catch (error) {
+    return { ok: false, code: error?.name === 'AbortError' ? 'timeout' : 'network', candidates: [] };
   }
 });
 registerHandle('sharing:status', (event) => {

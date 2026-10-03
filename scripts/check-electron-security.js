@@ -104,6 +104,7 @@ const validSamples = {
   'app:cache-track-image': ['C:\\fixture.png', 'track-1'],
   'app:optimize-artwork': ['C:\\fixture.png'],
   'music:exists': ['C:\\fixture.wav'],
+  'metadata:musicbrainz-search': [{ title: 'Song', artist: 'Band', album: 'Record', duration: 201.5 }],
   'app:set-text-scale': [1.3],
   'music:verify-integrity': [[{ path: 'C:\\fixture.wav', size: 10, mtimeMs: 1 }]],
   'app:export-backup': [{}],
@@ -127,6 +128,11 @@ for (const profileId of ['studio', 'canvas-studio', 'singularity-graph', 'singul
 for (const hostile of [[], [''], ['canvas-studio', 'extra'], [{ id: 'canvas-studio' }], ['--pixelody-canvas'], ['canvas-studio --no-sandbox'], ['../main'], ['foreground-stage'], ['__proto__']]) {
   assert.equal(validateIpcArguments('app:relaunch-development-profile', hostile).ok, false, `Development restart accepted a hostile payload: ${JSON.stringify(hostile)}`);
 }
+for (const hostile of [[], [{}], [{ title: '' }], [{ title: '   ' }], [{ title: 'x', url: 'https://evil.invalid/' }], [{ title: 'x', duration: -1 }], [{ title: 'x', duration: Infinity }], [{ title: 'x'.repeat(301) }], [{ title: 'x', artist: 5 }], [{ title: 'x' }, 'extra'], ['https://musicbrainz.org/ws/2/recording?query=x'], [null], [[]]]) {
+  assert.equal(validateIpcArguments('metadata:musicbrainz-search', hostile).ok, false, `MusicBrainz lookup accepted a hostile payload: ${JSON.stringify(hostile)}`);
+}
+assert.equal(validateIpcArguments('metadata:musicbrainz-search', [{ title: 'Song' }]).ok, true, 'MusicBrainz lookup must accept a bare title.');
+assert.equal(validateIpcArguments('metadata:musicbrainz-search', [{ title: 'Song', duration: null }]).ok, true, 'MusicBrainz lookup must accept an unknown duration.');
 for (const channel of contractChannels) {
   const args = validSamples[channel] || [];
   assert.equal(validateIpcArguments(channel, args).ok, true, `Valid contract fixture failed for ${channel}.`);

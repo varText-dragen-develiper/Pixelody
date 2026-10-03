@@ -55,6 +55,15 @@
     // list keeps its own selected id solely so a keyboard user can inspect a
     // different row before explicitly requesting activation with Enter.
     let selectedId = null;
+    // Multi-selection is a separate, additive state: Ctrl/Cmd+click toggles a
+    // row, Shift+click or Shift+Arrow extends from the anchor, Space toggles
+    // the focused row, Ctrl/Cmd+A selects every listed track. It never starts
+    // playback and never changes the focused (selectedId) row on its own.
+    const multiSelected = new Set();
+    let multiAnchorId = null;
+    let mountOptions = {};
+    let draggedIds = null;
+    let dropMarker = null;
     let currentTracks = [];
     // Rows in the DOM, in order: each row's markup without its playing and
     // selection state (so a repaint can replace only rows whose content
@@ -73,7 +82,8 @@
     function syncRowSelection(row, selected) {
       if (!row) return;
       row.classList.toggle('is-selected', selected);
-      if (row.getAttribute('aria-selected') !== String(selected)) row.setAttribute('aria-selected', String(selected));
+      const ariaSelected = String(selected || row.classList.contains('is-multi-selected'));
+      if (row.getAttribute('aria-selected') !== ariaSelected) row.setAttribute('aria-selected', ariaSelected);
       const tabIndex = selected ? 0 : -1;
       if (row.tabIndex !== tabIndex) row.tabIndex = tabIndex;
     }
@@ -87,7 +97,7 @@
     }
 
     function rowMarkup(track, index, content, activeId) {
-      return track.id === activeId || track.id === selectedId ? trackRowHtml(track, index, activeId, selectedId) : content;
+      return track.id === activeId || track.id === selectedId || multiSelected.has(track.id) ? trackRowHtml(track, index, activeId, selectedId, multiSelected.has(track.id)) : content;
     }
     // Indices of rows a refresh left unchecked because they were far from the
     // viewport, and the rows near it as last measured (null: not measured
@@ -127,7 +137,7 @@
     // that once per paint() instead of once per row, which is not
     // observably different since state.index cannot change mid-loop in
     // single-threaded JS.
-    function trackRowHtml(track, index, activeId, focusedId) {
+    function trackRowHtml(track, index, activeId, focusedId, multiSelectedRow = false) {
       const tuned = host.tuning.hasChanges(host.tuning.forTrack(track.id) || host.tuning.default());
       const quality = track.sampleRate ? `${track.bitDepth || '--'}-bit / ${(track.sampleRate / 1000).toFixed(1)} kHz` : (host.format.isLossless(track) ? 'Lossless' : 'Compressed');
       const art = track.artworkPath ? `style="background-image:url('${host.format.escapeHtml(host.format.fileUrl(track.artworkPath))}')"` : '';
@@ -138,7 +148,7 @@
       const cleanupBadge = gaps.length ? `<em class="discovery-badge">${track.missing ? 'Find file' : 'Fill info'}</em>` : '';
       const lootTags = questTrackLootMarkup(questTrackLootTags(track, tuned, favorite));
       const selected = focusedId === track.id;
-      return `<div class="track-row ${activeId === track.id ? 'playing' : ''} ${selected ? 'is-selected' : ''} ${track.missing ? 'missing' : ''} ${gaps.length ? 'needs-discovery' : ''}" role="option" aria-selected="${selected}" tabindex="${selected ? '0' : '-1'}" style="--row-index:${index}" data-id="${encodeURIComponent(track.id)}"><i class="signal-edge-ring" aria-hidden="true"></i><span>${String(index + 1).padStart(2, '0')}</span><span class="track-title"><span class="track-art" ${glyphAttributes} ${art}></span><strong>${host.format.escapeHtml(track.title)}${track.missing ? ' [Missing]' : ''}${cleanupBadge}</strong><span>${host.format.escapeHtml(track.artist)}${track.album ? ` &middot; ${host.format.escapeHtml(track.album)}` : ''}</span>${lootTags}</span><span class="format">${track.format}</span><span class="quality">${quality}</span><span class="${tuned ? 'tuned' : ''}">${tuned ? 'Custom' : 'Flat'}</span><span>${host.format.durationText(track.duration)}</span><span class="track-actions"><button class="favorite ${favorite ? 'active' : ''}" title="Favorite"><span class="public-icon icon-heart"></span></button>${gaps.length ? '<button class="find-track" title="Find metadata or buy this track"><span class="public-icon icon-search"></span></button>' : ''}<button class="edit-track" title="Edit local details"><span class="public-icon icon-edit"></span></button></span></div>`;
+      return `<div class="track-row ${activeId === track.id ? 'playing' : ''} ${selected ? 'is-selected' : ''}${multiSelectedRow ? ' is-multi-selected' : ''} ${track.missing ? 'missing' : ''} ${gaps.length ? 'needs-discovery' : ''}" role="option" aria-selected="${selected || multiSelectedRow}" tabindex="${selected ? '0' : '-1'}" style="--row-index:${index}" data-id="${encodeURIComponent(track.id)}" draggable="true"><i class="signal-edge-ring" aria-hidden="true"></i><span>${String(index + 1).padStart(2, '0')}</span><span class="track-title"><span class="track-art" ${glyphAttributes} ${art}></span><strong>${host.format.escapeHtml(track.title)}${track.missing ? ' [Missing]' : ''}${cleanupBadge}</strong><span>${host.format.escapeHtml(track.artist)}${track.album ? ` &middot; ${host.format.escapeHtml(track.album)}` : ''}</span>${lootTags}</span><span class="format">${track.format}</span><span class="quality">${quality}</span><span class="${tuned ? 'tuned' : ''}">${tuned ? 'Custom' : 'Flat'}</span><span>${host.format.durationText(track.duration)}</span><span class="track-actions"><button class="favorite ${favorite ? 'active' : ''}" title="Favorite"><span class="public-icon icon-heart"></span></button>${gaps.length ? '<button class="find-track" title="Find metadata or buy this track"><span class="public-icon icon-search"></span></button>' : ''}<button class="edit-track" title="Edit local details"><span class="public-icon icon-edit"></span></button></span></div>`;
     }
 
     function measurable(container) {
@@ -367,6 +377,18 @@
       currentTracks = Array.isArray(tracks) ? tracks.slice() : [];
       const previousSelectedId = selectedId;
       if (!currentTracks.some((track) => track.id === selectedId)) selectedId = activeId || currentTracks[0]?.id || null;
+      // A refresh (removal, filter, another collection) drops selected rows
+      // that are no longer listed.
+      if (multiSelected.size) {
+        const listed = new Set(currentTracks.map((track) => track.id));
+        const kept = [...multiSelected].filter((id) => listed.has(id));
+        if (kept.length !== multiSelected.size) {
+          multiSelected.clear();
+          kept.forEach((id) => multiSelected.add(id));
+          if (!kept.length) multiAnchorId = null;
+          mountOptions.onMultiSelectionChange?.(orderedSelection());
+        }
+      }
       const renderStartedAt = performance.now();
       paintStartedAt = renderStartedAt;
       const serial = ++renderSerial;
@@ -404,6 +426,63 @@
       }
     }
 
+    // ---- Multi-selection -------------------------------------------------
+    function orderedSelection() {
+      return currentTracks.filter((track) => multiSelected.has(track.id)).map((track) => track.id);
+    }
+
+    function setMultiRow(id, on) {
+      const row = renderedRows.get(id);
+      if (!row) return;
+      row.classList.toggle('is-multi-selected', on);
+      const ariaSelected = String(on || id === selectedId);
+      if (row.getAttribute('aria-selected') !== ariaSelected) row.setAttribute('aria-selected', ariaSelected);
+    }
+
+    // Replaces the selection with `ids`, touching only rows whose state
+    // changed (rows not yet materialized pick the state up from rowMarkup).
+    function commitMulti(ids, anchorId, options) {
+      const next = new Set(ids);
+      let changed = next.size !== multiSelected.size;
+      for (const id of multiSelected) {
+        if (!next.has(id)) { setMultiRow(id, false); changed = true; }
+      }
+      for (const id of next) {
+        if (!multiSelected.has(id)) { setMultiRow(id, true); changed = true; }
+      }
+      multiSelected.clear();
+      next.forEach((id) => multiSelected.add(id));
+      multiAnchorId = next.size ? (anchorId ?? multiAnchorId) : null;
+      mountedContainer?.setAttribute?.('aria-multiselectable', 'true');
+      if (changed) options?.onMultiSelectionChange?.(orderedSelection());
+      return changed;
+    }
+
+    function rangeIds(fromId, toId) {
+      const from = currentTracks.findIndex((track) => track.id === fromId);
+      const to = currentTracks.findIndex((track) => track.id === toId);
+      if (from < 0 || to < 0) return toId ? [toId] : [];
+      const [low, high] = from <= to ? [from, to] : [to, from];
+      return currentTracks.slice(low, high + 1).map((track) => track.id);
+    }
+
+    function toggleMulti(id, options) {
+      const ids = new Set(multiSelected);
+      if (ids.has(id)) ids.delete(id); else ids.add(id);
+      commitMulti(ids, id, options);
+    }
+
+    function extendMulti(toId, options, { additive = false } = {}) {
+      const anchor = multiAnchorId && currentTracks.some((track) => track.id === multiAnchorId) ? multiAnchorId : (selectedId || toId);
+      const ids = additive ? new Set(multiSelected) : new Set();
+      rangeIds(anchor, toId).forEach((id) => ids.add(id));
+      commitMulti(ids, anchor, options);
+    }
+
+    function clearMulti(options) {
+      return commitMulti([], null, options);
+    }
+
     // Verbatim from the old standalone `$('#trackRows').onclick = ...` /
     // `.oncontextmenu = ...` assignments (renderer.js ~15244-15252), now
     // owned by the mechanic instead of living as loose top-level statements
@@ -417,6 +496,18 @@
       if (event.target.closest('.favorite')) { options.onRowAction?.('favorite', id); return; }
       if (event.target.closest('.find-track')) { options.onRowAction?.('find', id); return; }
       if (event.target.closest('.edit-track')) { options.onRowAction?.('edit', id); return; }
+      if (event.ctrlKey || event.metaKey) {
+        select(id, options);
+        toggleMulti(id, options);
+        return;
+      }
+      if (event.shiftKey) {
+        select(id, options);
+        extendMulti(id, options);
+        return;
+      }
+      // A plain click means "play this one": the selection has done its job.
+      if (multiSelected.size) clearMulti(options);
       select(id, options);
       options.onActivate?.(id);
     }
@@ -466,7 +557,19 @@
       if (key === 'Escape') {
         event.preventDefault();
         event.stopPropagation();
-        options.onEscape?.();
+        // Escape first drops a multi-selection; only then does it go back.
+        if (multiSelected.size) clearMulti(options);
+        else options.onEscape?.();
+        return;
+      }
+      if ((key === ' ' || key === 'Spacebar') && !event.ctrlKey && !event.metaKey && !event.altKey) {
+        event.preventDefault();
+        toggleMulti(id, options);
+        return;
+      }
+      if ((event.ctrlKey || event.metaKey) && !event.altKey && String(key).toLowerCase() === 'a') {
+        event.preventDefault();
+        commitMulti(currentTracks.map((track) => track.id), id, options);
         return;
       }
       if (key === 'ContextMenu' || (key === 'F10' && event.shiftKey)) {
@@ -481,22 +584,101 @@
       if (key === 'End') nextIndex = currentTracks.length - 1;
       if (nextIndex >= 0) {
         event.preventDefault();
-        select(currentTracks[nextIndex].id, options, { moveFocus: true });
+        const nextId = currentTracks[nextIndex].id;
+        if (event.shiftKey && (key === 'ArrowDown' || key === 'ArrowUp')) {
+          if (!multiAnchorId || !multiSelected.size) multiAnchorId = id;
+          select(nextId, options, { moveFocus: true });
+          extendMulti(nextId, options);
+        } else {
+          select(nextId, options, { moveFocus: true });
+        }
       }
+    }
+
+    // ---- Drag and drop ---------------------------------------------------
+    // The mechanic owns the gesture; the host decides what a drop means.
+    // Dragging a row inside the selection carries the whole selection.
+    function clearDropMarker() {
+      if (!dropMarker) return;
+      dropMarker.row.classList.remove('drop-before', 'drop-after');
+      dropMarker = null;
+    }
+
+    function handleDragStart(event, options) {
+      const row = event.target.closest?.('.track-row');
+      if (!row || !event.dataTransfer) return;
+      const id = decodeURIComponent(row.dataset.id);
+      const selection = orderedSelection();
+      draggedIds = selection.length > 1 && selection.includes(id) ? selection : [id];
+      event.dataTransfer.effectAllowed = 'copyMove';
+      event.dataTransfer.setData('application/x-pixelody-tracks', JSON.stringify(draggedIds));
+      event.dataTransfer.setData('text/plain', `${draggedIds.length} Pixelody track${draggedIds.length === 1 ? '' : 's'}`);
+      options.onDragStart?.(draggedIds.slice(), event);
+    }
+
+    function handleDragEnd(event, options) {
+      clearDropMarker();
+      if (!draggedIds) return;
+      draggedIds = null;
+      options.onDragEnd?.(event);
+    }
+
+    function dropPosition(event, row) {
+      const rect = row.getBoundingClientRect?.();
+      if (!rect || !rect.height || typeof event.clientY !== 'number') return 'before';
+      return event.clientY > rect.top + rect.height / 2 ? 'after' : 'before';
+    }
+
+    function handleDragOver(event, options) {
+      if (!draggedIds || !options.canReorder?.(draggedIds)) return;
+      const row = event.target.closest?.('.track-row');
+      if (!row) return;
+      const id = decodeURIComponent(row.dataset.id);
+      if (draggedIds.includes(id)) { clearDropMarker(); return; }
+      event.preventDefault();
+      if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+      const position = dropPosition(event, row);
+      if (dropMarker && dropMarker.row === row && dropMarker.position === position) return;
+      clearDropMarker();
+      row.classList.add(position === 'after' ? 'drop-after' : 'drop-before');
+      dropMarker = { row, position };
+    }
+
+    function handleDrop(event, options) {
+      if (!draggedIds || !options.canReorder?.(draggedIds)) return;
+      const row = event.target.closest?.('.track-row');
+      if (!row) return;
+      const id = decodeURIComponent(row.dataset.id);
+      const position = dropPosition(event, row);
+      const ids = draggedIds.slice();
+      event.preventDefault();
+      clearDropMarker();
+      if (!ids.includes(id)) options.onReorderDrop?.(ids, id, position);
     }
 
     function mount(container, tracks, options = {}) {
       mountedContainer = container;
+      mountOptions = options;
       selectedId = options.activeId || tracks?.[0]?.id || null;
       const onClick = (event) => handleClick(event, options);
       const onContextMenu = (event) => handleContextMenu(event, options);
       const onFocusIn = (event) => handleFocusIn(event, options);
       const onKeyDown = (event) => handleKeyDown(event, options);
+      const onDragStart = (event) => handleDragStart(event, options);
+      const onDragEnd = (event) => handleDragEnd(event, options);
+      const onDragOver = (event) => handleDragOver(event, options);
+      const onDrop = (event) => handleDrop(event, options);
+      const onDragLeave = (event) => { if (!event.relatedTarget || !container.contains?.(event.relatedTarget)) clearDropMarker(); };
       container.addEventListener('click', onClick);
+      container.addEventListener('dragstart', onDragStart);
+      container.addEventListener('dragend', onDragEnd);
+      container.addEventListener('dragover', onDragOver);
+      container.addEventListener('drop', onDrop);
+      container.addEventListener('dragleave', onDragLeave);
       container.addEventListener('contextmenu', onContextMenu);
       container.addEventListener('focusin', onFocusIn);
       container.addEventListener('keydown', onKeyDown);
-      listeners = { onClick, onContextMenu, onFocusIn, onKeyDown };
+      listeners = { onClick, onContextMenu, onFocusIn, onKeyDown, onDragStart, onDragEnd, onDragOver, onDrop, onDragLeave };
       if (measurable(container)) {
         // Themes differ in which element scrolls the list, so scrolls are
         // observed anywhere; filling is frame-coalesced and idle otherwise.
@@ -522,9 +704,19 @@
         mountedContainer.removeEventListener('contextmenu', listeners.onContextMenu);
         mountedContainer.removeEventListener('focusin', listeners.onFocusIn);
         mountedContainer.removeEventListener('keydown', listeners.onKeyDown);
+        mountedContainer.removeEventListener('dragstart', listeners.onDragStart);
+        mountedContainer.removeEventListener('dragend', listeners.onDragEnd);
+        mountedContainer.removeEventListener('dragover', listeners.onDragOver);
+        mountedContainer.removeEventListener('drop', listeners.onDrop);
+        mountedContainer.removeEventListener('dragleave', listeners.onDragLeave);
       }
       host.cancelIdleWork(appendTimer);
       appendTimer = 0;
+      // Another mechanic is taking over this container: the host's selection
+      // bar must not keep describing rows that no longer exist.
+      const hadSelection = multiSelected.size > 0;
+      const notifySelection = mountOptions.onMultiSelectionChange;
+      const notifyDragEnd = draggedIds ? mountOptions.onDragEnd : null;
       if (viewportListeners) {
         const { view, onViewportChange, resizeObserver } = viewportListeners;
         view.document.removeEventListener('scroll', onViewportChange, { capture: true });
@@ -542,12 +734,19 @@
       mountedContainer = null;
       listeners = null;
       selectedId = null;
+      multiSelected.clear();
+      multiAnchorId = null;
+      mountOptions = {};
+      draggedIds = null;
+      dropMarker = null;
       currentTracks = [];
       painted = { html: [], ids: [] };
       paintedActiveId = null;
       renderedRows.clear();
       staleRows.clear();
       nearRows = null;
+      if (hadSelection) notifySelection?.([]);
+      notifyDragEnd?.({});
     }
 
     return Object.freeze({
@@ -555,6 +754,9 @@
       update,
       destroy,
       meta: { label: 'Linear List' },
+      getSelection: () => orderedSelection(),
+      setSelection: (ids) => commitMulti((ids || []).filter((id) => currentTracks.some((track) => track.id === id)), null, mountOptions),
+      clearSelection: () => clearMulti(mountOptions),
       // Exposed for unit testing (scripts/check-linear-list.js) without a
       // real DOM -- both are pure functions of their arguments plus `host`.
       __test__: { trackRowHtml, questTrackLootTags, questTrackLootMarkup },

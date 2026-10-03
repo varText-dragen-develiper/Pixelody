@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="overrides.css">
   <link rel="stylesheet" href="settings.css">
   <link rel="stylesheet" href="library-features.css">
+  <link rel="stylesheet" href="library-workflow.css">
   <link rel="stylesheet" href="purchase-bridge.css">
   <link rel="stylesheet" href="daily-curated.css">
   <link rel="stylesheet" href="signal-orbit.css">
@@ -238,6 +239,16 @@
 
           <div class="drop-zone" id="dropZone"><span class="pixel-icon icon-music drop-icon"></span><strong>Bring your music into Pixelody</strong><small>Drop FLAC, WAV, AIFF, ALAC, MP3, AAC, OGG or OPUS files here</small><button id="emptyImport">Choose files</button></div>
           <div class="daily-curated-sequence hidden" id="dailyCuratedSequence" aria-hidden="true"><span>TODAY'S ROUTE</span><strong id="dailyCuratedSequenceLabel">Play follows this order.</strong></div>
+          <div class="selection-bar hidden" id="selectionBar" role="toolbar" aria-label="Selected tracks">
+            <strong id="selectionCount" aria-live="polite">0 selected</strong>
+            <button type="button" data-selection-action="play-next">Play next</button>
+            <button type="button" data-selection-action="queue">Add to queue</button>
+            <button type="button" data-selection-action="playlist">Add to playlist...</button>
+            <button type="button" data-selection-action="edit">Edit details together</button>
+            <button type="button" data-selection-action="repair">Repair from MusicBrainz...</button>
+            <button type="button" data-selection-action="remove-from-playlist" class="hidden">Remove from playlist</button>
+            <button type="button" data-selection-action="clear">Clear</button>
+          </div>
           <div class="track-table hidden" id="trackTable">
             <div class="track-row track-header"><span>#</span><span>TITLE</span><span>FORMAT</span><span>QUALITY</span><span>TUNING</span><span>&#9716;</span><span></span></div>
             <div id="trackRows"></div>
@@ -391,6 +402,7 @@
     <button role="menuitem" data-track-action="less-like">Less like this</button>
     <button role="menuitem" data-track-action="queue">Add to queue</button>
     <button role="menuitem" data-track-action="discover">Find / buy this track...</button>
+    <button role="menuitem" data-track-action="repair">Repair from MusicBrainz...</button>
     <button role="menuitem" data-track-action="inspect">Re-inspect metadata</button>
     <button role="menuitem" data-track-action="edit">Edit local details...</button>
     <button role="menuitem" data-track-action="remove" class="danger">Remove from collection</button>
@@ -861,7 +873,7 @@
     <div class="shortcuts-backdrop" data-close-shortcuts></div>
     <section class="shortcuts-dialog" role="dialog" aria-modal="true" aria-labelledby="shortcutsTitle" tabindex="-1">
       <div class="shortcuts-heading"><div><p>NAVIGATION</p><h2 id="shortcutsTitle">Keyboard shortcuts</h2></div><button id="closeShortcuts" type="button" title="Close keyboard shortcuts" aria-label="Close keyboard shortcuts"><span class="public-icon icon-close" aria-hidden="true"></span></button></div>
-      <dl class="shortcut-list"><div><dt>Search</dt><dd>Ctrl+F</dd></div><div><dt>Settings</dt><dd>Ctrl+,</dd></div><div><dt>Queue</dt><dd>Ctrl+Shift+Q</dd></div><div><dt>Audio systems</dt><dd>Ctrl+Shift+O</dd></div><div><dt>Library controls</dt><dd>Ctrl+Shift+L</dd></div><div><dt>Shortcut help</dt><dd>Ctrl+/</dd></div><div><dt>Play / pause</dt><dd>Space</dd></div><div><dt>Previous / next</dt><dd>Ctrl+Left / Ctrl+Right</dd></div><div><dt>Volume</dt><dd>Ctrl+Down / Ctrl+Up</dd></div><div><dt>Back / close</dt><dd>Escape</dd></div></dl>
+      <dl class="shortcut-list"><div><dt>Search</dt><dd>Ctrl+F</dd></div><div><dt>Settings</dt><dd>Ctrl+,</dd></div><div><dt>Queue</dt><dd>Ctrl+Shift+Q</dd></div><div><dt>Select several tracks</dt><dd>Ctrl+click, Shift+click, Space, Shift+Arrow</dd></div><div><dt>Select all listed tracks</dt><dd>Ctrl+A in the list</dd></div><div><dt>Audio systems</dt><dd>Ctrl+Shift+O</dd></div><div><dt>Library controls</dt><dd>Ctrl+Shift+L</dd></div><div><dt>Shortcut help</dt><dd>Ctrl+/</dd></div><div><dt>Play / pause</dt><dd>Space</dd></div><div><dt>Previous / next</dt><dd>Ctrl+Left / Ctrl+Right</dd></div><div><dt>Volume</dt><dd>Ctrl+Down / Ctrl+Up</dd></div><div><dt>Back / close</dt><dd>Escape</dd></div></dl>
     </section>
   </div>
   <div class="jams-overlay hidden" id="jamsOverlay">
@@ -1077,6 +1089,32 @@
       <button class="save-track-details" id="saveTrackDetails">Save local details</button>
     </section>
   </div>
+  <div class="track-editor-overlay batch-editor-overlay hidden" id="batchEditorOverlay">
+    <div class="track-editor-backdrop" data-close-batch-editor></div>
+    <section class="track-editor" role="dialog" aria-modal="true" aria-labelledby="batchEditorTitle">
+      <div class="track-editor-heading"><div><p>LOCAL DETAILS</p><h2 id="batchEditorTitle">Edit tracks</h2></div><button type="button" id="closeBatchEditor" title="Close" aria-label="Close"><span class="public-icon icon-close" aria-hidden="true"></span></button></div>
+      <p class="batch-editor-hint">Only the fields you change are applied. A field where the tracks differ is left alone until you type in it. Tag fields add to what each track already has.</p>
+      <div class="track-editor-grid" id="batchEditorGrid"></div>
+      <p class="playlist-creator-error hidden" id="batchEditorError" role="alert"></p>
+      <p>Changes are stored inside Pixelody and do not alter the original music files.</p>
+      <button type="button" class="save-track-details" id="saveBatchEdit">Apply</button>
+    </section>
+  </div>
+  <div class="track-editor-overlay metadata-repair-overlay hidden" id="metadataRepairOverlay">
+    <div class="track-editor-backdrop" data-close-metadata-repair></div>
+    <section class="track-editor" role="dialog" aria-modal="true" aria-labelledby="metadataRepairTitle">
+      <div class="track-editor-heading"><div><p>MUSICBRAINZ</p><h2 id="metadataRepairTitle">Repair metadata</h2></div><button type="button" id="closeMetadataRepair" title="Close" aria-label="Close"><span class="public-icon icon-close" aria-hidden="true"></span></button></div>
+      <p class="repair-privacy">Looking up sends each track's title, artist and album to musicbrainz.org, one request per second. Nothing changes until you tick fields and apply them. Blank fields are ticked for you; replacing something you already have is always your call.</p>
+      <p id="repairSummary" aria-live="polite"></p>
+      <ul class="repair-list" id="repairList"></ul>
+      <div class="repair-actions">
+        <button type="button" id="startRepairLookup">Look up</button>
+        <button type="button" id="cancelRepairLookup" class="hidden">Stop</button>
+        <button type="button" class="save-track-details" id="applyRepair" disabled>Apply ticked changes</button>
+      </div>
+      <p>Changes are stored inside Pixelody and do not alter the original music files. Data courtesy of MusicBrainz.</p>
+    </section>
+  </div>
   <div class="playlist-creator-overlay hidden" id="playlistCreatorOverlay">
     <div class="playlist-creator-backdrop" data-close-playlist-creator></div>
     <section class="playlist-creator" role="dialog" aria-modal="true" aria-labelledby="playlistCreatorTitle">
@@ -1118,9 +1156,12 @@
   <script src="flow-shuffle-decision.js"></script>
   <script src="daily-curated.js"></script>
   <script src="purchase-bridge.js"></script>
+  <script src="library-batch.js"></script>
+  <script src="musicbrainz.js"></script>
   <script src="calibration-dsp.js"></script>
   <script src="renderer-domains/state-controller.js"></script>
   <script src="renderer-domains/library-controller.js"></script>
+  <script src="renderer-domains/library-workflow.js"></script>
   <script src="renderer-domains/navigation-controller.js"></script>
   <script src="renderer-domains/playback-controller.js"></script>
   <script src="renderer-domains/diagnostics-controller.js"></script>

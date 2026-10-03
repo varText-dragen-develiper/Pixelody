@@ -167,7 +167,7 @@ async function run() {
   // trackRowHtml() template in renderer.js (pre-extraction).
   const track = fakeTrack('a', { title: 'A & B', artworkPath: 'art.jpg' });
   const html = mechanic.__test__.trackRowHtml(track, 0, 'a', 'a');
-  assert.ok(html.startsWith('<div class="track-row playing is-selected  " role="option" aria-selected="true" tabindex="0" style="--row-index:0" data-id="a">'), 'active track must start selected, focusable, and expose the correct row markup opening');
+  assert.ok(html.startsWith('<div class="track-row playing is-selected  " role="option" aria-selected="true" tabindex="0" style="--row-index:0" data-id="a" draggable="true">'), 'active track must start selected, focusable, and expose the correct row markup opening');
   assert.ok(html.includes('A &amp; B'), 'title must be escaped through host.format.escapeHtml');
   assert.ok(html.includes("background-image:url('file:///art.jpg')"), 'artwork must resolve through host.format.fileUrl');
   assert.ok(html.includes('class="favorite '), 'favorite button must be present');
@@ -350,6 +350,98 @@ async function run() {
 
     listMechanic.destroy();
     assert.equal(list.style.getPropertyValue('--track-rows-pending-height'), '');
+  }
+
+  // Multi-selection and drag: additive state that never plays anything.
+  {
+    const selectionHost = createFakeHost();
+    const selectionMechanic = createLinearListMechanic(selectionHost);
+    const list = createFakeContainer();
+    const events = { activated: [], changes: [], escape: 0, dragStart: [], dragEnd: 0, reorder: [] };
+    const ids = ['a', 'b', 'c', 'd', 'e'];
+    selectionMechanic.mount(list, ids.map((id) => fakeTrack(id)), {
+      activeId: 'a',
+      onActivate: (id) => events.activated.push(id),
+      onEscape: () => { events.escape += 1; },
+      onMultiSelectionChange: (selection) => events.changes.push(selection),
+      onDragStart: (dragged) => events.dragStart.push(dragged),
+      onDragEnd: () => { events.dragEnd += 1; },
+      canReorder: () => true,
+      onReorderDrop: (dragged, target, position) => events.reorder.push([dragged, target, position]),
+    });
+    const rowClick = (id, extras = {}) => list.dispatch('click', { ...extras, target: { closest: (selector) => (selector === '.track-row' ? { dataset: { id: encodeURIComponent(id) } } : null) } });
+    const press = (key, id, extras = {}) => {
+      const log = { prevented: false, stopped: false };
+      list.dispatch('keydown', { key, target: list._rows[ids.indexOf(id)], shiftKey: false, ctrlKey: false, metaKey: false, altKey: false, preventDefault: () => { log.prevented = true; }, stopPropagation: () => { log.stopped = true; }, ...extras });
+      return log;
+    };
+    const multiRows = () => list._rows.filter((row) => row.classList.contains('is-multi-selected')).map((row) => decodeURIComponent(row.dataset.id));
+
+    rowClick('b', { ctrlKey: true });
+    rowClick('d', { metaKey: true });
+    assert.deepEqual(selectionMechanic.getSelection(), ['b', 'd'], 'Ctrl/Cmd+click must toggle rows into the selection in list order');
+    assert.deepEqual(multiRows(), ['b', 'd'], 'selected rows must carry is-multi-selected');
+    assert.equal(list._rows[1].getAttribute('aria-selected'), 'true', 'multi-selected rows must be announced as selected');
+    assert.deepEqual(events.activated, [], 'selecting with a modifier must not start playback');
+
+    rowClick('b', { ctrlKey: true });
+    assert.deepEqual(selectionMechanic.getSelection(), ['d'], 'Ctrl+click on a selected row must remove it');
+
+    rowClick('d', { shiftKey: true });
+    assert.deepEqual(selectionMechanic.getSelection(), ['b', 'c', 'd'], 'Shift+click must extend from the anchor to the clicked row');
+    assert.deepEqual(events.activated, [], 'range selection must not start playback');
+
+    press('Escape', 'b');
+    assert.deepEqual(selectionMechanic.getSelection(), [], 'Escape must clear a selection first');
+    assert.equal(events.escape, 0, 'Escape with a selection must not also navigate back');
+    assert.deepEqual(multiRows(), [], 'clearing must remove the row state');
+    press('Escape', 'b');
+    assert.equal(events.escape, 1, 'Escape with no selection must keep its back behaviour');
+
+    assert.equal(press(' ', 'c').prevented, true, 'Space must toggle the focused row and keep the page from scrolling');
+    assert.deepEqual(selectionMechanic.getSelection(), ['c'], 'Space must select the focused row');
+    press('ArrowDown', 'c', { shiftKey: true });
+    assert.deepEqual(selectionMechanic.getSelection(), ['c', 'd'], 'Shift+ArrowDown must extend the selection');
+    assert.deepEqual(events.activated, [], 'keyboard selection must not start playback');
+    press('a', 'c', { ctrlKey: true });
+    assert.deepEqual(selectionMechanic.getSelection(), ids, 'Ctrl+A must select every listed track');
+
+    rowClick('e');
+    assert.deepEqual(selectionMechanic.getSelection(), [], 'a plain click must drop the selection');
+    assert.deepEqual(events.activated, ['e'], 'a plain click must still play the clicked row');
+
+    // Selection survives a repaint and loses rows that leave the list.
+    selectionMechanic.setSelection(['a', 'b', 'c']);
+    selectionMechanic.update(ids.filter((id) => id !== 'b').map((id) => fakeTrack(id)), 'a', {});
+    assert.deepEqual(selectionMechanic.getSelection(), ['a', 'c'], 'removed tracks must leave the selection');
+    assert.deepEqual(events.changes.at(-1), ['a', 'c'], 'pruning must notify the host');
+    assert.deepEqual(multiRows(), ['a', 'c'], 'rows repainted after an update must keep their selected state');
+
+    // Dragging a selected row carries the whole selection; an unselected row drags alone.
+    const transfer = { data: {}, setData(type, value) { this.data[type] = value; }, effectAllowed: '', dropEffect: '' };
+    const dragRow = (id) => ({ target: { closest: (selector) => (selector === '.track-row' ? { dataset: { id: encodeURIComponent(id) } } : null) }, dataTransfer: transfer });
+    list.dispatch('dragstart', dragRow('c'));
+    assert.deepEqual(events.dragStart.at(-1), ['a', 'c'], 'dragging inside the selection must carry the selection');
+    assert.equal(JSON.parse(transfer.data['application/x-pixelody-tracks']).length, 2, 'the drag payload must name the tracks');
+    list.dispatch('dragend', {});
+    assert.equal(events.dragEnd, 1, 'dragend must notify the host');
+    list.dispatch('dragstart', dragRow('e'));
+    assert.deepEqual(events.dragStart.at(-1), ['e'], 'dragging an unselected row must carry only that row');
+
+    // Dropping on another row reports the target and a before/after position.
+    const dropRow = { dataset: { id: encodeURIComponent('d') }, classList: { add() {}, remove() {} }, getBoundingClientRect: () => ({ top: 100, height: 40 }) };
+    const dropEvent = (clientY) => ({ clientY, dataTransfer: transfer, preventDefault() {}, target: { closest: (selector) => (selector === '.track-row' ? dropRow : null) } });
+    list.dispatch('dragover', dropEvent(110));
+    list.dispatch('drop', dropEvent(110));
+    list.dispatch('dragend', {});
+    list.dispatch('drop', dropEvent(130));
+    list.dispatch('dragstart', dragRow('e'));
+    list.dispatch('drop', dropEvent(130));
+    assert.deepEqual(events.reorder, [[['e'], 'd', 'before'], [['e'], 'd', 'after']], 'a drop reports the target and before/after the row midpoint, and is ignored with no active drag');
+
+    selectionMechanic.destroy();
+    assert.equal(list._listeners.dragstart, undefined, 'destroy must remove the drag listeners');
+    assert.equal(list._listeners.drop, undefined, 'destroy must remove the drop listener');
   }
 
   // destroy(): tears down listeners.
