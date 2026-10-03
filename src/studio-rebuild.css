@@ -744,6 +744,6 @@ body[data-theme="studio"] .workspace > .inspector { grid-column: 5; grid-row: 1;
 }
 
 /* Keep header jobs in flow as the logo and window width change. */
-body[data-theme="studio"] .topbar :is(.jams-trigger, .settings-trigger, .top-quality) { position: static; flex-shrink: 0; }
-body[data-theme="studio"] .topbar .global-search { flex: 1 1 140px; min-width: 100px; width: auto; max-width: 560px; }
-body[data-theme="studio"] .topbar .jams-trigger { margin-left: auto; }
+body[data-theme="studio"]:not([data-singularity-probe]) .topbar :is(.jams-trigger, .settings-trigger, .top-quality) { position: static; flex-shrink: 0; }
+body[data-theme="studio"]:not([data-singularity-probe]) .topbar .global-search { flex: 1 1 140px; min-width: 100px; width: auto; max-width: 560px; }
+body[data-theme="studio"]:not([data-singularity-probe]) .topbar .jams-trigger { margin-left: auto; }

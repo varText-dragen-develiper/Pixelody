@@ -24,6 +24,9 @@ The shop uses an isolated website viewer without a native music-library bridge.
 RevenueCat currently uses a no-charge Test Store consumable. This is not a paid
 module entitlement or production checkout.
 
+If the shop cannot load (offline or server down), Windows shows a short message and
+Android shows an in-page notice with Reload. Installed modules keep working.
+
 ## Build and version troubleshooting
 
 The importer was initially available only in an isolated candidate. Earlier main

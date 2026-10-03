@@ -160,7 +160,7 @@ VISUAL SYSTEM
 [ ] Pixel waveform and spectrum visualizers
 [ ] Automatic palette extraction from playlist artwork
 [~] Windows-local declarative theme import/apply/remove is implemented; bounded assets, preview/revert, creator export, signatures, and community delivery remain planned
-[ ] Scalable text and high-contrast accessibility modes
+[x] Scalable text (100-150% window zoom) and high-contrast accessibility modes (follows the Windows contrast setting by default)
 
 RELIABILITY AND PROFESSIONAL TOOLS
 ----------------------------------
@@ -171,8 +171,8 @@ RELIABILITY AND PROFESSIONAL TOOLS
 [~] Atomic, schema-versioned durable state store with fsync, previous-file fallback, quarantine and crash recovery; two development-only keys remain on localStorage
 [~] Manual portable library/settings backup and restore; automatic scheduling remains
 [~] Codec, channel, bitrate, gain and signal-path diagnostics; event log remains
-[ ] Shared/exclusive mode indicator
-[ ] File integrity checks
+[x] Shared/exclusive mode indicator (Diagnostics; reports shared mode and resampling honestly, never claims exclusive or bit-perfect)
+[~] File integrity checks (library-wide header, size, truncation and change-since-last-check scan; audio is not decoded and per-file checksums remain)
 [~] Import, metadata, artwork, playback, pause/resume, favorites, queue, shuffle, repeat and restart restoration verified in isolated Electron integration runs; persistent CI suite remains
 
 IMPLEMENTATION ORDER
