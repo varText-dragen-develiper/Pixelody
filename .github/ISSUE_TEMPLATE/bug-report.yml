@@ -1,0 +1,61 @@
+name: Bug report
+description: Help us reproduce a problem with this app.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for trying Pixelody. Share only what is needed to reproduce the problem.
+        Do not post music files, passwords, pairing tokens, private paths or personal screenshots.
+        Report security concerns using SECURITY.md instead of this public form.
+  - type: input
+    id: version
+    attributes:
+      label: App version and where you got it
+      description: Include the release link or source commit, and preview/debug/stable status.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Device and operating system
+      description: Include host and phone versions if the problem involves pairing.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Start from opening the app and describe each action.
+    validations:
+      required: true
+  - type: textarea
+    id: expected-actual
+    attributes:
+      label: What you expected and what happened
+      description: Mention whether playback continued and whether reopening helped.
+    validations:
+      required: true
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: How often does it happen?
+      options:
+        - Every time
+        - Sometimes
+        - Happened once
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Optional redacted diagnostics
+      description: Remove credentials, private paths and personal information before sharing.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Before posting
+      options:
+        - label: I checked that this report contains no credentials or private library data.
+          required: true

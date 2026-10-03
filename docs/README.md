@@ -82,4 +82,6 @@ Design, architecture, and engineering references for Pixelody. Planning document
 ## Other
 
 - [Pixelody architecture](ARCHITECTURE.md)
+- [Getting started with Pixelody for Windows](GETTING_STARTED.md)
 - [Downloaded modules](OPTIONAL_MODULES.md)
+- [Release preparation](RELEASE_PREPARATION.md)

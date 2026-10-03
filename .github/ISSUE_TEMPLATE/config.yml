@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ideas and general discussion
+    url: https://github.com/varText-dragen-develiper/Pixelody/discussions
+    about: Use the shared Pixelody forum for listening ideas and questions.
+  - name: Security reporting
+    url: https://github.com/varText-dragen-develiper/Pixelody/blob/main/SECURITY.md
+    about: Read the private reporting instructions before sharing a security concern.

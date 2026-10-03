@@ -1,0 +1,28 @@
+name: Listening and setup feedback
+description: Tell us where ordinary listening or getting started could be better.
+title: "[Feedback]: "
+body:
+  - type: input
+    id: build
+    attributes:
+      label: Platform, device and app version
+    validations:
+      required: true
+  - type: textarea
+    id: task
+    attributes:
+      label: What were you trying to do?
+      description: Tell us about your listening workflow rather than just naming a feature.
+    validations:
+      required: true
+  - type: textarea
+    id: obstacle
+    attributes:
+      label: The first confusing or difficult step
+    validations:
+      required: true
+  - type: textarea
+    id: improvement
+    attributes:
+      label: What would make this easier?
+      description: Suggestions are welcome. Please keep private library details out of public reports.
