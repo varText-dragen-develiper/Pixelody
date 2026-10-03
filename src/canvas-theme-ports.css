@@ -2,8 +2,6 @@
 @font-face{font-family:"Canvas Future";src:url("assets/themes/orbital-retro/KenneyFuture.ttf") format("truetype");font-display:swap}
 @font-face{font-family:"Canvas Rajdhani";src:url("assets/themes/graphite-loadout/Rajdhani-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap}
 @font-face{font-family:"Canvas Space";src:url("assets/themes/cosmic-cinema/SpaceGrotesk-Variable.ttf") format("truetype");font-weight:300 700;font-display:swap}
-@font-face{font-family:"Canvas Signal";src:url("assets/themes/dead-signal/Oswald-Variable.ttf") format("truetype");font-weight:200 700;font-display:swap}
-
 /* Baseline archive-to-Canvas ports. The graph and product behavior remain
    Canvas-owned; these selectors translate only the archived palette and the
    manifest's existing HUD, type, corner, control, and motion traits. */
@@ -56,7 +54,7 @@ body[data-theme="foreground"][data-canvas-port-type="technical"] { --canvas-port
 body[data-theme="foreground"][data-canvas-port-type="technical-editorial"] { --canvas-port-font: "Canvas Rajdhani", "Segoe UI", sans-serif; --canvas-port-display-font: "Canvas Rajdhani", "Segoe UI", sans-serif; }
 body[data-theme="foreground"][data-canvas-port-type="display"] { --canvas-port-font: "Canvas Space", "Segoe UI", sans-serif; --canvas-port-display-font: "Canvas Space", "Segoe UI", sans-serif; }
 body[data-theme="foreground"][data-canvas-port-type="editorial"] { --canvas-port-font: Georgia, "Times New Roman", serif; --canvas-port-display-font: Georgia, "Times New Roman", serif; }
-body[data-theme="foreground"][data-canvas-theme-port="dead-signal"] { --canvas-port-display-font: "Canvas Signal", "Arial Narrow", sans-serif; }
+body[data-theme="foreground"][data-canvas-theme-port="dead-signal"] { --canvas-port-display-font: "Segoe UI", "Arial Narrow", sans-serif; }
 
 /* Each port gets an authored material recipe rather than a palette wash. All
    motifs are CSS-native and inherit the selected port's trusted palette. */
@@ -178,7 +176,7 @@ body[data-theme="foreground"][data-canvas-theme-port="dead-signal"] {
     radial-gradient(ellipse at 76% 28%, rgba(27, 215, 208, .12), transparent 38%),
     radial-gradient(ellipse at 74% 48%, rgba(195, 22, 34, .08), transparent 36%),
     linear-gradient(100deg, #020202 0 45%, #0b0506 72%, #020202),
-    url("assets/themes/dead-signal/worn-shutter-cc0.jpg");
+    none;
   --canvas-port-panel-face: repeating-linear-gradient(0deg, transparent 0 3px, rgba(232, 225, 214, .03) 3px 4px), linear-gradient(145deg, #100607, #071314 58%, #020202);
   --canvas-port-stage-face: transparent;
   --canvas-port-panel-edge: #24191a;
@@ -1425,7 +1423,7 @@ body[data-theme="foreground"][data-canvas-theme-port="dead-signal"]::after {
   pointer-events: none;
   opacity: .055;
   background-image:
-    url("assets/themes/dead-signal/scratched-metal-cc0.png"),
+    none,
     repeating-linear-gradient(0deg, transparent 0 3px, #fff 4px, transparent 5px);
   background-size: 520px auto, 100% 5px;
   background-position: center;
@@ -1451,7 +1449,7 @@ body[data-theme="foreground"][data-canvas-theme-port="dead-signal"] .playlist-he
   background-image:
     linear-gradient(90deg, #020202 0 34%, rgba(2, 2, 2, .92) 52%, rgba(2, 2, 2, .45) 100%),
     radial-gradient(ellipse at 79% 30%, rgba(27, 215, 208, .2), transparent 38%),
-    url("assets/themes/dead-signal/worn-shutter-cc0.jpg"),
+    none,
     linear-gradient(112deg, #020202 0 48%, #0b0506 100%) !important;
   background-size: 100% 100%, 100% 100%, 820px auto, 100% 100% !important;
   background-position: center, center, 104% 47%, center !important;
@@ -1468,7 +1466,7 @@ body[data-theme="foreground"][data-canvas-theme-port="dead-signal"] .playlist-he
   top: -20px;
   width: 480px;
   height: 480px;
-  background: url("assets/themes/dead-signal/dead-tower.svg") center / contain no-repeat;
+  background: none center / contain no-repeat;
   opacity: .82;
   filter: grayscale(.18) contrast(1.18) brightness(.92) drop-shadow(0 0 28px rgba(27, 215, 208, .28));
   pointer-events: none;
@@ -1498,7 +1496,7 @@ body[data-theme="foreground"][data-canvas-theme-port="dead-signal"] .hero-shade:
   mix-blend-mode: screen;
 }
 body[data-theme="foreground"][data-canvas-theme-port="dead-signal"] .hero-copy h1 {
-  font-family: var(--canvas-port-display-font, "Canvas Signal", sans-serif);
+  font-family: var(--canvas-port-display-font, "Segoe UI", sans-serif);
   text-shadow: 2px 0 #5e1014;
 }
 
@@ -1514,13 +1512,13 @@ body[data-theme="foreground"][data-canvas-theme-port="dead-signal"] .cw-module:n
 }
 
 body[data-theme="foreground"][data-canvas-theme-port="dead-signal"] :is(.playlist-cover, .mini-cover, .metadata-art, .track-editor-art):not(.has-image) {
-  background: #060203 url("assets/themes/dead-signal/archive-tape.svg") center / cover no-repeat;
+  background: #060203 none center / cover no-repeat;
   border: 1px solid #4a383a;
   box-shadow: 4px 4px 0 #5e1014;
   filter: grayscale(.48) contrast(1.12);
 }
 body[data-theme="foreground"][data-canvas-theme-port="dead-signal"] :is(.playlist-thumb, .track-art):not([style*="background-image"]) {
-  background: #080405 url("assets/themes/dead-signal/archive-tape.svg") center / cover no-repeat;
+  background: #080405 none center / cover no-repeat;
   border: 1px solid #342426;
   filter: grayscale(.58) contrast(1.12);
 }

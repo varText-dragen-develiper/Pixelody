@@ -4,7 +4,6 @@
    silhouette, and the transport-button hover state (text-shadow isn't part
    of the shared hover token, and window-actions buttons don't share this
    theme's hover treatment). */
-@font-face{font-family:"Dead Signal Display";src:url("assets/themes/dead-signal/Oswald-Variable.ttf") format("truetype");font-weight:200 700;font-display:swap}
 @font-face{font-family:"Dead Signal Mono";src:url("assets/themes/cosmic-cinema/IBMPlexMono-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
 body[data-theme="dead-signal"]{
   --mini-accent:#1bd7d0;
@@ -13,15 +12,15 @@ body[data-theme="dead-signal"]{
   font-family:"Segoe UI",sans-serif;
   --mini-shell-border:1px solid #344143;
   --mini-shell-radius:1px;
-  --mini-shell-bg:linear-gradient(180deg,#0d0809f0,#020202),radial-gradient(ellipse at 78% 22%,#1bd7d018,transparent 50%),url("assets/themes/dead-signal/worn-shutter-cc0.jpg") 100% 42%/250px auto no-repeat;
+  --mini-shell-bg:linear-gradient(180deg,#0d0809f0,#020202),radial-gradient(ellipse at 78% 22%,#1bd7d018,transparent 50%),none 100% 42%/250px auto no-repeat;
   --mini-shell-shadow:inset 0 1px #e8e1d60a,7px 8px 0 #080303,0 18px 55px #000;
   --mini-art-border:1px solid #817874;
-  --mini-art-bg:#060203 url("assets/themes/dead-signal/archive-tape.svg") center/cover no-repeat;
+  --mini-art-bg:#060203 none center/cover no-repeat;
   --mini-art-shadow:4px 4px 0 #12383a;
   --mini-copy-eyebrow-color:#1bd7d0;
   --mini-copy-eyebrow-font:7px "Dead Signal Mono",Consolas,monospace;
   --mini-copy-eyebrow-tracking:.15em;
-  --mini-copy-title-font:500 17px "Dead Signal Display",sans-serif;
+  --mini-copy-title-font:500 17px "Segoe UI",sans-serif;
   --mini-copy-meta-color:#8c8580;
   --mini-copy-time-color:#8c8580;
   --mini-progress-height:2px;
@@ -34,12 +33,12 @@ body[data-theme="dead-signal"]{
   --mini-play-shadow:0 0 0 4px #100607,0 0 20px #1bd7d033;
 }
 body[data-theme="dead-signal"] .mini-shell{overflow:hidden}
-body[data-theme="dead-signal"] .mini-shell::before{content:"";position:absolute;right:-7px;top:-34px;width:172px;height:156px;background:url("assets/themes/dead-signal/dead-tower.svg") center/contain no-repeat;opacity:.28;filter:grayscale(.26) contrast(1.18) drop-shadow(0 0 15px #1bd7d02c)}
+body[data-theme="dead-signal"] .mini-shell::before{content:"";position:absolute;right:-7px;top:-34px;width:172px;height:156px;background:none center/contain no-repeat;opacity:.28;filter:grayscale(.26) contrast(1.18) drop-shadow(0 0 15px #1bd7d02c)}
 body[data-theme="dead-signal"] .mini-shell::after{content:"";position:absolute;z-index:2;left:7%;right:7%;top:0;height:2px;background:linear-gradient(90deg,transparent,#12383a,#1bd7d0,#e8e1d6,#1bd7d0,#12383a,transparent);filter:drop-shadow(0 0 4px #1bd7d0)}
 body[data-theme="dead-signal"] .mini-shell>*{position:relative;z-index:1}
 body[data-theme="dead-signal"] .mini-glow{background:radial-gradient(circle,#1bd7d031,transparent 68%);filter:blur(12px)}
 body[data-theme="dead-signal"] .mini-art{position:relative;overflow:hidden;clip-path:polygon(0 0,90% 0,100% 10%,100% 100%,10% 100%,0 90%);filter:grayscale(.5) contrast(1.1)}
-body[data-theme="dead-signal"] .mini-art::after{content:"";position:absolute;inset:0;background:url("assets/themes/dead-signal/fracture-mask.svg") center/cover no-repeat;opacity:.13;mix-blend-mode:screen}
+body[data-theme="dead-signal"] .mini-art::after{content:"";position:absolute;inset:0;background:none center/cover no-repeat;opacity:.13;mix-blend-mode:screen}
 body[data-theme="dead-signal"] .mini-copy small{text-transform:uppercase;text-shadow:0 0 8px #1bd7d052}
 body[data-theme="dead-signal"] .mini-copy strong{letter-spacing:.055em;text-transform:uppercase}
 body[data-theme="dead-signal"] .mini-copy>span,body[data-theme="dead-signal"] .mini-time{font-family:"Dead Signal Mono",Consolas,monospace}

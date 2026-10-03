@@ -23,6 +23,11 @@ const jamLearningContract = window.PixelodyJamLearningContract;
 if (!jamLearningContract) throw new Error('J.A.M. learning contract failed to load.');
 const stateDomain = window.PixelodyStateController;
 const libraryDomain = window.PixelodyLibraryController;
+const libraryBatchDomain = window.PixelodyLibraryBatch;
+const musicBrainzDomain = window.PixelodyMusicBrainz;
+const libraryWorkflowDomain = window.PixelodyLibraryWorkflow;
+// Created once the track list is mounted; renders before that skip it.
+let libraryWorkflow = null;
 const navigationDomain = window.PixelodyNavigationController;
 const playbackDomain = window.PixelodyPlaybackController;
 const diagnosticsDomain = window.PixelodyDiagnosticsController;
@@ -56,7 +61,7 @@ const routeFieldMechanicDomain = window.PixelodyRouteFieldMechanic;
 const navigationDispatcherDomain = window.PixelodyNavigationDispatcher;
 const workspaceProductionDomain = window.PixelodyWorkspaceProductionHost;
 const singularityLiveHostDomain = window.PixelodySingularityLiveHost;
-if (![stateDomain, libraryDomain, navigationDomain, playbackDomain, diagnosticsDomain, jamDomain, appearanceDomain, audioDomain, themeGlyphDomain, canvasThemePortDomain, themeInformationContract, themeInformationRegistry, themeInformationBundles, themeInformationRuntimeDomain, navigationMechanicContract, navigationMechanicRegistry, linearListMechanicDomain, carouselMechanicDomain, coverFlowMechanicDomain, passDeckMechanicDomain, memoryCascadeMechanicDomain, spectralFieldMechanicDomain, pressureStackMechanicDomain, currentWeaveMechanicDomain, chorusFoldMechanicDomain, graftlineMechanicDomain, sharedStrataMechanicDomain, routeFieldMechanicDomain, navigationDispatcherDomain, workspaceProductionDomain, singularityLiveHostDomain].every(Boolean)) throw new Error('Renderer domain controllers failed to load.');
+if (![stateDomain, libraryDomain, libraryBatchDomain, musicBrainzDomain, libraryWorkflowDomain, navigationDomain, playbackDomain, diagnosticsDomain, jamDomain, appearanceDomain, audioDomain, themeGlyphDomain, canvasThemePortDomain, themeInformationContract, themeInformationRegistry, themeInformationBundles, themeInformationRuntimeDomain, navigationMechanicContract, navigationMechanicRegistry, linearListMechanicDomain, carouselMechanicDomain, coverFlowMechanicDomain, passDeckMechanicDomain, memoryCascadeMechanicDomain, spectralFieldMechanicDomain, pressureStackMechanicDomain, currentWeaveMechanicDomain, chorusFoldMechanicDomain, graftlineMechanicDomain, sharedStrataMechanicDomain, routeFieldMechanicDomain, navigationDispatcherDomain, workspaceProductionDomain, singularityLiveHostDomain].every(Boolean)) throw new Error('Renderer domain controllers failed to load.');
 const optionalFiniteNumber = audioDomain.optionalFiniteNumber;
 const clampNumber = audioDomain.clampNumber;
 const numericSamples = diagnosticsDomain.numericSamples;
@@ -16470,6 +16475,7 @@ function renderTracks(options = {}) {
     activationFailedId: Object.prototype.hasOwnProperty.call(options, 'activationFailedId') ? options.activationFailedId : trackBrowserActivationFailedId,
   });
   renderHero(); renderDailyCuratedPanel(); syncGhostIndexUi(tracks); syncThemeInformationUi(tracks); renderPlaylists();
+  libraryWorkflow?.syncBar();
   syncQueuePlaybackState(options);
   if (dailyMixNeedsPersist) {
     dailyMixNeedsPersist = false;
@@ -17683,13 +17689,15 @@ function confirmPlaylistCreation() {
   state.playlists.push(playlist); state.activePlaylistId = playlist.id; state.libraryMode = 'playlists';
   $('#playlistCreatorOverlay').classList.add('hidden'); navigationHistory.pop(); persist(); renderTracks({ animateRows: true }); syncNavigationState(); showToast(`Created ${playlist.name}.`);
 }
+// When set, the picker adds this whole list (multi-select) instead of one track.
+let playlistPickerBatchIds = null;
 let playlistPickerTrackId = null;
 function renderPlaylistPicker() {
   const quest = cartridgeQuestExperienceActive();
   const track = trackById(playlistPickerTrackId);
   const trackLabel = $('#playlistPickerTrackLabel');
   if (trackLabel) {
-    trackLabel.textContent = track ? `Adding "${track.title}" by ${track.artist || 'Unknown artist'}` : '';
+    trackLabel.textContent = playlistPickerBatchIds ? `Adding ${libraryBatchDomain.describeCount(playlistPickerBatchIds.length, 'track')}` : track ? `Adding "${track.title}" by ${track.artist || 'Unknown artist'}` : '';
   }
   const preheading = $('#playlistPickerPreheading');
   const title = $('#playlistPickerTitle');
@@ -17708,7 +17716,9 @@ function renderPlaylistPicker() {
   } else {
     list.innerHTML = customPlaylists.map((playlist) => {
       const trackIds = Array.isArray(playlist.trackIds) ? playlist.trackIds : [];
-      const alreadyAdded = playlistPickerTrackId ? trackIds.includes(playlistPickerTrackId) : false;
+      const alreadyAdded = playlistPickerBatchIds
+        ? playlistPickerBatchIds.every((id) => trackIds.some((entry) => (entry && typeof entry === 'object' ? entry.id : entry) === id))
+        : playlistPickerTrackId ? trackIds.includes(playlistPickerTrackId) : false;
       const count = trackIds.length;
       const meta = alreadyAdded
         ? (quest ? 'Already saved' : 'Already added')
@@ -17720,9 +17730,15 @@ function renderPlaylistPicker() {
     }).join('');
   }
 }
-function openPlaylistPicker(id, opener = null) {
+function openPlaylistPickerForTracks(ids, opener = null) {
+  const known = (ids || []).filter((id) => trackById(id));
+  if (!known.length) return;
+  openPlaylistPicker(known[0], opener, known.length > 1 ? known : null);
+}
+function openPlaylistPicker(id, opener = null, batchIds = null) {
   const track = trackById(id);
   if (!track) return;
+  playlistPickerBatchIds = batchIds;
   playlistPickerTrackId = id;
   rememberNavigationOpener('playlistPicker', opener || trackMenuOpener || document.activeElement);
   pushNavigationState();
@@ -17741,6 +17757,7 @@ function closePlaylistPicker({ restoreFocus = true } = {}) {
   if (!overlay || overlay.classList.contains('hidden')) return;
   overlay.classList.add('hidden');
   playlistPickerTrackId = null;
+  playlistPickerBatchIds = null;
   navigationHistory.pop();
   syncNavigationState();
   if (restoreFocus) {
@@ -17750,8 +17767,31 @@ function closePlaylistPicker({ restoreFocus = true } = {}) {
     }
   }
 }
+function addTracksToPlaylist(playlistId, trackIds) {
+  const playlist = state.playlists.find((p) => p.id === playlistId);
+  if (!playlist) return { added: 0, skipped: 0 };
+  if (!Array.isArray(playlist.trackIds)) playlist.trackIds = [];
+  const plan = libraryBatchDomain.planPlaylistAdd(playlist.trackIds, trackIds, (id) => Boolean(trackById(id)));
+  if (!plan.added.length) return { added: 0, skipped: plan.skipped };
+  playlist.trackIds.push(...plan.added);
+  persist();
+  renderPlaylists();
+  if (state.activePlaylistId === playlist.id) renderTracks({ animateRows: true });
+  return { added: plan.added.length, skipped: plan.skipped };
+}
+function toastPlaylistAdd(playlist, result) {
+  if (!playlist) return;
+  const skipped = result.skipped ? ` (${result.skipped} already there)` : '';
+  if (!result.added) showToast(`Everything is already in ${playlist.name}.`);
+  else showToast(`Added ${libraryBatchDomain.describeCount(result.added, 'track')} to ${playlist.name}${skipped}.`);
+}
 function addTrackToPlaylist(playlistId, trackId) {
   const playlist = state.playlists.find((p) => p.id === playlistId);
+  if (playlistPickerBatchIds && playlist) {
+    toastPlaylistAdd(playlist, addTracksToPlaylist(playlistId, playlistPickerBatchIds));
+    closePlaylistPicker({ restoreFocus: true });
+    return;
+  }
   const track = trackById(trackId);
   if (!playlist || !track) return;
   if (!Array.isArray(playlist.trackIds)) playlist.trackIds = [];
@@ -17781,16 +17821,18 @@ function confirmPlaylistPickerCreation() {
     return;
   }
   const track = trackById(playlistPickerTrackId);
+  const batchIds = playlistPickerBatchIds ? [...new Set(playlistPickerBatchIds.filter((id) => trackById(id)))] : null;
   const playlist = {
     id: `playlist-${Date.now()}`,
     name,
-    trackIds: playlistPickerTrackId ? [playlistPickerTrackId] : [],
+    trackIds: batchIds || (playlistPickerTrackId ? [playlistPickerTrackId] : []),
     background: null,
   };
   state.playlists.push(playlist);
   persist();
   renderPlaylists();
-  if (track) showToast(`Created ${playlist.name} and added "${track.title}".`);
+  if (batchIds) showToast(`Created ${playlist.name} and added ${libraryBatchDomain.describeCount(batchIds.length, 'track')}.`);
+  else if (track) showToast(`Created ${playlist.name} and added "${track.title}".`);
   else showToast(`Created ${playlist.name}.`);
   closePlaylistPicker({ restoreFocus: true });
 }
@@ -18625,6 +18667,35 @@ document.addEventListener('pointerdown', (event) => {
 // `.oncontextmenu = ...` assignments; behavior is unchanged, only the
 // owner moved. Routed through navigationDispatcher (not the raw mechanic)
 // so a later theme switch can swap which mechanic is mounted here.
+libraryWorkflow = libraryWorkflowDomain.createLibraryWorkflow({
+  document,
+  $,
+  escapeHtml,
+  batch: libraryBatchDomain,
+  musicBrainz: musicBrainzDomain,
+  trackById,
+  persist: () => persist(),
+  showToast: (message) => showToast(message),
+  renderTracks: (options) => renderTracks(options),
+  renderPlaylists: () => renderPlaylists(),
+  clearSelection: () => trackBrowserMechanic.clearSelection(),
+  queueTracks: (ids, options) => queueTracks(ids, options),
+  openPlaylistPickerForTracks: (ids, opener) => openPlaylistPickerForTracks(ids, opener),
+  editTrackDetails: (id) => editTrackDetails(id),
+  addTracksToPlaylist: (playlistId, ids) => addTracksToPlaylist(playlistId, ids),
+  toastPlaylistAdd: (playlist, result) => toastPlaylistAdd(playlist, result),
+  playlistById: (id) => state.playlists.find((playlist) => playlist.id === id) || null,
+  activeUserPlaylist: () => (isUserPlaylist() ? state.playlists.find((playlist) => playlist.id === state.activePlaylistId) || null : null),
+  isDroppablePlaylist: (id) => id !== 'all' && state.playlists.some((playlist) => playlist.id === id && !playlist.dailyMix && !playlist.virtual),
+  reorderEnabled: () => playlistReorderEnabled(),
+  normalizeTags: (value) => normalizeSignalTags(value),
+  normalizeRole: (value) => normalizeListeningRole(value),
+  metadataChanged: (ids) => afterBulkMetadataChange(ids),
+  canLookUp: () => typeof window.desktop?.musicBrainzSearch === 'function',
+  musicBrainzSearch: (query) => window.desktop.musicBrainzSearch(query),
+  openSurface: (selector) => prepareSurfaceForOpen(selector)?.classList.remove('hidden'),
+  closeSurface: (selector) => $(selector)?.classList.add('hidden'),
+});
 navigationDispatcher.mount($('#trackRows'), activeTrackNavigationMechanic(), [], {
   activeId: currentTrack()?.id || null,
   authoritativeTracks: state.tracks,
@@ -18648,11 +18719,19 @@ navigationDispatcher.mount($('#trackRows'), activeTrackNavigationMechanic(), [],
   },
   onContextMenu: (id, event) => showTrackMenu(event, id),
   onEscape: () => navigateBack(),
+  // Multi-select, drag to playlists/queue, and drag-to-reorder: see
+  // renderer-domains/library-workflow.js for what each gesture does.
+  onMultiSelectionChange: (ids) => libraryWorkflow.setSelection(ids),
+  onDragStart: (ids) => libraryWorkflow.setDragIds(ids),
+  onDragEnd: () => libraryWorkflow.setDragIds(null),
+  canReorder: () => playlistReorderEnabled(),
+  onReorderDrop: (ids, targetId, position) => libraryWorkflow.reorderDrop(ids, targetId, position),
   onRowAction: (action, id) => {
     if (action === 'favorite') toggleFavorite(id);
     else if (action === 'find' || action === 'edit') editTrackDetails(id);
   },
 });
+libraryWorkflow.bind();
 syncTrackHeaderVisibility();
 $('#trackMenu').onclick = (event) => {
   const action = event.target.dataset.trackAction; const id = state.menuTrackId; if (!action || !id) return;
@@ -18685,6 +18764,7 @@ $('#trackMenu').onclick = (event) => {
   if (action === 'not-session') applyFlowControl('not-session', trackById(id));
   if (action === 'less-like') applyFlowControl('less-like', trackById(id));
   if (action === 'discover') editTrackDetails(id);
+  if (action === 'repair') libraryWorkflow.openRepair([id], trackMenuOpener);
   if (action === 'inspect') reinspectTrackMetadata(id);
   if (action === 'edit') editTrackDetails(id);
   if (action === 'remove') removeTrack(id);
@@ -18780,6 +18860,37 @@ document.querySelectorAll('#trackEditorOverlay input, #trackEditorOverlay textar
   input.addEventListener('input', refreshTrackEditorDiscoveryCues);
   input.addEventListener('change', refreshTrackEditorDiscoveryCues);
 });
+// Repaints the parts of the player that show the playing track's details.
+function syncCurrentTrackMetadataView(track) {
+  const artworkUrl = track.artworkPath ? window.desktop.fileUrl(track.artworkPath) : '';
+  $('#playerTitle').textContent = track.title; $('#playerMeta').textContent = `${track.artist} · ${track.format}`; $('#metadataTitle').textContent = track.title; $('#metadataArtist').textContent = track.artist; $('#metadataAlbum').textContent = track.album || 'No album information'; $('#metadataGenre').textContent = track.genre || '--'; $('#metadataYear').textContent = track.year || '--';
+  updateSignalMetadataFields(track);
+  [$('#miniCover'), $('#metadataArt')].forEach((element) => { element.style.backgroundImage = artworkUrl ? `url("${artworkUrl}")` : ''; element.classList.toggle('has-image', Boolean(artworkUrl)); });
+  updateMemeCue(track);
+}
+// Applies metadata edits made to several tracks at once (batch editor,
+// MusicBrainz repair): the same follow-through as saving one track's details.
+function afterBulkMetadataChange(ids) {
+  ids.forEach((id) => { const track = trackById(id); if (track) resolveWantedTracksFor(track); });
+  const playing = currentTrack();
+  if (playing && ids.includes(playing.id)) syncCurrentTrackMetadataView(playing);
+  persist(); renderTracks({ preserveOrder: true }); renderQueue(); renderMigrationReport(); broadcastPlayerState();
+}
+function queueTracks(ids, { next = false } = {}) {
+  const fresh = [...new Set(ids)].filter((id) => trackById(id) && !state.queue.includes(id));
+  if (!fresh.length) { showToast('Those tracks are already in the queue.'); return; }
+  if (next) {
+    const currentIndex = state.queue.indexOf(currentTrack()?.id || '');
+    state.queue.splice(currentIndex >= 0 ? currentIndex + 1 : 0, 0, ...fresh);
+    [...fresh].reverse().forEach((id) => { state.flowShuffle = flowShuffleEngine.markPriority(state.flowShuffle, id, { front: true }); });
+  } else {
+    state.queue.push(...fresh);
+    fresh.forEach((id) => { state.flowShuffle = flowShuffleEngine.markPriority(state.flowShuffle, id); });
+  }
+  fresh.forEach((id) => recordSignalEvent('track_queued', { trackId: id, source: 'selection' }));
+  persist(); renderTracks(); renderQueue();
+  showToast(`${next ? 'Playing next' : 'Added to queue'}: ${libraryBatchDomain.describeCount(fresh.length, 'track')}.`);
+}
 $('#saveTrackDetails').onclick = () => {
   const track = trackById(state.editingTrackId); if (!track) return;
   Object.assign(track, {
@@ -18807,13 +18918,7 @@ $('#saveTrackDetails').onclick = () => {
     customArtwork: Boolean(state.editingArtworkPath),
     localMetadataOverride: true,
   });
-  if (currentTrack()?.id === track.id) {
-    const artworkUrl = track.artworkPath ? window.desktop.fileUrl(track.artworkPath) : '';
-    $('#playerTitle').textContent = track.title; $('#playerMeta').textContent = `${track.artist} · ${track.format}`; $('#metadataTitle').textContent = track.title; $('#metadataArtist').textContent = track.artist; $('#metadataAlbum').textContent = track.album || 'No album information'; $('#metadataGenre').textContent = track.genre || '--'; $('#metadataYear').textContent = track.year || '--';
-    updateSignalMetadataFields(track);
-    [$('#miniCover'), $('#metadataArt')].forEach((element) => { element.style.backgroundImage = artworkUrl ? `url("${artworkUrl}")` : ''; element.classList.toggle('has-image', Boolean(artworkUrl)); });
-    updateMemeCue(track);
-  }
+  if (currentTrack()?.id === track.id) syncCurrentTrackMetadataView(track);
   persist(); renderTracks(); renderQueue(); broadcastPlayerState(); closeTrackEditor(); showToast('Local track details saved.');
 };
 document.querySelectorAll('[data-discovery-link]').forEach((button) => button.onclick = () => openDiscoveryLink(button.dataset.discoveryLink));
@@ -20677,7 +20782,7 @@ function keyboardTargetIsEditable(target) {
   return Boolean(target?.matches?.('input,select,textarea,[contenteditable="true"]'));
 }
 function topmostVisibleModal() {
-  return ['#supportOwnOverlay', '#shortcutsOverlay', '#trackEditorOverlay', '#playlistPickerOverlay', '#playlistCreatorOverlay', '#settingsOverlay', '#jamsOverlay']
+  return ['#supportOwnOverlay', '#shortcutsOverlay', '#trackEditorOverlay', '#playlistPickerOverlay', '#playlistCreatorOverlay', '#batchEditorOverlay', '#metadataRepairOverlay', '#settingsOverlay', '#jamsOverlay']
     .map((selector) => $(selector))
     .find((element) => element && !element.classList.contains('hidden')) || null;
 }

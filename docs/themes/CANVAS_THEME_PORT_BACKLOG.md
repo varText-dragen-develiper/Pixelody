@@ -190,6 +190,8 @@ port now; **Later additions** remains the bounded feature queue.
 
 ## Dead Signal
 
+**October 3 retirement:** Previous decorative image files and dedicated Oswald font are removed pending redesign. The implementation history below records the earlier pass; worn-shutter, scratched-metal, dead-tower and tape artwork are no longer bundled or loaded. Palette, code-defined geometry and shared sound behavior remain as a baseline.
+
 **Baseline retained:** Haunted broadcast archive, bone/cyan/crimson ownership, square controls, signal motion, and linear navigation.
 
 **First detail pass (implemented):** Receiver scanlines, haunted archive plate, cyan live trace, and crimson treatment reserved for actually missing media. Elevated with worn-shutter machine panel background, scratched-metal CRT cathode scanline overlay, transparent stage reveal with dead-tower transmission artwork, live carrier-wave RF oscilloscope trace with pulsating amplitude on playing tracks, crimson REC telemetry, tape deck player chassis with dual carrier wave lines, graticule-grid signal monitor inspector cards, 5-lamp receiver scintillation, and Flow Shuffle 3-pill toggle switch console.

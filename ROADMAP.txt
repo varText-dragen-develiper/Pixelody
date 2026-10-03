@@ -44,8 +44,8 @@ LIBRARY AND PLAYLISTS
 [x] Automatic folder watching
 [~] Smart Favorites, Recently Played, cleanup and rediscovery collections exist; rule builder remains
 [ ] Playlist folders
-[ ] Drag tracks between playlists and queue positions
-[ ] Multi-select and batch editing
+[~] Drag tracks to playlists (copy, Shift to move), to the queue, and to reorder inside a playlist exist; arranging queue positions by drag remains
+[x] Multi-select (Ctrl/Shift click, Shift+Arrow, Space, Ctrl+A) with a selection bar and batch editing of shared metadata fields
 [~] Duplicate-content detection has local title/artist/duration smart collection; deeper file fingerprinting remains
 [~] Embedded track artwork is complete; user-selected track artwork remains
 [ ] Lyrics display
@@ -53,7 +53,7 @@ LIBRARY AND PLAYLISTS
 [~] Library Concierge guided first-run/migration flow with scan summary and match report; drawer, playlist reports and local import reports exist
 [~] CSV/JSON/m3u playlist metadata import with local track matching; basic file import, relative M3U paths and confidence matching exist
 [~] Missing From Library and Wanted Music workflows for unmatched imported tracks; wanted records, report surface and import-time resolution exist
-[ ] MusicBrainz-backed metadata repair with preview, confidence scoring and rate limiting
+[x] MusicBrainz-backed metadata repair with preview, confidence scoring and rate limiting
 [~] Local rediscovery smart collections exist for cleanup, duplicates, unplayed tracks, forgotten favorites, hi-res deep cuts and missing files; richer shelves remain
 [x] Daily Curated: local-first dated Rediscovery mix with stable same-day generation, Flow planning adapter, explanation receipt, and Save as Playlist
 [ ] Optional provider metadata import after product/legal review, without provider audio scraping
