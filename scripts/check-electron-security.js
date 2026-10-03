@@ -104,6 +104,8 @@ const validSamples = {
   'app:cache-track-image': ['C:\\fixture.png', 'track-1'],
   'app:optimize-artwork': ['C:\\fixture.png'],
   'music:exists': ['C:\\fixture.wav'],
+  'app:set-text-scale': [1.3],
+  'music:verify-integrity': [[{ path: 'C:\\fixture.wav', size: 10, mtimeMs: 1 }]],
   'app:export-backup': [{}],
   'app:export-tuning-profiles': [{}],
   'playlist:export-m3u': [{ name: 'Road Trip', entries: [{ path: 'C:\\Music\\a.flac', title: 'A', artist: 'B', duration: 212.4 }, { path: 'D:\\x.mp3', title: '', artist: '', duration: null }] }],

@@ -1,6 +1,6 @@
 {
   "$schema": "./theme.schema.json", "schemaVersion": 1, "id": "pixelody.obsession", "name": "Obsession Mode", "author": "Pixelody",
-  "description": "A restrained psychological-thriller poster interface with licensed red abstract material, bone-white type, original fracture geometry, and crimson reserved for playback and selection.",
+  "description": "A restrained psychological-thriller poster interface with licensed red abstract material, bone-white type, original fracture geometry, and crimson reserved for playback and selection. Background photo: Swirling Abstract Red and Maroon Liquid by Shreyansh Mishra on Unsplash.",
   "palette": { "primary": "#c91527", "secondary": "#ff5865", "base": "#030203" },
   "assets": {
     "backgroundTexture": "../assets/themes/obsession/red-fluid-shreyansh-mishra-unsplash.jpg",

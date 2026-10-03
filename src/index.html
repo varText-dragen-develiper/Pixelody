@@ -36,6 +36,7 @@
   <link rel="stylesheet" href="settings-streamlined.css">
   <link rel="stylesheet" href="core-navigation.css">
   <link rel="stylesheet" href="playback-performance.css">
+  <link rel="stylesheet" href="accessibility.css">
   <link rel="stylesheet" href="canvas-cartridge-quest.css" disabled>
   <link rel="stylesheet" href="canvas-obsession.css" disabled>
   <link rel="stylesheet" href="canvas-neon-burst.css" disabled>
@@ -591,6 +592,19 @@
         <label class="logo-follow-theme"><input type="checkbox" id="logoFollowsTheme" checked> Let other themes recolor the logo and window icon</label>
       </section>
 
+      <section class="setting-group accessibility-setting" data-settings-panel="style">
+        <div class="setting-label"><strong>Text size</strong><span>Scales the whole window, not just text, so everything stays in proportion.</span></div>
+        <div class="segmented-setting" id="textScaleSetting" role="group" aria-label="Text size">
+          <button type="button" data-text-scale="1" aria-pressed="true">100%</button><button type="button" data-text-scale="1.15" aria-pressed="false">115%</button><button type="button" data-text-scale="1.3" aria-pressed="false">130%</button><button type="button" data-text-scale="1.5" aria-pressed="false">150%</button>
+        </div>
+        <div class="setting-label"><strong>Contrast</strong><span>High contrast brightens text and borders and thickens focus outlines. Automatic follows the Windows contrast setting.</span></div>
+        <div class="segmented-setting" id="contrastSetting" role="group" aria-label="Contrast">
+          <button type="button" data-contrast-mode="auto" aria-pressed="true">Automatic</button><button type="button" data-contrast-mode="standard" aria-pressed="false">Standard</button><button type="button" data-contrast-mode="high" aria-pressed="false">High</button>
+        </div>
+        <small class="accessibility-note hidden" id="contrastOsNote" role="status">Windows is asking for more contrast, so Pixelody is using high contrast. Choose Standard to override.</small>
+        <div class="diagnostics-actions"><button class="quiet-button" id="resetAccessibility" type="button">Reset text size and contrast</button></div>
+      </section>
+
       <section class="setting-group" data-settings-panel="style">
         <div class="setting-label"><strong>Pixel detail</strong><span>Choose how strongly the visual language appears.</span></div>
         <div class="segmented-setting" id="detailSetting">
@@ -807,6 +821,15 @@
           <span><small>STORAGE</small><b id="diagStorage">--</b></span>
           <span><small>LIBRARY</small><b id="diagLibrary">--</b></span>
           <span><small>DURABLE PERSIST</small><b id="diagPersist">--</b></span>
+          <span><small>OUTPUT MODE</small><b id="diagOutputMode">--</b></span>
+        </div>
+        <div class="file-integrity-panel">
+          <div class="setting-label"><strong>File integrity</strong><span>Checks that library files still exist, are readable, still match their format, and have not changed since the last check. It does not decode audio, so it cannot prove a file plays cleanly.</span></div>
+          <div class="diagnostics-actions">
+            <button class="quiet-button" id="verifyLibraryFiles" type="button">Check library files</button>
+            <button class="quiet-button" id="copyIntegrityReport" type="button" disabled>Copy report</button>
+          </div>
+          <p class="accessibility-note" id="integrityStatus" role="status" aria-live="polite">Not checked yet.</p>
         </div>
         <div class="diagnostics-actions">
           <button class="copy-diagnostics" id="copyDiagnostics">Copy diagnostics</button>
@@ -1101,6 +1124,8 @@
   <script src="renderer-domains/navigation-controller.js"></script>
   <script src="renderer-domains/playback-controller.js"></script>
   <script src="renderer-domains/diagnostics-controller.js"></script>
+  <script src="renderer-domains/output-mode.js"></script>
+  <script src="renderer-domains/accessibility-controller.js"></script>
   <script src="renderer-domains/jam-controller.js"></script>
   <script src="brand-mark.js"></script>
   <script src="renderer-domains/appearance-controller.js"></script>
@@ -1150,6 +1175,7 @@
   <script src="workspace-composition/singularity-proxy-portal-probe.js"></script>
   <script src="workspace-composition/singularity-graph-projection-probe.js"></script>
   <script src="workspace-composition/singularity-live-host.js"></script>
+  <script src="accessibility.js"></script>
   <script src="renderer.js"></script>
 </body>
 </html>

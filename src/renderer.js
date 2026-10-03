@@ -13555,6 +13555,15 @@ function updateDeviceDiagnostics() {
   setText('#dacDiagTone', diagnosticsState.toneError || diagnosticsState.toneStatus);
   setText('#dacDiagNative', nativeHelperLabel(helper));
   setText('#dacDiagRisk', `${risk.label} / ${risk.detail}`);
+  updateOutputModeReadout();
+}
+// Honest shared-mode indicator: Pixelody plays through the system mixer and
+// never requests exclusive mode. See renderer-domains/output-mode.js.
+function updateOutputModeReadout() {
+  const mode = window.PixelodyOutputMode?.describeOutputMode({ platform: runtimeInfo.platform, contextSampleRate: state.context?.sampleRate || 0, trackSampleRate: currentTrack()?.sampleRate || 0, activeLabel: outputState.activeLabel });
+  if (!mode) return;
+  const cell = $('#diagOutputMode');
+  if (cell) { cell.textContent = mode.label; cell.title = mode.detail; }
 }
 const latencyFormat = (value) => value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value)) ? `${Number(value).toFixed(1)} ms` : '--';
 function selectedWasapiEndpoint() {
@@ -15463,6 +15472,7 @@ function renderDiagnosticsSnapshot(snapshot) {
     ? `${durable.lastWriteMs} ms, ${formatBytes(durable.lastWriteBytes)} via "${durable.lastWriteReason || 'unknown'}"${durable.lastWriteLargestKey ? ` (largest: ${durable.lastWriteLargestKey} / ${formatBytes(durable.lastWriteLargestKeyBytes)})` : ''}`
     : 'No durable write yet';
   setText('#diagPersist', durableSummary);
+  updateOutputModeReadout();
   updateDeviceDiagnostics();
 }
 
@@ -20482,6 +20492,47 @@ $('#copyDiagnostics').onclick = async () => {
   }
 };
 $('#cleanRuntimeState').onclick = cleanRuntimeState;
+
+// File integrity check (Settings > Diagnostics). Header-level only: see src/file-integrity.js.
+let integrityReport = '';
+async function checkLibraryFileIntegrity() {
+  const button = $('#verifyLibraryFiles');
+  const status = $('#integrityStatus');
+  if (!window.desktop?.verifyIntegrity) { status.textContent = 'File checks are not available in this build.'; return; }
+  const tracks = state.tracks.filter((track) => track.path);
+  if (!tracks.length) { status.textContent = 'The library is empty.'; return; }
+  button.disabled = true;
+  status.textContent = `Checking ${tracks.length.toLocaleString()} file${tracks.length === 1 ? '' : 's'}...`;
+  try {
+    const results = await window.desktop.verifyIntegrity(tracks.map((track) => ({ path: track.path, size: track.integrity?.size, mtimeMs: track.integrity?.mtimeMs })));
+    if (!Array.isArray(results) || results.length !== tracks.length) throw new Error('Unexpected integrity result.');
+    const labels = { missing: 'missing', unreadable: 'unreadable', empty: 'empty (0 bytes)', changed: 'changed since last check', 'header-mismatch': 'does not look like its file type', truncated: 'cut short' };
+    const problems = [];
+    tracks.forEach((track, index) => {
+      const result = results[index];
+      track.integrity = { size: result.size, mtimeMs: result.mtimeMs, status: result.status, checkedAt: Date.now() };
+      if (result.status === 'missing') track.missing = true;
+      else if (result.status === 'ok' || result.status === 'changed') track.missing = false;
+      if (result.status !== 'ok') problems.push(`${labels[result.status] || result.status}: ${track.artist || 'Unknown artist'} - ${track.title || nameOf(track.path)} (${track.path})`);
+    });
+    persist();
+    renderTracks({ preserveOrder: true });
+    integrityReport = problems.join('\n');
+    $('#copyIntegrityReport').disabled = !problems.length;
+    status.textContent = problems.length
+      ? `${problems.length.toLocaleString()} of ${tracks.length.toLocaleString()} files need attention. Headers look intact for the rest; this does not prove the audio decodes cleanly.`
+      : `All ${tracks.length.toLocaleString()} files exist, are readable, and look intact. Headers only; the audio itself is not decoded.`;
+  } catch (error) {
+    console.warn('Pixelody integrity check failed', error);
+    status.textContent = 'The file check could not finish.';
+  } finally {
+    button.disabled = false;
+  }
+}
+$('#verifyLibraryFiles').onclick = checkLibraryFileIntegrity;
+$('#copyIntegrityReport').onclick = async () => {
+  try { await navigator.clipboard.writeText(integrityReport); showToast('Integrity report copied.'); } catch { showToast('Could not copy the report.'); }
+};
 $('#generateSyntheticLibrary').onclick = () => {
   const count = Number($('#syntheticLibrarySize')?.value) || 1000;
   const startedAt = performance.now();

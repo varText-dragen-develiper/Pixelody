@@ -38,6 +38,11 @@ function createModuleShop({ app, BrowserWindow, dialog }) {
     contents.on('will-redirect', guard);
     contents.on('will-frame-navigate', guard);
     contents.on('will-attach-webview', event => event.preventDefault());
+    contents.on('did-fail-load', (_event, code, description, _url, isMainFrame) => {
+      if (!isMainFrame || code === -3) return; // -3 is a cancelled navigation, not a failure
+      if (webWin && !webWin.isDestroyed()) webWin.destroy();
+      if (dialog.showMessageBox) dialog.showMessageBox(win && !win.isDestroyed() ? win : undefined, { type: 'info', title: 'Shop unavailable', message: 'The shop could not load. Check your connection and choose Open shop to try again. Your music and notes are not affected.' }).catch(() => {});
+    });
     webWin.on('closed', () => { webWin = null; });
     webWin.loadURL(pkg.entry);
   }

@@ -73,6 +73,8 @@ const IPC_CONTRACTS = Object.freeze({
   'app:cache-track-image': { sender: 'main', payload: 'granted-image-path-and-track-id', sideEffect: 'writes-app-artwork', privacy: 'local-path-and-private-id' },
   'app:optimize-artwork': { sender: 'main', payload: 'granted-image-path', sideEffect: 'writes-app-preview', privacy: 'local-path' },
   'music:scan-downloads': { sender: 'main', payload: 'none', sideEffect: 'lists-top-level-audio-and-grants-media', privacy: 'local-paths' },
+  'app:set-text-scale': { sender: 'main', payload: 'allowlisted-scale', sideEffect: 'sets-main-window-zoom', privacy: 'none' },
+  'music:verify-integrity': { sender: 'main', payload: 'granted-path-fingerprints-5000', sideEffect: 'reads-file-headers', privacy: 'local-path' },
   'music:exists': { sender: 'main', payload: 'granted-path', sideEffect: 'checks-file', privacy: 'local-path' },
   'app:export-backup': { sender: 'main', payload: 'backup-64MiB', sideEffect: 'save-dialog-write', privacy: 'private-library' },
   'app:import-backup': { sender: 'main', payload: 'none', sideEffect: 'open-dialog-read-64MiB', privacy: 'private-library' },
@@ -378,6 +380,15 @@ function validateIpcArguments(channel, args) {
   if (channel === 'music:register-dropped-paths') return args.length === 1 && Array.isArray(args[0]) && args[0].length <= 10_000 && args[0].every((item) => validAbsolutePath(item, AUDIO_EXTENSIONS)) ? pass() : fail('Dropped media paths are invalid.');
   if (['app:cache-profile-image', 'app:optimize-artwork'].includes(channel)) return args.length === 1 && validAbsolutePath(args[0], IMAGE_EXTENSIONS) ? pass() : fail('Image path is invalid.');
   if (channel === 'app:cache-track-image') return args.length === 2 && validAbsolutePath(args[0], IMAGE_EXTENSIONS) && validString(args[1], 256, { nonEmpty: true }) ? pass() : fail('Track artwork payload is invalid.');
+  if (channel === 'app:set-text-scale') return args.length === 1 && [1, 1.15, 1.3, 1.5].includes(args[0]) ? pass() : fail('Text scale is not an allowed value.');
+  if (channel === 'music:verify-integrity') {
+    const list = args[0];
+    const valid = args.length === 1 && Array.isArray(list) && list.length <= 5000 && list.every((entry) => hasOnlyKeys(entry, new Set(['path', 'size', 'mtimeMs']))
+      && validAbsolutePath(entry.path, AUDIO_EXTENSIONS)
+      && (!Object.hasOwn(entry, 'size') || (Number.isFinite(entry.size) && entry.size >= 0))
+      && (!Object.hasOwn(entry, 'mtimeMs') || (Number.isFinite(entry.mtimeMs) && entry.mtimeMs >= 0)));
+    return valid ? pass() : fail('Integrity request is invalid.');
+  }
   if (channel === 'music:exists') return args.length === 1 && validAbsolutePath(args[0]) ? pass() : fail('Path is invalid.');
   if (channel === 'music:inspect') return args.length === 1 && validAbsolutePath(args[0], AUDIO_EXTENSIONS) ? pass() : fail('Audio path is invalid.');
   if (channel === 'app:export-backup') return args.length === 1 && isPlainRecord(args[0]) && boundedJson(args[0], 64 * 1024 * 1024) ? pass() : fail('Backup export is invalid or oversized.');

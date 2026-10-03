@@ -66,13 +66,14 @@ body[data-motion="off"] :is(.sg-shell,.sg-gravity-plane,.sg-shell-mount),body[da
 @media(forced-colors:active){.sg-live-host,.sg-center,.sg-gate,.sg-close,.sg-playback-status{forced-color-adjust:auto}.sg-center{background:CanvasText;border:2px solid CanvasText}.sg-gate,.sg-close,.sg-playback-status{background:Canvas;color:CanvasText;border:1px solid CanvasText}.sg-gate:focus-visible,.sg-product-mount .track-row:focus-visible,.sg-shell-mount .track-row:focus-visible{outline:2px solid Highlight;box-shadow:none}.sg-confirmed-seam{background:CanvasText;box-shadow:none}}
 @media(max-width:850px){.sg-status{left:20px;bottom:96px;max-width:calc(100vw - 40px)}.sg-playback-status{top:236px}.sg-gate{min-height:40px;padding:6px 8px}.sg-gate span{font-size:9px}.sg-gate small{font-size:6px}body[data-singularity-probe] :is(#queueDrawer,#migrationDrawer){inset:68px 10px 108px;width:auto;clip-path:none}}
 @media(max-width:420px){
+  /* Keep compact route slots independent of Studio's in-flow header. */
   body[data-singularity-probe]>.topbar{justify-content:flex-start;padding-inline:8px}
   body[data-singularity-probe]>.topbar .profile-button{position:absolute;left:8px;width:40px;height:40px}
-  body[data-singularity-probe]>.topbar .jams-trigger{left:54px!important;width:70px;min-width:70px;padding-inline:8px}
+  body[data-singularity-probe]>.topbar .jams-trigger{position:absolute;left:54px!important;margin-left:0;width:70px;min-width:70px;padding-inline:8px}
   body[data-singularity-probe]>.topbar .global-search{position:absolute;left:130px;right:106px;width:auto;min-width:0;padding-inline:8px;gap:5px}
   body[data-singularity-probe]>.topbar .global-search .pixel-search{width:18px!important;height:18px!important;mask-size:18px 18px!important}
   body[data-singularity-probe]>.topbar .global-search input{min-width:0;font-size:10px}
-  body[data-singularity-probe]>.topbar .settings-trigger{right:8px!important;width:92px;padding-inline:9px}
+  body[data-singularity-probe]>.topbar .settings-trigger{position:absolute;right:8px!important;width:92px;padding-inline:9px}
   body[data-singularity-probe]>.topbar .top-quality{display:none!important}
   body[data-singularity-probe]>.workspace{height:calc(100vh - 194px)}
   body[data-singularity-probe]>.player{height:136px;grid-template-columns:minmax(0,140px) minmax(0,1fr)!important;grid-template-rows:72px 54px!important;grid-template-areas:"identity playback" "output output"!important;column-gap:6px;padding:4px 8px!important}

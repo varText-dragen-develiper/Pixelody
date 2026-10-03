@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { parsePackage, validRequest, SHOP_ENTRY, allowedShopUrl } = require('../src/module-shop/contract');
+const { parsePackage, validRequest, SHOP_ORIGIN, SHOP_ENTRY, allowedShopUrl } = require('../src/module-shop/contract');
 const { ModuleStore, WebModuleStore } = require('../src/module-shop/store');
 const bytes = fs.readFileSync(path.join(__dirname, '../src/module-shop/listening-notes.pixelody-module'));
 assert.equal(parsePackage(bytes, 'desktop').id, 'pixelody.listening-notes');
@@ -38,6 +38,9 @@ assert.equal(notebook.read().text,'Keep me.'); assert.equal(web.read().entry,SHO
 web.remove(); assert.equal(web.read(),null); assert.equal(notebook.read().text,'Keep me.');
 web.install(webBytes); notebook.remove(); assert.equal(web.read().entry,SHOP_ENTRY);
 console.log('PASS optional web module validation, absent-by-default state and independent notebook persistence');
+const kotlin=fs.readFileSync(path.join(__dirname,'../https://github.com/varText-dragen-develiper/pixelody-android/blob/main/app/src/main/java/com/pixelody/app/modules/ModulePackage.kt'),'utf8');
+assert.equal(kotlin.match(/SHOP_HOST = "([^"]+)"/)[1],new URL(SHOP_ORIGIN).host,'Android SHOP_HOST must match desktop SHOP_ORIGIN');
+console.log('PASS shop origin identical on desktop and Android');
 const { EventEmitter }=require('node:events');
 const windows=[];
 const session=new EventEmitter();session.setPermissionRequestHandler=fn=>session.permission=fn;session.setPermissionCheckHandler=fn=>session.check=fn;session.clearStorageData=async()=>{};
@@ -46,7 +49,8 @@ class Window extends EventEmitter {
  isDestroyed(){return Boolean(this.dead)} setMenu(){} show(){} focus(){} loadFile(){} loadURL(url){this.url=url} destroy(){this.dead=true;this.emit('closed')}
 }
 const isolated=fs.mkdtempSync(path.join(os.tmpdir(),'pixelody-shop-window-test-'));
-const controller=require('../src/module-shop/window').createModuleShop({app:{getPath:()=>isolated},BrowserWindow:Window,dialog:{}});
+const dialogStub={};
+const controller=require('../src/module-shop/window').createModuleShop({app:{getPath:()=>isolated},BrowserWindow:Window,dialog:dialogStub});
 (async()=>{
  assert.equal((await controller.handle({op:'open-shop'})).ok,false);
  new WebModuleStore(path.join(isolated,'modules')).install(webBytes);
@@ -58,6 +62,15 @@ const controller=require('../src/module-shop/window').createModuleShop({app:{get
  let saveOptions=null;const item={getURLChain:()=>['https://pixelody-web.pixelody101.workers.dev/modules/listening-notes-1.0.0.pixelody-module'],getMimeType:()=> 'application/octet-stream',getTotalBytes:()=>361,setSaveDialogOptions:o=>saveOptions=o};
  denied=false;session.emit('will-download',{preventDefault(){denied=true}},item);assert.equal(denied,false);assert.ok(saveOptions);
  denied=false;session.emit('will-download',{preventDefault(){denied=true}},{...item,getURLChain:()=>['https://evil.example/file.pixelody-module']});assert.equal(denied,true);
+ // Failure states: offline load closes the window with a message; a cancelled navigation does not.
+ const shown=[];dialogStub.showMessageBox=async(...a)=>{shown.push(a)};
+ remote.webContents.emit('did-fail-load',{},-3,'ERR_ABORTED',SHOP_ENTRY,true);assert.equal(remote.dead,undefined);
+ remote.webContents.emit('did-fail-load',{},-106,'ERR_INTERNET_DISCONNECTED',SHOP_ENTRY,false);assert.equal(remote.dead,undefined);
+ remote.webContents.emit('did-fail-load',{},-106,'ERR_INTERNET_DISCONNECTED',SHOP_ENTRY,true);assert.equal(remote.dead,true);assert.equal(shown.length,1);
+ assert.equal((await controller.handle({op:'open-shop'})).ok,true);
+ // Bad packages are rejected without touching what is installed.
+ for (const bad of ['', 'not json', '[]', JSON.stringify({format:1,kind:'web-shop'})]) assert.throws(()=>parsePackage(Buffer.from(bad),'desktop'));
+ assert.equal(new WebModuleStore(path.join(isolated,'modules')).read().entry,SHOP_ENTRY);
  assert.equal((await controller.handle({op:'remove-shop'})).ok,true);assert.equal(remote.dead,true);assert.equal((await controller.handle({op:'open-shop'})).ok,false);
  console.log('PASS sandbox settings, installed-only opening, origin/redirect/download guards and uninstall closure');
 })().catch(error=>{console.error(error);process.exitCode=1});

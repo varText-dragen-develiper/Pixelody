@@ -1,7 +1,10 @@
 'use strict';
 const MAX_BYTES = 8192;
-const SHOP_ENTRY = 'https://pixelody-web.pixelody101.workers.dev/shop?embedded=1';
-function allowedShopUrl(value) { try { const u = new URL(value); return u.origin === new URL(SHOP_ENTRY).origin && !u.username && !u.password; } catch { return false; } }
+// The one place the shop host is named. Android keeps a mirror in ModulePackage.kt;
+// scripts/check-module-shop.js fails if the two drift apart.
+const SHOP_ORIGIN = 'https://pixelody-web.pixelody101.workers.dev';
+const SHOP_ENTRY = SHOP_ORIGIN + '/shop?embedded=1';
+function allowedShopUrl(value) { try { const u = new URL(value); return u.origin === SHOP_ORIGIN && !u.username && !u.password; } catch { return false; } }
 function parsePackage(bytes, platform) {
   if (!Buffer.isBuffer(bytes) || !bytes.length || bytes.length > MAX_BYTES) throw new Error('Module package must be between 1 and 8192 bytes.');
   const value = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
@@ -20,4 +23,4 @@ function validRequest(request) {
   if (['state', 'import', 'remove', 'remove-shop', 'open-shop'].includes(request.op)) return Object.keys(request).length === 1;
   return request.op === 'save' && Object.keys(request).length === 2 && typeof request.text === 'string' && request.text.length <= 20000;
 }
-module.exports = { MAX_BYTES, SHOP_ENTRY, allowedShopUrl, parsePackage, validRequest };
+module.exports = { MAX_BYTES, SHOP_ORIGIN, SHOP_ENTRY, allowedShopUrl, parsePackage, validRequest };
