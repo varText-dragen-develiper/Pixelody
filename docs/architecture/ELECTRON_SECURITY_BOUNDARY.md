@@ -14,6 +14,8 @@ All renderer processes use `sandbox: true`, `contextIsolation: true`, `nodeInteg
 
 Unexpected top-level/frame navigation, redirects, popups, and webview attachment are denied. User-facing discovery links use `shell.openExternal` only after URL parsing, HTTPS enforcement, credential rejection, and an exact hostname allowlist for MusicBrainz, Bandcamp, and Discogs.
 
+MusicBrainz metadata repair is the one main-process network request on behalf of the renderer (`metadata:musicbrainz-search`). The renderer sends only a title, artist, album and duration (validated and size-bounded in `src/electron-security.js`); the main process builds the URL itself from `src/musicbrainz.js`, refuses anything but `https://musicbrainz.org/ws/2/recording`, does not follow redirects, identifies Pixelody in the User-Agent, and spaces requests at least 1.1 s apart. The renderer CSP stays closed to the network.
+
 ## IPC contract registry
 
 `src/electron-security.js` is the authoritative inventory for every `ipcMain.handle` and `ipcMain.on` channel. Each entry declares:

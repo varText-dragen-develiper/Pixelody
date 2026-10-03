@@ -73,6 +73,7 @@ const IPC_CONTRACTS = Object.freeze({
   'app:cache-track-image': { sender: 'main', payload: 'granted-image-path-and-track-id', sideEffect: 'writes-app-artwork', privacy: 'local-path-and-private-id' },
   'app:optimize-artwork': { sender: 'main', payload: 'granted-image-path', sideEffect: 'writes-app-preview', privacy: 'local-path' },
   'music:scan-downloads': { sender: 'main', payload: 'none', sideEffect: 'lists-top-level-audio-and-grants-media', privacy: 'local-paths' },
+  'metadata:musicbrainz-search': { sender: 'main', payload: 'track-text-and-duration-2KiB', sideEffect: 'one-rate-limited-https-request-to-musicbrainz', privacy: 'track-title-artist-album-sent-to-musicbrainz' },
   'app:set-text-scale': { sender: 'main', payload: 'allowlisted-scale', sideEffect: 'sets-main-window-zoom', privacy: 'none' },
   'music:verify-integrity': { sender: 'main', payload: 'granted-path-fingerprints-5000', sideEffect: 'reads-file-headers', privacy: 'local-path' },
   'music:exists': { sender: 'main', payload: 'granted-path', sideEffect: 'checks-file', privacy: 'local-path' },
@@ -380,6 +381,15 @@ function validateIpcArguments(channel, args) {
   if (channel === 'music:register-dropped-paths') return args.length === 1 && Array.isArray(args[0]) && args[0].length <= 10_000 && args[0].every((item) => validAbsolutePath(item, AUDIO_EXTENSIONS)) ? pass() : fail('Dropped media paths are invalid.');
   if (['app:cache-profile-image', 'app:optimize-artwork'].includes(channel)) return args.length === 1 && validAbsolutePath(args[0], IMAGE_EXTENSIONS) ? pass() : fail('Image path is invalid.');
   if (channel === 'app:cache-track-image') return args.length === 2 && validAbsolutePath(args[0], IMAGE_EXTENSIONS) && validString(args[1], 256, { nonEmpty: true }) ? pass() : fail('Track artwork payload is invalid.');
+  if (channel === 'metadata:musicbrainz-search') {
+    const query = args[0];
+    const valid = args.length === 1 && validateOptions(query, new Set(['title', 'artist', 'album', 'duration']), 2048)
+      && validString(query.title, 300, { nonEmpty: true })
+      && (!Object.hasOwn(query, 'artist') || validString(query.artist, 300))
+      && (!Object.hasOwn(query, 'album') || validString(query.album, 300))
+      && (!Object.hasOwn(query, 'duration') || query.duration === null || (typeof query.duration === 'number' && Number.isFinite(query.duration) && query.duration >= 0 && query.duration < 86400));
+    return valid ? pass() : fail('MusicBrainz lookup is invalid.');
+  }
   if (channel === 'app:set-text-scale') return args.length === 1 && [1, 1.15, 1.3, 1.5].includes(args[0]) ? pass() : fail('Text scale is not an allowed value.');
   if (channel === 'music:verify-integrity') {
     const list = args[0];

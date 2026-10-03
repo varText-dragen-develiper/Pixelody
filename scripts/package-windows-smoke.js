@@ -117,7 +117,7 @@ async function validatePackagedApp(appDirectory) {
     }
     if (lower.includes('user-memes')) throw new Error(`Private meme assets must not be packaged: ${relative}`);
   }
-  for (const required of ['release/windows-identity.json', 'src/main.js', 'src/preload.js', 'src/mini-preload.js', 'src/electron-security.js', 'src/development-profiles.js', 'src/index.html', 'src/state-store.js', 'src/library-scan.js', 'src/playlist-export.js', 'src/workspace-composition/persistence.js', 'src/workspace-composition/first-party-modules.js', 'src/workspace-composition/production-host.js', 'src/integration-test-runner.js', 'src/security-probe.html', 'src/security-probe-preload.js', 'node_modules/music-metadata/package.json', 'node_modules/qrcode-generator/dist/qrcode.js']) {
+  for (const required of ['release/windows-identity.json', 'src/main.js', 'src/preload.js', 'src/mini-preload.js', 'src/electron-security.js', 'src/development-profiles.js', 'src/index.html', 'src/state-store.js', 'src/library-scan.js', 'src/playlist-export.js', 'src/musicbrainz.js', 'src/workspace-composition/persistence.js', 'src/workspace-composition/first-party-modules.js', 'src/workspace-composition/production-host.js', 'src/integration-test-runner.js', 'src/security-probe.html', 'src/security-probe-preload.js', 'node_modules/music-metadata/package.json', 'node_modules/qrcode-generator/dist/qrcode.js']) {
     if (!fs.existsSync(path.join(appDirectory, ...required.split('/')))) throw new Error(`Packaged app is missing ${required}.`);
   }
   return files;

@@ -113,6 +113,7 @@ const desktopApi = {
   setTextScale: (factor) => ipcRenderer.invoke('app:set-text-scale', factor),
   verifyIntegrity: (entries) => ipcRenderer.invoke('music:verify-integrity', (Array.isArray(entries) ? entries : []).filter((entry) => entry && isApproved(entry.path)).map((entry) => ({ path: entry.path, ...(Number.isFinite(entry.size) ? { size: entry.size } : {}), ...(Number.isFinite(entry.mtimeMs) ? { mtimeMs: entry.mtimeMs } : {}) }))),
   exists: (filePath) => isApproved(filePath) ? ipcRenderer.invoke('music:exists', filePath) : Promise.resolve(false),
+  musicBrainzSearch: (query) => ipcRenderer.invoke('metadata:musicbrainz-search', plainJson(query)),
   openExternal: (url) => ipcRenderer.invoke('app:open-external', url),
   getRuntimeInfo: () => ipcRenderer.invoke('app:runtime-info'),
   listThemePackages: () => ipcRenderer.invoke('theme:list-packages'),

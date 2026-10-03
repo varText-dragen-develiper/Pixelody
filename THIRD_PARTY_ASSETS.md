@@ -51,7 +51,7 @@ Obsession Mode is an original Pixelody psychological-thriller poster theme. Comm
 
 The Unsplash License permits free use, copying, modification, and distribution for commercial and non-commercial purposes without required attribution. Pixelody includes credit voluntarily. No endorsement by Unsplash or the creator is implied.
 
-Dead Signal is an original Pixelody design based on the user's written analog-horror brief. No commercial horror poster, portrait, face, gore, logo, or copyrighted composition is bundled. `archive-tape.svg`, `dead-tower.svg`, `fracture-mask.svg`, `transmission-reel.svg`, and `transmission-log.svg` are original abstract Pixelody geometry and require no third-party attribution.
+Dead Signal retains a code-defined palette/layout baseline pending redesign. Its previous decorative SVGs, Poly Haven textures and Oswald font have been removed from shipped assets. They are retained only in a private recovery archive; no retired Dead Signal artwork is bundled.
 
 Cartridge Quest is an original Pixelody console-era homage. NES and SNES were used only as broad historical references for pixel density, cartridge culture, and controller-era materials. No Nintendo name, logo, console or controller silhouette, character, sprite, screenshot, sound, game artwork, or proprietary interface is bundled. `pixel-landscape.svg`, `music-cartridge.svg`, and `controller-panel.svg` are original Pixelody assets. `music-cartridge.png` and `snes-workbench.png` are the stock pixel-art artwork the theme shows by default when no custom image is set. The project owner has confirmed they belong in the app; their original creator and licence are not yet recorded here.
 
@@ -147,7 +147,7 @@ StockSnap releases this file under CC0. Pixelody includes credit voluntarily. Th
 
 ## StockSnap: Computer Office
 
-- Creator: StockSnap contributor listed through Openverse/StockSnap
+- Creator: Lukas (StockSnap author 43730; creator identified on the original photo page)
 - Source: https://stocksnap.io/photo/computer-office-XGXORJWZIX
 - Discovery metadata: https://api.openverse.org/v1/images/?q=coffee%20notebook%20headphones&license=cc0,pdm&extension=jpg&page_size=6
 - License: Creative Commons Zero 1.0 (CC0)
@@ -167,38 +167,6 @@ StockSnap releases this file under CC0. Pixelody includes credit voluntarily. Th
 - Bundled font: `GeistPixel-Circle.woff2`
 
 The upstream OFL text is bundled at `licenses/GeistPixel-OFL.txt`.
-
-## Poly Haven: Blue Metal Plate
-
-- Creator: Rob Tuytel
-- Source: https://polyhaven.com/a/blue_metal_plate
-- License: Creative Commons Zero 1.0 (CC0)
-- License URL: https://polyhaven.com/license
-- Used by: Dead Signal theme as a scratched, opaque archive object and low-opacity physical surface
-- Bundled file: `scratched-metal-cc0.png` (official material preview render)
-
-Poly Haven explicitly releases its assets under CC0. The material is recolored and composited by CSS. A PNG text-metadata chunk containing an upstream absolute host path was removed during the Windows release privacy audit; image data, color metadata, and every remaining chunk are byte-identical to the original preview render.
-
-## Poly Haven: Worn Shutter
-
-- Creator: Dimitrios Savva
-- Source: https://polyhaven.com/a/worn_shutter
-- License: Creative Commons Zero 1.0 (CC0)
-- License URL: https://polyhaven.com/license
-- Used by: Dead Signal theme as a subtle corrugated machine-panel backing and hidden material-credit reveal
-- Bundled file: `worn-shutter-cc0.jpg` (1K diffuse map)
-
-Poly Haven explicitly releases its assets under CC0. The bundled file is the official 1K diffuse JPG, composited and recolored by CSS.
-
-## Oswald
-
-- Designers: Vernon Adams, Kalapi Gajjar, and Cyreal
-- Source: https://github.com/googlefonts/OswaldFont
-- License: SIL Open Font License 1.1
-- Used by: Dead Signal theme for cinematic display typography
-- Bundled font: `Oswald-Variable.ttf`
-
-The upstream OFL text is bundled at `src/assets/themes/dead-signal/OFL-OSWALD.txt`.
 
 ## Tabler Icons
 
@@ -414,3 +382,28 @@ Attribution is voluntary because the source is CC0. Pixelody includes credit any
 ## Desktop speaker glyphs
 
 `src/assets/icons/volume.svg` and `volume-muted.svg` are original Pixelody geometric speaker glyphs authored for the desktop mute control. No external source or attribution is required.
+
+## Pixelarticons desktop UI glyphs
+
+- Creator: Gerrit Halfmann
+- Source: https://github.com/halfmage/pixelarticons
+- License: MIT
+- Upstream revision checked: `8275e0af7c16aa40c54ea2b90b7af83b1fe4eb4c`
+- Verification: ordered SVG path data matches upstream exactly after whitespace normalization; markup/formatting may differ.
+- Bundled files:
+  - `src/assets/icons/arrow-left-box-sharp.svg`
+  - `src/assets/icons/close.svg`
+  - `src/assets/icons/download.svg`
+  - `src/assets/icons/folder.svg`
+  - `src/assets/icons/heart.svg`
+  - `src/assets/icons/image.svg`
+  - `src/assets/icons/info-box-sharp.svg`
+  - `src/assets/icons/list-box-sharp.svg`
+  - `src/assets/icons/music.svg`
+  - `src/assets/icons/pen-square-sharp.svg`
+  - `src/assets/icons/play.svg`
+  - `src/assets/icons/search.svg`
+  - `src/assets/icons/settings-2-sharp.svg`
+  - `src/assets/icons/user-sharp.svg`
+
+The upstream copyright and MIT permission notice is bundled at `licenses/Pixelarticons-MIT.txt`. These glyphs are third-party assets, not original Pixelody artwork.
