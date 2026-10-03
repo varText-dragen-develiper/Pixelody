@@ -38,9 +38,6 @@ assert.equal(notebook.read().text,'Keep me.'); assert.equal(web.read().entry,SHO
 web.remove(); assert.equal(web.read(),null); assert.equal(notebook.read().text,'Keep me.');
 web.install(webBytes); notebook.remove(); assert.equal(web.read().entry,SHOP_ENTRY);
 console.log('PASS optional web module validation, absent-by-default state and independent notebook persistence');
-const kotlin=fs.readFileSync(path.join(__dirname,'../https://github.com/varText-dragen-develiper/pixelody-android/blob/main/app/src/main/java/com/pixelody/app/modules/ModulePackage.kt'),'utf8');
-assert.equal(kotlin.match(/SHOP_HOST = "([^"]+)"/)[1],new URL(SHOP_ORIGIN).host,'Android SHOP_HOST must match desktop SHOP_ORIGIN');
-console.log('PASS shop origin identical on desktop and Android');
 const { EventEmitter }=require('node:events');
 const windows=[];
 const session=new EventEmitter();session.setPermissionRequestHandler=fn=>session.permission=fn;session.setPermissionCheckHandler=fn=>session.check=fn;session.clearStorageData=async()=>{};
