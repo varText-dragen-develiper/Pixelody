@@ -1,0 +1,34 @@
+/* Accessibility layer. Loaded after the main layers so it can raise contrast
+   without touching any theme. Text size is handled by window zoom, not here. */
+.accessibility-note { display: block; margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.4; }
+
+:root[data-contrast="high"] {
+  --bg: #000;
+  --surface: #0a0a0a;
+  --surface2: #121212;
+  --surface3: #1c1c1c;
+  --line: #8a8a8a;
+  --text: #fff;
+  --muted: #e0e0e0;
+  --dim: #bdbdbd;
+  --gold: #ffd75e;
+  --gold2: #ffe9a3;
+  --green: #7dffc0;
+}
+:root[data-contrast="high"] button,
+:root[data-contrast="high"] input,
+:root[data-contrast="high"] select { border: 1px solid var(--line); }
+:root[data-contrast="high"] button:focus-visible,
+:root[data-contrast="high"] input:focus-visible,
+:root[data-contrast="high"] select:focus-visible,
+:root[data-contrast="high"] [tabindex]:focus-visible { outline: 3px solid var(--gold2); outline-offset: 2px; }
+:root[data-contrast="high"] button.active,
+:root[data-contrast="high"] [aria-pressed="true"] { outline: 2px solid var(--gold2); outline-offset: -2px; }
+:root[data-contrast="high"] small { color: var(--muted); }
+:root[data-contrast="high"] ::placeholder { color: var(--muted); opacity: 1; }
+:root[data-contrast="high"] ::-webkit-scrollbar-thumb { background: #9a9a9a; }
+
+@media (forced-colors: active) {
+  button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid Highlight; }
+  button.active, [aria-pressed="true"] { outline: 2px solid Highlight; outline-offset: -2px; }
+}

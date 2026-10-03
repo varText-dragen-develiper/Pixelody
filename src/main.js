@@ -7,6 +7,7 @@ const crypto = require('crypto');
 const { createPersonalServer } = require('./server');
 const { scanAudioFolder } = require('./library-scan');
 const { buildM3u8, sanitizePlaylistFileName } = require('./playlist-export');
+const { verifyFiles } = require('./file-integrity');
 const { getWasapiHelperStatus, getNativeMixerStatus, runWasapiDiagnostics, runWasapiCapabilityProbe, runWasapiLoopbackPrototype, runNativeMixerClockDisciplineLab } = require('./native-wasapi-helper');
 const { PixelodyStateStore, WORKSPACE_STATE_KEY, WORKSPACE_THEME_IDS } = require('./state-store');
 const { WorkspaceStartupWatchdog, createAuthority: createWorkspaceAuthority } = require('./workspace-composition/persistence');
@@ -1769,6 +1770,21 @@ registerHandle('music:scan-downloads', async () => {
     .map((entry) => path.join(downloads, entry.name));
   found.forEach((filePath) => grantPath(filePath, 'media'));
   return found;
+});
+
+registerHandle('app:set-text-scale', (event, factor) => {
+  // Window zoom scales text and layout together; there is no app menu, so
+  // Ctrl+plus/minus never worked. Only the allowlisted steps reach here.
+  const target = BrowserWindow.fromWebContents(event.sender);
+  if (!target || target !== mainWindow || target.isDestroyed()) return false;
+  target.webContents.setZoomFactor(factor);
+  return true;
+});
+
+registerHandle('music:verify-integrity', async (_event, entries) => {
+  const granted = entries.filter((entry) => isGrantedPath(entry.path, 'media'));
+  if (granted.length !== entries.length) return rejectedIpc('path_not_granted', 'music:verify-integrity', 'Integrity check includes a path outside the library.');
+  return verifyFiles(entries);
 });
 
 registerHandle('music:exists', async (_event, filePath) => {
