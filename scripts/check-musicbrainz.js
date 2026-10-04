@@ -112,5 +112,15 @@ const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
   assert.match(main, /'User-Agent': musicBrainz\.userAgent\(app\.getVersion\(\)\)/, 'lookups must identify Pixelody');
   assert.ok(!/musicbrainz\.org/i.test(read('src/renderer-domains/library-workflow.js')), 'the renderer never names an endpoint');
   assert.match(read('src/index.html'), /connect-src 'self' http:\/\/127\.0\.0\.1:\* http:\/\/localhost:\*;/, 'the renderer CSP must stay closed to the network');
+  // A malformed server payload must degrade to fewer candidates, never throw
+  // (a throw would be reported to the person as a network failure).
+  const hostile = mb.parseSearchResponse({ recordings: [
+    { id: 'a', title: 'Song', releases: [null, 7, 'x', { title: 'Real', media: { track: [{ number: '3' }] } }, { title: 'Also', media: [{ track: { number: 2 } }] }] },
+    { id: 'b', title: 'Other', releases: { title: 'not an array' } },
+  ] });
+  assert.equal(hostile.length, 2, 'odd release lists must not drop the recording');
+  assert.deepEqual(hostile[0].releases.map((release) => release.title), ['Real', 'Also'], 'only object releases are kept');
+  assert.equal(hostile[0].releases[0].trackNumber, null, 'non-array media is ignored');
+
   console.log('MusicBrainz audit passed: query building, endpoint allowlist, rate limiting, scoring, preview-before-apply, and the privacy surface hold.');
 })().catch((error) => { console.error(error); process.exitCode = 1; });

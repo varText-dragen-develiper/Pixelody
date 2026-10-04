@@ -265,6 +265,11 @@ class PixelodyStateStore {
       quarantine: path.join(this.directory, 'quarantine'),
     };
     this.cachedEnvelope = null;
+    // Serialized JSON of each top-level value of cachedEnvelope, valid only
+    // while fragmentsFor === cachedEnvelope. A routine save changes a few keys,
+    // so it re-serializes those and reuses the text of the (large) rest.
+    this.fragments = null;
+    this.fragmentsFor = null;
     // Load status without a state copy. It stays set after commits so later
     // commits merge against the in-memory envelope instead of re-reading and
     // re-validating the whole file from disk.
@@ -378,8 +383,10 @@ class PixelodyStateStore {
     return { ...this.lastLoad.diagnostics, revision: this.cachedEnvelope?.revision || 0 };
   }
 
-  markCommitted(envelope) {
+  markCommitted(envelope, fragments = null) {
     this.cachedEnvelope = envelope;
+    this.fragments = fragments;
+    this.fragmentsFor = fragments ? envelope : null;
     this.lastLoad = { ok: true, status: 'committed', needsLegacyMigration: false, readOnly: false, diagnostics: this.diagnostics('committed') };
   }
 
@@ -388,7 +395,7 @@ class PixelodyStateStore {
     return this.cachedEnvelope;
   }
 
-  writeEnvelopeAtomic(envelope, serialized = serializeEnvelope(envelope)) {
+  writeEnvelopeAtomic(envelope, serialized = serializeEnvelope(envelope), fragments = null) {
     this.ensureDirectories();
     if (serialized.length > MAX_STORE_BYTES) throw new Error('State envelope exceeds the 64 MB safety limit.');
     const descriptor = fs.openSync(this.paths.temporary, 'w');
@@ -406,13 +413,13 @@ class PixelodyStateStore {
       fs.renameSync(this.paths.current, this.paths.previous);
     }
     fs.renameSync(this.paths.temporary, this.paths.current);
-    this.markCommitted(envelope);
+    this.markCommitted(envelope, fragments);
     this.rotateBackupIfDue(envelope);
   }
 
   // Same atomic sequence as writeEnvelopeAtomic, but disk I/O and fsync run on
   // the libuv pool so the Electron main process keeps handling input and IPC.
-  async writeEnvelopeAtomicAsync(envelope, serialized = serializeEnvelope(envelope)) {
+  async writeEnvelopeAtomicAsync(envelope, serialized = serializeEnvelope(envelope), fragments = null) {
     this.ensureDirectories();
     if (serialized.length > MAX_STORE_BYTES) throw new Error('State envelope exceeds the 64 MB safety limit.');
     this.asyncWritesInFlight += 1;
@@ -430,7 +437,7 @@ class PixelodyStateStore {
         await fsp.rename(this.paths.current, this.paths.previous);
       }
       await fsp.rename(this.paths.temporary, this.paths.current);
-      this.markCommitted(envelope);
+      this.markCommitted(envelope, fragments);
     } finally {
       this.asyncWritesInFlight -= 1;
     }
@@ -519,27 +526,59 @@ class PixelodyStateStore {
       ? { ...retainedValues, ...normalizedValues }
       : { ...currentValues, ...normalizedValues };
     if (!Object.prototype.hasOwnProperty.call(mergedValues, this.workspaceStateKey)) mergedValues[this.workspaceStateKey] = this.workspaceAuthority.defaultState();
-    let text;
+    // Only the keys this commit supplies are serialized (and parsed back as
+    // the defensive copy kept in memory). Every other key reuses the text and
+    // the object from the previous envelope, so a settings or position tick no
+    // longer re-serializes the whole library on the main process.
+    const reusable = this.fragments && this.fragmentsFor === current ? this.fragments : null;
+    const has = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
+    const fragments = new Map();
+    const nextValues = {};
+    const serializeError = (error) => ({ result: { ok: false, status: 'validation-error', error: `State values are not serializable: ${error.message}` } });
     try {
-      text = JSON.stringify({
-        ...(current || {}),
-        storeId: STORE_ID,
-        schemaVersion: CURRENT_SCHEMA_VERSION,
-        revision: Math.max(0, Number(current?.revision) || 0) + 1,
-        committedAt: new Date(this.now()).toISOString(),
-        reason: String(options.reason || 'renderer-persist').slice(0, 80),
-        migration: {
-          ...(isPlainObject(current?.migration) ? current.migration : {}),
-          ...(isPlainObject(options.migration) ? options.migration : {}),
-        },
-        values: mergedValues,
-      });
+      for (const key of Object.keys(mergedValues)) {
+        let fragment;
+        let value;
+        if (has(normalizedValues, key) || !has(currentValues, key)) {
+          // Supplied by this commit (or newly defaulted): serialize it, and keep
+          // the parsed-back copy so nothing the caller holds is shared.
+          fragment = JSON.stringify(mergedValues[key]);
+          if (fragment === undefined) fragment = 'null';
+          value = JSON.parse(fragment);
+        } else {
+          value = currentValues[key];
+          fragment = reusable && reusable.has(key) ? reusable.get(key) : JSON.stringify(value);
+        }
+        fragments.set(key, fragment);
+        Object.defineProperty(nextValues, key, { value, enumerable: true, writable: true, configurable: true });
+      }
     } catch (error) {
-      return { result: { ok: false, status: 'validation-error', error: `State values are not serializable: ${error.message}` } };
+      return serializeError(error);
     }
-    const serialized = Buffer.from(`${text}\n`, 'utf8');
+    const header = {
+      ...(current || {}),
+      storeId: STORE_ID,
+      schemaVersion: CURRENT_SCHEMA_VERSION,
+      revision: Math.max(0, Number(current?.revision) || 0) + 1,
+      committedAt: new Date(this.now()).toISOString(),
+      reason: String(options.reason || 'renderer-persist').slice(0, 80),
+      migration: {
+        ...(isPlainObject(current?.migration) ? current.migration : {}),
+        ...(isPlainObject(options.migration) ? options.migration : {}),
+      },
+    };
+    const slot = JSON.stringify('pixelody-values-slot');
+    let headerText;
+    try { headerText = JSON.stringify({ ...header, values: JSON.parse(slot) }); } catch (error) { return serializeError(error); }
+    if (headerText.indexOf(slot) < 0 || headerText.indexOf(slot) !== headerText.lastIndexOf(slot)) {
+      return { result: { ok: false, status: 'validation-error', error: 'State header collides with the values slot.' } };
+    }
+    const valuesText = `{${[...fragments].map(([key, fragment]) => `${JSON.stringify(key)}:${fragment}`).join(',')}}`;
+    const text = headerText.replace(slot, () => valuesText);
+    const serialized = Buffer.from(`${text}
+`, 'utf8');
     if (serialized.length > MAX_STORE_BYTES) return { result: { ok: false, status: 'validation-error', error: 'State values exceed the 64 MB safety limit.' } };
-    return { envelope: JSON.parse(text), serialized };
+    return { envelope: { ...header, values: nextValues }, serialized, fragments };
   }
 
   // `includeState: false` returns only the envelope header. The renderer's
@@ -556,7 +595,7 @@ class PixelodyStateStore {
   commitSync(values, options = {}) {
     const prepared = this.prepareCommit(values, options);
     if (prepared.result) return prepared.result;
-    this.writeEnvelopeAtomic(prepared.envelope, prepared.serialized);
+    this.writeEnvelopeAtomic(prepared.envelope, prepared.serialized, prepared.fragments);
     return this.commitResult(prepared.envelope, options);
   }
 
@@ -564,7 +603,7 @@ class PixelodyStateStore {
   async commitQueued(values, options = {}) {
     const prepared = this.prepareCommit(values, options);
     if (prepared.result) return prepared.result;
-    await this.writeEnvelopeAtomicAsync(prepared.envelope, prepared.serialized);
+    await this.writeEnvelopeAtomicAsync(prepared.envelope, prepared.serialized, prepared.fragments);
     return this.commitResult(prepared.envelope, options);
   }
 

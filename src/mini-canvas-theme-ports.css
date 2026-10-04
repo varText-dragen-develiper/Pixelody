@@ -1,5 +1,8 @@
 /* Mini companion for the baseline Canvas ports. All values arrive from the
    trusted main-window port registry; no archived stylesheet is loaded here. */
+@font-face{font-family:"Edition Space";src:url("assets/themes/cosmic-cinema/SpaceGrotesk-Variable.ttf") format("truetype");font-weight:300 700;font-display:swap}
+body[data-theme="foreground"][data-canvas-theme-port="cosmic-cinema"] :is(.mini-copy,.mini-copy strong,.mini-quality) { font-family:"Edition Space","Segoe UI",sans-serif; }
+body[data-theme="foreground"][data-canvas-theme-port="cosmic-cinema"] .mini-art:not(.has-image) { border-radius:50%; background:#070a12 url("assets/themes/cosmic-cinema/calibration-halo.svg") center/contain no-repeat; }
 body[data-theme="foreground"][data-canvas-theme-port] {
   --mini-shell-bg: linear-gradient(150deg, var(--canvas-port-surface2), var(--canvas-port-bg) 72%);
   --mini-shell-border: 1px solid color-mix(in srgb, var(--canvas-port-gold) 48%, var(--canvas-port-line));

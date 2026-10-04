@@ -34,6 +34,10 @@
   // click, etc.) the carousel correctly does not move either, so there is
   // no window where the visual position and actual playback can disagree.
   const MAX_VISUAL_DISTANCE = 5;
+  // Only cards near the centre are mounted. Cards past MAX_VISUAL_DISTANCE share
+  // one visual position, so a library of any size costs a fixed number of
+  // nodes; the full track list stays in currentTracks for status and keys.
+  const WINDOW_RADIUS = 14;
 
   function createCarouselMechanic(host) {
     if (!host) throw new Error('createCarouselMechanic requires a host adapter object.');
@@ -71,6 +75,38 @@
     // goes through recenterOn() instead, which mutates the existing DOM
     // rather than rebuilding it, so any in-flight CSS transition on
     // --card-offset/--card-distance isn't interrupted.
+    function windowBounds(centerIndex, count) {
+      if (centerIndex < 0 || count <= 0) return [0, -1];
+      return [Math.max(0, centerIndex - WINDOW_RADIUS), Math.min(count - 1, centerIndex + WINDOW_RADIUS)];
+    }
+
+    function rangeHtml(first, last, centerIndex, activeId) {
+      let html = '';
+      for (let index = first; index <= last; index += 1) {
+        const track = currentTracks[index];
+        html += cardHtml(track, index, index - centerIndex, track.id === activeId);
+      }
+      return html;
+    }
+
+    // Slides the mounted window to the new centre, keeping the cards that stay
+    // so their transitions still run. Cards entering or leaving sit past the
+    // visible stack, so nothing pops.
+    function syncWindow(container, centerIndex, activeId) {
+      const [first, last] = windowBounds(centerIndex, currentTracks.length);
+      let keptFirst = Infinity;
+      let keptLast = -1;
+      container.querySelectorAll('.carousel-card').forEach((card) => {
+        const index = Number(card.dataset.index);
+        if (index < first || index > last) { card.remove(); return; }
+        keptFirst = Math.min(keptFirst, index);
+        keptLast = Math.max(keptLast, index);
+      });
+      if (keptLast < 0) { container.innerHTML = rangeHtml(first, last, centerIndex, activeId); return; }
+      if (first < keptFirst) container.insertAdjacentHTML('afterbegin', rangeHtml(first, keptFirst - 1, centerIndex, activeId));
+      if (last > keptLast) container.insertAdjacentHTML('beforeend', rangeHtml(keptLast + 1, last, centerIndex, activeId));
+    }
+
     function paint(container, tracks, activeId) {
       currentTracks = tracks;
       if (!tracks.length) {
@@ -78,7 +114,8 @@
         return;
       }
       const centerIndex = centerIndexFor(tracks, activeId);
-      container.innerHTML = tracks.map((track, index) => cardHtml(track, index, index - centerIndex, track.id === activeId)).join('');
+      const [first, last] = windowBounds(centerIndex, tracks.length);
+      container.innerHTML = rangeHtml(first, last, centerIndex, activeId);
     }
 
     // Moves the visual center and the is-playing marker to match a new,
@@ -91,6 +128,7 @@
     // full repaint.
     function recenterOn(container, activeId) {
       const centerIndex = centerIndexFor(currentTracks, activeId);
+      if (currentTracks.length) syncWindow(container, centerIndex, activeId);
       container.querySelectorAll('.carousel-card').forEach((card) => {
         const index = Number(card.dataset.index);
         const offset = index - centerIndex;

@@ -1099,8 +1099,11 @@ body[data-window-resizing="true"] :is(.topbar,.library-rail,.main-stage,.inspect
    the compositor. The ink shapes keep their authored positions, gradients,
    and paths; only blur/shape-morph repaint work is made static. */
 @keyframes perf-load-reveal{
-  from{opacity:0;transform:translate3d(-7%,0,0)}
-  to{opacity:.92;transform:translate3d(0,0,0)}
+  /* Fade only. It used to start 7% to the left, which left the right-hand 7% of
+     the screen uncovered (a sliver of the outgoing colours) that closed as the
+     layer slid across. */
+  from{opacity:0}
+  to{opacity:.92}
 }
 @keyframes perf-load-content{
   from{opacity:0;transform:translate3d(0,10px,0) scale(.985)}

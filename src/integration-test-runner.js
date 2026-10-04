@@ -1989,7 +1989,7 @@
     assert(getComputedStyle(document.querySelector('.playlist-cover')).backgroundImage.includes('music-cartridge.png'), 'Cartridge Quest no-artwork title cartridge did not retain its authored asset.');
     assert(getComputedStyle(document.querySelector('.playlist-thumb')).backgroundImage.includes('music-cartridge.png'), 'Cartridge Quest cartridge rack thumbnails did not retain their authored asset.');
     assert(cartridgeBootStyle?.display === 'flex', `Cartridge Quest boot-state readout stayed parked by the neutral Canvas shell (${cartridgeBootStyle?.display || 'missing'}).`);
-    assert(cartridgeCabinetStyle?.display === 'flex', `Cartridge Quest save/route/achievement cabinet stayed parked (${cartridgeCabinetStyle?.display || 'missing'}).`);
+    assert(cartridgeCabinetStyle?.display === 'grid', `Cartridge Quest save/route/achievement cabinet stayed parked (${cartridgeCabinetStyle?.display || 'missing'}).`);
     assert(cartridgeBossStyle?.display === 'grid', `Cartridge Quest truthful track-progress encounter strip is unavailable (${cartridgeBossStyle?.display || 'missing'}).`);
     assert(cartridgeHudStyle?.display === 'grid', `Cartridge Quest listening XP cabinet is unavailable (${cartridgeHudStyle?.display || 'missing'}).`);
     assert(Math.abs(cartridgePlayerHeight - 128) < 2, `The painted Cartridge Quest player is ${cartridgePlayerHeight}px instead of the archived 128px height (computed ${cartridgePlayerStyle?.height || 'missing'}, parent ${cartridgePlayer?.parentElement?.className || 'missing'}, anchor ${cartridgePlayer?.closest?.('[data-cw-anchored]')?.dataset?.cwAnchored || 'missing'}, variable ${getComputedStyle(document.body).getPropertyValue('--canvas-port-player-height').trim() || 'missing'}).`);

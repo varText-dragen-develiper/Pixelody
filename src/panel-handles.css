@@ -99,7 +99,7 @@ body.library-collapsed .library-panel-handle {
               transform .14s ease, background .18s ease, color .18s ease, box-shadow .18s ease;
 }
 
-body.library-collapsed:is(.library-untucked, :has(.library-rail:is(:hover, :focus-within, .is-untucked)), :has(.library-panel-handle:is(:hover, .is-untucked))) .library-panel-handle,
+body.library-collapsed:is(.library-untucked, :has(.library-rail:is(:hover, .is-untucked)), :has(.library-panel-handle:is(:hover, .is-untucked))) .library-panel-handle,
 body.library-collapsed.library-untucked .library-panel-handle {
   left: calc(var(--library-width) + 9px);
   transition: left var(--panel-untuck-duration) var(--panel-untuck-ease),
@@ -113,7 +113,7 @@ body.inspector-collapsed .info-panel-handle {
               transform .14s ease, background .18s ease, color .18s ease, box-shadow .18s ease;
 }
 
-body.inspector-collapsed:is(.inspector-untucked, :has(.inspector:is(:hover, :focus-within, .is-untucked)), :has(.info-panel-handle:is(:hover, .is-untucked))) .info-panel-handle,
+body.inspector-collapsed:is(.inspector-untucked, :has(.inspector:is(:hover, .is-untucked)), :has(.info-panel-handle:is(:hover, .is-untucked))) .info-panel-handle,
 body.inspector-collapsed.inspector-untucked .info-panel-handle {
   right: calc(var(--inspector-width) + 9px);
   transition: right var(--panel-untuck-duration) var(--panel-untuck-ease),
@@ -164,8 +164,8 @@ body.library-collapsed .library-rail::after {
   background: transparent;
 }
 
-body.library-collapsed:is(.library-untucked, :has(.library-rail:is(:hover, :focus-within, .is-untucked)), :has(.library-panel-handle:is(:hover, .is-untucked))) .library-rail,
-body.library-collapsed .library-rail:is(:hover, :focus-within, .is-untucked),
+body.library-collapsed:is(.library-untucked, :has(.library-rail:is(:hover, .is-untucked)), :has(.library-panel-handle:is(:hover, .is-untucked))) .library-rail,
+body.library-collapsed .library-rail:is(:hover, .is-untucked),
 body.library-collapsed.library-untucked .library-rail {
   transform: translateX(0);
   opacity: 1;
@@ -179,7 +179,7 @@ body.library-collapsed.library-untucked .library-rail {
               filter var(--panel-untuck-duration) var(--panel-untuck-ease);
 }
 
-body.library-collapsed .library-rail:is(:hover, :focus-within, .is-untucked)::after,
+body.library-collapsed .library-rail:is(:hover, .is-untucked)::after,
 body.library-collapsed.library-untucked .library-rail::after {
   display: none;
 }
@@ -212,8 +212,8 @@ body.inspector-collapsed .inspector::after {
   background: transparent;
 }
 
-body.inspector-collapsed:is(.inspector-untucked, :has(.inspector:is(:hover, :focus-within, .is-untucked)), :has(.info-panel-handle:is(:hover, .is-untucked))) .inspector,
-body.inspector-collapsed .inspector:is(:hover, :focus-within, .is-untucked),
+body.inspector-collapsed:is(.inspector-untucked, :has(.inspector:is(:hover, .is-untucked)), :has(.info-panel-handle:is(:hover, .is-untucked))) .inspector,
+body.inspector-collapsed .inspector:is(:hover, .is-untucked),
 body.inspector-collapsed.inspector-untucked .inspector {
   transform: translateX(0);
   opacity: 1;
@@ -227,7 +227,7 @@ body.inspector-collapsed.inspector-untucked .inspector {
               filter var(--panel-untuck-duration) var(--panel-untuck-ease);
 }
 
-body.inspector-collapsed .inspector:is(:hover, :focus-within, .is-untucked)::after,
+body.inspector-collapsed .inspector:is(:hover, .is-untucked)::after,
 body.inspector-collapsed.inspector-untucked .inspector::after {
   display: none;
 }

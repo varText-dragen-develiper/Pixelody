@@ -1,6 +1,10 @@
 const { app, BrowserWindow, dialog, ipcMain, Menu, nativeImage, screen, session, shell } = require('electron');
 const path = require('path');
-const moduleShop = require('./module-shop/window').createModuleShop({ app, BrowserWindow, dialog });
+const moduleShop = require('./module-shop/window').createModuleShop({ app, BrowserWindow, dialog, applyEdition: async (recipe) => {
+  if (!composableThemeExperimentEnabled || singularityProbeMode || !mainWindow || mainWindow.isDestroyed()) throw new Error('Theme editions require a Windows Canvas development session.');
+  mainWindow.webContents.send('theme:edition-request', recipe);
+  mainWindow.show(); mainWindow.focus();
+} });
 const fs = require('fs/promises');
 const nodeFs = require('fs');
 const crypto = require('crypto');
@@ -631,6 +635,7 @@ function createWindow() {
     });
   }
   configureWindowSecurity(win, 'index.html');
+  recoverRendererOnCrash(win, 'index.html');
   if (integrationTestMode) {
     win.webContents.on('console-message', (_event, level, message) => console.error(`[renderer:${level}] ${String(message || '').slice(0, 1000)}`));
     win.webContents.on('preload-error', (_event, _preloadPath, error) => console.error(`[preload-error] ${String(error?.message || error).slice(0, 1000)}`));
@@ -689,6 +694,7 @@ function createMiniWindow() {
   miniWindow.setMenuBarVisibility(false);
   miniWindow.setAlwaysOnTop(true, 'floating');
   configureWindowSecurity(miniWindow, 'mini-player.html');
+  recoverRendererOnCrash(miniWindow, 'mini-player.html');
   loadAppFile(miniWindow, 'mini-player.html');
   miniWindow.once('ready-to-show', () => {
     const { workArea } = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
@@ -699,6 +705,30 @@ function createMiniWindow() {
   });
   miniWindow.on('closed', () => { miniWindow = null; });
   return miniWindow;
+}
+
+// A crashed or out-of-memory renderer used to leave a blank window that did
+// nothing until the person quit and relaunched. Library, playlists and settings
+// live in the main-process state store, so reloading the page restores the app.
+// Three crashes inside a minute stop the retries, so a crash during load cannot
+// spin forever. Integration runs keep the crash visible instead of hiding it.
+const RENDERER_CRASH_WINDOW_MS = 60_000;
+const RENDERER_CRASH_RETRIES = 3;
+function recoverRendererOnCrash(window, fileName) {
+  const crashTimes = [];
+  window.webContents.on('render-process-gone', (_event, details) => {
+    const reason = details?.reason || 'unknown';
+    if (integrationTestMode || reason === 'clean-exit' || window.isDestroyed()) return;
+    const now = Date.now();
+    while (crashTimes.length && now - crashTimes[0] > RENDERER_CRASH_WINDOW_MS) crashTimes.shift();
+    crashTimes.push(now);
+    if (crashTimes.length > RENDERER_CRASH_RETRIES) {
+      console.error(`[renderer-recovery] ${fileName} kept crashing (${reason}); not reloading again.`);
+      return;
+    }
+    console.error(`[renderer-recovery] ${fileName} renderer exited (${reason}); reloading.`);
+    setTimeout(() => { if (!window.isDestroyed()) loadAppFile(window, fileName); }, 250);
+  });
 }
 
 function loadAppFile(window, fileName) {

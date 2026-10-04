@@ -10,6 +10,10 @@
   // activeId is the only position source of truth. Cards request playback;
   // they never move the corridor until update() confirms the new active id.
   const MAX_VISUAL_DISTANCE = 5;
+  // Only cards near the centre are mounted. Cards past MAX_VISUAL_DISTANCE share
+  // one visual position, so a library of any size costs a fixed number of
+  // nodes; the full track list stays in currentTracks for status and keys.
+  const WINDOW_RADIUS = 14;
 
   function createSpectralFieldMechanic(host) {
     if (!host) throw new Error('createSpectralFieldMechanic requires a host adapter object.');
@@ -51,6 +55,38 @@
       captionEl.innerHTML = captionHtml(track, centerIndex, tracks.length, Boolean(track && track.id === activeId));
     }
 
+    function windowBounds(centerIndex, count) {
+      if (centerIndex < 0 || count <= 0) return [0, -1];
+      return [Math.max(0, centerIndex - WINDOW_RADIUS), Math.min(count - 1, centerIndex + WINDOW_RADIUS)];
+    }
+
+    function rangeHtml(first, last, centerIndex, activeId) {
+      let html = '';
+      for (let index = first; index <= last; index += 1) {
+        const track = currentTracks[index];
+        html += cardHtml(track, index, index - centerIndex, track.id === activeId, index === centerIndex);
+      }
+      return html;
+    }
+
+    // Slides the mounted window to the new centre, keeping the cards that stay
+    // so their transitions still run. Cards entering or leaving sit past the
+    // visible stack, so nothing pops.
+    function syncWindow(stageEl, centerIndex, activeId) {
+      const [first, last] = windowBounds(centerIndex, currentTracks.length);
+      let keptFirst = Infinity;
+      let keptLast = -1;
+      stageEl.querySelectorAll('.spectral-field-card').forEach((card) => {
+        const index = Number(card.dataset.index);
+        if (index < first || index > last) { card.remove(); return; }
+        keptFirst = Math.min(keptFirst, index);
+        keptLast = Math.max(keptLast, index);
+      });
+      if (keptLast < 0) { stageEl.innerHTML = rangeHtml(first, last, centerIndex, activeId); return; }
+      if (first < keptFirst) stageEl.insertAdjacentHTML('afterbegin', rangeHtml(first, keptFirst - 1, centerIndex, activeId));
+      if (last > keptLast) stageEl.insertAdjacentHTML('beforeend', rangeHtml(keptLast + 1, last, centerIndex, activeId));
+    }
+
     function paint(tracks, activeId) {
       currentTracks = tracks;
       if (!tracks.length) {
@@ -59,7 +95,8 @@
         return;
       }
       const centerIndex = centerIndexFor(tracks, activeId);
-      stageEl.innerHTML = tracks.map((track, index) => cardHtml(track, index, index - centerIndex, track.id === activeId, index === centerIndex)).join('');
+      const [first, last] = windowBounds(centerIndex, tracks.length);
+      stageEl.innerHTML = rangeHtml(first, last, centerIndex, activeId);
       setCaption(tracks, activeId);
     }
 
@@ -74,6 +111,7 @@
 
     function recenterOn(activeId) {
       const centerIndex = centerIndexFor(currentTracks, activeId);
+      if (currentTracks.length) syncWindow(stageEl, centerIndex, activeId);
       stageEl.querySelectorAll('.spectral-field-card').forEach((card) => {
         const index = Number(card.dataset.index);
         const offset = index - centerIndex;

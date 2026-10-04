@@ -1,0 +1,143 @@
+/* Stable listening furniture: Canvas owns placement; these editions own light,
+   navigation, and read-only readings. No timers, simulated meters, or new assets. */
+body[data-theme="foreground"]:is([data-canvas-theme-port="obsession"],[data-canvas-theme-port="crystal"]) .listening-lens {
+  position:sticky;top:-16px;z-index:3;display:grid;gap:6px;min-width:0;
+  padding:8px 12px;margin:0 0 10px;border:1px solid var(--line);
+  background:var(--surface);color:var(--text);font:11px/1.4 "Segoe UI",sans-serif;
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="obsession"],[data-canvas-theme-port="crystal"]) .lens-status {font:10px/1.4 Consolas,monospace;color:var(--muted)}
+body[data-theme="foreground"]:is([data-canvas-theme-port="obsession"],[data-canvas-theme-port="crystal"]) .lens-controls {display:flex;gap:6px;min-width:0}
+body[data-theme="foreground"]:is([data-canvas-theme-port="obsession"],[data-canvas-theme-port="crystal"]) .listening-lens button {
+  min-height:32px;min-width:0;padding:5px 10px;color:inherit;background:transparent;
+  border:1px solid var(--line);cursor:pointer;text-align:left;font:inherit;
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="obsession"],[data-canvas-theme-port="crystal"]) .listening-lens button:focus-visible {outline:2px solid var(--gold2);outline-offset:2px}
+body[data-theme="foreground"]:is([data-canvas-theme-port="obsession"],[data-canvas-theme-port="crystal"]) .listening-lens button:hover {border-color:var(--gold2)}
+body[data-theme="foreground"]:is([data-canvas-theme-port="obsession"],[data-canvas-theme-port="crystal"]) .listening-lens small {font:10px/1.4 Consolas,monospace}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .listening-lens {grid-template-columns:1fr auto;border:0;border-left:2px solid var(--ob-red);border-bottom:1px solid var(--ob-line);background:#090506}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .lens-status {align-self:center}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .listening-lens .lens-note {grid-column:1/-1;min-height:24px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:0;border-top:1px solid var(--ob-line);padding:3px 0}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .lens-controls button {border:0;border-bottom:2px solid transparent;clip-path:none}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .lens-controls button[aria-pressed="true"] {border-bottom-color:var(--ob-red);color:var(--ob-bone)}
+body[data-theme="foreground"][data-canvas-theme-port="crystal"] .listening-lens {border-radius:12px;background:linear-gradient(120deg,#172544,#0c142a);border-color:#8cecff40}
+body[data-theme="foreground"][data-canvas-theme-port="crystal"] .lens-controls button {flex:1;display:grid;gap:3px;border-radius:8px;border-color:#8cecff30}
+body[data-theme="foreground"][data-canvas-theme-port="crystal"] .lens-controls button span {overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e8f7ff}
+body[data-theme="foreground"][data-canvas-theme-port="crystal"] .lens-controls button small {color:#a4ccd9}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) {
+  --edition-ink: var(--text, #f4f4ef);
+  --edition-light: var(--gold2);
+  --edition-ease: cubic-bezier(.2,.7,.2,1);
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) .cw-module {
+  opacity: 1;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+/* Disclosure retains its hover/focus trigger, with a reserved footprint so the
+   collection never jumps. Keyboard focus opens it before any control is used. */
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) .cw-grid > .cw-module:not(:first-child) :is(.rail-import,.library-filters,.rail-tools) {
+  max-height: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 160ms var(--edition-ease), visibility 0s 160ms;
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) .cw-grid > .cw-module:not(:first-child):is(:hover,:focus-within) :is(.rail-import,.library-filters,.rail-tools) {
+  max-height: none;
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 80ms, 0s;
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) .listening-edition {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 18px;
+  padding: 12px 14px 15px;
+  margin: 0 0 10px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--edition-ink);
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) .listening-edition nav {
+  display: flex; flex-wrap: wrap; gap: 5px;
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) .listening-edition button {
+  min-height: 32px; padding: 5px 10px; border: 1px solid var(--line);
+  background: transparent; color: var(--edition-ink); font: inherit; font-size: 11px;
+  cursor: pointer; transition: background-color 140ms ease, border-color 140ms ease;
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) .listening-edition button:hover {
+  border-color: var(--edition-light); background: color-mix(in srgb,var(--edition-light) 9%,transparent);
+  box-shadow: none;
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) .listening-edition button:focus-visible {
+  outline: 2px solid var(--edition-light); outline-offset: 3px;
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) .edition-readings {
+  display: flex; flex-wrap: wrap; gap: 5px 12px; min-width: 0;
+  font: 10px/1.6 Consolas,monospace; color: var(--muted);
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) [data-edition-reading="source"] { overflow-wrap: anywhere; }
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) [data-edition-reading="status"] { color: var(--edition-ink); }
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) .edition-progress {
+  position: absolute; bottom: 0; left: 14px; right: 14px; height: 2px;
+  background: var(--line);
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) .edition-progress::after {
+  content: ""; display: block; height: 100%; width: var(--edition-progress,0%); background: var(--edition-light);
+}
+/* Observatory: quiet orbit selectors and grounded light. The carousel keeps
+   its single confirmed position; selection never pretends a preview is playing. */
+body[data-theme="foreground"][data-canvas-theme-port="cosmic-cinema"] .listening-edition { border-radius: 16px 16px 0 0; background: linear-gradient(120deg,#101522,#05070d); }
+body[data-theme="foreground"][data-canvas-theme-port="cosmic-cinema"] .listening-edition button { border-radius: 999px; }
+body[data-theme="foreground"][data-canvas-theme-port="cosmic-cinema"] .library-filters { gap: 5px; }
+body[data-theme="foreground"][data-canvas-theme-port="cosmic-cinema"] .library-filters .chip { border-radius: 999px; border: 1px solid #2d323d; background: transparent; }
+body[data-theme="foreground"][data-canvas-theme-port="cosmic-cinema"] .library-filters .chip.active { border-color: #9fb7f5; background: #182238; color: #fffefa; }
+body[data-theme="foreground"][data-canvas-theme-port="cosmic-cinema"] .carousel-card { border-radius: 16px; border: 1px solid #2d323d; background: #0b0e16; }
+body[data-theme="foreground"][data-canvas-theme-port="cosmic-cinema"] .carousel-card.is-playing { border-color: #9fb7f5; box-shadow: 0 0 0 1px #9fb7f533,0 12px 32px #0008; }
+body[data-theme="foreground"][data-canvas-theme-port="cosmic-cinema"] .carousel-card-art { border-radius: 50%; }
+body[data-theme="foreground"][data-canvas-theme-port="cosmic-cinema"] .main-stage::after { opacity: 0; display: none; }
+body[data-theme="foreground"][data-canvas-theme-port="cosmic-cinema"] .activity-item i { animation: none !important; }
+body[data-theme="foreground"][data-canvas-theme-port="cosmic-cinema"]::after { opacity: .16; }
+body[data-theme="foreground"][data-canvas-theme-port="cosmic-cinema"] {
+  --canvas-port-font: "Canvas Space", "Segoe UI", sans-serif;
+  --canvas-port-display-font: "Canvas Space", "Segoe UI", sans-serif;
+}
+body[data-theme="foreground"][data-canvas-theme-port="cosmic-cinema"] :is(button,input,select,.rail-heading,.quality-card h3,.tuning-card h3,.hero-copy>span,.playlist-item strong,.timeline,.transport-buttons) { font-family: "Canvas Space","Segoe UI",sans-serif; }
+body[data-theme="foreground"][data-canvas-theme-port="cosmic-cinema"] .hero-copy h1 { font-size: clamp(28px,3.5vw,48px); letter-spacing: -.035em; text-transform: none; }
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) .playlist-hero {
+  height: clamp(170px,25vh,230px); min-height: 0 !important; max-height: 230px;
+  padding: 24px; flex: 0 0 auto;
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) .playlist-cover { width: 100px; height: 100px; min-width: 100px; }
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) .collection-body { min-height: 0; }
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) :is(.quest-save-slot,.quest-save-meta,.quest-collection-award,.quest-loot-tags,.quest-party-slot) { display: none; }
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) :is(.filter,.sort-select,.subtle-action) { clip-path: none; border-radius: 4px; border: 1px solid var(--line); font-family: var(--canvas-port-font); }
+/* Print desk: indexed tabs and a measured registration rail. Keep strong ink
+   while containing the pressure response to the selected control. */
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] { --edition-light: #f1ff8a; }
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .listening-edition { border-left: 3px solid #d7c6ff; background: #141018; }
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .listening-edition button { border-radius: 0; letter-spacing: .06em; }
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .library-filters .chip { border: 0; border-bottom: 2px solid transparent; background: transparent; }
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .library-filters .chip.active { border-bottom-color: #f1ff8a; background: #f1ff8a12; color: #f1ff8a; }
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] :is(.playlist-item,.track-row,.queue-item):hover { box-shadow: inset 2px 0 #d7c6ff; }
+body[data-theme="foreground"][data-canvas-theme-port="neon-burst"] .listening-edition[data-playback="Playing"] { border-left-color: #f1ff8a; }
+@media (max-width:1180px) {
+  /* The inherited two-column tier reduced the nested browser to one grid row.
+     Give the browser a complete first band; utility panes follow by scrolling.
+     This is presentation only and never rewrites the persisted module graph. */
+  body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]):not([data-composition-mode="edit"]) .cw-grid[data-cw-node-id="canvas-field"] > .cw-node:first-child { grid-column: 1 / -1; grid-row: 1 / span 6; }
+  body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]):not([data-composition-mode="edit"]) .cw-grid[data-cw-node-id$="-stage"] { grid-template-columns: minmax(0,1fr); grid-template-rows: repeat(6,minmax(0,1fr)); }
+  body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]):not([data-composition-mode="edit"]) .cw-grid[data-cw-node-id$="-stage"] > .cw-module[data-cw-module-key="tracks.browser"] { grid-column: 1 / -1; grid-row: 1 / -1; }
+  body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]):not([data-composition-mode="edit"]) .cw-grid[data-cw-node-id$="-stage"] > .cw-module[data-cw-module-key="audio.visualizer"] { grid-column: 1 / -1; grid-row: 1 / span 2; }
+}
+@media (hover:none), (prefers-reduced-motion:reduce) {
+  body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) .cw-grid > .cw-module:not(:first-child) :is(.rail-import,.library-filters,.rail-tools) { visibility: visible; opacity: 1; transition: none; }
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]):is([data-motion="off"],[data-performance="conserve"]) .cw-grid > .cw-module:not(:first-child) :is(.rail-import,.library-filters,.rail-tools) { visibility: visible; opacity: 1; transition: none; }
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"])[data-effect-panels="false"] .cw-grid > .cw-module:not(:first-child) :is(.rail-import,.library-filters,.rail-tools) { visibility: visible; opacity: 1; transition: none; }
+body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"])[data-motion="off"] * { transition: none !important; animation: none !important; }
+@media (prefers-reduced-motion:reduce) {
+  body[data-theme="foreground"]:is([data-canvas-theme-port="cosmic-cinema"],[data-canvas-theme-port="neon-burst"]) * { transition: none !important; animation: none !important; }
+}

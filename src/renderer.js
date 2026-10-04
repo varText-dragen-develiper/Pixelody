@@ -966,6 +966,35 @@ function neonBurstExperienceActive() {
   return activeCanvasThemePort()?.experience?.key === 'neon-burst';
 }
 
+let listeningEdition = null;
+let listeningEditionKey = '';
+function syncListeningEdition() {
+  const key = activeCanvasThemePort()?.key || '';
+  if (!window.PixelodyListeningEditions?.KEYS.includes(key)) {
+    listeningEdition?.destroy(); listeningEdition = null; listeningEditionKey = '';
+    return;
+  }
+  if (key !== listeningEditionKey) {
+    listeningEdition?.destroy();
+    listeningEdition = window.PixelodyListeningEditions.mount(document.querySelector('.collection-body'), key, (action, opener) => {
+      if (action === 'queue.open') { openQueue(opener); return; }
+      if (action === 'systems.open') { openSystemsView(opener); return; }
+      productionWorkspaceCommand(action);
+      const target = action === 'library.open' ? document.querySelector('.library-rail .create-button')
+        : action === 'track-information.open' ? document.querySelector('.inspector button')
+        : document.querySelector('#trackRows [tabindex="0"], #trackRows button');
+      target?.focus();
+    });
+    listeningEditionKey = listeningEdition ? key : '';
+  }
+  const published = confirmedPublishedOutputSnapshot();
+  const sameSource = published.activeId === currentTrack()?.id;
+  listeningEdition?.update({ track: published.track, paused: published.paused, pending: Boolean(published.pending),
+    position: sameSource ? audio.currentTime : published.currentTime,
+    duration: sameSource && Number.isFinite(audio.duration) ? audio.duration : published.track?.duration,
+    bpm: flowTempoValue(published.track), queueLength: activeQueue().length, outputLabel: outputState.activeLabel });
+}
+
 // Halftone pitch from the confirmed playing track's real BPM tag. track.bpm is
 // read from file metadata at import and is user-editable in the track editor;
 // flowTempoValue() is the existing accessor and already returns null for
@@ -1074,6 +1103,9 @@ function syncLoFiCafeRoom() {
 }
 
 function applyCanvasThemePortAttributes(port) {
+  document.querySelectorAll('link[href="canvas-listening-editions.css"]').forEach((link) => {
+    link.disabled = !window.PixelodyListeningEditions?.KEYS.includes(port?.key);
+  });
   const values = {
     canvasThemePort: port?.key || '',
     canvasPortName: port?.name || '',
@@ -1103,6 +1135,7 @@ function applyCanvasThemePortAttributes(port) {
   });
   syncLoFiCafeRoom();
   syncNeonBurstTempo(confirmedPublishedOutputSnapshot().track);
+  syncListeningEdition();
   if (port?.experience?.key === 'obsession') {
     installObsessionExperience();
     syncObsessionPressure();
@@ -1182,41 +1215,91 @@ function installCanvasStudioControl() {
         ? `${port.summary} Includes its stock module composition; later additions remain separate.`
         : 'Neutral Canvas material. Choose one of the 27 baseline archive ports.';
   };
-  portSelect.addEventListener('change', async () => {
+  const applyPortSelection = async () => {
     const previousKey = appearance.canvasThemePort;
     const nextKey = canvasThemePortDomain.normalizeKey(portSelect.value);
     const nextPort = canvasThemePortDomain.get(nextKey);
     portSelect.disabled = true;
-    if (canvasStageActive() && nextPort) {
-      let presetResult;
-      try {
+    // The same themed loading screen as any theme change, with the new port's
+    // colours and the recoloured logo, before the stock composition swaps in.
+    const loadTheme = nextKey || 'foreground';
+    const loadVisible = nextKey !== previousKey && canvasStageActive() && showThemeLoadScreen(loadTheme, nextThemeLoadDuration());
+    const loadStartedAt = performance.now();
+    if (loadVisible) {
+      document.body.classList.add('theme-switching');
+      await waitForPaint();
+      await wait(Math.max(0, (Number($('#themeLoadScreen')?.dataset.enterMs) || 0) - (performance.now() - loadStartedAt)));
+    }
+    // Whatever happens below, the cover must come down and the picker must come
+    // back: an exception between the swap and the reveal used to leave the
+    // full-screen loading cover up until the next selection.
+    let loadSettled = false;
+    try {
+      const finishLoad = async () => {
+        if (!loadVisible) return;
+        await prepareThemeArrival(loadTheme, { visible: true });
+        await waitForThemeLoadAnimation();
+        loadSettled = true;
+        const revealMs = hideThemeLoadScreen();
+        startThemeAssetSettle();
+        setTimeout(() => document.body.classList.remove('theme-switching'), revealMs);
+      };
+      if (canvasStageActive() && nextPort) {
+        let presetResult;
+        try {
+          await syncProductionWorkspaceHost();
+          presetResult = await productionWorkspaceHost?.applyThemePreset?.({
+            key: nextPort.key,
+            label: nextPort.name,
+            graph: canvasThemePortDomain.graphForPort(nextPort.key),
+          });
+        } catch (error) {
+          presetResult = { ok: false, error: error?.message || 'The stock Canvas composition could not be applied.' };
+        }
+        if (!presetResult?.ok) {
+          appearance.canvasThemePort = previousKey;
+          portSelect.value = previousKey;
+          portSelect.disabled = false;
+          paintPort();
+          if (loadVisible) { loadSettled = true; hideThemeLoadScreen(); document.body.classList.remove('theme-switching'); }
+          showToast(presetResult?.error || 'Finish or discard the current Canvas draft before switching themes.');
+          return;
+        }
+      }
+      appearance.canvasThemePort = nextKey;
+      applyAppearance();
+      if (navigationDispatcher.setMechanic(activeTrackNavigationMechanic())) {
+        syncTrackHeaderVisibility();
+        renderTracks({ preserveOrder: true });
+      }
+      scheduleDurableStatePersist(0, 'settings-change');
+      paintPort();
+      await finishLoad();
+    } finally {
+      if (loadVisible && !loadSettled) { hideThemeLoadScreen(); document.body.classList.remove('theme-switching'); }
+      portSelect.disabled = !canvasStageActive();
+    }
+  };
+  portSelect.addEventListener('change', applyPortSelection);
+  let editionApplying = false;
+  window.desktop.onThemeEditionRequest?.(async (key) => {
+    if (!['cosmic-cinema', 'neon-burst'].includes(key) || !canvasRuntimeReady()) return;
+    if (editionApplying || (canvasStageActive() && portSelect.disabled)) { showToast('A theme change is already in progress. Try Apply again.'); return; }
+    editionApplying = true;
+    try {
+      if (!canvasStageActive()) {
+        canvasOptIn = true; canvasLaunchDismissed = false;
+        setLocalStorageItem(CANVAS_OPT_IN_KEY, 'on');
+        enableCanvasStageStyles();
+        await selectTheme(CANVAS_STAGE_THEME);
         await syncProductionWorkspaceHost();
-        presetResult = await productionWorkspaceHost?.applyThemePreset?.({
-          key: nextPort.key,
-          label: nextPort.name,
-          graph: canvasThemePortDomain.graphForPort(nextPort.key),
-        });
-      } catch (error) {
-        presetResult = { ok: false, error: error?.message || 'The stock Canvas composition could not be applied.' };
       }
-      if (!presetResult?.ok) {
-        appearance.canvasThemePort = previousKey;
-        portSelect.value = previousKey;
-        portSelect.disabled = false;
-        paintPort();
-        showToast(presetResult?.error || 'Finish or discard the current Canvas draft before switching themes.');
-        return;
-      }
-    }
-    appearance.canvasThemePort = nextKey;
-    applyAppearance();
-    if (navigationDispatcher.setMechanic(activeTrackNavigationMechanic())) {
-      syncTrackHeaderVisibility();
-      renderTracks({ preserveOrder: true });
-    }
-    scheduleDurableStatePersist(0, 'settings-change');
-    paintPort();
-    portSelect.disabled = false;
+      portSelect.value = key;
+      await applyPortSelection();
+      paint();
+      if (appearance.canvasThemePort === key) showToast(`${canvasThemePortDomain.get(key).name} applied. Return to Studio from Settings > Themes.`);
+    } catch (error) { showToast(error?.message || 'The theme edition could not be applied.'); }
+    finally { editionApplying = false; }
   });
   portLabel.append(portSelect);
   const paint = () => {
@@ -1382,6 +1465,8 @@ function enableCanvasStageStyles() {
 }
 
 function disableCanvasStageStyles() {
+  document.querySelectorAll('link[href="canvas-listening-editions.css"]').forEach((link) => { link.disabled = true; });
+  listeningEdition?.destroy(); listeningEdition = null; listeningEditionKey = '';
   document.querySelectorAll('link[rel="stylesheet"][href="foreground.css"], link[rel="stylesheet"][href="canvas-theme-ports.css"], link[rel="stylesheet"][href="canvas-cartridge-quest.css"], link[rel="stylesheet"][href="canvas-obsession.css"], link[rel="stylesheet"][href="canvas-neon-burst.css"], link[rel="stylesheet"][href="canvas-lo-fi-cafe.css"]').forEach((link) => { link.disabled = true; });
 }
 const communityThemes = new Map();
@@ -4566,7 +4651,28 @@ const activePlaylist = () => {
   return state.playlists.find((playlist) => playlist.id === state.activePlaylistId) || state.playlists[0];
 };
 const currentTrack = () => state.tracks[state.index];
-const trackById = (id) => state.tracks.find((track) => track.id === id);
+// Looked up once per row in several loops (queue, playlists, history), so a
+// linear scan made those quadratic: about 300 ms per queue render at 10,000
+// tracks. The index is only a hint: a hit is confirmed against the live array,
+// and anything else (reorder, edit, unknown id) falls back to the plain scan
+// and rebuilds the index, so results are exactly what find() would return.
+let trackIndexSource = null;
+let trackIndexLength = -1;
+let trackIndexById = new Map();
+function trackById(id) {
+  const tracks = state.tracks;
+  if (trackIndexSource !== tracks || trackIndexLength !== tracks.length) {
+    trackIndexById = new Map();
+    for (let index = 0; index < tracks.length; index += 1) if (!trackIndexById.has(tracks[index]?.id)) trackIndexById.set(tracks[index]?.id, index);
+    trackIndexSource = tracks;
+    trackIndexLength = tracks.length;
+  }
+  const hit = tracks[trackIndexById.get(id)];
+  if (hit && hit.id === id) return hit;
+  const found = tracks.find((track) => track.id === id);
+  if (found) trackIndexSource = null;
+  return found;
+}
 const memeSafeAssets = {
   'genre-electronic-dance.gif': 'chaos-cards.svg',
   'genre-rock-metal.gif': 'fire.svg',
@@ -5800,6 +5906,7 @@ function applyAppearance() {
   setLocalStorageItem('pixelody.appearance', JSON.stringify(appearance));
   syncInterfaceSoundEngine();
   syncThemePreloader();
+  persistStartupLoadColors();
   queueMicrotask(() => {
     if ($('#playlistHero') && $('#playlistCover')) renderHero();
     updateMemeCue();
@@ -6021,6 +6128,8 @@ let themeLoadResetTimer = 0;
 let themeAssetSettleTimer = 0;
 let trackRowsArriveTimer = 0;
 let lastThemeLoadStartedAt = 0;
+let themeLoadRapidCount = 0;
+let themeLoadWatchdog = 0;
 let lastUserInputAt = 0;
 let interactionQuietTimer = 0;
 const prewarmedSurfaces = new Set();
@@ -6132,6 +6241,28 @@ function targetThemeLoadColors(theme) {
   return paletteLoadColors(palette);
 }
 
+// The loading screen is static markup that paints before any script runs, so
+// the next launch's colours are stored for startup-load-colors.js (a head
+// script) to apply to the very first frame. Otherwise every launch showed the
+// default gold screen first and then dissolved into the saved theme's colours.
+function persistStartupLoadColors() {
+  try {
+    const theme = canvasStageActive() ? (appearance.canvasThemePort || CANVAS_STAGE_THEME) : appearance.theme || 'studio';
+    const to = targetThemeLoadColors(theme);
+    const from = startupThemeLoadColors(to);
+    const mark = brandMarkDomain.resolveMarkColor({ logoColor: appearance.logoColor, logoFollowsTheme: appearance.logoFollowsTheme, themeAccent: theme === 'studio' ? '' : to.accent }).hex;
+    const stored = {
+      fromBg: from.bg, fromSurface: from.surface, fromAccent: from.accent, fromAccent2: from.accent2,
+      toBg: to.bg, toSurface: to.surface, toAccent: to.accent, toAccent2: to.accent2,
+      text: to.text, muted: to.muted, mark,
+    };
+    if (Object.values(stored).every((value) => /^#[0-9a-f]{6}$/i.test(String(value)))) setLocalStorageItem('pixelody.startupLoadColors', JSON.stringify(stored));
+    else localStorage.removeItem('pixelody.startupLoadColors');
+  } catch {
+    // Startup colours are a nicety; never let them break a theme change.
+  }
+}
+
 function startupThemeLoadColors(colors) {
   const shadow = isLightColor(colors.bg) ? '#f7f1e6' : '#020304';
   return {
@@ -6157,13 +6288,18 @@ function shouldShowThemeLoad(theme) {
   return requested !== current || (requested === 'studio' && alternateThemes.includes(appearance.palette));
 }
 
+// Choosing a theme is a small ceremony: the themed loading screen plays in full
+// for the first few selections. Only someone flipping through several themes in
+// a row gets the shorter version, and it is never skipped.
+const THEME_LOAD_FULL_SELECTIONS = 3;
 function nextThemeLoadDuration() {
   const now = performance.now();
   const browsingRapidly = lastThemeLoadStartedAt && now - lastThemeLoadStartedAt <= THEME_LOAD_RAPID_WINDOW_MS;
+  themeLoadRapidCount = browsingRapidly ? themeLoadRapidCount + 1 : 1;
   lastThemeLoadStartedAt = now;
   clearTimeout(themeLoadResetTimer);
-  themeLoadResetTimer = setTimeout(() => { lastThemeLoadStartedAt = 0; }, THEME_LOAD_RAPID_WINDOW_MS);
-  return browsingRapidly ? THEME_LOAD_QUICK_MS : THEME_LOAD_FULL_MS;
+  themeLoadResetTimer = setTimeout(() => { lastThemeLoadStartedAt = 0; themeLoadRapidCount = 0; }, THEME_LOAD_RAPID_WINDOW_MS);
+  return themeLoadRapidCount > THEME_LOAD_FULL_SELECTIONS ? THEME_LOAD_QUICK_MS : THEME_LOAD_FULL_MS;
 }
 
 function themeLoadExitStyle(theme) {
@@ -6237,6 +6373,15 @@ function showThemeLoadScreen(theme, durationMs = THEME_LOAD_FULL_MS, options = {
   // Start the existing receipt immediately so its compositor work overlaps
   // theme/runtime preparation instead of beginning after that work finishes.
   startThemeLoadAnimation(durationMs);
+  // Backstop: the cover is full-screen and blocks input, so if whatever shows it
+  // never reaches its reveal (an error, a superseded selection), take it down.
+  clearTimeout(themeLoadWatchdog);
+  themeLoadWatchdog = setTimeout(() => {
+    if (!screen.classList.contains('active') || screen.classList.contains('leaving')) return;
+    console.warn('Pixelody theme loading screen was never revealed; clearing it.');
+    hideThemeLoadScreen();
+    document.body.classList.remove('theme-switching');
+  }, durationMs + 8000);
   return true;
 }
 
@@ -6299,6 +6444,7 @@ function hideThemeLoadScreen() {
   const screen = $('#themeLoadScreen');
   if (!screen) return 0;
   clearTimeout(themeLoadTimer);
+  clearTimeout(themeLoadWatchdog);
   if (motionDisabled()) {
     screen.classList.remove('active', 'leaving');
     screen.dataset.loadPhase = 'hidden';
@@ -7212,9 +7358,14 @@ function drawCurve(trackEq = tuningDefault(), systemEq = tuningDefault()) {
     || canvas.closest('.hidden,[hidden],[inert][aria-hidden="true"]')
     || (document.body.dataset.singularityProbeReady === 'true' && singularityHost?.dataset.openModule !== 'secondary')) return;
   const dpr = devicePixelRatio || 1;
-  canvas.width = canvas.clientWidth * dpr; canvas.height = canvas.clientHeight * dpr;
-  const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr);
   const width = canvas.clientWidth, height = canvas.clientHeight;
+  const ctx = canvas.getContext('2d');
+  // Assigning width/height reallocates the backing store even when the value is
+  // unchanged; redrawing on every track change did that each time (~40 ms on
+  // play at 2,000 tracks). Resize only when the size changed, otherwise clear.
+  if (canvas.width !== width * dpr || canvas.height !== height * dpr) { canvas.width = width * dpr; canvas.height = height * dpr; }
+  else { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, canvas.width, canvas.height); }
+  ctx.scale(dpr, dpr);
   const themeStyle = getComputedStyle(document.documentElement);
   const themeLine = themeStyle.getPropertyValue('--line').trim() || '#34373c';
   const themeAccent = themeStyle.getPropertyValue('--green').trim() || themeStyle.getPropertyValue('--gold').trim() || '#d8b66a';
@@ -15503,6 +15654,7 @@ function clearRendererRuntimeState() {
   clearTimeout(themeLoadTimer);
   clearTimeout(themeLoadResetTimer);
   lastThemeLoadStartedAt = 0;
+  themeLoadRapidCount = 0;
   hideThemeLoadScreen();
   resetThemeContinuationState();
   diagnosticsState.lastConserveReason = '';
@@ -15615,7 +15767,11 @@ function dailyMixDateLabel(dateKey) {
   return new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric' }).format(dailyMixLocalDate(dateKey));
 }
 
-function dailyCuratedPlanAdapter({ candidates = [], count = 0 }) {
+// Scoring a 10,000-track library is long, synchronous work. The planner is a
+// generator that yields between slices so the app can run it a slice per idle
+// moment; the synchronous adapter below simply runs it to the end.
+const DAILY_CURATED_SCORE_SLICE = 400;
+function* dailyCuratedPlanSteps({ candidates = [], count = 0 }) {
   // Read-only use of Flow's planner: Daily Curated owns its recipe score and
   // persisted result, while Flow retains all queue, plan, and learning state.
   const remaining = candidates.slice();
@@ -15623,10 +15779,13 @@ function dailyCuratedPlanAdapter({ candidates = [], count = 0 }) {
   let previous = currentTrack() || null;
   while (remaining.length && selected.length < count) {
     const context = flowScoreContext(remaining.map((candidate) => candidate.track), previous || remaining[0].track, 'deep-library');
-    const scored = remaining.map((candidate) => ({
-      candidate,
-      flow: scoreFlowCandidate(candidate.track, context),
-    }));
+    const scored = [];
+    for (let start = 0; start < remaining.length; start += DAILY_CURATED_SCORE_SLICE) {
+      for (const candidate of remaining.slice(start, start + DAILY_CURATED_SCORE_SLICE)) {
+        scored.push({ candidate, flow: scoreFlowCandidate(candidate.track, context) });
+      }
+      yield;
+    }
     const planned = flowShufflePlanner.planSession({
       current: flowPlannerTrack(previous || scored[0].candidate.track, 0),
       candidates: scored.map((item) => flowPlannerTrack(item.candidate.track, item.flow.score + item.candidate.score)),
@@ -15648,8 +15807,15 @@ function dailyCuratedPlanAdapter({ candidates = [], count = 0 }) {
     for (let index = remaining.length - 1; index >= 0; index -= 1) {
       if (selectedSet.has(remaining[index].track.id)) remaining.splice(index, 1);
     }
+    yield;
   }
   return selected;
+}
+function dailyCuratedPlanAdapter(request) {
+  const steps = dailyCuratedPlanSteps(request);
+  let step = steps.next();
+  while (!step.done) step = steps.next();
+  return step.value;
 }
 
 function emptyDailyMix() {
@@ -15675,18 +15841,79 @@ function emptyDailyMix() {
   };
 }
 
+// A new day's mix is built after the app is up and the person is not typing,
+// scrolling or clicking, a slice at a time. Until it lands the rail entry and
+// panel say it is being prepared; nothing is guessed or shown in the meantime.
+let dailyMixGeneration = null;
+function pendingDailyMix() {
+  const mix = emptyDailyMix();
+  mix.pending = true;
+  mix.explanationReceipt.summary = "Preparing today's listen from your library.";
+  return mix;
+}
+function dailyMixOptions() {
+  return { tracks: state.tracks, history: state.history, favorites: state.favorites, trackStats: state.signalJournal.trackStats };
+}
+function dailyMixQuietTurn() {
+  return new Promise((resolve) => {
+    const wait = () => scheduleIdleWork(() => {
+      if (inputIsRecent()) setTimeout(wait, INTERACTION_QUIET_MS);
+      else resolve();
+    }, 1500);
+    wait();
+  });
+}
+// Between slices: hand the frame back, and wait out any input in progress.
+const DAILY_MIX_SLICE_MS = 10;
+function dailyMixBreathe() {
+  if (inputIsRecent()) return dailyMixQuietTurn();
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+function scheduleDailyMixGeneration() {
+  if (dailyMixGeneration) return dailyMixGeneration;
+  dailyMixGeneration = (async () => {
+    try {
+      await dailyMixQuietTurn();
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        if (dailyCurated.todaysMix(state.dailyMixes)) return;
+        if (!state.tracks.some((track) => track?.id && !track.missing)) return;
+        const options = dailyMixOptions();
+        const prepared = dailyCurated.prepareRediscovery(options);
+        let plannedIds = [];
+        try {
+          const steps = dailyCuratedPlanSteps({ candidates: prepared.candidates, count: prepared.count });
+          let sliceStart = performance.now();
+          let step = steps.next();
+          while (!step.done) {
+            if (performance.now() - sliceStart >= DAILY_MIX_SLICE_MS) { await dailyMixBreathe(); sliceStart = performance.now(); }
+            step = steps.next();
+          }
+          plannedIds = step.value;
+        } catch (error) {
+          // The ranked order is the recipe's own; only Flow's smoothing is lost.
+          console.warn('Pixelody Daily Curated planning failed; using the ranked order.', error);
+        }
+        // Importing or removing music, or midnight, while planning invalidates the plan.
+        if (dailyCurated.libraryFingerprint(state.tracks) !== prepared.fingerprint || dailyCurated.dayKey() !== prepared.currentDay) continue;
+        state.dailyMixes = dailyCurated.storeMix(state.dailyMixes, dailyCurated.finishRediscovery(options, prepared, plannedIds)).state;
+        persist();
+        renderTracks({ preserveOrder: true });
+        return;
+      }
+    } catch (error) {
+      console.warn('Pixelody Daily Curated could not prepare the daily listen.', error);
+    } finally {
+      dailyMixGeneration = null;
+    }
+  })();
+  return dailyMixGeneration;
+}
 function dailyMixForToday() {
   if (!state.tracks.some((track) => track?.id && !track.missing)) return emptyDailyMix();
-  const result = dailyCurated.ensureToday(state.dailyMixes, {
-    tracks: state.tracks,
-    history: state.history,
-    favorites: state.favorites,
-    trackStats: state.signalJournal.trackStats,
-    plan: dailyCuratedPlanAdapter,
-  });
-  state.dailyMixes = result.state;
-  dailyMixNeedsPersist ||= result.created;
-  return result.mix;
+  const existing = dailyCurated.todaysMix(state.dailyMixes);
+  if (existing) return existing;
+  void scheduleDailyMixGeneration();
+  return pendingDailyMix();
 }
 
 function dailyCuratedCollection() {
@@ -15911,7 +16138,7 @@ function renderPlaylists() {
       const mixDate = dailyMixLocalDate(playlist.mix.dateKey);
       const compactDate = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(mixDate).toUpperCase();
       const availableCount = playlist.trackIds.map(trackById).filter((track) => track && !track.missing).length;
-      const status = availableCount ? `${availableCount} local track${availableCount === 1 ? '' : 's'} · ready` : 'Add local music to begin';
+      const status = playlist.mix.pending ? "Preparing today's listen" : availableCount ? `${availableCount} local track${availableCount === 1 ? '' : 's'} · ready` : 'Add local music to begin';
       return `<button class="playlist-item daily-curated-entry ${active ? 'active' : ''}" data-playlist="${playlist.id}" aria-current="${active ? 'page' : 'false'}" aria-label="Today's listen: Rediscovery, ${escapeHtml(status)}" title="Today's listen · no setup · ready until tomorrow" data-daily-curated="true"><span class="playlist-thumb" ${glyphAttributes}>${dailyThumb}</span><span class="playlist-copy"><span class="daily-curated-entry-eyebrow">DAILY CURATED <time datetime="${escapeHtml(playlist.mix.dateKey)}">${escapeHtml(compactDate)}</time></span><strong>Today's Listen</strong><span class="daily-curated-entry-promise">One ready path. No setup.</span><span class="daily-curated-entry-status"><i aria-hidden="true"></i>${escapeHtml(status)}</span></span><span class="playlist-dots" aria-hidden="true">›</span></button>`;
     }
     return `<button class="playlist-item ${active ? 'active' : ''}" data-playlist="${playlist.id}" data-quest-slot="${escapeHtml(save.slot)}"${loFiCafeCardAttributes(playlist, save)} aria-current="${active ? 'page' : 'false'}" title="${escapeHtml(playlist.name)}" ${playlist.dailyMix ? 'data-daily-curated="true"' : ''}><span class="playlist-thumb" ${glyphAttributes} ${image}>${playlist.dailyMix ? dailyThumb : playlist.background ? '' : escapeHtml(playlist.glyph || playlist.name.charAt(0).toUpperCase())}</span><span class="playlist-copy"><span class="quest-save-slot">SLOT ${escapeHtml(save.slot)} <b>${escapeHtml(save.type.toUpperCase())}</b></span><strong>${escapeHtml(playlist.name)}</strong><span>${playlist.dailyMix ? 'Today · Rediscovery' : `${save.type} &middot; ${count} track${count === 1 ? '' : 's'}`}</span><span class="quest-save-meta">${collectionWearText(playlist, save)}</span>${award}</span><span class="playlist-dots">${playlist.virtual ? '' : '...'}</span></button>`;
@@ -15996,11 +16223,14 @@ function renderDailyCuratedPanel() {
   setText('#dailyCuratedTitle', 'Rediscovery');
   setText('#dailyCuratedDayNumber', String(dailyMixLocalDate(mix.dateKey).getDate()).padStart(2, '0'));
   setText('#dailyCuratedDate', `${dailyMixDateLabel(mix.dateKey)} · Set for the day. A new listen arrives tomorrow.`);
-  setText('#dailyCuratedReadyMark', stateLabel === 'empty' ? 'WAITING FOR MUSIC' : unavailable ? `${unavailable} UNAVAILABLE` : 'READY TODAY');
-  setText('#dailyCuratedPromise', stateLabel === 'empty'
+  if (mix.pending) panel.dataset.state = 'pending';
+  setText('#dailyCuratedReadyMark', mix.pending ? 'PREPARING' : stateLabel === 'empty' ? 'WAITING FOR MUSIC' : unavailable ? `${unavailable} UNAVAILABLE` : 'READY TODAY');
+  setText('#dailyCuratedPromise', mix.pending
+    ? "Preparing today's listen. You can keep using Pixelody; it will appear here in a moment."
+    : stateLabel === 'empty'
     ? 'Bring in music once and Daily Curated will prepare a simple listening path from your own library.'
     : 'A ready-to-play path through music you own. No setup, no choices to configure, and no reshuffle until tomorrow.');
-  setText('#dailyCuratedLeadTitle', leadTrack?.title || (mix.trackIds.length ? "Today's tracks are unavailable" : 'Waiting for local music'));
+  setText('#dailyCuratedLeadTitle', leadTrack?.title || (mix.pending ? "Preparing today's listen" : mix.trackIds.length ? "Today's tracks are unavailable" : 'Waiting for local music'));
   setText('#dailyCuratedLeadMeta', leadTrack ? `${leadTrack.artist || 'Unknown artist'}${leadTrack.album ? ` · ${leadTrack.album}` : ''}` : mix.trackIds.length ? 'The missing tracks stay recorded instead of being silently replaced.' : "Import music and tomorrow's path takes care of itself.");
   setText('#dailyCuratedTrackCount', unavailable ? `${availableTracks.length} of ${mix.trackIds.length}` : String(availableTracks.length));
   setText('#dailyCuratedDuration', dailyMixDurationText(receipt.totalDurationSeconds));
@@ -17180,6 +17410,7 @@ async function playTrack(id, options = {}) {
 }
 
 function broadcastPlayerState() {
+  syncListeningEdition();
   const published = confirmedPublishedOutputSnapshot();
   const track = published.track;
   const canvasTempo = syncNeonBurstTempo(track);
@@ -17386,6 +17617,7 @@ function adjacentTrack(offset, fromEnded = false) {
 }
 function buildQueue(tracks, startId = null) {
   state.queue = playbackDomain.buildQueue(tracks, startId);
+  queueRenderLimit = QUEUE_RENDER_STEP;
   resetFlowShuffleCycle(startId || '');
   persist(); renderQueue();
 }
@@ -17413,6 +17645,14 @@ function syncQueuePlaybackState(options = {}) {
   });
 }
 
+// A queue started from the library holds every track, so the list renders a
+// window around the playing track and offers the rest in steps. Building all of
+// it blocked the renderer for about 650 ms at 10,000 tracks on every play and
+// every track change, and mounted ~100,000 nodes for a drawer that is
+// usually closed.
+const QUEUE_RENDER_STEP = 200;
+const QUEUE_RENDER_LEAD = 5;
+let queueRenderLimit = QUEUE_RENDER_STEP;
 function renderQueue() {
   const queue = activeQueue();
   syncFlowShuffleQueue(queue);
@@ -17424,14 +17664,26 @@ function renderQueue() {
   syncQuestOutputModule();
   $('#queueSummary').textContent = `${queue.length} track${queue.length === 1 ? '' : 's'}`;
   $('#queueEmpty').classList.toggle('hidden', queue.length > 0);
-  $('#queueList').innerHTML = queue.map((track, index) => {
+  const playingId = currentTrack()?.id;
+  const playingIndex = playingId ? queue.findIndex((track) => track.id === playingId) : -1;
+  const windowStart = Math.max(0, playingIndex - QUEUE_RENDER_LEAD);
+  const windowEnd = Math.min(queue.length, windowStart + queueRenderLimit);
+  const plan = state.flowShuffle.plan || {};
+  const priorityIds = new Set(state.flowShuffle.priorityIds);
+  const standardOrder = plan.style === 'standard' && Array.isArray(plan.order) ? new Set(plan.order) : null;
+  const futureIds = Array.isArray(plan.future) ? new Set(plan.future) : null;
+  const hiddenBefore = windowStart ? `<div class="queue-window-note">${windowStart.toLocaleString()} earlier in the queue are not shown.</div>` : '';
+  const hiddenAfter = windowEnd < queue.length
+    ? `<button type="button" class="queue-more" data-queue-more>Show ${Math.min(QUEUE_RENDER_STEP, queue.length - windowEnd).toLocaleString()} more (${(queue.length - windowEnd).toLocaleString()} not shown)</button>`
+    : '';
+  $('#queueList').innerHTML = hiddenBefore + queue.slice(windowStart, windowEnd).map((track, offset) => {
+    const index = windowStart + offset;
     const art = track.artworkPath ? `style="background-image:url('${escapeHtml(window.desktop.fileUrl(track.artworkPath))}')"` : '';
-    const plan = state.flowShuffle.plan || {};
-    const intent = state.flowShuffle.priorityIds.includes(track.id) ? 'MANUAL' : plan.style === 'standard' && plan.order.includes(track.id) && track.id !== currentTrack()?.id ? 'STANDARD' : plan.future?.includes(track.id) ? 'FLOW' : '';
+    const intent = priorityIds.has(track.id) ? 'MANUAL' : standardOrder?.has(track.id) && track.id !== playingId ? 'STANDARD' : futureIds?.has(track.id) ? 'FLOW' : '';
     const title = track.title || 'Untitled track';
     const safeTitle = escapeHtml(title);
     return `<div class="queue-item ${track.id === currentTrack()?.id ? 'playing' : ''}" role="listitem" data-id="${encodeURIComponent(track.id)}"><span class="quest-party-slot" aria-hidden="true">P${String(index + 1).padStart(2, '0')}</span><span class="queue-item-art" ${art} aria-hidden="true"></span><span class="queue-item-copy"><strong>${safeTitle}</strong><span>${escapeHtml(track.artist)}${intent ? ` <em class="queue-intent">${intent}</em>` : ''}</span></span><span class="queue-item-actions"><button data-queue-action="up" title="Move up" aria-label="Move ${safeTitle} up"${index === 0 ? ' disabled' : ''}>&#8593;</button><button data-queue-action="down" title="Move down" aria-label="Move ${safeTitle} down"${index === queue.length - 1 ? ' disabled' : ''}>&#8595;</button><button data-queue-action="remove" title="Remove" aria-label="Remove ${safeTitle} from queue">x</button></span></div>`;
-  }).join('');
+  }).join('') + hiddenAfter;
   syncQueuePlaybackState();
   updateFlowShuffleUi();
   refreshMemeOnScreenUpdate('QUEUE UPDATE');
@@ -17639,7 +17891,7 @@ async function playDailyCuratedMix() {
   const playlist = dailyCuratedCollection();
   const tracks = playlist.trackIds.map(trackById).filter((track) => track && !track.missing);
   if (!tracks.length) {
-    showToast('Import local music before playing this Daily Curated mix.');
+    showToast(playlist.mix?.pending || playlist.pending ? "Today's listen is still being prepared." : 'Import local music before playing this Daily Curated mix.');
     return false;
   }
   buildQueue(tracks, tracks[0].id);
@@ -17649,7 +17901,7 @@ async function playDailyCuratedMix() {
 function saveDailyCuratedMix() {
   const mix = dailyMixForToday();
   if (!mix.trackIds.length) {
-    showToast('There are no available tracks to save yet.');
+    showToast(mix.pending ? "Today's listen is still being prepared." : 'There are no available tracks to save yet.');
     return null;
   }
   const existing = mix.savedPlaylistId && state.playlists.find((playlist) => playlist.id === mix.savedPlaylistId);
@@ -18607,7 +18859,11 @@ document.addEventListener('drop', async (event) => {
   event.preventDefault();
   questDropDragDepth = 0;
   setQuestDropReady(false);
-  const paths = await window.desktop.registerDroppedFiles([...event.dataTransfer.files]);
+  const dropped = [...(event.dataTransfer?.files || [])];
+  if (!dropped.length) return;
+  let paths = [];
+  try { paths = await window.desktop.registerDroppedFiles(dropped); } catch (error) { console.warn('Pixelody drop could not be registered', error); }
+  if (!paths.length) { showToast(dropped.length === 1 ? 'That item is not a supported audio file. Use Add folder to import a whole folder.' : 'None of those items are supported audio files. Use Add folder to import a whole folder.'); return; }
   addPaths(paths, { sourceName: 'Dropped files', importKind: 'drop' });
 });
 $('#playlistList').onclick = (event) => { const item = event.target.closest('.playlist-item'); if (item) selectPlaylist(item.dataset.playlist); };
@@ -18952,6 +19208,7 @@ $('#queueButton').onclick = () => openQueue($('#queueButton'));
 $('#closeQueue').onclick = navigateBack;
 $('#clearQueue').onclick = () => { state.queue = currentTrack() ? [currentTrack().id] : []; resetFlowShuffleCycle(currentTrack()?.id || ''); persist(); renderTracks(); renderQueue(); };
 $('#queueList').onclick = (event) => {
+  if (event.target.closest('[data-queue-more]')) { queueRenderLimit += QUEUE_RENDER_STEP; renderQueue(); return; }
   const item = event.target.closest('.queue-item'); if (!item) return; const id = decodeURIComponent(item.dataset.id); const action = event.target.dataset.queueAction;
   if (!action) { playTrack(id); return; }
   const index = state.queue.indexOf(id);
@@ -19247,6 +19504,7 @@ function updatePlaybackProgress() {
   $('#duration').textContent = durationText(audio.duration);
   $('#seek').value = audio.duration ? audio.currentTime / audio.duration * 1000 : 0;
   syncQuestBossBar();
+  syncListeningEdition();
 }
 audio.ontimeupdate = () => {
   maintainCalibrationLoop();
@@ -19394,19 +19652,35 @@ function setupPanelHoverTuck(panelSelector, handleSelector, collapsedKey, bodyUn
   if (!panel || !handle) return;
   let leaveTimer = null;
 
+  // Keyboard focus inside the panel keeps it open; a mouse-clicked button does
+  // not. The stylesheet used to keep it open for any :focus-within, so clicking
+  // a button in a collapsed panel and moving away left it standing out until
+  // something else took focus.
+  const keyboardInside = () => Boolean(panel.querySelector(':focus-visible')) || handle.matches(':focus-visible');
+  const insideOrHandle = (node) => node instanceof Node && (panel.contains(node) || handle.contains(node));
+  // pointerleave is not delivered when the panel moves out from under a still
+  // pointer, when capture is held, or when the window loses the pointer, so
+  // while the panel is out any pointer movement elsewhere also tucks it.
+  const onPointerElsewhere = (event) => {
+    if (insideOrHandle(event.target) || keyboardInside()) return;
+    setUntucked(false);
+  };
   const setUntucked = (untucked) => {
     clearTimeout(leaveTimer);
     if (!layout[collapsedKey]) {
       panel.classList.remove('is-untucked');
       handle.classList.remove('is-untucked');
       document.body.classList.remove(bodyUntuckedClass);
+      document.removeEventListener('pointermove', onPointerElsewhere);
       return;
     }
     if (untucked) {
       panel.classList.add('is-untucked');
       handle.classList.add('is-untucked');
       document.body.classList.add(bodyUntuckedClass);
+      document.addEventListener('pointermove', onPointerElsewhere, { passive: true });
     } else {
+      document.removeEventListener('pointermove', onPointerElsewhere);
       leaveTimer = setTimeout(() => {
         panel.classList.remove('is-untucked');
         handle.classList.remove('is-untucked');
@@ -19423,6 +19697,7 @@ function setupPanelHoverTuck(panelSelector, handleSelector, collapsedKey, bodyUn
     const related = e.relatedTarget;
     if (related && (panel.contains(related) || handle.contains(related))) return;
     delete document.body.dataset[collapsedKey === 'libraryCollapsed' ? 'libraryCollapseClick' : 'inspectorCollapseClick'];
+    if (keyboardInside()) return;
     setUntucked(false);
   };
 
@@ -19431,13 +19706,13 @@ function setupPanelHoverTuck(panelSelector, handleSelector, collapsedKey, bodyUn
   handle.addEventListener('pointerenter', onEnter);
   handle.addEventListener('pointerleave', onLeave);
 
-  panel.addEventListener('focusin', () => { if (layout[collapsedKey]) setUntucked(true); });
+  panel.addEventListener('focusin', (e) => { if (layout[collapsedKey] && e.target.matches?.(':focus-visible')) setUntucked(true); });
   panel.addEventListener('focusout', (e) => {
     if (!layout[collapsedKey]) return;
     if (e.relatedTarget && (panel.contains(e.relatedTarget) || handle.contains(e.relatedTarget))) return;
     setUntucked(false);
   });
-  handle.addEventListener('focusin', () => { if (layout[collapsedKey]) setUntucked(true); });
+  handle.addEventListener('focusin', (e) => { if (layout[collapsedKey] && e.target.matches?.(':focus-visible')) setUntucked(true); });
   handle.addEventListener('focusout', (e) => {
     if (!layout[collapsedKey]) return;
     if (e.relatedTarget && (panel.contains(e.relatedTarget) || handle.contains(e.relatedTarget))) return;
@@ -20600,6 +20875,7 @@ $('#cleanRuntimeState').onclick = cleanRuntimeState;
 
 // File integrity check (Settings > Diagnostics). Header-level only: see src/file-integrity.js.
 let integrityReport = '';
+const INTEGRITY_SLICE = 1000;
 async function checkLibraryFileIntegrity() {
   const button = $('#verifyLibraryFiles');
   const status = $('#integrityStatus');
@@ -20609,8 +20885,17 @@ async function checkLibraryFileIntegrity() {
   button.disabled = true;
   status.textContent = `Checking ${tracks.length.toLocaleString()} file${tracks.length === 1 ? '' : 's'}...`;
   try {
-    const results = await window.desktop.verifyIntegrity(tracks.map((track) => ({ path: track.path, size: track.integrity?.size, mtimeMs: track.integrity?.mtimeMs })));
-    if (!Array.isArray(results) || results.length !== tracks.length) throw new Error('Unexpected integrity result.');
+    // The bridge accepts at most 5,000 files per request, and one request that
+    // large holds the main process for its whole run, so a big library is
+    // checked in slices with a progress line between them.
+    const results = [];
+    for (let start = 0; start < tracks.length; start += INTEGRITY_SLICE) {
+      const slice = tracks.slice(start, start + INTEGRITY_SLICE);
+      const part = await window.desktop.verifyIntegrity(slice.map((track) => ({ path: track.path, size: track.integrity?.size, mtimeMs: track.integrity?.mtimeMs })));
+      if (!Array.isArray(part) || part.length !== slice.length) throw new Error('Unexpected integrity result.');
+      results.push(...part);
+      if (results.length < tracks.length) status.textContent = `Checking ${tracks.length.toLocaleString()} files... ${results.length.toLocaleString()} done`;
+    }
     const labels = { missing: 'missing', unreadable: 'unreadable', empty: 'empty (0 bytes)', changed: 'changed since last check', 'header-mismatch': 'does not look like its file type', truncated: 'cut short' };
     const problems = [];
     tracks.forEach((track, index) => {

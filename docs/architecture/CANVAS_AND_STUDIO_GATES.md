@@ -53,6 +53,14 @@ selected port.
 
 ## Theme explorer
 
+October 3, 2026: Modules can import the free Cosmic Cinema and Neon Burst
+`theme-edition` test selectors. Apply sends an allowlisted request to this same
+development Canvas host and uses its atomic preset/draft guard. It does not
+register built-ins, enable arbitrary package CSS, restore My Themes, or activate
+Canvas in packaged builds. Imported selectors are inert until Apply. The local
+shop listing and evidence are in the private development notes;
+public delivery and paid entitlements remain unverified.
+
 In development builds, Settings > Themes lists Pixelody Studio under **Ready to
 use** and the development presentations under **In development**, grouped by
 status: **Active** (Canvas Studio, Singularity Graph, Singularity Proxy).
