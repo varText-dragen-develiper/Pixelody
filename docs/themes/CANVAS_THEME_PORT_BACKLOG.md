@@ -110,11 +110,20 @@ port now; **Later additions** remains the bounded feature queue.
 
 ## Neon Burst
 
+**October 3 listening refinement (implemented):** A fixed-footprint hover/focus
+reveal replaces utility height expansion. Indexed section shortcuts and a
+read-only source/progress strip share product state with Cosmic Cinema. The
+hero is shorter, compact browsers remain usable, inherited cartridge captions
+are suppressed, and strong row-hover shadows are contained to an inset marker.
+Free desktop recipe selectors and local shop download/application tests are
+recorded in the private development notes. Public delivery,
+paid entitlements and packaged availability remain open.
+
 **Baseline retained:** Blacklight print energy, pixel-cut controls, phosphor color, mechanical response, and linear navigation.
 
 **First detail pass (implemented):** Halftone field, fluorescent overprint edges, offset print shadows, and distinct pressure travel for a real pressed control.
 
-**Neon Burst reconstruction (implemented):** Canvas now declares an explicit Neon Burst experience while retaining the standard Library / Stage / Inspector / Queue / Now Playing / Transport ownership graph. The archive's fixed 9px and 12px coral offsets are replaced by one body-owned scalar, `--nb-slip`, that every surface in both sheets resolves through; no surface declares an offset distance of its own. Confirmed playback is the only state that brings it to zero, so registration reads as the absence of error rather than as a highlight colour. Hover, keyboard focus, drag and press each get a different *kind* of slip — lateral, vertical split, lifted spread, and a flat strike — rather than one offset at four magnitudes. Halftone pitch is derived from the confirmed playing track's real `track.bpm` tag through the existing `flowTempoValue()` accessor and Flow Shuffle's own `(bpm - 55) / 145` normalisation, banded to an 8–15px pitch; an untagged track gets a line screen at a fixed pitch and an explicit `data-nb-tempo="untagged"` state rather than a mid-density dot screen that would imply a measurement never taken. Pitch is recomputed only on a confirmed track change, so nothing oscillates and the check forbids keyframes or animation in the sheet outright. Motion-off is authored as a larger *fixed* slip with transitions removed — the press stopped mid-run rather than cleaned up — so fluorescent ink contrast survives with nothing moving. Neon Burst declares no assets, so every mark is CSS-generated; the retired `poster-themes.css` remains detached.
+**Neon Burst reconstruction (implemented):** Canvas now declares an explicit Neon Burst experience while retaining the standard Library / Stage / Inspector / Queue / Now Playing / Transport ownership graph. The archive's fixed 9px and 12px coral offsets are replaced by one body-owned scalar, `--nb-slip`, that every surface in both sheets resolves through; no surface declares an offset distance of its own. Confirmed playback is the only state that brings it to zero, so registration reads as the absence of error rather than as a highlight colour. Following the October 3 owner review, hover uses a contained edge highlight and neutral depth, keyboard focus uses one clear ring, and press uses a 1px inset seat rather than split fluorescent wings. Drag retains the lifted print-plate spread; material registration remains tied to confirmed playback. Halftone pitch is derived from the confirmed playing track's real `track.bpm` tag through the existing `flowTempoValue()` accessor and Flow Shuffle's own `(bpm - 55) / 145` normalisation, banded to an 8–15px pitch; an untagged track gets a line screen at a fixed pitch and an explicit `data-nb-tempo="untagged"` state rather than a mid-density dot screen that would imply a measurement never taken. Pitch is recomputed only on a confirmed track change, so nothing oscillates and the check forbids keyframes or animation in the sheet outright. Motion-off is authored as a larger *fixed* slip with transitions removed — the press stopped mid-run rather than cleaned up — so fluorescent ink contrast survives with nothing moving. Neon Burst declares no assets, so every mark is CSS-generated; the retired `poster-themes.css` remains detached.
 
 **Later additions:**
 
@@ -150,6 +159,17 @@ port now; **Later additions** remains the bounded feature queue.
 - Add gentle paper-handling sounds only as an optional, user-controlled theme effect.
 
 ## Cosmic Cinema
+
+**October 3 listening refinement (implemented):** Space Grotesk replaces inherited
+retro control text, orbital section shortcuts accompany the existing carousel,
+and a compact observatory strip reads confirmed playback, source format/rate/depth,
+tagged tempo, queue length and actual progress. Steady seams replace activity-dot
+pulsing and the persistent action flare. Library disclosure keeps a stable
+footprint. A shorter hero and complete compact browser band keep music visible.
+The mini player receives matching type and the existing original calibration
+halo when artwork is absent. Free desktop recipe selectors and local shop tests
+are recorded in the private development notes; this does not
+promote Cosmic Cinema into the built-in registry.
 
 **Baseline retained:** Black-hole observatory framing, technical type, orbital-gravity motion, silver light, and carousel navigation.
 

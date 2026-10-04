@@ -59,6 +59,28 @@ test('normalizes saved state and records a permanent-playlist origin without cha
   assert.deepEqual(savedMix.trackIds, generated.mix.trackIds);
 });
 
+test('building a mix in two steps matches building it at once, so the planner can run in slices', () => {
+  const plan = ({ candidates, count }) => candidates.slice().reverse().slice(0, count).map((candidate) => candidate.track.id);
+  const options = { tracks, now, history: [{ id: 'track-03', playedAt: '2026-07-01T00:00:00Z' }], favorites: ['track-05'] };
+  const once = daily.createRediscoveryMix({ ...options, plan });
+  const prepared = daily.prepareRediscovery(options);
+  const stepped = daily.finishRediscovery(options, prepared, plan({ candidates: prepared.candidates, count: prepared.count }));
+  assert.deepEqual(stepped, once);
+  assert.equal(prepared.fingerprint, daily.libraryFingerprint(tracks));
+  assert.equal(daily.todaysMix({}, { now }), null, 'no mix exists before one is stored');
+  const stored = daily.storeMix({}, stepped);
+  assert.deepEqual(daily.todaysMix(stored.state, { now }).trackIds, once.trackIds);
+  assert.equal(daily.ensureToday(stored.state, { tracks, now }).created, false, 'a stored mix is reused, not regenerated');
+});
+
+test('the renderer builds a new day in idle slices and shows an honest pending state', () => {
+  const renderer = fs.readFileSync(path.join(__dirname, '..', 'src', 'renderer.js'), 'utf8');
+  assert.match(renderer, /function\* dailyCuratedPlanSteps/, 'the planner must be resumable');
+  assert.match(renderer, /await dailyMixQuietTurn()\(\)/, 'planning must wait for quiet idle moments');
+  assert.match(renderer, /mix\.pending \? 'PREPARING'/, 'the panel must say the listen is being prepared');
+  assert.ok(!/dailyCurated\.ensureToday\(state\.dailyMixes/.test(renderer), 'rendering must never build the mix synchronously');
+});
+
 test('renderer integration keeps the feature isolated, persistable, and theme-addressable', () => {
   const root = path.resolve(__dirname, '..');
   const renderer = fs.readFileSync(path.join(root, 'src', 'renderer.js'), 'utf8');

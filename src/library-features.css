@@ -28,4 +28,4 @@
 .watched-folder-remove{height:24px;padding:0 8px;background:transparent;border:1px solid #ffffff18;color:var(--muted);font-size:7px;cursor:pointer}
 .watched-folder-remove:hover{background:#ff4d4d22;border-color:#ff4d4d;color:#ff8b8b}
 .watched-folders-empty{margin:0;padding:12px;text-align:center;color:var(--muted);font-size:9px;background:#00000018;border:1px dashed #ffffff12}
-
+.queue-more{display:block;width:100%;margin:10px 0 0;padding:10px 8px;color:var(--muted);background:color-mix(in srgb,var(--bg) 48%,transparent);border:1px dashed color-mix(in srgb,var(--line) 80%,transparent);font-size:9px;cursor:pointer}.queue-more:hover,.queue-more:focus-visible{color:var(--text);border-color:var(--gold)}.queue-window-note{padding:8px 4px;color:var(--muted);font-size:8px;border-bottom:1px solid #ffffff0b}

@@ -101,7 +101,7 @@
       // separate from Flow Shuffle's learned weighting and persisted plan state.
       const score = Math.round(Math.min(72, daysAway) + (familiarity === 'unheard' ? 18 : 0) + (favorites.has(track.id) ? 5 : 0));
       return { track, score, familiarity, daysAway, tieBreak: seededValue(seed, track.id) };
-    }).sort((left, right) => right.score - left.score || right.tieBreak - left.tieBreak || left.track.id.localeCompare(right.track.id));
+    }).sort((left, right) => right.score - left.score || right.tieBreak - left.tieBreak || String(left.track.id).localeCompare(String(right.track.id)));
   }
 
   function receiptFor(trackIds = [], candidates = [], tracks = []) {
@@ -124,25 +124,33 @@
     };
   }
 
-  function createRediscoveryMix(options = {}) {
+  // The expensive, synchronous half of building a mix: library fingerprint,
+  // seed and the ranked candidate list. Splitting it from the planner lets a
+  // caller run the (much slower) planner in slices between frames.
+  function prepareRediscovery(options = {}) {
     const now = options.now instanceof Date ? options.now : new Date(options.now || Date.now());
     const currentDay = dayKey(now);
-    const seed = hash(`${currentDay}|${REDISCOVERY_RECIPE}|${libraryFingerprint(options.tracks)}`);
+    const fingerprint = libraryFingerprint(options.tracks);
+    const seed = hash(`${currentDay}|${REDISCOVERY_RECIPE}|${fingerprint}`);
     const candidates = rediscoveryCandidates({ ...options, seed, now, nowMs: now.getTime() });
     const target = clamp(Math.round(Number(options.trackCount) || DEFAULT_TRACK_COUNT), 1, DEFAULT_TRACK_COUNT);
-    const planner = typeof options.plan === 'function' ? options.plan : null;
+    return { currentDay, fingerprint, seed, candidates, target, count: Math.min(target, candidates.length), now };
+  }
+
+  // plannedIds are the planner's picks in order; ranked candidates fill the rest.
+  function finishRediscovery(options = {}, prepared, plannedIds = []) {
+    const { currentDay, fingerprint, seed, candidates, target, now } = prepared;
     const eligibleIds = new Set(candidates.map((candidate) => candidate.track.id));
-    const plannedIds = (planner ? uniqueIds(planner({ candidates, count: Math.min(target, candidates.length), seed })) : [])
-      .filter((id) => eligibleIds.has(id));
+    const planned = uniqueIds(plannedIds).filter((id) => eligibleIds.has(id));
     const rankedIds = candidates.map((candidate) => candidate.track.id);
-    const trackIds = uniqueIds([...plannedIds, ...rankedIds]).slice(0, Math.min(target, candidates.length));
+    const trackIds = uniqueIds([...planned, ...rankedIds]).slice(0, Math.min(target, candidates.length));
     return {
       id: `${collectionId(REDISCOVERY_RECIPE)}:${currentDay}`,
       dateKey: currentDay,
       recipeKey: REDISCOVERY_RECIPE,
       recipeVersion: VERSION,
       seed,
-      libraryFingerprint: libraryFingerprint(options.tracks),
+      libraryFingerprint: fingerprint,
       trackIds,
       createdAt: now.toISOString(),
       explanationReceipt: receiptFor(trackIds, candidates, options.tracks),
@@ -151,16 +159,29 @@
     };
   }
 
-  function ensureToday(state, options = {}) {
+  function createRediscoveryMix(options = {}) {
+    const prepared = prepareRediscovery(options);
+    const planner = typeof options.plan === 'function' ? options.plan : null;
+    const plannedIds = planner ? planner({ candidates: prepared.candidates, count: prepared.count, seed: prepared.seed }) : [];
+    return finishRediscovery(options, prepared, plannedIds);
+  }
+
+  function todaysMix(state, options = {}) {
     const normalized = normalizeState(state);
-    const today = dayKey(options.now);
-    const key = `${REDISCOVERY_RECIPE}:${today}`;
-    const existing = normalized.mixes[key];
-    if (existing) return { state: normalized, mix: existing, created: false };
-    const mix = createRediscoveryMix(options);
-    const mixes = { ...normalized.mixes, [key]: mix };
-    const next = normalizeState({ mixes });
-    return { state: next, mix: next.mixes[key], created: true };
+    return normalized.mixes[`${REDISCOVERY_RECIPE}:${dayKey(options.now)}`] || null;
+  }
+
+  function storeMix(state, mix) {
+    const normalized = normalizeState(state);
+    const next = normalizeState({ mixes: { ...normalized.mixes, [`${mix.recipeKey}:${mix.dateKey}`]: mix } });
+    return { state: next, mix: next.mixes[`${mix.recipeKey}:${mix.dateKey}`] };
+  }
+
+  function ensureToday(state, options = {}) {
+    const existing = todaysMix(state, options);
+    if (existing) return { state: normalizeState(state), mix: existing, created: false };
+    const stored = storeMix(state, createRediscoveryMix(options));
+    return { state: stored.state, mix: stored.mix, created: true };
   }
 
   function markSaved(state, mixId, playlistId) {
@@ -176,6 +197,10 @@
     COLLECTION_PREFIX,
     collectionId,
     createRediscoveryMix,
+    finishRediscovery,
+    prepareRediscovery,
+    storeMix,
+    todaysMix,
     dayKey,
     ensureToday,
     isCollectionId,

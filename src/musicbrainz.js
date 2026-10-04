@@ -140,8 +140,8 @@
   }
 
   function trackNumberOf(release) {
-    for (const medium of release?.media || []) {
-      for (const entry of medium?.track || []) {
+    for (const medium of Array.isArray(release?.media) ? release.media : []) {
+      for (const entry of Array.isArray(medium?.track) ? medium.track : []) {
         const number = Number(entry?.number);
         if (Number.isInteger(number) && number > 0) return number;
       }
@@ -158,7 +158,7 @@
         artist: creditText(recording['artist-credit']),
         lengthMs: Number(recording.length) || 0,
         isrc: Array.isArray(recording.isrcs) && recording.isrcs[0] ? clean(recording.isrcs[0], 20) : '',
-        releases: (Array.isArray(recording.releases) ? recording.releases : []).slice(0, 12).map((item) => ({
+        releases: (Array.isArray(recording.releases) ? recording.releases : []).filter((item) => item && typeof item === 'object').slice(0, 12).map((item) => ({
           title: clean(item.title),
           date: clean(item.date, 12),
           status: clean(item.status, 40),
