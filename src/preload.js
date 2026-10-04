@@ -93,7 +93,12 @@ const desktopApi = {
   choosePlaylistFile: () => ipcRenderer.invoke('migration:choose-playlist-file'),
   chooseImage: () => invokePath('music:choose-image'),
   registerDroppedFiles: async (files) => {
-    const paths = Array.from(files || []).slice(0, 10_000).map((file) => webUtils.getPathForFile(file)).filter(Boolean);
+    // The main-process contract rejects the whole request if any path is not
+    // an audio file, so one stray image, playlist or folder in a drop used to
+    // cancel the entire import. Filter here and let the renderer report it.
+    const paths = Array.from(files || []).map((file) => webUtils.getPathForFile(file))
+      .filter((filePath) => filePath && /\.(flac|wav|wave|aiff?|mp3|m4a|aac|ogg|opus)$/i.test(filePath))
+      .slice(0, 10_000);
     const granted = await ipcRenderer.invoke('music:register-dropped-paths', paths);
     return approvePaths(granted);
   },
@@ -116,6 +121,11 @@ const desktopApi = {
   musicBrainzSearch: (query) => ipcRenderer.invoke('metadata:musicbrainz-search', plainJson(query)),
   openExternal: (url) => ipcRenderer.invoke('app:open-external', url),
   getRuntimeInfo: () => ipcRenderer.invoke('app:runtime-info'),
+  onThemeEditionRequest: (callback) => {
+    const listener = (_event, recipe) => { if (['cosmic-cinema', 'neon-burst'].includes(recipe)) callback(recipe); };
+    ipcRenderer.on('theme:edition-request', listener);
+    return () => ipcRenderer.removeListener('theme:edition-request', listener);
+  },
   listThemePackages: () => ipcRenderer.invoke('theme:list-packages'),
   importThemePackage: () => ipcRenderer.invoke('theme:import-package'),
   deleteThemePackage: (identity) => ipcRenderer.invoke('theme:delete-package', plainJson(identity)),

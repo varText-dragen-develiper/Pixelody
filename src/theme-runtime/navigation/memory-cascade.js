@@ -6,6 +6,11 @@
   'use strict';
 
   const MAX_VISUAL_DISTANCE = 5;
+  // Only cards near the centre are mounted. Cards past MAX_VISUAL_DISTANCE all
+  // sit in the same stack, so a library of any size costs a fixed number of
+  // nodes (a 2,000-track library used to mount 63,000 elements and spend a
+  // second restyling them on every theme variable change).
+  const WINDOW_RADIUS = 14;
 
   function createMemoryCascadeMechanic(host) {
     if (!host?.format) throw new Error('createMemoryCascadeMechanic requires a host format adapter.');
@@ -39,7 +44,7 @@
       const classes = ['memory-cascade-card'];
       if (isCentered) classes.push('is-centered');
       if (isPlaying) classes.push('is-playing');
-      return `<div class="${classes.join(' ')}" style="--memory-offset:${offset};--memory-distance:${distance};--memory-side:${side}" tabindex="0" role="option" aria-selected="${isCentered}" aria-label="${number}. ${title}, ${artist}" data-id="${encodeURIComponent(track.id)}" data-index="${index}"><div class="memory-cascade-cast" aria-hidden="true"></div><div class="memory-cascade-shell"><div class="memory-cascade-optic" ${artStyle}><span>${number}</span><i aria-hidden="true"></i></div><div class="memory-cascade-board" aria-hidden="true"><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div><div class="memory-cascade-copy"><small>LOCAL MEMORY / ${format}</small><strong>${title}</strong><span>${artist}</span><em>${album}</em></div><div class="memory-cascade-bus" aria-hidden="true"><i></i><i></i><i></i><i></i><b></b></div><div class="memory-cascade-stub"><small>${state}</small><b>${duration}</b><span>${number}</span></div><div class="memory-cascade-edge" aria-hidden="true"></div></div></div>`;
+      return `<div class="${classes.join(' ')}" style="--memory-offset:${offset};--memory-distance:${distance};--memory-side:${side}" tabindex="0" role="option" aria-selected="${isCentered}" aria-posinset="${index + 1}" aria-setsize="${Math.max(currentTracks.length, index + 1)}" aria-label="${number}. ${title}, ${artist}" data-id="${encodeURIComponent(track.id)}" data-index="${index}"><div class="memory-cascade-cast" aria-hidden="true"></div><div class="memory-cascade-shell"><div class="memory-cascade-optic" ${artStyle}><span>${number}</span><i aria-hidden="true"></i></div><div class="memory-cascade-board" aria-hidden="true"><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div><div class="memory-cascade-copy"><small>LOCAL MEMORY / ${format}</small><strong>${title}</strong><span>${artist}</span><em>${album}</em></div><div class="memory-cascade-bus" aria-hidden="true"><i></i><i></i><i></i><i></i><b></b></div><div class="memory-cascade-stub"><small>${state}</small><b>${duration}</b><span>${number}</span></div><div class="memory-cascade-edge" aria-hidden="true"></div></div></div>`;
     }
 
     function statusHtml(tracks, activeId) {
@@ -59,16 +64,46 @@
         && track.artworkPath === b[index].artworkPath);
     }
 
+    function windowBounds(centerIndex, count) {
+      if (centerIndex < 0 || count <= 0) return [0, -1];
+      return [Math.max(0, centerIndex - WINDOW_RADIUS), Math.min(count - 1, centerIndex + WINDOW_RADIUS)];
+    }
+
+    function rangeHtml(first, last, centerIndex, activeId) {
+      let html = '';
+      for (let index = first; index <= last; index += 1) {
+        const track = currentTracks[index];
+        html += cardHtml(track, index, index - centerIndex, Boolean(activeId && track.id === activeId), index === centerIndex);
+      }
+      return html;
+    }
+
     function paint(tracks, activeId) {
       currentTracks = tracks;
       currentActiveId = activeId || null;
       if (!stageEl) return;
       const centerIndex = centerIndexFor(tracks, activeId);
-      stageEl.innerHTML = tracks.map((track, index) => cardHtml(
-        track, index, index - centerIndex,
-        Boolean(activeId && track.id === activeId), index === centerIndex,
-      )).join('');
+      const [first, last] = windowBounds(centerIndex, tracks.length);
+      stageEl.innerHTML = rangeHtml(first, last, centerIndex, activeId);
       if (statusEl) statusEl.innerHTML = statusHtml(tracks, activeId);
+    }
+
+    // Slides the mounted window to the new centre, keeping the cards that stay
+    // so their transitions still run. Cards entering or leaving sit past the
+    // visible stack, so nothing pops.
+    function syncWindow(centerIndex, activeId) {
+      const [first, last] = windowBounds(centerIndex, currentTracks.length);
+      let keptFirst = Infinity;
+      let keptLast = -1;
+      stageEl.querySelectorAll('.memory-cascade-card').forEach((card) => {
+        const index = Number(card.dataset.index);
+        if (index < first || index > last) { card.remove(); return; }
+        keptFirst = Math.min(keptFirst, index);
+        keptLast = Math.max(keptLast, index);
+      });
+      if (keptLast < 0) { stageEl.innerHTML = rangeHtml(first, last, centerIndex, activeId); return; }
+      if (first < keptFirst) stageEl.insertAdjacentHTML('afterbegin', rangeHtml(first, keptFirst - 1, centerIndex, activeId));
+      if (last > keptLast) stageEl.insertAdjacentHTML('beforeend', rangeHtml(keptLast + 1, last, centerIndex, activeId));
     }
 
     function focusCardAt(index) {
@@ -78,6 +113,7 @@
     function recenterOn(activeId) {
       currentActiveId = activeId || null;
       const centerIndex = centerIndexFor(currentTracks, activeId);
+      if (stageEl) syncWindow(centerIndex, activeId);
       stageEl?.querySelectorAll('.memory-cascade-card').forEach((card) => {
         const index = Number(card.dataset.index);
         const offset = index - centerIndex;

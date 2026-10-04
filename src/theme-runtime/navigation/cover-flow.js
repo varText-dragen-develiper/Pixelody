@@ -30,6 +30,10 @@
   // centered card's info is shown at all here, matching the reference
   // Cover Flow behavior this mechanic is modeled on.
   const MAX_VISUAL_DISTANCE = 4;
+  // Only cards near the centre are mounted. Cards past MAX_VISUAL_DISTANCE share
+  // one visual position, so a library of any size costs a fixed number of
+  // nodes; the full track list stays in currentTracks for status and keys.
+  const WINDOW_RADIUS = 14;
 
   function createCoverFlowMechanic(host) {
     if (!host) throw new Error('createCoverFlowMechanic requires a host adapter object.');
@@ -79,6 +83,38 @@
     // goes through recenterOn() instead, mutating existing DOM rather than
     // rebuilding it, so any in-flight CSS transition on
     // --card-offset/--card-distance isn't interrupted.
+    function windowBounds(centerIndex, count) {
+      if (centerIndex < 0 || count <= 0) return [0, -1];
+      return [Math.max(0, centerIndex - WINDOW_RADIUS), Math.min(count - 1, centerIndex + WINDOW_RADIUS)];
+    }
+
+    function rangeHtml(first, last, centerIndex, activeId) {
+      let html = '';
+      for (let index = first; index <= last; index += 1) {
+        const track = currentTracks[index];
+        html += coverHtml(track, index, index - centerIndex, track.id === activeId);
+      }
+      return html;
+    }
+
+    // Slides the mounted window to the new centre, keeping the cards that stay
+    // so their transitions still run. Cards entering or leaving sit past the
+    // visible stack, so nothing pops.
+    function syncWindow(stageEl, centerIndex, activeId) {
+      const [first, last] = windowBounds(centerIndex, currentTracks.length);
+      let keptFirst = Infinity;
+      let keptLast = -1;
+      stageEl.querySelectorAll('.cover-flow-card').forEach((card) => {
+        const index = Number(card.dataset.index);
+        if (index < first || index > last) { card.remove(); return; }
+        keptFirst = Math.min(keptFirst, index);
+        keptLast = Math.max(keptLast, index);
+      });
+      if (keptLast < 0) { stageEl.innerHTML = rangeHtml(first, last, centerIndex, activeId); return; }
+      if (first < keptFirst) stageEl.insertAdjacentHTML('afterbegin', rangeHtml(first, keptFirst - 1, centerIndex, activeId));
+      if (last > keptLast) stageEl.insertAdjacentHTML('beforeend', rangeHtml(keptLast + 1, last, centerIndex, activeId));
+    }
+
     function paint(tracks, activeId) {
       currentTracks = tracks;
       if (!tracks.length) {
@@ -87,7 +123,8 @@
         return;
       }
       const centerIndex = centerIndexFor(tracks, activeId);
-      stageEl.innerHTML = tracks.map((track, index) => coverHtml(track, index, index - centerIndex, track.id === activeId)).join('');
+      const [first, last] = windowBounds(centerIndex, tracks.length);
+      stageEl.innerHTML = rangeHtml(first, last, centerIndex, activeId);
       setCaption(tracks, activeId);
     }
 
@@ -98,6 +135,7 @@
     // hasn't changed -- see update()'s tracksEqual() guard.
     function recenterOn(activeId) {
       const centerIndex = centerIndexFor(currentTracks, activeId);
+      if (currentTracks.length) syncWindow(stageEl, centerIndex, activeId);
       stageEl.querySelectorAll('.cover-flow-card').forEach((card) => {
         const index = Number(card.dataset.index);
         const offset = index - centerIndex;

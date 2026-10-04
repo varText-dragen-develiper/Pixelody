@@ -1566,42 +1566,73 @@ body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .main-st
 @media(max-width:1280px){
   body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .quest-log-recap{display:none!important}
 }
+/* Position the Canvas ownership wrappers, not only the roots inside them. */
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .player > [data-cw-module-key="now-playing"]{grid-area:identity;align-self:stretch}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .player > [data-cw-module-key="transport.controls"]{grid-area:playback;align-self:center}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .transport{padding:0;height:92px;grid-template-rows:58px 28px;gap:6px;overflow:visible!important}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .transport-buttons{height:58px;padding-block:1px}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .quest-boss-bar{height:28px;padding-block:2px}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .volume{box-sizing:border-box;grid-template-rows:38px 28px;padding-bottom:5px}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .volume #muteButton{grid-column:2;grid-row:2;height:28px;min-height:0;width:100%}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .volume #playerSystemsButton{grid-column:3/5;grid-row:2;width:100%;max-width:none;height:28px;min-height:28px}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .volume .quest-output-status{display:none!important}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .playlist-hero{height:320px;flex-shrink:0}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"]:not([data-composition-mode="edit"]) .main-stage{overflow:hidden!important}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"]:not([data-composition-mode="edit"]) .main-stage>.view-enter:not(.hidden){display:flex;flex-direction:column;flex:1 1 auto;min-height:0;overflow:hidden}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"]:not([data-composition-mode="edit"]) .collection-body{flex:1 1 auto;min-height:0!important;overflow:auto!important;padding-bottom:24px}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .hero-copy #playlistTitle{font-size:clamp(28px,3.2vw,44px);line-height:1.15;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin-bottom:8px}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .hero-copy #playlistDescription{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .hero-copy .quest-cabinet-stack{position:absolute;left:0;bottom:0;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .quest-cabinet-stack :is(.quest-info-cabinet,.quest-cabinet-placeholder){width:100%!important;margin:0!important}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .quest-cabinet-stack .quest-info-cabinet.is-cabinet-promoted{top:auto!important;bottom:0}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .quest-cabinet-handle{grid-template-columns:minmax(0,1fr) 16px;gap:5px}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .quest-cabinet-handle>small{display:none}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .quest-info-cabinet.is-cabinet-open>.quest-cabinet-body{max-height:140px!important;overflow:auto}
 @media(max-width:1180px){
-  /* The archive host becomes two authored rows at intermediate widths.
-     Canvas's generic responsive flow removes explicit coordinates; release
-     the stock fixed-height row too, otherwise Library and Inspector occupy a
-     hidden second row underneath the playback dock. */
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .workspace{height:calc(100vh - 58px);overflow:auto}
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .cw-canvas{height:auto;min-height:100%;overflow:visible}
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .cw-root{height:auto;min-height:100%}
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .cw-root>.cw-split{grid-template-rows:auto auto;min-height:100%}
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] [data-cw-node-id="canvas-port-cartridge-quest-frame"]{height:900px!important;min-height:900px!important;grid-template-rows:744px 148px!important;align-content:start!important}
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .cw-root>.cw-split>.cw-grid{
-    height:auto;
-    min-height:728px;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    grid-template-rows:minmax(420px,auto) minmax(300px,auto);
-    grid-auto-rows:minmax(300px,auto);
-    align-content:start;
-    overflow:visible;
-  }
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] [data-cw-node-id="canvas-field"]{height:728px!important;min-height:728px!important;grid-template-rows:420px 300px!important;grid-auto-rows:300px!important;align-content:start!important}
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .cw-root>.cw-split>.cw-grid>[data-cw-node-id$="-stage"]{grid-column:1/-1!important;grid-row:1!important;min-height:420px}
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .cw-root>.cw-split>.cw-grid>[data-cw-module-key="library.browser"]{grid-column:1!important;grid-row:2!important;min-height:300px}
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .cw-root>.cw-split>.cw-grid>[data-cw-node-id$="-utility-stack"]{grid-column:2!important;grid-row:2!important;min-height:300px}
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .cw-dock[data-cw-anchored=".player"]{position:relative;z-index:4;min-height:148px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .collection-body{padding:12px 16px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] #trackRows.carousel-mounted{height:170px;padding-top:8px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .carousel-card{width:112px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .carousel-card-title{font-size:10px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .carousel-card-meta{font-size:9px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .playlist-hero{height:240px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .hero-content{top:12px;bottom:18px;right:76px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .hero-content>.playlist-cover{width:140px;height:140px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .hero-copy #playlistTitle{font-size:28px;-webkit-line-clamp:1}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .hero-copy #playlistDescription{font-size:10px;line-height:1.4;-webkit-line-clamp:1;margin-bottom:6px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .hero-copy p{font-size:6px;margin-bottom:4px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .quest-boot-message{margin-bottom:6px}
+  /* Only the stock listening layout reflows. User-authored graphs retain their coordinates. */
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-canvas-port-composition="archive-host"]:not([data-composition-mode="edit"]) .workspace{height:calc(100vh - 64px);overflow:hidden}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-canvas-port-composition="archive-host"]:not([data-composition-mode="edit"]) .cw-canvas{height:100%;min-height:0;overflow:hidden;--canvas-port-player-columns:minmax(170px,24fr) minmax(310px,43fr) minmax(250px,33fr)}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-canvas-port-composition="archive-host"]:not([data-composition-mode="edit"]) .cw-root{height:100%;min-height:0}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-canvas-port-composition="archive-host"]:not([data-composition-mode="edit"]) [data-cw-node-id="canvas-port-cartridge-quest-frame"]{height:100%;min-height:0;grid-template-rows:minmax(0,1fr) auto;align-content:stretch}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-canvas-port-composition="archive-host"]:not([data-composition-mode="edit"]) [data-cw-node-id="canvas-field"]{height:100%;min-height:0;margin:0;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:minmax(460px,calc(100vh - 212px)) 320px;grid-auto-rows:320px;align-content:start;overflow:hidden auto}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-canvas-port-composition="archive-host"]:not([data-composition-mode="edit"]) [data-cw-node-id="canvas-field"]>[data-cw-node-id$="-stage"]{grid-column:1/-1;grid-row:1;min-height:0;grid-template-columns:1fr;grid-template-rows:repeat(6,minmax(0,1fr));grid-auto-rows:0}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-canvas-port-composition="archive-host"]:not([data-composition-mode="edit"]) [data-cw-node-id$="-stage"]>[data-cw-module-key="tracks.browser"]{grid-column:1/-1;grid-row:1/-1;min-height:0}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-canvas-port-composition="archive-host"]:not([data-composition-mode="edit"]) [data-cw-node-id="canvas-field"]>[data-cw-module-key="library.browser"]{grid-column:1;grid-row:2;min-height:0}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-canvas-port-composition="archive-host"]:not([data-composition-mode="edit"]) [data-cw-node-id="canvas-field"]>[data-cw-node-id$="-utility-stack"]{grid-column:2;grid-row:2;min-height:0}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .timeline{grid-template-columns:30px minmax(0,1fr) 30px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .volume{grid-template-columns:46px 64px minmax(0,1fr) 30px;padding-inline:4px}
+}
+@media(max-width:980px){
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-canvas-port-composition="archive-host"]:not([data-composition-mode="edit"]) .cw-canvas{--canvas-port-player-height:180px;--canvas-port-player-columns:minmax(150px,1fr) minmax(310px,2fr);--canvas-port-player-padding:8px 12px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .player{grid-template-columns:minmax(150px,1fr) minmax(310px,2fr)!important;grid-template-rows:98px 52px!important;grid-template-areas:"identity playback" "output output"!important;gap:6px 12px;padding-right:12px!important}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .quest-hotbar-hud{display:none!important}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .player>.volume{position:relative!important;top:auto;right:auto;transform:none;display:grid!important;grid-template-columns:54px 78px 36px minmax(0,1fr) 100px!important;grid-template-rows:38px;height:52px;width:100%;padding:4px;gap:5px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .volume::before,body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .volume::after,body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .volume .quest-output-status{display:none!important}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .volume #muteButton{grid-column:3;grid-row:1;height:38px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .volume .quest-volume-meter{grid-column:4;grid-row:1}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .volume #playerSystemsButton{grid-column:5;grid-row:1}
 }
 @media(max-width:850px){
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .quest-hotbar-hud{display:none!important}
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .cw-root>.cw-split>.cw-grid{display:grid;grid-template-columns:1fr;grid-template-rows:none;grid-auto-rows:minmax(280px,auto);min-height:1000px}
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] [data-cw-node-id="canvas-field"]{height:auto!important;min-height:1000px!important;grid-template-rows:420px 280px 280px!important;grid-auto-rows:280px!important}
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] [data-cw-node-id="canvas-port-cartridge-quest-frame"]{height:1164px!important;min-height:1164px!important;grid-template-rows:1008px 148px!important}
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .cw-root>.cw-split>.cw-grid>[data-cw-node-id$="-stage"],
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .cw-root>.cw-split>.cw-grid>[data-cw-module-key="library.browser"],
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .cw-root>.cw-split>.cw-grid>[data-cw-node-id$="-utility-stack"]{grid-column:1!important;grid-row:auto!important;min-height:280px}
-}
-@media(max-width:560px){
-  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] :is(.playing-info,.quest-hotbar-hud){display:none!important}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .library-rail .library-compact-toggle{display:none!important}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .library-rail .playlist-item{grid-template-columns:48px minmax(0,1fr) 20px!important;justify-content:stretch!important}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .library-rail :is(.playlist-copy,.rail-heading strong,.create-button){display:block!important}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-canvas-port-composition="archive-host"]:not([data-composition-mode="edit"]) [data-cw-node-id="canvas-field"]{grid-template-columns:1fr;grid-template-rows:minmax(460px,calc(100vh - 264px)) 320px 320px}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-canvas-port-composition="archive-host"]:not([data-composition-mode="edit"]) [data-cw-node-id="canvas-field"]>[data-cw-node-id$="-utility-stack"]{grid-column:1;grid-row:3}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .hero-content{top:12px;bottom:18px;left:24px;right:76px;display:block}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .hero-content>.hero-copy{position:absolute;top:0;left:160px;right:0;bottom:0;max-width:none}
+  body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .hero-content>.playlist-cover{position:absolute!important;left:0;bottom:0;width:140px;height:140px}
 }
 @media(prefers-reduced-motion:reduce){
   body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] :is(.theme-action-overlay,.main-stage.quest-stage-wipe::after){display:none!important}

@@ -3,13 +3,14 @@ const path = require('node:path');
 const fs = require('node:fs');
 const { pathToFileURL } = require('node:url');
 const { MAX_BYTES, validRequest, parsePackage, allowedShopUrl } = require('./contract');
-const { ModuleStore, WebModuleStore } = require('./store');
-function createModuleShop({ app, BrowserWindow, dialog }) {
+const { ModuleStore, WebModuleStore, EditionStore } = require('./store');
+function createModuleShop({ app, BrowserWindow, dialog, applyEdition }) {
   let win = null; let webWin = null; let webSession = null;
   const documentUrl = pathToFileURL(path.join(__dirname, 'shop.html')).href;
   const store = () => new ModuleStore(path.join(app.getPath('userData'), 'modules'));
   const webStore = () => new WebModuleStore(path.join(app.getPath('userData'), 'modules'));
-  const snapshot = () => ({ ...store().read(), shop: webStore().read() });
+  const editions = () => new EditionStore(path.join(app.getPath('userData'), 'modules'));
+  const snapshot = () => ({ ...store().read(), shop: webStore().read(), editions: editions().read() });
   function openWebShop() {
     const pkg = webStore().read();
     if (!pkg || pkg.kind !== 'web-shop') throw new Error('Import the free shop module first.');
@@ -68,6 +69,12 @@ function createModuleShop({ app, BrowserWindow, dialog }) {
       if (request.op === 'remove-shop') { if (webWin && !webWin.isDestroyed()) webWin.destroy(); webStore().remove(); if (webSession) await webSession.clearStorageData(); }
       if (request.op === 'remove') state = storage.remove();
       if (request.op === 'save') state = storage.save(request.text);
+      if (request.op === 'remove-edition') editions().remove(request.recipe);
+      if (request.op === 'apply-edition') {
+        if (!editions().read().some(pkg => pkg.recipe === request.recipe)) throw new Error('Import this theme edition first.');
+        if (!applyEdition) throw new Error('This host cannot apply theme editions.');
+        await applyEdition(request.recipe);
+      }
       if (request.op === 'import') {
         const selected = await dialog.showOpenDialog(win, { title: 'Install a Pixelody module', properties: ['openFile'], filters: [{ name: 'Pixelody module', extensions: ['pixelody-module'] }] });
         if (selected.canceled || !selected.filePaths[0]) return { ok: true, canceled: true };
@@ -77,7 +84,9 @@ function createModuleShop({ app, BrowserWindow, dialog }) {
         try { count = fs.readSync(fd, bytes, 0, bytes.length, 0); } finally { fs.closeSync(fd); }
         const data = bytes.subarray(0, count);
         const pkg = parsePackage(data, 'desktop');
-        if (pkg.kind === 'web-shop') webStore().install(data); else storage.install(data);
+        if (pkg.kind === 'web-shop') webStore().install(data);
+        else if (pkg.kind === 'theme-edition') editions().install(data);
+        else storage.install(data);
       }
       return { ok: true, state: snapshot() };
     } catch (error) { return { ok: false, error: error.code ? 'The local file could not be read or saved. Existing notes were preserved.' : error.message }; }
