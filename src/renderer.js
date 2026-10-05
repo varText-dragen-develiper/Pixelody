@@ -167,7 +167,9 @@ const SPEAKER_RIG_VALIDATION_MAX_RUNS = 12;
 const SPEAKER_RIG_VALIDATION_REQUIRED_REPEAT_RUNS = 3;
 const SPEAKER_RIG_VALIDATION_CHECKPOINTS = [60, 300, 600, 900, 1200, 1500, 1800];
 const GENERIC_AUDIO_OUTPUT_LABELS = new Set(['', 'audio output', 'default', 'communications', 'system default']);
-const PRIMARY_MEDIA_ELEMENT_DIRECT_OUTPUT = true;
+// Direct output skips the Web Audio graph, which also skips the equalizer, spatial
+// and limiter stages. Only turn it on for an A/B bypass test, never for shipping.
+const PRIMARY_MEDIA_ELEMENT_DIRECT_OUTPUT = false;
 function safeTextValue(value, fallback = '') {
   const text = String(value ?? '').trim();
   return text || fallback;
@@ -7294,9 +7296,14 @@ async function resumeAudioContext(reason = 'playback') {
   }
 }
 function applyEq() {
-  if (!state.context) return;
   const trackEq = state.bypass ? tuningDefault() : effectiveTuning(state.tunings[currentTrack()?.id] || tuningDefault(), 'track');
   const systemEq = state.bypass ? tuningDefault() : effectiveTuning(activeSystemTuning(), 'system');
+  if (!state.context) {
+    // No graph yet (nothing has played): sliders still have to move the response curve.
+    drawCurve(trackEq, systemEq);
+    updateSystemTuningUi();
+    return;
+  }
   let simplePositivePeak = 0;
   bands.forEach((band, index) => {
     const combinedGain = clampNumber(bandGain(trackEq, band.id) + bandGain(systemEq, band.id), -EQ_GAIN_LIMIT_DB, EQ_GAIN_LIMIT_DB);
@@ -18572,6 +18579,8 @@ async function routeOutput(deviceId = '', options = {}) {
     } else {
       await audio.setSinkId(targetId);
     }
+    // Once the media element feeds the Web Audio graph, the graph's context owns the sink.
+    if (state.context && typeof state.context.setSinkId === 'function') await routePrimaryGraphSink(targetId);
     const routedSinkId = typeof audio.sinkId === 'string' ? audio.sinkId : targetId;
     outputState.activeId = routedSinkId;
     outputState.activeLabel = targetLabel || 'System Default';
