@@ -34,6 +34,7 @@ requireText(renderer, 'audioDomain.buildAudioGraph(state.context, audio, bands, 
 requireText(audioDomain, 'context.createMediaElementSource(mediaElement)', 'primary playback graph');
 requireText(audioDomain, 'limiter.connect(context.destination)', 'primary playback graph');
 requireText(renderer, 'PRIMARY_MEDIA_ELEMENT_DIRECT_OUTPUT', 'primary playback audibility guard');
+requireText(renderer, 'const PRIMARY_MEDIA_ELEMENT_DIRECT_OUTPUT = false;', 'equalizer needs the Web Audio graph on the primary path');
 requireText(renderer, 'await audio.setSinkId(targetId)', 'output switching');
 requireText(renderer, 'await audio.setSinkId(outputState.activeId || \'\')', 'primary playback routing');
 requireText(renderer, 'await state.context.setSinkId(targetId)', 'processed sink routing');
