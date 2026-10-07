@@ -201,6 +201,7 @@ body[data-theme="monument"]{
 }
 body[data-theme="monument"] .mini-shell{
   overflow:hidden;
+  clip-path:none;
   border:1px solid rgba(244,239,227,.18);
   border-radius:2px;
   color:#17191c;
@@ -219,6 +220,7 @@ body[data-theme="monument"] .mini-shell::after{
   letter-spacing:.16em
 }
 body[data-theme="monument"] .mini-art{
+  clip-path:none;
   border:8px solid #f4efe3;
   border-radius:2px;
   background:
@@ -251,12 +253,34 @@ body[data-theme="monument"] .mini-progress{
   background:#c8c1b3
 }
 body[data-theme="monument"] .mini-progress i{background:linear-gradient(90deg,#596d7d,#9f633d);border-radius:0}
-body[data-theme="monument"] .mini-controls button,
-body[data-theme="monument"] .window-actions button{color:#17191c}
+body[data-theme="monument"] :is(.mini-controls button, .window-actions button){
+  clip-path:none;
+  color:#17191c
+}
 body[data-theme="monument"] .mini-controls .mini-play{
+  border-radius:2px !important;
+  clip-path:none !important;
+  display:grid !important;
+  place-items:center !important;
+  padding:0 !important;
   background:#17191c;
   color:#f4efe3;
   box-shadow:inset 0 -3px #9f633d
+}
+body[data-theme="monument"] .mini-transport-icon{
+  width: clamp(14px, 3.2cqw, 20px) !important;
+  height: clamp(14px, 3.2cqw, 20px) !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+  mask-size:18px 18px;
+}
+body[data-theme="monument"] .mini-play .mini-transport-icon{
+  width: clamp(16px, 3.8cqw, 24px) !important;
+  height: clamp(16px, 3.8cqw, 24px) !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+  margin: 0 auto !important;
+  mask-size:20px 20px;
 }
 body[data-theme="analog-dossier"] .mini-shell{
   --dossier-mini-art:url("assets/themes/analog-dossier/derived/analog-mini-loc-science-no-known-restrictions.webp");
@@ -344,6 +368,9 @@ body[data-theme="analog-dossier"] .mini-progress{
     #c7bdab var(--dossier-trace-art) center/220px auto no-repeat
 }
 body[data-theme="analog-dossier"] .mini-progress i{background:#bf5726;border-radius:0}
+body[data-theme="analog-dossier"] :is(.mini-shell, .mini-art, .mini-controls button, .window-actions button){
+  clip-path:none;
+}
 body[data-theme="analog-dossier"] .mini-controls button,
 body[data-theme="analog-dossier"] .window-actions button{
   color:#1d1d1b;
@@ -352,9 +379,29 @@ body[data-theme="analog-dossier"] .window-actions button{
   background:#e2dac9
 }
 body[data-theme="analog-dossier"] .mini-play{
+  border-radius:0 !important;
+  clip-path:none !important;
+  display:grid !important;
+  place-items:center !important;
+  padding:0 !important;
   color:#fff7ed!important;
   background:#bf5726!important;
   box-shadow:3px 3px 0 rgba(29,29,27,.24)
+}
+body[data-theme="analog-dossier"] .mini-transport-icon{
+  width: clamp(14px, 3.2cqw, 20px) !important;
+  height: clamp(14px, 3.2cqw, 20px) !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+  mask-size:18px 18px;
+}
+body[data-theme="analog-dossier"] .mini-play .mini-transport-icon{
+  width: clamp(16px, 3.8cqw, 24px) !important;
+  height: clamp(16px, 3.8cqw, 24px) !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+  margin: 0 auto !important;
+  mask-size:20px 20px;
 }
 body[data-theme="poster-pop"]{
   --pop-ink:#17151a;
@@ -373,7 +420,10 @@ body[data-theme="poster-pop"] .mini-shell{
     var(--pop-sticker) right -92px center/410px auto no-repeat;
   box-shadow:6px 6px 0 var(--pop-ink);
 }
-body[data-theme="poster-pop"] :is(.mini-cover,.mini-art,.mini-play){
+body[data-theme="poster-pop"] :is(.mini-shell, .mini-cover, .mini-art, .mini-controls button, .window-actions button){
+  clip-path:none;
+}
+body[data-theme="poster-pop"] :is(.mini-cover,.mini-art){
   border:3px solid var(--pop-ink);
   border-radius:16px;
   color:var(--pop-ink);
@@ -381,6 +431,34 @@ body[data-theme="poster-pop"] :is(.mini-cover,.mini-art,.mini-play){
     radial-gradient(circle at 50% 50%, var(--pop-coral) 0 18%, var(--pop-ink) 19% 23%, transparent 24%),
     radial-gradient(circle at 50% 50%, var(--pop-paper) 0 48%, var(--pop-blue) 49% 100%);
   box-shadow:4px 4px 0 var(--pop-ink);
+}
+body[data-theme="poster-pop"] .mini-controls .mini-play{
+  border:3px solid var(--pop-ink);
+  border-radius:999px !important;
+  clip-path:none !important;
+  display:grid !important;
+  place-items:center !important;
+  padding:0 !important;
+  color:var(--pop-ink);
+  background:
+    radial-gradient(circle at 50% 50%, var(--pop-coral) 0 18%, var(--pop-ink) 19% 23%, transparent 24%),
+    radial-gradient(circle at 50% 50%, var(--pop-paper) 0 48%, var(--pop-blue) 49% 100%);
+  box-shadow:4px 4px 0 var(--pop-ink);
+}
+body[data-theme="poster-pop"] .mini-transport-icon{
+  width: clamp(14px, 3.2cqw, 20px) !important;
+  height: clamp(14px, 3.2cqw, 20px) !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+  mask-size:18px 18px;
+}
+body[data-theme="poster-pop"] .mini-play .mini-transport-icon{
+  width: clamp(16px, 3.8cqw, 24px) !important;
+  height: clamp(16px, 3.8cqw, 24px) !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+  margin: 0 auto !important;
+  mask-size:20px 20px;
 }
 body[data-theme="poster-pop"] .mini-progress{
   height:8px;

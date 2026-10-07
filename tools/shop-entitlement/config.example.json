@@ -1,0 +1,6 @@
+{
+  "_comment": "Copy to config.json (git-ignored). Values are placeholders. Only the PUBLIC SDK keys go here; never a secret key (sk_...).",
+  "enabled": false,
+  "publicSdkKeys": { "web": "", "android": "" },
+  "entitlements": { "pixelody.listening-notes": "module_listening_notes" }
+}

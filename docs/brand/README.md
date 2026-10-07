@@ -3,8 +3,8 @@
 Status: **shipped.** The mark is Sampled Disc (A), the wordmark is W1, and the
 brand colour is Ultraviolet. It is now the desktop build icon, the desktop
 window/taskbar icon, the Android launcher icon (adaptive, with a themed-icon
-layer) and the Android splash emblem. Users can recolour it within the purple
-range described under "Logo colour setting" below.
+layer) and the Android splash emblem. Manual logo choices use the purple range described below. Android automatic
+icons also follow theme/palette accents unless overridden.
 
 ![Pixelody logo sheet](pixelody-logo-sheet.png)
 
@@ -81,13 +81,19 @@ purple range, with Ultraviolet as the default:
   icon (the dock icon on macOS) to that colour's baked PNG. The installer and
   pinned shortcuts keep the Ultraviolet `build/icon.png`, because Windows reads
   those from the executable.
-- **Android:** Profile > Logo color. This recolours the in-app mark and swaps the
-  home-screen icon by enabling one of five launcher `activity-alias` entries.
-- **Themes:** on base Pixelody (Studio) the mark always uses the chosen
+- **Android:** Settings & Themes > Logo color follows the effective theme and
+  Style palette by default, including Studio. The six authored themes and nine
+  preset palettes have exact generated launcher colors. Arbitrary custom colors
+  use the nearest baked launcher shade; the in-app mark uses the exact accent.
+  Selecting a purple swatch disables "Follow theme and palette" and becomes an
+  explicit override. Turning following back on retains that saved manual color.
+  Older manual choices without a following preference stay manual. One of twenty
+  launcher aliases is enabled, without killing playback. Android wallpaper-themed
+  icons and launcher icon packs can override the visible home-screen colors.
+- **Desktop themes:** on base Pixelody (Studio) the mark always uses the chosen
   purple. Another active theme may recolour the in-app mark with its own accent
   unless the user turns off "Let other themes recolor the in-app logo". Desktop themes also recolour the running window/taskbar icon in memory
-  using the generated mark. Installer, pinned shortcut and Android launcher
-  icons keep their baked colours.
+  using the generated mark. Installer and pinned shortcuts keep their baked colours. Android follows the separate automatic-icon rules above.
 
 The list is defined in `src/brand-mark.js`, `tools/brand/logo-colors.json`
 (written by the generator) and Android's `ui/brand/PixelodyLogoColor.kt`.
@@ -129,3 +135,10 @@ Shipped copies generated from the same geometry: `build/icon.svg`/`.png`,
 - Use the small icon at 24 px and below. The lockup needs a height of at least 20 px.
 - Don't rotate the disc (the wave must rise first on the left), outline it,
   add gradients, or recolour the wave cut.
+
+Android automatic accents are generated from the same mark using
+`python tools/brand/generate_brand_assets.py --android-theme-icons-only`.
+`ANDROID_THEME_COLORS`, `ThemeLauncherIcon.kt` and the automatic manifest aliases
+must agree; the development repository's checks cover colors, aliases, adaptive layers
+and unchanged geometry. Unit tests verify every effective theme/preset accent.
+Desktop's five-color manual list remains independent.

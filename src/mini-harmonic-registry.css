@@ -1,12 +1,12 @@
 body[data-theme="harmonic-registry"] {
-  --mini-shell-columns: 86px minmax(140px,1fr) auto;
+  --mini-shell-columns: clamp(56px, min(24cqw, 54cqh), 140px) minmax(100px, 1fr) auto;
   --mini-shell-gap: 14px;
   --mini-shell-padding: 15px;
   --mini-shell-radius: 0;
   --mini-shell-border: 1px solid #141318;
   --mini-shell-bg: #f4f1e8;
   --mini-shell-shadow: 8px 8px 0 #14131824;
-  --mini-art-size: 76px;
+  --mini-art-size: clamp(56px, min(24cqw, 54cqh), 140px);
   --mini-art-radius: 0;
   --mini-art-border: 1px solid #141318;
   --mini-art-bg: #ebe8df;
@@ -33,6 +33,9 @@ body[data-theme="harmonic-registry"] {
   background: #e9e7df;
 }
 
+body[data-theme="harmonic-registry"] :is(.mini-shell, .mini-art, .mini-controls button, .window-actions button) {
+  clip-path: none !important;
+}
 body[data-theme="harmonic-registry"] .mini-shell {
   overflow: hidden;
   isolation: isolate;
@@ -157,8 +160,39 @@ body[data-theme="harmonic-registry"] .mini-art.has-image::after { display:none; 
 body[data-theme="harmonic-registry"] .mini-copy { padding-top: 8px; }
 body[data-theme="harmonic-registry"] .mini-copy strong { margin-top: 5px; }
 body[data-theme="harmonic-registry"] .mini-progress { margin-top: 10px; }
-body[data-theme="harmonic-registry"] .mini-controls button { color: #141318; }
-body[data-theme="harmonic-registry"] .mini-controls .mini-play { width: 36px; height: 36px; }
+body[data-theme="harmonic-registry"] .mini-controls button {
+  color: #141318;
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+}
+body[data-theme="harmonic-registry"] .mini-transport-icon {
+  width: clamp(14px, 3.2cqw, 20px) !important;
+  height: clamp(14px, 3.2cqw, 20px) !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+}
+body[data-theme="harmonic-registry"] .mini-controls .mini-play {
+  width: 36px;
+  height: 36px;
+  border-radius: 50% !important;
+  clip-path: none !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+}
+body[data-theme="harmonic-registry"] .mini-play .mini-transport-icon {
+  width: clamp(16px, 3.8cqw, 24px) !important;
+  height: clamp(16px, 3.8cqw, 24px) !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+  margin: 0 auto !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+  margin: 0 auto !important;
+}
 body[data-theme="harmonic-registry"].playing .mini-controls .mini-play {
   border-color: #00b9cf;
   background: #00b9cf;

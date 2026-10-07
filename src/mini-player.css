@@ -1,84 +1,69 @@
+/*
+ * Mini player token baseline
+ * ---------------------------------------------------------------------
+ * Fluid responsive baseline powered by container query units (cqw, cqh, cqmin).
+ * Every theme scopes overrides under body[data-theme="<key>"].
+ */
 @font-face {
   font-family: "Geist Pixel Circle";
   src: url("assets/fonts/GeistPixel-Circle.woff2") format("woff2");
 }
 
-/*
- * Mini player token baseline
- * ---------------------------------------------------------------------
- * Every theme's mini-player stylesheet (mini-<theme>.css) scopes its rules
- * under body[data-theme="<key>"] and, historically, has had to re-declare
- * whole property blocks (shell radius+border+background+shadow, art
- * size+radius+border, button shape, progress bar geometry, etc.) just to
- * change one or two things, because the baseline below only ever exposed
- * --mini-accent as a variable. That's the "not modular enough" problem:
- * a theme author can't nudge one knob without copy-pasting the entire
- * declaration and every future baseline tweak silently stops reaching
- * that theme.
- *
- * These custom properties are the actual surface area a theme is meant to
- * flex. Set only the ones a theme needs to change on its
- * body[data-theme="key"] rule; the rest inherit these defaults. Themes
- * that need bespoke shapes/motifs beyond what a token expresses (pseudo-
- * element overlays, gradients, animations) still add their own selectors
- * as before -- tokens replace duplicated *geometry and color* rules, not
- * a theme's decorative identity.
- */
 :root {
   --mini-accent: #d8b66a;
 
   /* shell */
-  --mini-shell-columns: clamp(64px, 24vw, 94px) minmax(110px, 1fr) auto;
-  --mini-shell-gap: 12px;
-  --mini-shell-padding: 17px;
-  --mini-shell-radius: 0px;
-  --mini-shell-border: 1px solid color-mix(in srgb, var(--mini-accent) 50%, #333);
-  --mini-shell-bg: #101214;
-  --mini-shell-shadow: inset 3px 3px #ffffff06, inset -3px -3px #0008;
+  --mini-shell-columns: clamp(56px, min(24cqw, 54cqh), 140px) minmax(100px, 1fr) auto;
+  --mini-shell-gap: clamp(8px, 2.2cqw, 18px);
+  --mini-shell-padding: clamp(8px, min(2.8cqw, 3cqh), 20px);
+  --mini-shell-radius: 14px;
+  --mini-shell-border: 1px solid color-mix(in srgb, var(--mini-accent) 24%, rgba(255, 255, 255, 0.08));
+  --mini-shell-bg: linear-gradient(155deg, rgba(22, 25, 32, 0.94), rgba(11, 13, 17, 0.96));
+  --mini-shell-shadow: 0 20px 48px rgba(0, 0, 0, 0.45), 0 4px 14px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
   /* artwork */
-  --mini-art-size: 82px;
-  --mini-art-radius: 0px;
-  --mini-art-border: 1px solid color-mix(in srgb, var(--mini-accent) 55%, transparent);
-  --mini-art-bg: linear-gradient(135deg, color-mix(in srgb, var(--mini-accent) 30%, #17191b), #17191b);
-  --mini-art-shadow: 5px 5px #0008;
-  --mini-art-glyph-font: 31px "Geist Pixel Circle";
+  --mini-art-size: clamp(56px, min(24cqw, 54cqh), 140px);
+  --mini-art-radius: 10px;
+  --mini-art-border: 1px solid color-mix(in srgb, var(--mini-accent) 28%, rgba(255, 255, 255, 0.12));
+  --mini-art-bg: linear-gradient(145deg, color-mix(in srgb, var(--mini-accent) 20%, #20242c), #111317);
+  --mini-art-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.2);
+  --mini-art-glyph-font: 600 clamp(22px, 5.5cqw, 38px) "Geist Pixel Circle", sans-serif;
   --mini-art-glyph-color: var(--mini-accent);
 
   /* copy */
-  --mini-copy-eyebrow-color: #75d6ad;
-  --mini-copy-eyebrow-font: 7px "Geist Pixel Circle";
-  --mini-copy-eyebrow-tracking: .12em;
-  --mini-copy-title-font: 14px "Geist Pixel Circle";
-  --mini-copy-title-color: inherit;
-  --mini-copy-meta-color: #9b9fa5;
-  --mini-copy-meta-size: 9px;
-  --mini-copy-time-color: #777b80;
-  --mini-copy-time-size: 7px;
+  --mini-copy-eyebrow-color: color-mix(in srgb, var(--mini-accent) 85%, #8ae6c1);
+  --mini-copy-eyebrow-font: 700 clamp(6.5px, 1.4cqw, 9.5px) "Geist Pixel Circle", "Segoe UI", sans-serif;
+  --mini-copy-eyebrow-tracking: .14em;
+  --mini-copy-title-font: 650 clamp(12.5px, 2.7cqw, 19px) -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", sans-serif;
+  --mini-copy-title-color: #f7f6f4;
+  --mini-copy-meta-color: color-mix(in srgb, currentColor 68%, transparent);
+  --mini-copy-meta-size: clamp(8.5px, 1.8cqw, 12px);
+  --mini-copy-time-color: color-mix(in srgb, currentColor 48%, transparent);
+  --mini-copy-time-size: clamp(7.5px, 1.4cqw, 9.5px);
 
   /* progress */
-  --mini-progress-height: 3px;
-  --mini-progress-radius: 0px;
-  --mini-progress-bg: #33363a;
+  --mini-progress-height: clamp(3px, 0.8cqh, 5px);
+  --mini-progress-radius: 999px;
+  --mini-progress-bg: rgba(255, 255, 255, 0.08);
   --mini-progress-fill: var(--mini-accent);
-  --mini-progress-fill-shadow: none;
+  --mini-progress-fill-shadow: 0 0 10px color-mix(in srgb, var(--mini-accent) 40%, transparent);
 
   /* transport controls + window actions */
-  --mini-btn-color: #b9bbc0;
+  --mini-btn-color: color-mix(in srgb, currentColor 72%, transparent);
   --mini-btn-hover-color: var(--mini-accent);
-  --mini-btn-size: 22px;
-  --mini-btn-height: 28px;
-  --mini-btn-radius: 0px;
-  --mini-btn-gap: 4px;
-  --mini-play-size: 34px;
+  --mini-btn-size: clamp(24px, 5.2cqw, 36px);
+  --mini-btn-height: var(--mini-btn-size);
+  --mini-btn-radius: 50%;
+  --mini-btn-gap: clamp(4px, 1cqw, 8px);
+  --mini-play-size: clamp(32px, 7.5cqw, 48px);
   --mini-play-radius: 50%;
-  --mini-play-border: 0;
-  --mini-play-bg: #f2efe8;
-  --mini-play-color: #111;
-  --mini-play-shadow: none;
-  --mini-window-btn-size: 23px;
-  --mini-window-btn-height: 22px;
-  --mini-window-btn-font-size: 9px;
+  --mini-play-border: 1px solid color-mix(in srgb, var(--mini-accent) 35%, transparent);
+  --mini-play-bg: linear-gradient(135deg, color-mix(in srgb, var(--mini-accent) 30%, #ffffff), color-mix(in srgb, var(--mini-accent) 70%, #d8b66a));
+  --mini-play-color: #0b0d10;
+  --mini-play-shadow: 0 4px 16px color-mix(in srgb, var(--mini-accent) 30%, rgba(0, 0, 0, 0.35));
+  --mini-window-btn-size: clamp(18px, 3.8cqw, 26px);
+  --mini-window-btn-height: var(--mini-window-btn-size);
+  --mini-window-btn-font-size: clamp(8px, 1.5cqw, 10px);
 }
 
 * { box-sizing: border-box; }
@@ -91,11 +76,13 @@ body {
 
 body {
   margin: 0;
-  padding: 8px;
+  padding: clamp(6px, 1.8cqmin, 12px);
   background: #050607;
   color: #f5f3ef;
-  font-family: "Segoe UI", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   overflow: hidden;
+  container-type: size;
+  container-name: mini-window;
 }
 
 .mini-shell {
@@ -113,7 +100,11 @@ body {
   border: var(--mini-shell-border);
   border-radius: var(--mini-shell-radius);
   box-shadow: var(--mini-shell-shadow);
+  backdrop-filter: blur(18px) saturate(120%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
   -webkit-app-region: no-drag;
+  overflow: hidden;
+  transition: box-shadow 0.25s ease;
 }
 
 .mini-drag-strip {
@@ -129,10 +120,15 @@ body {
 .mini-resize-grip {
   position: absolute;
   z-index: 9;
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
   pointer-events: none;
-  opacity: .55;
+  opacity: 0.2;
+  transition: opacity 0.2s ease;
+}
+
+.mini-shell:hover .mini-resize-grip {
+  opacity: 0.55;
 }
 
 .mini-resize-grip::before,
@@ -151,24 +147,12 @@ body {
 .mini-resize-grip::before { top: 3px; left: 1px; }
 .mini-resize-grip::after { top: 7px; left: 1px; width: 4px; }
 
-/* A still wash under the shell, for the themes that paint one. It used to be
-   a band that swept back and forth across the whole player every five
-   seconds in every theme -- the one motion nobody asked for -- and a theme
-   that tinted it (Foreground's was solid amber) made it a stripe sliding over
-   the controls. It no longer moves, and it is clear unless a theme gives it
-   a background of its own. */
 .mini-glow {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
-/* Furniture that belongs to one theme each: Cartridge Quest's XP/run/combo
-   readout, Counterform Choir's previous/current/next line, Violet Violent's
-   board and SOURCE / TRANSPORT / OUTPUT bus, Axis Break's break-lines. The
-   markup is shared, so each used to render as raw text in every theme that
-   did not hide it -- which was every theme but Studio and the ones that
-   listed them one by one. Hidden here; the theme it belongs to shows it. */
 :is(.mini-quest-stats, .counterform-mini-choir, .vv-mini-board, .vv-mini-bus, .axis-mini-breakline, .axis-mini-mask) {
   display: none;
 }
@@ -176,6 +160,9 @@ body {
 .mini-art {
   width: var(--mini-art-size);
   height: var(--mini-art-size);
+  max-width: calc(100cqh - clamp(14px, 4cqh, 32px));
+  max-height: calc(100cqh - clamp(14px, 4cqh, 32px));
+  aspect-ratio: 1 / 1;
   display: grid;
   place-items: center;
   background: var(--mini-art-bg);
@@ -186,11 +173,18 @@ body {
   box-shadow: var(--mini-art-shadow);
   font: var(--mini-art-glyph-font);
   color: var(--mini-art-glyph-color);
+  flex-shrink: 0;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
 }
 
 .mini-art.has-image span { display: none; }
 
-.mini-copy { min-width: 0; }
+.mini-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
 .mini-copy small,
 .mini-copy strong,
@@ -205,32 +199,45 @@ body {
   color: var(--mini-copy-eyebrow-color);
   font: var(--mini-copy-eyebrow-font);
   letter-spacing: var(--mini-copy-eyebrow-tracking);
+  text-transform: uppercase;
+  opacity: 0.85;
 }
 
 .mini-copy strong {
-  margin-top: 7px;
+  margin-top: clamp(2px, 0.9cqh, 6px);
   font: var(--mini-copy-title-font);
   color: var(--mini-copy-title-color);
+  letter-spacing: -0.015em;
+  font-weight: 650;
 }
 
 .mini-copy > span {
-  margin-top: 5px;
+  margin-top: clamp(2px, 0.7cqh, 5px);
   color: var(--mini-copy-meta-color);
   font-size: var(--mini-copy-meta-size);
+  opacity: 0.8;
 }
 
 .mini-progress {
   height: var(--mini-progress-height);
   border-radius: var(--mini-progress-radius);
-  margin-top: 14px;
+  margin-top: clamp(8px, 2.2cqh, 14px);
   background: var(--mini-progress-bg);
   overflow: hidden;
+  position: relative;
+  transition: height 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
+}
+
+.mini-progress:hover {
+  height: calc(var(--mini-progress-height) + 2px);
+  background: rgba(255, 255, 255, 0.14);
 }
 
 .mini-progress i {
   display: block;
   height: 100%;
   width: 0;
+  border-radius: inherit;
   background: var(--mini-progress-fill);
   box-shadow: var(--mini-progress-fill-shadow);
   transition: width .2s linear;
@@ -239,15 +246,18 @@ body {
 .mini-time {
   display: flex;
   justify-content: space-between;
-  margin-top: 5px;
+  margin-top: clamp(3px, 0.8cqh, 5px);
   color: var(--mini-copy-time-color);
   font-size: var(--mini-copy-time-size);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
 }
 
 .mini-controls {
   display: flex;
   align-items: center;
-  justify-content: end;
+  justify-content: flex-end;
   gap: var(--mini-btn-gap);
   -webkit-app-region: no-drag;
   pointer-events: auto;
@@ -259,13 +269,26 @@ body {
   background: transparent;
   color: var(--mini-btn-color);
   cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: color 0.18s ease, background-color 0.18s ease, transform 0.12s ease;
 }
 
 .mini-controls button {
   width: var(--mini-btn-size);
-  height: var(--mini-btn-height);
+  height: var(--mini-btn-height, var(--mini-btn-size));
   border-radius: var(--mini-btn-radius);
   padding: 0;
+  border: 1px solid transparent;
+}
+
+.mini-controls button:hover {
+  color: var(--mini-btn-hover-color);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mini-controls button:active {
+  transform: scale(0.92);
 }
 
 .mini-controls .mini-play {
@@ -276,36 +299,97 @@ body {
   background: var(--mini-play-bg);
   color: var(--mini-play-color);
   box-shadow: var(--mini-play-shadow);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.mini-controls .mini-play:hover {
+  transform: scale(1.06);
+  box-shadow: var(--mini-play-shadow), 0 0 16px color-mix(in srgb, var(--mini-accent) 40%, transparent);
+}
+
+.mini-controls .mini-play:active {
+  transform: scale(0.95);
+}
+
+.mini-transport-icon {
+  display: block;
+  width: clamp(14px, 3.2cqw, 20px);
+  height: clamp(14px, 3.2cqw, 20px);
+  background: currentColor;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  margin: 0 auto;
+}
+
+.mini-controls .mini-play .mini-transport-icon,
+#miniPlayIcon {
+  width: clamp(16px, 3.8cqw, 24px);
+  height: clamp(16px, 3.8cqw, 24px);
 }
 
 .window-actions {
   position: absolute;
-  top: 7px;
-  right: 7px;
+  top: clamp(6px, 1.8cqmin, 12px);
+  right: clamp(6px, 1.8cqmin, 12px);
   display: flex;
+  gap: 3px;
   -webkit-app-region: no-drag;
   z-index: 10;
+  opacity: 0.58;
+  transition: opacity 0.2s ease;
+}
+
+.mini-shell:hover .window-actions,
+.window-actions:focus-within {
+  opacity: 0.95;
 }
 
 .window-actions button {
   width: var(--mini-window-btn-size);
-  height: var(--mini-window-btn-height);
+  height: var(--mini-window-btn-height, var(--mini-window-btn-size));
   font-size: var(--mini-window-btn-font-size);
+  border-radius: 6px;
+  padding: 0;
 }
 
-.window-actions button:hover,
-.mini-controls button:hover { color: var(--mini-btn-hover-color); }
+.window-actions button:hover {
+  color: var(--mini-btn-hover-color);
+  background: rgba(255, 255, 255, 0.08);
+}
 
-.mini-controls button,
-.window-actions button { position: relative; z-index: 11; pointer-events: auto; -webkit-app-region: no-drag; }
+#closeMini:hover {
+  color: #ff5f6d;
+  background: rgba(255, 80, 100, 0.16);
+}
 
-.playing .mini-art { animation: art-pulse 3s ease-in-out infinite; }
+.window-actions button:active {
+  transform: scale(0.92);
+}
+
+.playing .mini-art {
+  box-shadow: var(--mini-art-shadow), 0 0 20px color-mix(in srgb, var(--mini-accent) 28%, transparent);
+}
 
 body[data-glow="false"] .mini-glow { display: none; }
 body[data-artwork="false"] .mini-art { animation: none!important; }
 
-@keyframes art-pulse {
-  50% { box-shadow: 5px 5px #0008, 0 0 16px color-mix(in srgb, var(--mini-accent) 25%, transparent); }
+@container mini-window (max-height: 165px) {
+  .mini-copy small { display: none; }
+  .mini-copy strong { margin-top: 1px; }
+  .mini-progress { margin-top: 6px; }
+}
+
+@container mini-window (max-width: 380px) {
+  .mini-time { display: none; }
+}
+
+@container mini-window (min-width: 580px) {
+  .mini-copy strong { font-size: clamp(14px, 2.7cqw, 20px); }
+  .mini-copy > span { font-size: clamp(9.5px, 1.8cqw, 13.5px); }
 }
 
 @media (prefers-reduced-motion: reduce) {

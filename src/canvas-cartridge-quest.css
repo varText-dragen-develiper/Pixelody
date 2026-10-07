@@ -1539,10 +1539,6 @@ body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-mot
 /* Keep the development-only Canvas routes in the console's top hardware
    strip. They remain visible and keyboard reachable without covering the
    cartridge rack or the first stage controls. */
-body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] :is(.cw-studio-launcher,.cw-studio-legacy-launcher){left:6px;width:66px;min-height:22px;padding:0 4px;border:2px solid #5f5d66;border-radius:1px;background:#262a3b;color:#d6d2ca;box-shadow:inset 1px 1px #404453,inset -1px -1px #10131f;font:5px "Quest Pixel","Segoe UI",sans-serif;letter-spacing:.05em;text-transform:uppercase}
-body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .cw-studio-launcher{top:5px}
-body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .cw-studio-legacy-launcher{top:31px}
-body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] :is(.cw-studio-launcher,.cw-studio-legacy-launcher):is(:hover,:focus-visible){border-color:#fff7c4;background:#7b68c9;color:#fff7c4;outline:0}
 
 /* Canvas gives the Stage a much larger owned surface than the archived host.
    Keep the original route-change punctuation, but turn its full-panel curtain

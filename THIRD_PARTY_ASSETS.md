@@ -411,3 +411,42 @@ The upstream copyright and MIT permission notice is bundled at `licenses/Pixelar
 ## Explicit original artwork licenses
 
 Copyright (C) 2026 Hikari. Obsession Mode's original `fracture-overlay.svg` and Cartridge Quest's original `console-rack.svg`, `controller-panel.svg`, `music-cartridge.svg` and `pixel-landscape.svg` are explicitly licensed GPL-3.0-only. Complete license text and exact file lists accompany them in their respective `LICENSE-PIXELODY-ART.txt` files. The separate stock JPG and two unconfirmed cartridge PNGs are excluded. No trademark rights are granted. Other original artwork is not relicensed by this entry; existing applicable grants remain in effect.
+
+## Art Gallery Asset Library Provenance & Quarantine Ledger (2026-10-05 Audit)
+
+A forensic intellectual property and visual similarity audit was executed on 2026-10-05 across all 1,822 visual assets in `Images, and all art/` (62 families and 7 uncatalogued PDFs), tracing all files back to their commissioning prompts and 68 user reference uploads.
+
+### Commercial Quarantine Policy (`HOLD / EXCLUDE` — 523 Files)
+The following 17 families contain direct 1:1 forensic copies or close derivatives of third-party copyrighted works, registered trademarks, or proprietary commercial fonts. They are strictly quarantined and must NEVER be bundled in production themes, exported in commercial sales bundles, or distributed publicly:
+1. `vktr-robotics` (18 files): Wipeout 2097 / The Designers Republic (Sony Interactive Entertainment).
+2. `marathon-terminal` & `phosphor-terminal` (56 files): Marathon UESC logos & green CRT terminals (Bungie / Sony Interactive Entertainment).
+3. `dimension-c137` (8 files): Rick & Morty Galactic Government C-137 badges (Adult Swim / Warner Bros. Discovery).
+4. `swiss-typography`, `utilitarian-nav`, `architectural-minimal`, `iso-pictograms` (19 files): AC Hotel Bella Sky Copenhagen wayfinding & angular display alphabet (Stockholm Design Lab).
+5. `swiss-modernism` (TRACK series — 8 files): TRACK10 Annual Student Exhibition poster for Santralistanbul (Burak Beceren / Istanbul Bilgi University; breaches CC BY-NC-ND 3.0).
+6. `wavebird-arcade` (18 files): Wavebird // Gamesplitters 90s Attitude commercial merchandise art print (uncredited indie artist).
+7. `audio-visualizers` (5 files): "We Make You See" horizontal dither visualizer (Weiden Haus Studio).
+8. `chromatic-prismatic` (12 files): MOV Bauhaus progressive RGB dispersion poster (uncredited Bauhaus artist).
+9. `cyber-occult` (12 files): Hyper|gnosis 1806-01 brutalist telemetry poster (uncredited brutalist designer).
+10. `titanfall-mecha` (12 files): Titan chassis warning stencils and military faction badges (Respawn Entertainment / Electronic Arts).
+11. `neo-gothic-mecha` (74 files): Ornate vector mecha line art and Misato Katsuragi / NERV character motifs (Joshua M. Smith / Hydro74 & Studio Khara / Gainax).
+12. `dot-matrix` (27 files): PP Dotty Matrix font specimen (Pangram Pangram Foundry / Mathieu Desjardins).
+13. `luxury-audio` (54 files): OP-1 luxury minimalist audio hardware design (Teenage Engineering).
+14. `sacred-ascii` (48 files): Underground demoscene ASCII art reconstructions ("Dove", "Whale", "Pantheon" by Mistigris).
+15. `dharma-cyber` (12 files): Dharma Initiative retro station telemetry from *Lost* (Bad Robot Productions / ABC / Disney).
+16. `experimental-type` (92 files): Alternates Glyphs commercial display typeface specimen sheets.
+17. `cyber-anatomy` (6 files): Split cybernetic anatomical hand wireframe schematics.
+
+### Public Domain & Permissive Attribution Records (`CREDIT REQUIRED` — 92 Files)
+- **US Army Corps of Engineers Nearshore Bathymetry** (`oceanic-cartography` — 14 files): Figures A11 and A12 from USACE Coastal Engineering Research Center (CERC) technical reports. Public domain under 17 U.S.C. § 105. Attribution: "U.S. Army Corps of Engineers Coastal Engineering Research Center (CERC)."
+- **Wikimedia Commons Rotoscoped Series** (`rotoscope` — 71 files + 7 PDFs): Procedurally rotoscoped and dithered derivatives of open-license photography (coffee mug, cup of coffee, fist, open hand, human hand, tea cup, traffic light) sourced from Wikimedia Commons contributors under CC BY, CC BY-SA, and CC0 licenses. Attribution notices must be preserved upon distribution.
+
+### Approved Commercial Assets (`APPROVED FOR USE` — 353 Files)
+The following modules represent pure procedural mathematics, original shader code, or native Pixelody application assets and are cleared for commercial use:
+- `harmonograph-acoustics` (10 files): Pure mathematical two-pendulum acoustic interval Lissajous curves.
+- `parametric-waves` (22 files): Procedural sinusoidal fabric wave ribbon meshes.
+- `warp-gradients` (58 files): Spherical radial noise gradients depicting celestial planetary bodies.
+- `crt-hardware` (32 files): Algorithmic cathode ray tube scanline and phosphor bloom physics.
+- `dither-matrix` (7 files): Mathematical 3D sphere ray-intersection shaders with Bayer dithering.
+- `system-telemetry` (128 files): Procedural circular reticles, diagnostic compass dials, and status indicators.
+- `pixelody-ui` (21 files): Original Pixelody player native UI badges and empty state illustrations.
+

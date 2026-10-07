@@ -366,7 +366,6 @@ body[data-theme="cut-sheet"] .theme-action-overlay { border: 1px solid var(--edg
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  animation: theme-load-background var(--theme-load-duration) ease both;
 }
 
 /* The static HTML starts at a stable first frame. Renderer setup supplies the
@@ -956,12 +955,6 @@ body[data-theme="cut-sheet"] .theme-action-overlay { border: 1px solid var(--edg
   animation: theme-load-bar var(--theme-load-bar-ms) ease-in-out infinite;
 }
 
-@keyframes theme-load-background {
-  100% {
-    background-position: 100% 50%;
-  }
-}
-
 @keyframes theme-load-drift {
   100% {
     opacity: .86;
@@ -1282,8 +1275,9 @@ body[data-theme="cut-sheet"] .theme-action-overlay { border: 1px solid var(--edg
 }
 
 @keyframes theme-load-bar {
+  /* -44% -> 102% of the track is 146% of its width, i.e. 348% of the 42% bar. */
   100% {
-    left: 102%;
+    transform: translate3d(348%, 0, 0);
   }
 }
 
