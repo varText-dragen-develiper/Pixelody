@@ -1,0 +1,53 @@
+name: Spec budget
+
+# Launches the real app on hosted Windows, macOS and Linux runners and checks
+# startup, memory and playback against docs/MINIMUM_SPECS.md.
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'scripts/check-spec-budget.js'
+      - '.github/workflows/spec-budget.yml'
+      - 'package.json'
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  spec-budget:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.9.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check the spec budget (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" node scripts/check-spec-budget.js
+
+      - name: Check the spec budget
+        if: runner.os != 'Linux'
+        run: node scripts/check-spec-budget.js

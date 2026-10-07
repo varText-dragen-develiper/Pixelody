@@ -2047,7 +2047,10 @@
       assert((cartridgeCabinetStackBounds?.height || 0) >= 140, `Cartridge Quest cabinet stack collapsed to ${Math.round(cartridgeCabinetStackBounds?.height || 0)}px.`);
       const canvasLauncherBounds = document.querySelector('.cw-studio-launcher')?.getBoundingClientRect();
       const studioLauncherBounds = document.querySelector('.cw-studio-legacy-launcher')?.getBoundingClientRect();
-      assert((canvasLauncherBounds?.bottom || Infinity) <= 58 && (studioLauncherBounds?.bottom || Infinity) <= 58, 'Cartridge Quest Canvas routes cover the cartridge rack instead of living in the top hardware strip.');
+      const rackBounds = document.querySelector('.quest-cabinet-stack')?.getBoundingClientRect();
+      const tagBounds = document.querySelector('.cw-studio-chrome')?.getBoundingClientRect();
+      assert(canvasLauncherBounds && studioLauncherBounds && tagBounds && tagBounds.left >= 0 && tagBounds.top >= 0 && tagBounds.right <= window.innerWidth && tagBounds.bottom <= window.innerHeight, 'Cartridge Quest Canvas tag left the window.');
+      assert(!rackBounds || tagBounds.right <= rackBounds.left || tagBounds.left >= rackBounds.right || tagBounds.bottom <= rackBounds.top || tagBounds.top >= rackBounds.bottom, 'Cartridge Quest Canvas tag covers the cartridge rack in its resting place.');
       broadcastPlayerState();
       await new Promise((resolve) => setTimeout(resolve, 120));
       const wide = await bridge.action('capture-canvas-cartridge-quest-wide');

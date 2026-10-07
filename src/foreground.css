@@ -1594,6 +1594,16 @@ body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[dat
 body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module:is([data-cw-shape="strip"], [data-cw-shape="ambient"]) > *,
 body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module:is([data-cw-shape="strip"], [data-cw-shape="ambient"]) { overflow: hidden; }
 
+/* Transport is fixed furniture. The generic relocated-root rule above wins
+   over the strip rule and creates a few pixels of wheel-scrollable overflow
+   from the controls' rings and timeline. Keep the deck out of scroll
+   containment, including its pane, so controls and focus rings stay visible.
+   Important is needed against that generic root selector's exclusions. */
+body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-module-key="transport.controls"],
+body[data-theme="foreground"]:not([data-composition-mode="edit"]) .cw-module[data-cw-module-key="transport.controls"] > .transport {
+  overflow: visible !important;
+}
+
 /* ---- The artboard (Composition Mode only) -----------------------------
    Composition Mode turns the canvas into a workspace and the composition
    into an artboard inside it: a rectangle exactly the size the player fills
@@ -1865,10 +1875,63 @@ body[data-theme="foreground"][data-composition-mode="edit"] .cw-canvas [data-cw-
   outline: 2px solid #ff5d5d !important;
 }
 
-/* Theme-coloured application chrome; no reserved row above the artboard. */
-body[data-theme="foreground"] .cw-studio-chrome { display: flex; align-items: center; gap: 6px; margin-left: auto; -webkit-app-region: no-drag; }
-body[data-theme="foreground"] .cw-studio-chrome :is(.cw-studio-launcher, .cw-studio-legacy-launcher) { position: static; min-height: 30px; padding: 0 10px; box-shadow: none; background: color-mix(in srgb, var(--surface2) 90%, transparent); color: var(--text); border-color: var(--fg-hairline); border-radius: var(--canvas-port-radius, 9px); font-size: 9px; }
-body[data-theme="foreground"] .cw-studio-chrome .cw-studio-launcher { color: var(--gold); }
+/* The Canvas tag: Edit canvas and Return to Studio in one movable module. The
+   caution tape (--cw-tape) is the one thing every theme keeps, so the control
+   is recognisable whichever theme is on; forms and colours are per theme in
+   canvas-theme-ports.css. Studio's own canvas uses the plain strip below. */
+body[data-theme="foreground"] {
+  --cw-tape-yellow: #ffd21f;
+  --cw-tape-black: #15130c;
+  --cw-tape: repeating-linear-gradient(-45deg, var(--cw-tape-yellow) 0 9px, var(--cw-tape-black) 9px 18px);
+}
+body[data-theme="foreground"] .cw-studio-chrome {
+  position: fixed;
+  z-index: 38;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: max-content;
+  padding: 0 0 6px;
+  background: color-mix(in srgb, var(--surface2) 94%, transparent);
+  border: 1px solid var(--fg-hairline);
+  border-radius: var(--canvas-port-radius, 9px);
+  box-shadow: 0 10px 30px #01020575;
+  overflow: hidden;
+  -webkit-app-region: no-drag;
+}
+body[data-theme="foreground"] .cw-studio-chrome[hidden] { display: none; }
+body[data-theme="foreground"] .cw-studio-chrome[data-cw-tag-dragging="true"] { box-shadow: 0 18px 44px #010205a0; }
+body[data-theme="foreground"] .cw-studio-tag-grip {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: 800 8px system-ui, sans-serif;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  cursor: grab;
+  touch-action: none;
+}
+body[data-theme="foreground"] .cw-studio-chrome[data-cw-tag-dragging="true"] .cw-studio-tag-grip { cursor: grabbing; }
+body[data-theme="foreground"] .cw-studio-tape { display: block; height: 10px; background: var(--cw-tape); }
+body[data-theme="foreground"] .cw-studio-tag-name { padding: 4px 10px 0; text-align: left; }
+body[data-theme="foreground"] .cw-studio-chrome :is(.cw-studio-launcher, .cw-studio-legacy-launcher) {
+  position: static;
+  min-height: 30px;
+  margin: 0 6px;
+  padding: 0 12px;
+  box-shadow: none;
+  font: 700 10px system-ui, sans-serif;
+  border-radius: var(--canvas-port-control-radius, 7px);
+}
+body[data-theme="foreground"] .cw-studio-chrome .cw-studio-launcher { background: var(--cw-tape-yellow); color: var(--cw-tape-black); border: 1px solid var(--cw-tape-black); }
+body[data-theme="foreground"] .cw-studio-chrome .cw-studio-launcher:hover { background: #ffe066; }
+body[data-theme="foreground"] .cw-studio-chrome .cw-studio-legacy-launcher { background: color-mix(in srgb, var(--surface) 92%, transparent); color: var(--text); border: 1px solid var(--fg-hairline); }
+body[data-theme="foreground"] .cw-studio-chrome :is(.cw-studio-launcher, .cw-studio-legacy-launcher, .cw-studio-tag-grip):focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
 body[data-theme="foreground"] .topbar .global-search { flex: 1 1 140px; min-width: 100px; width: auto; max-width: 420px; }
 body[data-theme="foreground"] .topbar { display: flex; gap: 8px; }
 body[data-theme="foreground"] .topbar :is(.settings-trigger, .top-quality, .jams-trigger) { position: static; flex-shrink: 0; }

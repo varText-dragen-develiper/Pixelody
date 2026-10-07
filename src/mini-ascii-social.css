@@ -46,8 +46,33 @@ body[data-theme="ascii-social"] .mini-copy>span,body[data-theme="ascii-social"] 
 body[data-theme="ascii-social"] .mini-progress{border:1px solid #3f4a52;box-shadow:inset 0 1px 5px #000c}
 body[data-theme="ascii-social"] .mini-progress i{border-radius:2px}
 body[data-theme="ascii-social"] .mini-controls{border:1px solid #3f4a52;border-radius:6px;background:#0b0f14;box-shadow:inset 0 1px 0 #ffffff12}
+body[data-theme="ascii-social"] :is(.mini-shell, .mini-art, .mini-controls button, .window-actions button){
+  clip-path:none;
+}
 body[data-theme="ascii-social"] .mini-controls button{border-radius:4px;color:#e7e0d3}
 body[data-theme="ascii-social"] .window-actions button{border-radius:4px;color:#d6b45d}
+body[data-theme="ascii-social"] .mini-controls .mini-play{
+  border-radius:5px !important;
+  clip-path:none !important;
+  display:grid !important;
+  place-items:center !important;
+  padding:0 !important;
+}
+body[data-theme="ascii-social"] .mini-transport-icon{
+  width: clamp(14px, 3.2cqw, 20px) !important;
+  height: clamp(14px, 3.2cqw, 20px) !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+  mask-size:18px 18px;
+}
+body[data-theme="ascii-social"] .mini-play .mini-transport-icon{
+  width: clamp(16px, 3.8cqw, 24px) !important;
+  height: clamp(16px, 3.8cqw, 24px) !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+  margin: 0 auto !important;
+  mask-size:20px 20px;
+}
 body[data-theme="ascii-social"].playing .mini-shell::before{animation:mini-ascii-scan 2.8s steps(2,end) infinite}
 body[data-theme="ascii-social"].playing .mini-progress i{animation:mini-ascii-spark 2.4s ease-in-out infinite}
 @keyframes mini-ascii-scan{50%{color:#79d8cf;text-shadow:0 0 10px #79d8cf55}}

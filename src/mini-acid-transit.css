@@ -35,9 +35,17 @@ body[data-theme="acid-transit"] .mini-copy strong{letter-spacing:-.02em;text-sha
 body[data-theme="acid-transit"] .mini-progress{border-radius:0}
 body[data-theme="acid-transit"] .mini-controls button{color:#f6f0ff}
 body[data-theme="acid-transit"] .mini-controls button:hover{background:#ff2fa5;color:#08060d}
-body[data-theme="acid-transit"] #miniPlay{background:#b7ff39!important;color:#08060d!important;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,0 100%)}
+body[data-theme="acid-transit"] #miniPlay{background:#b7ff39!important;color:#08060d!important;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,0 100%);display:grid !important;place-items:center !important;padding:0 !important}
+body[data-theme="acid-transit"] .mini-transport-icon{width: clamp(14px, 3.2cqw, 20px) !important;
+  height: clamp(14px, 3.2cqw, 20px) !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;mask-size:18px 18px}
 body[data-theme="acid-transit"] #miniPlay .signal-orbit-ring{display:none!important;visibility:hidden!important;opacity:0!important;animation:none!important}
-body[data-theme="acid-transit"] #miniPlayIcon{position:relative!important;z-index:2147483647!important;display:block!important;width:20px!important;height:20px!important;-webkit-mask:none!important;mask:none!important;background:#08060d}
+body[data-theme="acid-transit"] #miniPlayIcon{position:relative!important;z-index:2147483647!important;display:block!important;width: clamp(16px, 3.8cqw, 24px) !important;
+  height: clamp(16px, 3.8cqw, 24px) !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+  margin: 0 auto !important;-webkit-mask:none!important;mask:none!important;background:#08060d}
 body[data-theme="acid-transit"] #miniPlayIcon.mini-play-icon{clip-path:polygon(24% 10%,88% 50%,24% 90%)}
 body[data-theme="acid-transit"] #miniPlayIcon.mini-pause-icon{clip-path:none;background:linear-gradient(90deg,#08060d 0 32%,transparent 32% 62%,#08060d 62% 100%)}
 body[data-theme="acid-transit"] .mini-glow{background:linear-gradient(90deg,transparent,#a68cff 25%,#ff2fa5 55%,#b7ff39,transparent)}

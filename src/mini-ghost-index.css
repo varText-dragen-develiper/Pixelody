@@ -1,9 +1,9 @@
 /* Ghost Index mini-player: original compact process window. */
 body[data-theme="ghost-index"]{
   color:#e8e7e2;
-  --mini-shell-columns:clamp(78px,25vw,102px) minmax(108px,1fr) auto;
+  --mini-shell-columns:clamp(56px, min(24cqw, 54cqh), 140px) minmax(100px, 1fr) auto;
   --mini-shell-gap:15px;
-  --mini-shell-padding:28px 16px 14px;
+  --mini-shell-padding:clamp(20px, 5cqh, 28px) clamp(10px, 2.5cqw, 18px) clamp(8px, 2.5cqh, 14px);
   --mini-shell-border:1px solid #e8e7e2;
   --mini-shell-radius:0;
   --mini-shell-bg:#020303;
@@ -40,10 +40,20 @@ body[data-theme="ghost-index"] .mini-copy strong{font-family:Georgia,"Times New 
 body[data-theme="ghost-index"] .mini-progress{border-radius:0;height:3px}
 body[data-theme="ghost-index"] .mini-controls button{color:#e8e7e2}
 body[data-theme="ghost-index"] .mini-controls button:hover{background:#ff596d;color:#020303}
-body[data-theme="ghost-index"] #miniPlay{border:1px solid #e8e7e2!important;background:#020303!important;color:#e8e7e2!important;clip-path:none}
+body[data-theme="ghost-index"] :is(.mini-shell,.mini-controls button,.window-actions button){clip-path:none!important}
+body[data-theme="ghost-index"] .mini-controls button{display:grid!important;place-items:center!important;padding:0!important}
+body[data-theme="ghost-index"] .mini-transport-icon{width: clamp(14px, 3.2cqw, 20px) !important;
+  height: clamp(14px, 3.2cqw, 20px) !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;mask-size: contain !important;-webkit-mask-size:18px 18px!important}
+body[data-theme="ghost-index"] #miniPlay{border:1px solid #e8e7e2!important;background:#020303!important;color:#e8e7e2!important;clip-path:none!important;display:grid!important;place-items:center!important;padding:0!important}
 body[data-theme="ghost-index"] #miniPlay:hover{border-color:#41ff68!important;background:#41ff68!important}
 body[data-theme="ghost-index"] #miniPlay .signal-orbit-ring{display:none!important;visibility:hidden!important;opacity:0!important;animation:none!important}
-body[data-theme="ghost-index"] #miniPlayIcon{position:relative!important;z-index:2147483647!important;display:block!important;width:20px!important;height:20px!important;-webkit-mask:none!important;mask:none!important;background:#e8e7e2}
+body[data-theme="ghost-index"] #miniPlayIcon{position:relative!important;z-index:2147483647!important;display:block!important;width: clamp(16px, 3.8cqw, 24px) !important;
+  height: clamp(16px, 3.8cqw, 24px) !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+  margin: 0 auto !important;margin:0 auto!important;-webkit-mask:none!important;mask:none!important;background:#e8e7e2}
 body[data-theme="ghost-index"] #miniPlay:hover #miniPlayIcon{background:#020303}
 body[data-theme="ghost-index"] #miniPlayIcon.mini-play-icon{clip-path:polygon(24% 10%,88% 50%,24% 90%)}
 body[data-theme="ghost-index"] #miniPlayIcon.mini-pause-icon{clip-path:none;background:linear-gradient(90deg,#e8e7e2 0 32%,transparent 32% 62%,#e8e7e2 62% 100%)}

@@ -83,5 +83,6 @@ Design, architecture, and engineering references for Pixelody. Planning document
 
 - [Pixelody architecture](ARCHITECTURE.md)
 - [Getting started with Pixelody for Windows](GETTING_STARTED.md)
+- [Pixelody minimum specs (measured 2026-10-05)](MINIMUM_SPECS.md)
 - [Downloaded modules](OPTIONAL_MODULES.md)
 - [Release preparation](RELEASE_PREPARATION.md)

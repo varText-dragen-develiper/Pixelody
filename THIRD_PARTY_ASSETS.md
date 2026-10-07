@@ -411,3 +411,4 @@ The upstream copyright and MIT permission notice is bundled at `licenses/Pixelar
 ## Explicit original artwork licenses
 
 Copyright (C) 2026 Hikari. Obsession Mode's original `fracture-overlay.svg` and Cartridge Quest's original `console-rack.svg`, `controller-panel.svg`, `music-cartridge.svg` and `pixel-landscape.svg` are explicitly licensed GPL-3.0-only. Complete license text and exact file lists accompany them in their respective `LICENSE-PIXELODY-ART.txt` files. The separate stock JPG and two unconfirmed cartridge PNGs are excluded. No trademark rights are granted. Other original artwork is not relicensed by this entry; existing applicable grants remain in effect.
+

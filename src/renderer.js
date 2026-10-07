@@ -1737,6 +1737,7 @@ const durableStateController = stateDomain.createStateController({
 });
 const durableStateRuntime = durableStateController.runtime;
 const enqueueDurableStateWrite = (reason = 'renderer-persist') => durableStateController.enqueue(reason);
+const DURABLE_PERSIST_AFTER_RESPONSE_MS = 160;
 const scheduleDurableStatePersist = (delay = 420, reason = 'renderer-persist') => durableStateController.schedule(delay, reason);
 const initializeDurableStateAuthority = () => durableStateController.initialize();
 
@@ -1757,7 +1758,9 @@ function persist() {
   // lastPersistMs intentionally in place as a diagnostics signal: it should
   // now read effectively 0ms, proving the redundant work is gone.
   diagnosticsState.lastPersistMs = performance.now() - start;
-  scheduleDurableStatePersist(0, 'core-state-persist');
+  // Snapshotting the library costs ~14 ms at 2,000 tracks; let the frames that
+  // answer the click go first. Closing the window still flushes at once.
+  scheduleDurableStatePersist(DURABLE_PERSIST_AFTER_RESPONSE_MS, 'core-state-persist');
   scheduleSharingSnapshot('persist');
 }
 function schedulePersist(delay = 220) {
@@ -3828,7 +3831,17 @@ function applySignalSettingsUi() {
   });
   updateSignalJournalUi();
 }
+// Playback events arrive on the click path of every play and skip; the journal
+// write and dashboard refresh (~6 ms at a few thousand events) can follow the
+// frames that respond to the click. Any direct persist cancels the pending one.
+let signalJournalPersistTimer = 0;
+function persistSignalJournalSoon() {
+  clearTimeout(signalJournalPersistTimer);
+  signalJournalPersistTimer = setTimeout(persistSignalJournal, 250);
+}
 function persistSignalJournal() {
+  clearTimeout(signalJournalPersistTimer);
+  signalJournalPersistTimer = 0;
   setLocalStorageItem('pixelody.signalJournal', JSON.stringify({
     ...state.signalJournal,
     events: state.signalJournal.events.slice(-SIGNAL_EVENT_LIMIT),
@@ -3920,7 +3933,7 @@ function recordSignalEvent(type, payload = {}) {
     detail: event.detail || signalEventDetail(type, event, track),
     timestamp: event.timestamp,
   };
-  persistSignalJournal();
+  persistSignalJournalSoon();
   return event;
 }
 function attachShuffleOutcomeLink(play, outcomeEvent) {
@@ -6069,6 +6082,7 @@ const THEME_ASSET_SETTLE_MS = 1300;
 const INTERACTION_QUIET_MS = 850;
 const SURFACE_PREWARM_TIMEOUT_MS = 1800;
 const SURFACE_PREWARM_RETRY_MS = 620;
+const PREWARM_SURFACE_GAP_MS = 160;
 const themeLoadExitStyles = {
   studio: 'studio-pixel',
   orbital: 'orbital-ring',
@@ -6183,8 +6197,23 @@ function noteUserInput(event = null) {
 function inputIsRecent(windowMs = INTERACTION_QUIET_MS) {
   return lastUserInputAt > 0 && performance.now() - lastUserInputAt < windowMs;
 }
+let readinessSettled = null;
 function setReadinessState(stateName) {
   document.body.dataset.readiness = stateName;
+  if (stateName === 'settled') readinessSettled?.resolve();
+}
+// Background work (surface prewarm, Daily Curated planning) must not start
+// while the cover is fading and the first view is arriving: launch profiling
+// showed it landing as 140-340 ms tasks right behind the reveal. The cap keeps
+// a window that never settles (occluded, failed-closed startup) from starving it.
+function whenReadinessSettled(maxMs = 6000) {
+  if (document.body.dataset.readiness === 'settled') return Promise.resolve();
+  if (!readinessSettled) {
+    let resolve;
+    const promise = new Promise((done) => { resolve = done; });
+    readinessSettled = { promise, resolve };
+  }
+  return Promise.race([readinessSettled.promise, new Promise((done) => setTimeout(done, maxMs))]);
 }
 
 function normalizedLoadColors(colors = {}) {
@@ -6919,6 +6948,7 @@ function restoreNavigationState(snapshot) {
   prepareSurfaceForOpen('#playlistPickerOverlay')?.classList.toggle('hidden', !snapshot.playlistPicker);
   prepareSurfaceForOpen('#playlistCreatorOverlay')?.classList.toggle('hidden', !snapshot.playlistCreator);
   prepareSurfaceForOpen('#queueDrawer')?.classList.toggle('hidden', !snapshot.queue);
+  if (snapshot.queue) flushQueueRender();
   prepareSurfaceForOpen('#shortcutsOverlay')?.classList.toggle('hidden', !snapshot.shortcuts);
   $('#playlistHero').classList.toggle('track-info-open', snapshot.metadata);
   document.body.classList.toggle('compact-library-open', Boolean(snapshot.compactLibrary));
@@ -7355,7 +7385,22 @@ function estimateEqGainAtFrequency(frequency, trackEq, systemEq) {
   });
   return clampNumber(gain, -EQ_HEADROOM_LIMIT_DB, EQ_HEADROOM_LIMIT_DB, 0);
 }
+// Drawing reads layout and computed style, which forces both to be recomputed
+// in the middle of the click handler that just changed the DOM; the frame then
+// lays out again. Draw once per frame, after the handler has finished.
+let drawCurveFrame = 0;
+let drawCurveArgs = null;
 function drawCurve(trackEq = tuningDefault(), systemEq = tuningDefault()) {
+  drawCurveArgs = [trackEq, systemEq];
+  if (drawCurveFrame) return;
+  drawCurveFrame = requestAnimationFrame(() => {
+    drawCurveFrame = 0;
+    const args = drawCurveArgs;
+    drawCurveArgs = null;
+    if (args) drawCurveNow(...args);
+  });
+}
+function drawCurveNow(trackEq = tuningDefault(), systemEq = tuningDefault()) {
   const canvas = $('#eqCanvas');
   // Singularity and compact routes can retain the real Systems surface while
   // it is dormant. Reading clientWidth on that hidden surface forces layout of
@@ -7429,7 +7474,7 @@ function buildEqControls(container, type) {
     input.value = value;
     let values;
     if (type === 'track') {
-      if (!currentTrack()) return;
+      if (!currentTrack()) { syncEqControls(); showToast('Select a track to tune it.'); return; }
       values = normalizeTuning(state.tunings[currentTrack().id] || tuningDefault()); state.tunings[currentTrack().id] = values;
     } else {
       stopCalibrationPreview();
@@ -7590,10 +7635,25 @@ function resetPlaybackTransition() {
   });
   if (state.deckAGain && state.context) {
     try {
+      state.deckAGain.gain.cancelScheduledValues(state.context.currentTime);
       state.deckAGain.gain.setValueAtTime(1, state.context.currentTime);
       state.deckBGain.gain.setValueAtTime(0, state.context.currentTime);
     } catch {}
   }
+}
+
+// The outgoing track already fades out at its end; give an automatically advanced
+// track the matching fade-in so Equal Power / Linear are audible at both ends.
+function beginTransitionFadeIn(options = {}) {
+  const config = state.playbackTransitions || audioDomain.normalizePlaybackTransitions(null);
+  if (!options.naturalAdvance || !state.context || !state.deckAGain) return;
+  if (config.mode !== 'equal-power' && config.mode !== 'linear') return;
+  try {
+    const now = state.context.currentTime;
+    const curve = Float32Array.from({ length: 64 }, (_, i) => audioDomain.calculateCrossfadeGains(i / 63, config.mode).inGain);
+    state.deckAGain.gain.cancelScheduledValues(now);
+    state.deckAGain.gain.setValueCurveAtTime(curve, now, Math.max(0.5, config.duration));
+  } catch {}
 }
 
 function maintainPlaybackTransition() {
@@ -7660,9 +7720,9 @@ function syncTransitionSettingsUi() {
     if (mode === 'gapless') {
       statusEl.textContent = 'Gapless (0s seam-free)';
     } else if (mode === 'equal-power') {
-      statusEl.textContent = `Equal Power (${duration.toFixed(1)}s blend)`;
+      statusEl.textContent = `Equal Power (${duration.toFixed(1)}s fade out and in)`;
     } else if (mode === 'linear') {
-      statusEl.textContent = `Linear (${duration.toFixed(1)}s fade)`;
+      statusEl.textContent = `Linear (${duration.toFixed(1)}s fade out and in)`;
     } else {
       statusEl.textContent = 'Standard (Off)';
     }
@@ -15862,13 +15922,13 @@ function dailyMixOptions() {
   return { tracks: state.tracks, history: state.history, favorites: state.favorites, trackStats: state.signalJournal.trackStats };
 }
 function dailyMixQuietTurn() {
-  return new Promise((resolve) => {
+  return whenReadinessSettled().then(() => new Promise((resolve) => {
     const wait = () => scheduleIdleWork(() => {
       if (inputIsRecent()) setTimeout(wait, INTERACTION_QUIET_MS);
       else resolve();
     }, 1500);
     wait();
-  });
+  }));
 }
 // Between slices: hand the frame back, and wait out any input in progress.
 const DAILY_MIX_SLICE_MS = 10;
@@ -17294,12 +17354,21 @@ async function playTrack(id, options = {}) {
   if (previousTrack && previousTrack.id !== id && !options.naturalAdvance) finalizeSignalPlayback('skipped', 'manual-switch', options);
   if (!state.queue.includes(id)) state.queue = visibleTracks().map((track) => track.id);
   if (track.artworkPath && !track.customArtwork && !track.artworkOptimized) {
-    const optimizedArtwork = await window.desktop.optimizeArtwork(track.artworkPath);
-    if (requestSerial !== trackPlayRequestSerial) return;
-    // A rejected or failed IPC request can return a structured error object.
-    // Never replace a previously usable artwork path with that non-path value.
-    if (typeof optimizedArtwork === 'string' && optimizedArtwork && optimizedArtwork !== track.artworkPath) track.artworkPath = optimizedArtwork;
+    // Resizing a large cover runs on the main process; playback must not wait for it.
     track.artworkOptimized = true;
+    const originalArtwork = track.artworkPath;
+    window.desktop.optimizeArtwork(originalArtwork).then((optimizedArtwork) => {
+      // A rejected or failed IPC request can return a structured error object.
+      // Never replace a previously usable artwork path with that non-path value.
+      if (!(typeof optimizedArtwork === 'string' && optimizedArtwork) || optimizedArtwork === originalArtwork || track.artworkPath !== originalArtwork) return;
+      track.artworkPath = optimizedArtwork;
+      persist();
+      if (currentTrack()?.id !== track.id) return;
+      const url = window.desktop.fileUrl(optimizedArtwork);
+      [$('#miniCover'), $('#coverArt'), $('#metadataArt')].filter(Boolean).forEach((cover) => { cover.style.backgroundImage = `url("${url}")`; cover.classList.add('has-image'); });
+      publishMediaSessionMetadata(track, url);
+      broadcastPlayerState();
+    }).catch(() => {});
   }
   if (!(await resumeAudioContext('Playback'))) {
     if (requestSerial !== trackPlayRequestSerial) return;
@@ -17324,6 +17393,7 @@ async function playTrack(id, options = {}) {
   confirmedOutputTransitionRuntime.note('source-loading', requestSerial, confirmedOutputUiSnapshot({ requestedId: id }));
   await issueSharedPlaybackCommand('source', { src: audio.src, trackId: track.id });
   if (requestSerial !== trackPlayRequestSerial) return;
+  beginTransitionFadeIn(options);
   try {
     await issueSharedPlaybackCommand('play', { trackId: track.id }, () => {
       if (requestSerial !== trackPlayRequestSerial) return undefined;
@@ -17660,6 +17730,8 @@ function syncQueuePlaybackState(options = {}) {
 const QUEUE_RENDER_STEP = 200;
 const QUEUE_RENDER_LEAD = 5;
 let queueRenderLimit = QUEUE_RENDER_STEP;
+let queueListStale = false;
+function flushQueueRender() { if (queueListStale) renderQueue(); }
 function renderQueue() {
   const queue = activeQueue();
   syncFlowShuffleQueue(queue);
@@ -17671,6 +17743,15 @@ function renderQueue() {
   syncQuestOutputModule();
   $('#queueSummary').textContent = `${queue.length} track${queue.length === 1 ? '' : 's'}`;
   $('#queueEmpty').classList.toggle('hidden', queue.length > 0);
+  // A closed drawer is rebuilt when it opens (flushQueueRender); building up to
+  // QUEUE_RENDER_STEP rows twice per track start, unseen, was pure main-thread cost.
+  const queueDrawer = $('#queueDrawer');
+  if (queueDrawer?.classList.contains('hidden') && !queueDrawer.classList.contains('surface-prewarm')) {
+    queueListStale = true;
+    updateFlowShuffleUi();
+    return;
+  }
+  queueListStale = false;
   const playingId = currentTrack()?.id;
   const playingIndex = playingId ? queue.findIndex((track) => track.id === playingId) : -1;
   const windowStart = Math.max(0, playingIndex - QUEUE_RENDER_LEAD);
@@ -18676,55 +18757,62 @@ function prepareSurfaceForOpen(selector) {
   return element;
 }
 
+// Resolves once the surface has been laid out (or was skipped), so callers can
+// prewarm one at a time instead of laying out every hidden panel in one burst.
 function prewarmSurface(selector, setup = null) {
-  if (prewarmedSurfaces.has(selector)) return;
+  if (prewarmedSurfaces.has(selector)) return Promise.resolve();
   prewarmedSurfaces.add(selector);
-  const attempt = () => {
-    scheduleIdleWork(async () => {
-      const element = $(selector);
-      if (!element) return;
-      if (!element.classList.contains('hidden')) return;
-      if (inputIsRecent()) {
-        setTimeout(attempt, SURFACE_PREWARM_RETRY_MS);
-        return;
-      }
-      const previousAria = element.getAttribute('aria-hidden');
-      element.dataset.prewarming = 'true';
-      element.classList.add('surface-prewarm');
-      element.classList.remove('hidden');
-      element.setAttribute('aria-hidden', 'true');
-      element.inert = true;
-      try {
-        if (typeof setup === 'function') setup();
-        void element.offsetHeight;
-        await waitForPaint();
-      } finally {
-        if (element.dataset.prewarming === 'true') {
-          element.classList.add('hidden');
-          element.classList.remove('surface-prewarm');
-          element.removeAttribute('data-prewarming');
-          element.inert = false;
-          if (previousAria === null) element.removeAttribute('aria-hidden');
-          else element.setAttribute('aria-hidden', previousAria);
+  return new Promise((resolve) => {
+    const attempt = () => {
+      scheduleIdleWork(async () => {
+        const element = $(selector);
+        if (!element || !element.classList.contains('hidden')) { resolve(); return; }
+        if (inputIsRecent()) {
+          setTimeout(attempt, SURFACE_PREWARM_RETRY_MS);
+          return;
         }
-      }
-    }, SURFACE_PREWARM_TIMEOUT_MS);
-  };
-  attempt();
+        const previousAria = element.getAttribute('aria-hidden');
+        element.dataset.prewarming = 'true';
+        element.classList.add('surface-prewarm');
+        element.classList.remove('hidden');
+        element.setAttribute('aria-hidden', 'true');
+        element.inert = true;
+        try {
+          if (typeof setup === 'function') setup();
+          void element.offsetHeight;
+          await waitForPaint();
+        } finally {
+          if (element.dataset.prewarming === 'true') {
+            element.classList.add('hidden');
+            element.classList.remove('surface-prewarm');
+            element.removeAttribute('data-prewarming');
+            element.inert = false;
+            if (previousAria === null) element.removeAttribute('aria-hidden');
+            else element.setAttribute('aria-hidden', previousAria);
+          }
+          resolve();
+        }
+      }, SURFACE_PREWARM_TIMEOUT_MS);
+    };
+    attempt();
+  });
 }
 
-function prewarmInteractiveSurfaces() {
+async function prewarmInteractiveSurfaces() {
   // Settings contains every built-in theme specimen. Forcing the whole hidden
   // drawer through layout/paint used to start all preview loops and could still
   // be running when the listener opened it. The final performance stylesheet
   // now virtualizes those cards, so settings is intentionally opened lazily.
-  prewarmSurface('#jamsOverlay', updateSharingUi);
-  prewarmSurface('#queueDrawer', renderQueue);
-  prewarmSurface('#migrationDrawer', renderMigrationReport);
-  prewarmSurface('#trackEditorOverlay');
-  prewarmSurface('#supportOwnOverlay');
-  prewarmSurface('#playlistPickerOverlay');
-  prewarmSurface('#playlistCreatorOverlay');
+  // One surface per idle slot, with a gap, so no frame budget is ever the sum.
+  await whenReadinessSettled();
+  const gap = () => wait(PREWARM_SURFACE_GAP_MS);
+  await prewarmSurface('#jamsOverlay', updateSharingUi); await gap();
+  await prewarmSurface('#queueDrawer', renderQueue); await gap();
+  await prewarmSurface('#migrationDrawer', renderMigrationReport); await gap();
+  await prewarmSurface('#trackEditorOverlay'); await gap();
+  await prewarmSurface('#supportOwnOverlay'); await gap();
+  await prewarmSurface('#playlistPickerOverlay'); await gap();
+  await prewarmSurface('#playlistCreatorOverlay');
 }
 
 function runStartupBackgroundTask(label, task, timeout = 1200) {
@@ -19208,6 +19296,7 @@ function openQueue(opener = document.activeElement) {
   if (queueDrawer?.classList.contains('hidden')) pushNavigationState();
   rememberNavigationOpener('queue', opener);
   queueDrawer?.classList.remove('hidden');
+  flushQueueRender();
   syncNavigationState();
   syncCoreNavigationDisclosureState();
   triggerThemeAction('queue', 'Play queue');
@@ -20196,12 +20285,12 @@ function setSystemsPageMode(mode) {
 }
 document.querySelectorAll('[data-page-mode-value]').forEach((button) => button.onclick = () => setSystemsPageMode(button.dataset.pageModeValue));
 syncSystemsPageMode();
-document.querySelectorAll('.preset').forEach((button) => button.onclick = () => {
+document.querySelectorAll('.preset[data-preset]').forEach((button) => button.onclick = () => {
   const presets = { reference: [0, 0, 0], small: [6, 1, 2], warm: [-2, 0, 1], bright: [1, 0, -4] }; const values = presets[button.dataset.preset];
   stopCalibrationPreview();
   state.systems[currentSystemId()] = normalizeTuning({ bass: values[0], presence: values[1], treble: values[2] });
   eqModes.system = 'simple';
-  document.querySelectorAll('.preset').forEach((item) => item.classList.remove('active')); button.classList.add('active'); persist(); syncEqModeControls(); syncEqControls(); applyEq(); updateDeviceDiagnostics(); renderDeviceProfileLibrary(); updateSystemTuningUi();
+  document.querySelectorAll('.preset[data-preset]').forEach((item) => item.classList.remove('active')); button.classList.add('active'); persist(); syncEqModeControls(); syncEqControls(); applyEq(); updateDeviceDiagnostics(); renderDeviceProfileLibrary(); updateSystemTuningUi();
 });
 $('#deviceProfileSelect').onchange = updateDeviceProfileDetails;
 $('#applyDeviceProfile').onclick = () => applyDeviceProfile();

@@ -33,5 +33,30 @@ body[data-theme="cut-sheet"] .mini-shell::after{content:"CUT / MINI";position:ab
 body[data-theme="cut-sheet"] .mini-art{position:relative;overflow:hidden}
 body[data-theme="cut-sheet"] .mini-copy small{text-transform:uppercase}
 body[data-theme="cut-sheet"] .mini-copy strong{text-transform:uppercase}
+body[data-theme="cut-sheet"] :is(.mini-shell,.mini-art,.mini-controls button,.window-actions button){
+  clip-path:none;
+}
 body[data-theme="cut-sheet"] .mini-controls button{color:#f1e6da}
+body[data-theme="cut-sheet"] .mini-controls .mini-play{
+  border-radius:50% !important;
+  clip-path:none !important;
+  display:grid !important;
+  place-items:center !important;
+  padding:0 !important;
+}
+body[data-theme="cut-sheet"] .mini-transport-icon{
+  width: clamp(14px, 3.2cqw, 20px) !important;
+  height: clamp(14px, 3.2cqw, 20px) !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+  mask-size:18px 18px;
+}
+body[data-theme="cut-sheet"] .mini-play .mini-transport-icon{
+  width: clamp(16px, 3.8cqw, 24px) !important;
+  height: clamp(16px, 3.8cqw, 24px) !important;
+  mask-size: contain !important;
+  -webkit-mask-size: contain !important;
+  margin: 0 auto !important;
+  mask-size:20px 20px;
+}
 body[data-theme="cut-sheet"] .mini-glow{background:linear-gradient(90deg,transparent,#c2734f,transparent)}

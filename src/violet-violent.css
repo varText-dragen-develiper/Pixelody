@@ -46,7 +46,7 @@ body[data-theme="violet-violent"] .library-rail{padding:37px 11px 12px;overflow:
 body[data-theme="violet-violent"] .library-rail::before{content:"LOCAL CAPSULE RACK / ON DEVICE";position:absolute;left:14px;right:14px;top:12px;padding-bottom:8px;border-bottom:1px solid #6b517777;color:#cb9fe1;font:700 7px/1 Consolas,monospace;letter-spacing:.17em}
 body[data-theme="violet-violent"] .rail-heading{position:relative;z-index:2;margin-bottom:10px;padding:9px;border:1px solid #cbbbd355;background:#ffffff08;box-shadow:inset 3px 0 #ffffff12,3px 4px #0007}
 body[data-theme="violet-violent"] .rail-heading strong{font:800 12px/1 Consolas,monospace;letter-spacing:.04em;text-transform:uppercase}
-body[data-theme="violet-violent"] :is(.create-button,.chip,.rail-import button){border:1px solid #745683;border-radius:2px;background:linear-gradient(120deg,#ffffff0d,#ca54f40b),#0e0716;color:#eee9f4;box-shadow:inset 1px 1px #ffffff0d,inset -1px -1px #0008}
+body[data-theme="violet-violent"] :is(.create-button,.chip,.rail-import button){border:1px solid #745683;border-radius:2px;background:linear-gradient(120deg,#ffffff0d,#ca54f40b),#0e0716;color:#eee9f4;box-shadow:inset 1px 1px #ffffff0d,inset -1px -1px #0008;clip-path:none}
 body[data-theme="violet-violent"] .create-button:hover,body[data-theme="violet-violent"] .rail-import button:hover{border-color:#d096ea;background:#32153f}
 body[data-theme="violet-violent"] .library-filters{display:grid;grid-template-columns:1fr 1fr;gap:4px}
 body[data-theme="violet-violent"] .chip{min-height:27px;font:700 7px Consolas,monospace;letter-spacing:.1em;text-transform:uppercase}
@@ -111,8 +111,8 @@ body[data-theme="violet-violent"] :is(.ghost-record-cabinet,.quest-cabinet-stack
 body[data-theme="violet-violent"] .collection-body{min-height:570px;padding:20px 28px 92px;background:linear-gradient(180deg,#150a1d 0,#09050f 150px,#050209 100%);border-top:6px solid #050209;box-shadow:inset 0 1px #ffffff18}
 body[data-theme="violet-violent"] .collection-actions{position:relative;height:75px;padding:9px 12px;border:1px solid #74548366;background:linear-gradient(110deg,#ffffff09,#ca54f40c 50%,#50eee307);box-shadow:inset 3px 3px #ffffff06,5px 7px #0006}
 body[data-theme="violet-violent"] .collection-actions::after{content:"CONTROL FILM / SELECT + CONFIRM";position:absolute;right:11px;bottom:5px;color:#8e7b98;font:700 6px Consolas,monospace;letter-spacing:.16em}
-body[data-theme="violet-violent"] :is(.hero-play,.subtle-action,.filter,.sort-select,.icon-action){border:1px solid #735681;border-radius:2px;background:linear-gradient(120deg,#ffffff0d,#9c38c30a),#0b0611;color:#efe9f2;box-shadow:inset 1px 1px #ffffff0a,2px 3px #0007}
-body[data-theme="violet-violent"] .hero-play{width:50px;height:50px;border-color:#e3a7fb;background:linear-gradient(135deg,#de78ff,#9b2fbd);color:#09040e;box-shadow:inset 2px 2px #ffffff44,inset -3px -3px #601576,4px 5px #0009}
+body[data-theme="violet-violent"] :is(.hero-play,.subtle-action,.filter,.sort-select,.icon-action){border:1px solid #735681;border-radius:2px;background:linear-gradient(120deg,#ffffff0d,#9c38c30a),#0b0611;color:#efe9f2;box-shadow:inset 1px 1px #ffffff0a,2px 3px #0007;clip-path:none}
+body[data-theme="violet-violent"] .hero-play{width:50px;height:50px;border-color:#e3a7fb;background:linear-gradient(135deg,#de78ff,#9b2fbd);color:#09040e;box-shadow:inset 2px 2px #ffffff44,inset -3px -3px #601576,4px 5px #0009;display:grid!important;place-items:center!important;padding:0!important;clip-path:none!important}
 body[data-theme="violet-violent"] .filter.active{border-color:#d98ffc;background:#4d1d5e;color:#fff;box-shadow:inset 3px 0 #dd8cff}
 body[data-theme="violet-violent"] .drop-zone{position:relative;overflow:hidden;border:1px solid #997aaa;border-radius:2px;background:linear-gradient(135deg,#ffffff0b,#ca54f414 40%,#50eee30c);box-shadow:inset 0 0 0 8px #05020977,8px 10px #0006}
 body[data-theme="violet-violent"] .drop-zone::before{content:"";position:absolute;inset:17px;border:1px dashed #cc9ee066;background:repeating-linear-gradient(90deg,transparent 0 31px,#ffffff08 32px)}
@@ -194,7 +194,7 @@ body[data-theme="violet-violent"] .settings-drawer :is(.theme-option.active,.pal
 body[data-theme="violet-violent"] .settings-drawer .theme-option b{font-family:Consolas,monospace;font-size:8px;letter-spacing:.04em;text-transform:uppercase}
 body[data-theme="violet-violent"] .settings-drawer .theme-option small{color:#9d8aa7;font:7px/1.35 Consolas,monospace}
 body[data-theme="violet-violent"] .settings-drawer .reset-appearance{bottom:-24px;border:1px solid #815e8f;background:#0a0510ed;color:#d4c5db;box-shadow:0 -8px 20px #050209}
-body[data-theme="violet-violent"] :is(select,input,textarea,.quiet-button,.preset,.open-systems){border-color:#6f527e!important;border-radius:2px!important;background:#100719!important;color:#f0eaf3!important;box-shadow:inset 1px 1px #ffffff09!important}
+body[data-theme="violet-violent"] :is(select,input,textarea,.quiet-button,.preset,.open-systems){border-color:#6f527e!important;border-radius:2px!important;background:#100719!important;color:#f0eaf3!important;box-shadow:inset 1px 1px #ffffff09!important;clip-path:none!important}
 body[data-theme="violet-violent"] input[type="range"]{accent-color:#ca54f4}
 body[data-theme="violet-violent"] .preset.active{border-color:#d98afb!important;background:#371342!important;color:#fff!important;box-shadow:inset 3px 0 #d98afb!important}
 
@@ -215,9 +215,10 @@ body[data-theme="violet-violent"] .violet-player-hud>i{height:1px;background:lin
 body[data-theme="violet-violent"] .violet-player-hud>i:last-of-type{background:linear-gradient(90deg,#ffffff77,#50eee3)}
 body[data-theme="violet-violent"][data-violet-state="live"] .violet-player-hud span:nth-of-type(2) b,body[data-theme="violet-violent"][data-violet-state="live"] .violet-player-hud span:nth-of-type(3) b{color:#50eee3;text-shadow:0 0 8px #50eee366}
 body[data-theme="violet-violent"] .transport{height:75px;padding:4px 12px;border:1px solid #74568166;background:#08040dcc;box-shadow:inset 2px 2px #ffffff06}
-body[data-theme="violet-violent"] .transport-buttons button{border:1px solid transparent;border-radius:2px;color:#d8ccdd}
+body[data-theme="violet-violent"] .transport-buttons button{border:1px solid transparent;border-radius:2px;color:#d8ccdd;clip-path:none}
 body[data-theme="violet-violent"] .transport-buttons button:hover{border-color:#896799;background:#1b0b25;color:#fff}
-body[data-theme="violet-violent"] .transport-buttons .play-button{width:43px;height:43px;border:1px solid #e2a0ff;border-radius:2px;background:linear-gradient(135deg,#db7bff,#9427b3);color:#07030b;box-shadow:inset 2px 2px #ffffff44,inset -3px -3px #5e126f,4px 5px #0009;transform:none}
+body[data-theme="violet-violent"] .transport-buttons .play-button{width:43px;height:43px;border:1px solid #e2a0ff;border-radius:2px;background:linear-gradient(135deg,#db7bff,#9427b3);color:#07030b;box-shadow:inset 2px 2px #ffffff44,inset -3px -3px #5e126f,4px 5px #0009;transform:none;display:grid!important;place-items:center!important;padding:0!important;clip-path:none!important}
+body[data-theme="violet-violent"] :is(.hero-play .pixel-icon,.transport-buttons .play-button .transport-icon){margin:0 auto!important;display:block!important}
 body[data-theme="violet-violent"].is-playing .transport-buttons .play-button{border-color:#aafff9;background:linear-gradient(135deg,#70fff4,#25bdb6);box-shadow:inset 2px 2px #ffffff55,inset -3px -3px #116f6b,4px 5px #0009,0 0 18px #50eee344}
 body[data-theme="violet-violent"] .timeline{margin-top:3px}
 body[data-theme="violet-violent"] .timeline input{accent-color:#ca54f4}

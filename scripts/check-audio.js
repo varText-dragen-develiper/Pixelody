@@ -35,6 +35,8 @@ requireText(audioDomain, 'context.createMediaElementSource(mediaElement)', 'prim
 requireText(audioDomain, 'limiter.connect(context.destination)', 'primary playback graph');
 requireText(renderer, 'PRIMARY_MEDIA_ELEMENT_DIRECT_OUTPUT', 'primary playback audibility guard');
 requireText(renderer, 'const PRIMARY_MEDIA_ELEMENT_DIRECT_OUTPUT = false;', 'equalizer needs the Web Audio graph on the primary path');
+requireText(renderer, "document.querySelectorAll('.preset[data-preset]')", 'EQ presets must not capture the transition preset buttons');
+requireText(renderer, 'beginTransitionFadeIn(options)', 'automatic advance fades the next track in');
 requireText(renderer, 'await audio.setSinkId(targetId)', 'output switching');
 requireText(renderer, 'await audio.setSinkId(outputState.activeId || \'\')', 'primary playback routing');
 requireText(renderer, 'await state.context.setSinkId(targetId)', 'processed sink routing');

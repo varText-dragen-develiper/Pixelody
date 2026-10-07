@@ -14,6 +14,7 @@ body[data-theme="lo-fi-cafe"] {
 
 body[data-theme="lo-fi-cafe"] .mini-shell {
   overflow: hidden;
+  clip-path: none;
   border: 1px solid rgba(236,223,195,.14);
   border-radius: 11px;
   color: var(--cafe-paper);
@@ -46,14 +47,12 @@ body[data-theme="lo-fi-cafe"] .mini-shell::before {
 }
 
 body[data-theme="lo-fi-cafe"] .mini-shell::after {
-  top: 8px;
-  right: 10px;
-  width: 44px;
-  height: 44px;
+  top: -12px;
+  right: -12px;
+  width: 120px;
+  height: 120px;
   border-radius: 999px;
-  background:
-    radial-gradient(circle, rgba(225,183,117,.5) 0 12%, transparent 13%),
-    radial-gradient(circle, transparent 0 48%, rgba(225,183,117,.2) 49% 54%, transparent 55%);
+  background: radial-gradient(circle at 60% 40%, rgba(225,183,117,.32) 0 16%, rgba(225,183,117,.12) 36%, transparent 68%);
   opacity: .78;
 }
 
@@ -72,7 +71,8 @@ body[data-theme="lo-fi-cafe"] .mini-time {
   color: rgba(236,223,195,.66);
 }
 
-body[data-theme="lo-fi-cafe"] :is(.mini-cover,.mini-art,.mini-play) {
+body[data-theme="lo-fi-cafe"] :is(.mini-cover,.mini-art) {
+  clip-path: none;
   border-radius: 10px;
   border-color: rgba(196,138,74,.3);
   color: #211812;
@@ -96,10 +96,45 @@ body[data-theme="lo-fi-cafe"] .mini-progress i {
 }
 
 body[data-theme="lo-fi-cafe"] :is(.mini-button,.mini-close,.mini-controls button,.window-actions button) {
+  clip-path: none;
   border-radius: 999px;
   color: rgba(236,223,195,.8);
   background: rgba(236,223,195,.075);
   border-color: rgba(236,223,195,.12);
+}
+
+body[data-theme="lo-fi-cafe"] .mini-transport-icon {
+  width: clamp(14px, 3.2cqw, 20px);
+  height: clamp(14px, 3.2cqw, 20px);
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-size: 18px 18px;
+}
+
+body[data-theme="lo-fi-cafe"] .mini-controls .mini-play {
+  border-radius: 999px !important;
+  clip-path: none !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+  border: 1px solid rgba(225,183,117,.5);
+  color: #211812;
+  background:
+    radial-gradient(circle at 50% 50%, #100b08 0 17%, #e1b775 18% 20%, transparent 21%),
+    repeating-radial-gradient(circle at 50% 50%, rgba(16,11,8,.66) 0 2px, transparent 2px 7px),
+    linear-gradient(145deg, var(--cafe-honey), var(--cafe-moss));
+  box-shadow:
+    inset 0 1px rgba(255,239,208,.24),
+    0 10px 24px rgba(7,5,4,.34);
+}
+
+body[data-theme="lo-fi-cafe"] .mini-controls .mini-play .mini-transport-icon {
+  width: clamp(16px, 3.8cqw, 24px);
+  height: clamp(16px, 3.8cqw, 24px);
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  margin: 0 auto;
+  mask-size: 20px 20px;
 }
 
 body[data-theme="lo-fi-cafe"] :is(.mini-button,.mini-close,.mini-controls button,.window-actions button):hover {
