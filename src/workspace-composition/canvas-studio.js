@@ -35,6 +35,10 @@
     let launcher = null;
     let legacyLauncher = null;
     let addLauncher = null;
+    let chrome = null;
+    let chromePortKey = null;
+    let chromeObserver = null;
+    let chromeDrag = null;
     let serial = 1;
     let selectedId = '';
     let lastGraph = null;
@@ -3209,6 +3213,149 @@
       return rail;
     }
 
+    // ---- The Canvas tag -------------------------------------------------
+    //
+    // Edit canvas and Return to Studio live in one small module the person can
+    // pick up and put anywhere. Every theme gives it its own form and its own
+    // resting place, but all of them carry the same yellow-and-black caution
+    // tape, so it reads as "this is how I edit the canvas" in any theme. The
+    // position is kept per theme as a fraction of the window, so it survives
+    // resizing; Home on the grip (or a double click) sends it back.
+    const CHROME_STORAGE_KEY = 'pixelody.canvasTag.v1';
+    const CHROME_DEFAULT = Object.freeze({ form: 'strip', x: 0.01, y: 0.74 });
+    // key: [form, x, y] -- x and y are fractions of the free window area.
+    const CHROME_PLACEMENT = Object.freeze({
+      'dev-lab': ['plate', 0.01, 0.72], orbital: ['plate', 0.99, 0.66], bulkhead: ['plate', 0.01, 0.5],
+      'graphite-loadout': ['plate', 0.99, 0.74], 'modular-signal': ['plate', 0.5, 0.72], 'acid-transit': ['plate', 0.02, 0.76],
+      'abyssal-press': ['plate', 0.98, 0.66],
+      crystal: ['pill', 0.5, 0.7], monument: ['pill', 0.98, 0.7], 'cosmic-cinema': ['pill', 0.02, 0.74],
+      'frosted-void': ['pill', 0.98, 0.74], 'obsidian-glass': ['pill', 0.5, 0.74], 'creator-layer': ['pill', 0.99, 0.6],
+      'analog-dossier': ['ticket', 0.01, 0.68], 'sakura-bloom': ['ticket', 0.98, 0.72], 'lo-fi-cafe': ['ticket', 0.02, 0.66],
+      'cut-sheet': ['ticket', 0.5, 0.7], 'harmonic-registry': ['ticket', 0.99, 0.76],
+      'cartridge-quest': ['cart', 0.01, 0.72], 'meme-machine': ['cart', 0.98, 0.7], 'ascii-social': ['cart', 0.02, 0.74],
+      obsession: ['slip', 0.5, 0.72], 'neon-burst': ['slip', 0.02, 0.7], 'dead-signal': ['slip', 0.99, 0.7],
+      'poster-pop': ['slip', 0.5, 0.7], 'ghost-index': ['slip', 0.02, 0.72], 'violet-violent': ['slip', 0.98, 0.74],
+    });
+
+    function chromeStorageRead() {
+      try {
+        const parsed = JSON.parse(documentObject.defaultView?.localStorage?.getItem(CHROME_STORAGE_KEY) || '{}');
+        return parsed && typeof parsed === 'object' ? parsed : {};
+      } catch { return {}; }
+    }
+
+    function chromeStorageWrite(key, position) {
+      try {
+        const all = chromeStorageRead();
+        if (position) all[key] = position; else delete all[key];
+        documentObject.defaultView?.localStorage?.setItem(CHROME_STORAGE_KEY, JSON.stringify(all));
+      } catch { /* a blocked store only costs the remembered position */ }
+    }
+
+    function chromeFraction(value, fallback) {
+      return Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : fallback;
+    }
+
+    function chromeDefaults(portKey) {
+      const entry = CHROME_PLACEMENT[portKey];
+      return entry ? { form: entry[0], x: entry[1], y: entry[2] } : CHROME_DEFAULT;
+    }
+
+    function chromeSpace() {
+      const view = documentObject.defaultView;
+      const box = chrome.getBoundingClientRect();
+      return { width: Math.max(0, (view?.innerWidth || 0) - box.width), height: Math.max(0, (view?.innerHeight || 0) - box.height) };
+    }
+
+    function paintChrome(x, y) {
+      const space = chromeSpace();
+      chrome.style.left = `${Math.round(x * space.width)}px`;
+      chrome.style.top = `${Math.round(y * space.height)}px`;
+    }
+
+    function placeChrome() {
+      if (!chrome) return;
+      const portKey = documentObject.body.dataset.canvasThemePort || '';
+      const defaults = chromeDefaults(portKey);
+      const saved = chromeStorageRead()[portKey || 'studio'] || {};
+      chrome.dataset.cwTagForm = defaults.form;
+      chrome.dataset.cwTagMoved = saved.x === undefined ? 'false' : 'true';
+      chromePortKey = portKey;
+      paintChrome(chromeFraction(saved.x, defaults.x), chromeFraction(saved.y, defaults.y));
+    }
+
+    function currentChromeFraction() {
+      const space = chromeSpace();
+      const box = chrome.getBoundingClientRect();
+      return { x: space.width ? Math.min(1, Math.max(0, box.left / space.width)) : 0, y: space.height ? Math.min(1, Math.max(0, box.top / space.height)) : 0 };
+    }
+
+    function commitChrome() {
+      const fraction = currentChromeFraction();
+      chromeStorageWrite(chromePortKey || 'studio', { x: +fraction.x.toFixed(4), y: +fraction.y.toFixed(4) });
+      chrome.dataset.cwTagMoved = 'true';
+    }
+
+    function resetChrome() {
+      chromeStorageWrite(chromePortKey || 'studio', null);
+      placeChrome();
+    }
+
+    function nudgeChrome(dx, dy) {
+      const box = chrome.getBoundingClientRect();
+      const space = chromeSpace();
+      const left = Math.min(space.width, Math.max(0, box.left + dx));
+      const top = Math.min(space.height, Math.max(0, box.top + dy));
+      paintChrome(space.width ? left / space.width : 0, space.height ? top / space.height : 0);
+      commitChrome();
+    }
+
+    function buildChrome() {
+      chrome = element('div', 'cw-studio-chrome');
+      chrome.setAttribute('role', 'group');
+      chrome.setAttribute('aria-label', 'Canvas controls');
+      const grip = element('button', 'cw-studio-tag-grip');
+      grip.type = 'button';
+      grip.setAttribute('aria-label', 'Move the canvas controls. Arrow keys nudge, Home puts them back.');
+      grip.title = 'Drag to move. Double-click to put back.';
+      const tape = element('span', 'cw-studio-tape');
+      tape.setAttribute('aria-hidden', 'true');
+      grip.append(tape, element('span', 'cw-studio-tag-name', 'Canvas'));
+      grip.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return;
+        const box = chrome.getBoundingClientRect();
+        chromeDrag = { id: event.pointerId, dx: event.clientX - box.left, dy: event.clientY - box.top };
+        grip.setPointerCapture?.(event.pointerId);
+        chrome.dataset.cwTagDragging = 'true';
+        event.preventDefault();
+        event.stopPropagation();
+      });
+      grip.addEventListener('pointermove', (event) => {
+        if (!chromeDrag || event.pointerId !== chromeDrag.id) return;
+        const space = chromeSpace();
+        const left = Math.min(space.width, Math.max(0, event.clientX - chromeDrag.dx));
+        const top = Math.min(space.height, Math.max(0, event.clientY - chromeDrag.dy));
+        paintChrome(space.width ? left / space.width : 0, space.height ? top / space.height : 0);
+      });
+      const endDrag = (event) => {
+        if (!chromeDrag || event.pointerId !== chromeDrag.id) return;
+        chromeDrag = null;
+        delete chrome.dataset.cwTagDragging;
+        commitChrome();
+      };
+      grip.addEventListener('pointerup', endDrag);
+      grip.addEventListener('pointercancel', endDrag);
+      grip.addEventListener('dblclick', resetChrome);
+      grip.addEventListener('keydown', (event) => {
+        const step = event.shiftKey ? 64 : 16;
+        const moves = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] };
+        if (moves[event.key]) { event.preventDefault(); nudgeChrome(...moves[event.key]); }
+        else if (event.key === 'Home') { event.preventDefault(); resetChrome(); }
+      });
+      chrome.append(grip, launcher, legacyLauncher);
+      return chrome;
+    }
+
     function buildLauncher() {
       launcher = button('Edit canvas', 'Enter Composition Mode', () => bridge.enter(), 'cw-studio-launcher');
       launcher.setAttribute('aria-label', 'Edit this canvas');
@@ -3609,6 +3756,10 @@
       rail.hidden = !editing;
       if (launcher) launcher.hidden = editing;
       if (legacyLauncher) legacyLauncher.hidden = editing;
+      if (chrome) {
+        chrome.hidden = editing;
+        if (!editing) placeChrome();
+      }
       if (addLauncher) addLauncher.hidden = !editing;
       documentObject.body.dataset.cwStudio = editing ? 'open' : 'closed';
       applyCanvasZoom();
@@ -3916,10 +4067,13 @@
       buildRail();
       buildLauncher();
       (host || documentObject.body).append(rail, addLauncher);
-      const chrome = documentObject.createElement('div');
-      chrome.className = 'cw-studio-chrome';
-      chrome.append(launcher, legacyLauncher);
-      (documentObject.querySelector('.topbar') || host || documentObject.body).append(chrome);
+      (host || documentObject.body).append(buildChrome());
+      const View = documentObject.defaultView;
+      if (View?.MutationObserver) {
+        chromeObserver = new View.MutationObserver(placeChrome);
+        chromeObserver.observe(documentObject.body, { attributes: true, attributeFilter: ['data-canvas-theme-port'] });
+      }
+      View?.addEventListener?.('resize', placeChrome);
       bindCanvasSelection();
       render();
       return rail;
@@ -3960,7 +4114,12 @@
       closeModuleContextMenu();
       finishPointer();
       rail?.remove();
-      if (launcher?.parentElement?.classList.contains('cw-studio-chrome')) launcher.parentElement.remove();
+      chromeObserver?.disconnect();
+      chromeObserver = null;
+      documentObject.defaultView?.removeEventListener?.('resize', placeChrome);
+      chromeDrag = null;
+      chrome?.remove();
+      chrome = null;
       launcher?.remove();
       legacyLauncher?.remove();
       addLauncher?.remove();

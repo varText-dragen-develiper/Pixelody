@@ -1,0 +1,77 @@
+[
+  {
+    "key": "theme_studio",
+    "hex": "#91a7ff",
+    "alias": ".LauncherThemeStudio"
+  },
+  {
+    "key": "theme_quest",
+    "hex": "#7b68c9",
+    "alias": ".LauncherThemeQuest"
+  },
+  {
+    "key": "theme_glass",
+    "hex": "#9fdcff",
+    "alias": ".LauncherThemeGlass"
+  },
+  {
+    "key": "theme_cafe",
+    "hex": "#c48a4a",
+    "alias": ".LauncherThemeCafe"
+  },
+  {
+    "key": "theme_terminal",
+    "hex": "#f6c945",
+    "alias": ".LauncherThemeTerminal"
+  },
+  {
+    "key": "theme_obsession",
+    "hex": "#ff5865",
+    "alias": ".LauncherThemeObsession"
+  },
+  {
+    "key": "theme_gold",
+    "hex": "#d8b66a",
+    "alias": ".LauncherThemeGold"
+  },
+  {
+    "key": "theme_aurora",
+    "hex": "#65d9d1",
+    "alias": ".LauncherThemeAurora"
+  },
+  {
+    "key": "theme_ember",
+    "hex": "#ff9860",
+    "alias": ".LauncherThemeEmber"
+  },
+  {
+    "key": "theme_violet",
+    "hex": "#c49bff",
+    "alias": ".LauncherThemeViolet"
+  },
+  {
+    "key": "theme_mono",
+    "hex": "#e4e2dc",
+    "alias": ".LauncherThemeMono"
+  },
+  {
+    "key": "theme_cobalt",
+    "hex": "#64a8ff",
+    "alias": ".LauncherThemeCobalt"
+  },
+  {
+    "key": "theme_sakura",
+    "hex": "#ff9fc9",
+    "alias": ".LauncherThemeSakura"
+  },
+  {
+    "key": "theme_cafenight",
+    "hex": "#c58a4a",
+    "alias": ".LauncherThemeCafeNight"
+  },
+  {
+    "key": "theme_verdant",
+    "hex": "#79df8b",
+    "alias": ".LauncherThemeVerdant"
+  }
+]

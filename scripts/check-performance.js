@@ -24,7 +24,7 @@ function functionSource(name) {
 {
   const code = functionSource('persist').split('\n').filter((line) => !/^\s*\/\//.test(line)).join('\n');
   assert.ok(!/localStorage\.|setLocalStorageItem\(|JSON\.stringify/.test(code), 'persist() must not serialize the library synchronously; the durable store is authoritative');
-  assert.ok(code.includes("scheduleDurableStatePersist(0, 'core-state-persist')"), 'persist() must always schedule the durable save');
+  assert.ok(code.includes("scheduleDurableStatePersist(DURABLE_PERSIST_AFTER_RESPONSE_MS, 'core-state-persist')"), 'persist() must always schedule the durable save, after the frames that answer the click');
 }
 
 {
@@ -49,6 +49,12 @@ assert.ok(!functionSource('broadcastPlayerState').includes('getComputedStyle'), 
   assert.ok(update.includes('requestAnimationFrame') && !/^\s*return diagnosticsController\.render\(\)/m.test(update), 'updateDiagnostics() must coalesce renders to one per frame');
   assert.ok(/LOCAL_STORAGE_BYTES_TTL_MS/.test(functionSource('localStorageBytes')), 'localStorageBytes() must cache the full localStorage scan');
 }
+
+assert.ok(/queueDrawer\?\.classList\.contains\('hidden'\)[\s\S]{0,120}queueListStale = true;[\s\S]{0,80}return;/.test(functionSource('renderQueue')), 'renderQueue() must not rebuild up to 200 rows twice per track start while the drawer is closed; openQueue() flushes it');
+assert.ok(/flushQueueRender\(\);/.test(functionSource('openQueue')), 'openQueue() must render a stale queue before showing it');
+
+assert.ok(/function drawCurve\([^\n]*\{\n  drawCurveArgs = \[trackEq, systemEq\];\n  if \(drawCurveFrame\) return;\n  drawCurveFrame = requestAnimationFrame/.test(renderer), 'drawCurve() must defer to one frame; reading layout and style inside a track-change handler forces a layout the frame repeats (~22 ms per skip)');
+assert.ok(/persistSignalJournalSoon\(\);\s*return event;/.test(functionSource('recordSignalEvent')), 'recordSignalEvent() runs on every play and skip and must not write the journal and refresh the dashboard synchronously');
 
 for (const name of ['syncQuestMiniMap', 'syncQuestCollectionPanel']) {
   assert.ok(/\{\s*if \(!cartridgeQuestExperienceActive\(\)\) return;/.test(functionSource(name)), `${name}() runs on every timeupdate and must skip work while Cartridge Quest is hidden`);

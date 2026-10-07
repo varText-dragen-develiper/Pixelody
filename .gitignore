@@ -30,3 +30,6 @@ Thumbs.db
 
 # Dev-only renderer console mirror (src/main.js, isDevelopment-gated)
 Pixelody-console-log.txt
+tools/shop-entitlement/config.json
+
+# Generated art-library pack assets (~1.1GB); never commit. Manifests stay tracked.

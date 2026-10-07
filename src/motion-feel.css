@@ -1,0 +1,132 @@
+/* Motion feel.
+ *
+ * One vocabulary for how Pixelody responds, so every surface moves the same
+ * way and responses start on the very next frame:
+ *
+ *   press     snaps in at once (55 ms), so a click is never waiting on a curve
+ *   hover     rises quickly and lands with a small overshoot (a spring)
+ *   release   settles slowly -- the "inertia" -- so the control reads as
+ *             having weight instead of toggling
+ *   panels    appear immediately (opacity is full by 35% of the travel) and
+ *             then glide the rest of the way on an expo-out curve; their
+ *             contents follow in a short cascade
+ *   rows      arrive in a tight, capped cascade; only rows that can be seen
+ *             animate
+ *
+ * Entrances animate transform and opacity only, which the compositor can run
+ * without layout or paint, so a busy main thread does not stall a panel that
+ * is already moving.
+ *
+ * Scope: loaded after settings.css / library-features.css, before the themes,
+ * so a theme's own rule (higher specificity) still wins. Off motion, reduced
+ * motion and the "Hover and press motion" switch keep their existing,
+ * more specific "no transition" rules; this file adds none of its own for them
+ * and only applies when the OS has not asked for reduced motion.
+ */
+:root {
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-spring: cubic-bezier(.34, 1.42, .64, 1);
+  --motion-press: 55ms;
+  --motion-hover: 150ms;
+  --motion-release: 260ms;
+  --motion-panel: 340ms;
+  --motion-content: 280ms;
+  --motion-view: 240ms;
+  --motion-row: 220ms;
+  --panel-travel: 48px;
+}
+/* Calm keeps the same timing but drops the overshoot and shortens the travel. */
+body[data-motion="calm"] {
+  --ease-spring: var(--ease-out);
+  --motion-panel: 280ms;
+  --panel-travel: 28px;
+}
+/* While a track plays on a slow machine, panels still arrive; they just skip the cascade. */
+body[data-performance="conserve"] {
+  --motion-panel: 220ms;
+  --motion-content: 1ms;
+}
+
+@keyframes drawer-in {
+  from { opacity: 0; transform: translate3d(var(--panel-travel), 0, 0); }
+  35% { opacity: 1; }
+  to { opacity: 1; transform: none; }
+}
+@keyframes jam-drawer-in {
+  from { opacity: 0; transform: translate3d(calc(var(--panel-travel) * -1), 0, 0); }
+  35% { opacity: 1; }
+  to { opacity: 1; transform: none; }
+}
+@keyframes view-enter {
+  from { opacity: 0; transform: translate3d(0, 6px, 0); }
+  40% { opacity: 1; }
+  to { opacity: 1; transform: none; }
+}
+@keyframes row-arrive {
+  from { opacity: 0; transform: translate3d(0, 10px, 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes content-arrive {
+  from { opacity: 0; transform: translate3d(0, 8px, 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Panels. */
+  .settings-drawer,
+  .queue-drawer,
+  .migration-drawer {
+    animation: drawer-in var(--motion-panel) var(--ease-out) backwards;
+  }
+  .jams-drawer {
+    animation: jam-drawer-in var(--motion-panel) var(--ease-out) backwards;
+  }
+  .settings-backdrop,
+  .jams-backdrop {
+    animation: backdrop-in 160ms ease-out backwards;
+  }
+  /* The first things you read arrive just behind the panel edge. */
+  .settings-drawer > .settings-heading,
+  .jams-drawer > .jams-heading,
+  .queue-drawer > .queue-heading,
+  .migration-drawer > .migration-heading { animation: content-arrive var(--motion-content) var(--ease-out) 40ms backwards; }
+  .settings-drawer > .settings-intro,
+  .queue-drawer > .queue-summary { animation: content-arrive var(--motion-content) var(--ease-out) 70ms backwards; }
+  .settings-drawer > .settings-nav { animation: content-arrive var(--motion-content) var(--ease-out) 100ms backwards; }
+
+  /* Views and collections. */
+  .view-enter { animation: view-enter var(--motion-view) var(--ease-out) backwards; }
+  #trackRows.rows-arriving .track-row:not(.track-header) {
+    animation: row-arrive var(--motion-row) var(--ease-out) backwards;
+    animation-delay: min(calc(var(--row-index, 0) * 16ms), 112ms);
+  }
+  /* Rows past the first screenful are off screen while the cascade plays. */
+  #trackRows.rows-arriving .track-row:not(.track-header):nth-child(n + 17) { animation: none; }
+
+  /* Controls: quick in, weighted out. */
+  button:not(:disabled) {
+    transition: transform var(--motion-release) var(--ease-out), filter var(--motion-release) ease-out;
+  }
+  button:not(:disabled):hover {
+    transition: transform var(--motion-hover) var(--ease-spring), filter var(--motion-hover) ease-out;
+  }
+  button:not(:disabled):not(.dragging):active {
+    transition: transform var(--motion-press) ease-out, filter var(--motion-press) ease-out;
+  }
+  .track-row:not(.track-header) {
+    transition: transform var(--motion-release) var(--ease-out), background-color 170ms ease, border-color 170ms ease, box-shadow 170ms ease, filter var(--motion-hover) ease-out;
+  }
+  .track-row:not(.track-header):hover {
+    transition: transform var(--motion-hover) var(--ease-out), background-color 170ms ease, border-color 170ms ease, box-shadow 170ms ease, filter var(--motion-hover) ease-out;
+  }
+  .track-row:not(.track-header):active {
+    transition: transform var(--motion-press) ease-out, background-color 170ms ease, border-color 170ms ease, box-shadow 170ms ease, filter var(--motion-press) ease-out;
+  }
+}
+
+/* A slow machine keeps the press and hover response, and drops the cascade. */
+body[data-performance="conserve"] #trackRows.rows-arriving .track-row:not(.track-header) { animation: none; }

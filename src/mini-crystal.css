@@ -14,6 +14,7 @@ body[data-theme="crystal"] .mini-shell{
   position:relative;
   overflow:hidden;
   contain:paint;
+  clip-path:none;
   border-color:rgba(167,239,255,.42);
   border-radius:20px;
   background:
@@ -26,19 +27,22 @@ body[data-theme="crystal"] .mini-shell{
 body[data-theme="crystal"] .mini-shell::before{
   content:"";
   position:absolute;
-  top:-34px;
-  right:-78px;
-  width:280px;
-  height:150px;
+  top:-24px;
+  right:-40px;
+  width:260px;
+  height:140px;
   pointer-events:none;
   background:var(--mini-crystal-caustics) center/cover no-repeat;
   opacity:.18;
   mix-blend-mode:screen;
+  -webkit-mask-image:radial-gradient(ellipse at 60% 40%,#000 45%,transparent 80%);
+  mask-image:radial-gradient(ellipse at 60% 40%,#000 45%,transparent 80%);
 }
 body[data-theme="crystal"] .mini-art{
   position:relative;
   isolation:isolate;
   overflow:hidden;
+  clip-path:none;
   border-color:rgba(255,255,255,.32);
   border-radius:15px;
   background-image:linear-gradient(135deg,rgba(255,255,255,.18),rgba(140,236,255,.12),rgba(213,199,255,.1));
@@ -68,15 +72,37 @@ body[data-theme="crystal"] .mini-progress i{
 }
 body[data-theme="crystal"] .mini-controls button,
 body[data-theme="crystal"] .window-actions button{
+  clip-path:none;
+  border-radius:10px;
   color:#d9f7ff;
+}
+body[data-theme="crystal"] .mini-transport-icon{
+  width: clamp(14px, 3.2cqw, 20px);
+  height: clamp(14px, 3.2cqw, 20px);
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-size:18px 18px;
 }
 body[data-theme="crystal"] .mini-controls .mini-play{
   border-color:rgba(167,239,255,.58);
+  border-radius:50%!important;
+  clip-path:none!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:0!important;
   color:#071022;
   background:
     var(--mini-crystal-lens) center/100% 100% no-repeat,
     radial-gradient(circle at 36% 24%,#ffffff 0 8%,#8cecff 36%,#d5c7ff 100%);
   box-shadow:inset 0 1px rgba(255,255,255,.5),0 0 22px rgba(140,236,255,.24);
+}
+body[data-theme="crystal"] .mini-controls .mini-play .mini-transport-icon{
+  width: clamp(16px, 3.8cqw, 24px);
+  height: clamp(16px, 3.8cqw, 24px);
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  margin: 0 auto;
+  mask-size:20px 20px;
 }
 body[data-theme="crystal"] .mini-glow{
   background:linear-gradient(90deg,transparent,rgba(140,236,255,.18),rgba(255,155,216,.1),transparent);
