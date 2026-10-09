@@ -6554,6 +6554,27 @@ function beginStartupLoad() {
   return startupLoad;
 }
 
+// Shows the workspace a couple of rendered frames after the cover begins to
+// fade. The timer covers a window that renders no frames (occluded, minimised).
+function holdWorkspaceForFrames(frames) {
+  const body = document.body;
+  body.dataset.startupHold = 'true';
+  let remaining = frames;
+  let released = false;
+  const release = () => {
+    if (released) return;
+    released = true;
+    delete body.dataset.startupHold;
+  };
+  const step = () => {
+    if (released) return;
+    if (--remaining <= 0) release();
+    else requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+  setTimeout(release, 250);
+}
+
 async function finishStartupLoad(startupLoad) {
   if (!startupLoad?.visible) return;
   await prepareThemeArrival(startupLoad.theme, { visible: true, timeout: 520, maxTasks: 16 });
@@ -6568,6 +6589,7 @@ async function finishStartupLoad(startupLoad) {
   document.body.dataset.startupAuthorityReady = document.body.dataset.runtimeInfoReady === 'true' ? 'true' : 'false';
   diagnosticsState.firstInteractiveMs = performance.now() - startupLoad.startedAt;
   setReadinessState('interactive');
+  holdWorkspaceForFrames(2);
   const revealMs = hideThemeLoadScreen();
   document.body.dataset.startupReveal = 'normal';
   const settleMs = startThemeAssetSettle();
@@ -21337,8 +21359,8 @@ document.addEventListener('keydown', (event) => {
   const arrowMod = hasPrimaryOrCtrl(event);
   const key = String(event.key || '').toLowerCase();
   if (modifier && key === 'f') { event.preventDefault(); $('#search')?.focus(); $('#search')?.select?.(); return; }
-  if (keyboardTargetIsEditable(event.target)) return;
   if (modifier && key === ',') { event.preventDefault(); openSettings({ opener: document.activeElement }); return; }
+  if (keyboardTargetIsEditable(event.target)) return;
   if (modifier && event.shiftKey && key === 'q') { event.preventDefault(); openQueue(document.activeElement); return; }
   if (modifier && event.shiftKey && key === 'o') { event.preventDefault(); openSystemsView(document.activeElement); return; }
   if (modifier && event.shiftKey && key === 'l') { event.preventDefault(); openCompactLibrary(document.activeElement); return; }

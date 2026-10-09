@@ -2021,6 +2021,7 @@
     buttonWithText('.cw-studio-commit .cw-studio-button', 'Discard draft').click();
     await waitFor(() => document.body.dataset.compositionMode === 'use', 2500, 'Cartridge Quest effects editor exit');
     if (config.visualMode) {
+      await waitFor(() => !document.body.classList.contains('theme-loading'), 3000, 'Cartridge Quest painted surface reveal');
       const questGeometry = (selector) => {
         const element = document.querySelector(selector);
         const bounds = element?.getBoundingClientRect();
@@ -2049,7 +2050,14 @@
       const cartridgeCabinetStackBounds = document.querySelector('.quest-cabinet-stack')?.getBoundingClientRect();
       assert(cartridgeCabinets.length === 4, `Cartridge Quest rendered ${cartridgeCabinets.length} cabinet rows instead of the archived four.`);
       assert(cartridgeCabinets.every((cabinet) => getComputedStyle(cabinet).display !== 'none'), 'Cartridge Quest left at least one authored cabinet row hidden.');
-      assert((cartridgeCabinetStackBounds?.height || 0) >= 140, `Cartridge Quest cabinet stack collapsed to ${Math.round(cartridgeCabinetStackBounds?.height || 0)}px.`);
+      // Closed cabinets now form a two-column disclosure rack. Verify the
+      // actual controls rather than requiring the archived vertical height.
+      const cartridgeHandleBounds = cartridgeCabinets.map((cabinet) => cabinet.querySelector('.quest-cabinet-handle')?.getBoundingClientRect());
+      assert(cartridgeCabinetStackBounds && cartridgeHandleBounds.every((bounds) => bounds && bounds.width >= 32 && bounds.height >= 32
+        && bounds.left >= cartridgeCabinetStackBounds.left - 1 && bounds.right <= cartridgeCabinetStackBounds.right + 1
+        && bounds.top >= cartridgeCabinetStackBounds.top - 1 && bounds.bottom <= cartridgeCabinetStackBounds.bottom + 1), 'Cartridge Quest lost a usable cabinet handle inside its rack.');
+      assert(cartridgeHandleBounds.every((bounds, index) => cartridgeHandleBounds.slice(index + 1).every((other) =>
+        bounds.right <= other.left + 1 || other.right <= bounds.left + 1 || bounds.bottom <= other.top + 1 || other.bottom <= bounds.top + 1)), 'Cartridge Quest cabinet handles overlap.');
       const canvasLauncherBounds = document.querySelector('.cw-studio-launcher')?.getBoundingClientRect();
       const studioLauncherBounds = document.querySelector('.cw-studio-legacy-launcher')?.getBoundingClientRect();
       const rackBounds = document.querySelector('.quest-cabinet-stack')?.getBoundingClientRect();
@@ -2120,7 +2128,26 @@
       });
       assert((narrowLibraryBounds?.top || 0) >= (narrowStageBounds?.bottom || 0) - 2, 'Cartridge Quest narrow library overlaps its title-screen stage.');
       assert((narrowUtilityBounds?.top || 0) >= (narrowStageBounds?.bottom || 0) - 2, 'Cartridge Quest narrow inspector overlaps its title-screen stage.');
-      assert((narrowPlayerBounds?.top || 0) >= Math.max(narrowLibraryBounds?.bottom || 0, narrowUtilityBounds?.bottom || 0) - 2, `Cartridge Quest narrow controller dock overlaps its library or inspector row (player top ${Math.round(narrowPlayerBounds?.top || 0)}, library bottom ${Math.round(narrowLibraryBounds?.bottom || 0)}, utility bottom ${Math.round(narrowUtilityBounds?.bottom || 0)}).`);
+      // The fixed transport sits below a clipped, scrollable composition.
+      // Offscreen row bounds may extend beyond the viewport without painting
+      // over that dock; prove the clip and the rows' actual reachability.
+      const narrowReadingViewport = document.querySelector('[data-cw-node-id="canvas-field"]');
+      const narrowReadingBounds = narrowReadingViewport?.getBoundingClientRect();
+      assert(narrowReadingBounds && narrowPlayerBounds && narrowReadingBounds.bottom <= narrowPlayerBounds.top + 2
+        && ['auto', 'scroll'].includes(getComputedStyle(narrowReadingViewport).overflowY), 'Cartridge Quest reading viewport is not clipped above the fixed transport.');
+      const narrowReadingScroll = narrowReadingViewport.scrollTop;
+      narrowReadingViewport.scrollTo({ top: narrowReadingViewport.scrollHeight, behavior: 'instant' });
+      await waitFor(() => narrowReadingViewport.scrollTop > narrowReadingScroll, 1200, 'Cartridge Quest lower reading row');
+      for (const selector of ['[data-cw-module-key="library.browser"]', '[data-cw-node-id="canvas-port-cartridge-quest-utility-stack"]']) {
+        const bounds = document.querySelector(selector)?.getBoundingClientRect();
+        assert(bounds && Math.min(bounds.bottom, narrowReadingBounds.bottom) - Math.max(bounds.top, narrowReadingBounds.top) >= 96, `Cartridge Quest cannot scroll ${selector} into a usable reading area.`);
+      }
+      const pinnedPlayerBounds = document.querySelector('[data-cw-anchored=".player"]')?.getBoundingClientRect();
+      assert(pinnedPlayerBounds && Math.abs(pinnedPlayerBounds.top - narrowPlayerBounds.top) <= 1, 'Cartridge Quest scroll moved the fixed transport.');
+      const pinnedPlay = document.querySelector('#playButton');
+      const pinnedPlayBounds = pinnedPlay.getBoundingClientRect();
+      assert(pinnedPlay.contains(document.elementFromPoint(pinnedPlayBounds.x + pinnedPlayBounds.width / 2, pinnedPlayBounds.y + pinnedPlayBounds.height / 2)), 'Cartridge Quest lower row covers the Play target.');
+      narrowReadingViewport.scrollTo({ top: narrowReadingScroll, behavior: 'instant' });
       assert((narrowLastCabinetBounds?.bottom || Infinity) <= (narrowStageBounds?.bottom || 0) + 2, `Cartridge Quest narrow title screen clips the lower authored cabinet rows (cabinet bottom ${Math.round(narrowLastCabinetBounds?.bottom || 0)}, stage bottom ${Math.round(narrowStageBounds?.bottom || 0)}, stage height ${Math.round(narrowStageBounds?.height || 0)}, rows ${getComputedStyle(document.querySelector('[data-cw-node-id="canvas-field"]')).gridTemplateRows}).`);
       const narrow = await bridge.action('capture-canvas-cartridge-quest-narrow');
       assert(narrow?.ok === true && narrow.isMaximized === false, 'Cartridge Quest narrow painted capture failed.');
