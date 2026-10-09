@@ -527,7 +527,11 @@ body[data-theme="studio"] .transport-buttons .play-button {
 }
 
 body[data-theme="studio"] .timeline input,
-body[data-theme="studio"] .volume input { accent-color: var(--studio-accent); }
+body[data-theme="studio"] .volume input {
+  accent-color: var(--studio-accent);
+  /* Keep the native rail slim while giving pointer/keyboard focus a real target. */
+  height: 24px;
+}
 
 body[data-theme="studio"] .volume #qualityBadge {
   color: var(--studio-cyan);

@@ -1073,8 +1073,20 @@ body[data-performance="balanced"][data-readiness="booting"] :is(.topbar,.workspa
   transform:none!important;
 }
 body[data-performance="balanced"][data-readiness="interactive"] :is(.topbar,.workspace,.player){
-  transition:opacity 160ms ease!important;
+  transition:none!important;
 }
+/* Launch only (readiness is "settled" for every later theme switch): the cover
+   is the entrance. Promoting the rail and inspector into their own animated
+   layers made the main thread wait on their first GPU raster right behind the
+   reveal (a 260-380 ms stall on ANGLE/D3D11). They stay in the page layer, and
+   the workspace appears two frames after the cover starts to fade. */
+body[data-performance="balanced"][data-readiness="interactive"].theme-assets-settling :is(
+  .topbar,.library-rail,.main-stage,.inspector,.player
+){
+  animation:none!important;
+  will-change:auto;
+}
+body[data-performance="balanced"][data-startup-hold="true"] .workspace{opacity:0!important}
 
 /* Native resize is itself the animation. Pause decorative work and surface
    transitions only for the live gesture; responsive grid/media-query layout
