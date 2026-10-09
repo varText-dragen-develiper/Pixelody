@@ -306,7 +306,12 @@
       const queueEscape = await injectSingularityKey('singularity-keyboard-escape');
       assert(queueEscape.observedKey.targetId === 'closeQueue', `${label} 200% Escape did not originate from the focused Queue close control.`);
       await waitFor(() => document.getElementById('queueDrawer').classList.contains('hidden'), 2400, `${label} 200% queue Escape closure`);
-      await waitFor(() => document.activeElement === document.getElementById('queueButton'), 2400, `${label} 200% queue trigger focus return`);
+      try {
+        await waitFor(() => document.activeElement === document.getElementById('queueButton'), 2400, `${label} 200% queue trigger focus return`);
+      } catch (error) {
+        const active = document.activeElement;
+        throw new Error(`${error.message} (active=${active?.tagName || 'none'}#${active?.id || ''}.${String(active?.className || '').slice(0, 60)}; hasFocus=${document.hasFocus()}; queueHidden=${document.getElementById('queueDrawer').classList.contains('hidden')}; queueExpanded=${document.getElementById('queueButton').getAttribute('aria-expanded')}; queueButtonDisabled=${document.getElementById('queueButton').disabled}; queueButtonRects=${document.getElementById('queueButton').getClientRects().length}; queueButtonInert=${Boolean(document.getElementById('queueButton').closest('[inert]'))}; modal=${Boolean(document.querySelector(':modal'))}; restore=${JSON.stringify(navigateBack.lastRestore)}; manualFocusLanded=${(() => { const b = document.getElementById('queueButton'); b.focus(); return document.activeElement === b; })()}).`);
+      }
       await report('singularity-zoom-queue-return', {
         label,
         queueHidden: true,
@@ -2814,6 +2819,21 @@
       assert(host.enabled && host.visibility === 'localhost', 'Owner IPC did not start a localhost host.');
       const pairing = await window.desktop.startSharingPairing({ deviceName: 'Sequence 5 IPC fixture', permissions: ['browse', 'playback:read'], accessProfile: 'jam-guest' });
       assert(pairing.ok, 'Owner IPC rejected the explicit guest pairing profile.');
+      openJams();
+      await refreshSharingStatus();
+      sharingState.pairing = pairing;
+      $('#jamAdvancedCabinet').open = true;
+      updateJamPairingUi();
+      const qrSvg = $('#jamPairingQr svg');
+      assert(qrSvg && qrSvg.viewBox.baseVal.width === qrSvg.viewBox.baseVal.height, 'Pairing QR did not render a square SVG.');
+      await waitFor(() => qrSvg.getBoundingClientRect().width > 0, 3000, 'visible pairing QR');
+      assert(getComputedStyle(qrSvg.querySelector('rect')).fill === 'rgb(255, 255, 255)', 'QR background was tinted.');
+      const qrPath = qrSvg.querySelector('path');
+      assert(getComputedStyle(qrPath).fill === 'rgb(0, 0, 0)', 'QR modules were tinted.');
+      const qrBounds = qrPath.getBBox();
+      assert(qrBounds.x >= 16 && qrBounds.y >= 16
+        && qrBounds.x + qrBounds.width <= qrSvg.viewBox.baseVal.width - 16
+        && qrBounds.y + qrBounds.height <= qrSvg.viewBox.baseVal.height - 16, 'QR lost its four-module quiet zone.');
       const guest = await window.desktop.createSharingDevice({ name: 'Sequence 5 IPC fixture', permissions: ['browse'], accessProfile: 'jam-guest' });
       assert(guest.ok && guest.device.accessProfile === 'jam-guest', 'Owner IPC guest creation failed.');
       const access = await window.desktop.updateSharingDevicePermissions(guest.device.id, ['browse', 'playback:read'], 'jam-guest');
@@ -2825,6 +2845,9 @@
       assert((await window.desktop.revokeSharingDevice(guest.device.id)).ok, 'Owner IPC credential revocation failed.');
       assert((await window.desktop.stopJamSession()).ok && !(await window.desktop.getJamSession()).active, 'Owner IPC session cleanup failed.');
     } finally {
+      sharingState.pairing = null;
+      clearJamPairingTimer();
+      updateJamPairingUi();
       await window.desktop.stopSharingHost();
     }
     const after = await bridge.getStatus();

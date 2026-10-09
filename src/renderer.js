@@ -6920,18 +6920,26 @@ function applyHandlePositions() {
   document.documentElement.style.setProperty('--info-handle-y', `${layout.infoHandleY}px`);
 }
 
+// An idle prewarm briefly un-hides a closed surface (marked data-prewarming) so
+// it can be painted ahead of time. It is not open: counting it made a drawer
+// closing during a prewarm look like a different surface closing, so focus was
+// never returned to the control that opened the drawer.
+function surfaceIsOpen(selector) {
+  const element = $(selector);
+  return Boolean(element) && !element.classList.contains('hidden') && element.dataset.prewarming !== 'true';
+}
 function captureNavigationState() {
   return {
     view: $('#systemsView').classList.contains('hidden') ? 'library' : 'systems',
-    settings: !$('#settingsOverlay').classList.contains('hidden'),
-    jams: !$('#jamsOverlay').classList.contains('hidden'),
-    migration: !$('#migrationDrawer').classList.contains('hidden'),
-    supportOwn: !$('#supportOwnOverlay').classList.contains('hidden'),
-    editor: !$('#trackEditorOverlay').classList.contains('hidden'),
-    playlistPicker: !$('#playlistPickerOverlay').classList.contains('hidden'),
-    playlistCreator: !$('#playlistCreatorOverlay').classList.contains('hidden'),
-    queue: !$('#queueDrawer').classList.contains('hidden'),
-    shortcuts: !$('#shortcutsOverlay').classList.contains('hidden'),
+    settings: surfaceIsOpen('#settingsOverlay'),
+    jams: surfaceIsOpen('#jamsOverlay'),
+    migration: surfaceIsOpen('#migrationDrawer'),
+    supportOwn: surfaceIsOpen('#supportOwnOverlay'),
+    editor: surfaceIsOpen('#trackEditorOverlay'),
+    playlistPicker: surfaceIsOpen('#playlistPickerOverlay'),
+    playlistCreator: surfaceIsOpen('#playlistCreatorOverlay'),
+    queue: surfaceIsOpen('#queueDrawer'),
+    shortcuts: surfaceIsOpen('#shortcutsOverlay'),
     metadata: $('#playlistHero').classList.contains('track-info-open'),
     compactLibrary: document.body.classList.contains('compact-library-open'),
     libraryCollapsed: layout.libraryCollapsed,
@@ -7012,15 +7020,37 @@ function navigateBack() {
   if (!closedKey && before.view === 'systems' && after.view === 'library') closedKey = 'systems';
   if (closedKey === 'supportOwn') supportOwnTarget = null;
   syncCoreNavigationDisclosureState();
-  const opener = closedKey ? navigationOpeners.get(closedKey) : null;
-  if (opener?.isConnected) {
+  // The remembered control can be replaced while its drawer is open (the
+  // player controls re-render when the window or zoom changes), so fall back
+  // to whatever now carries the same id instead of focusing a detached node.
+  const rememberedOpener = closedKey ? navigationOpeners.get(closedKey) : null;
+  // Kept so a failing focus-return check can say what this function did.
+  const trace = navigateBack.lastRestore = { closedKey: closedKey || '', remembered: rememberedOpener?.id || (rememberedOpener ? rememberedOpener.tagName : ''), connected: Boolean(rememberedOpener?.isConnected), runs: 0, landed: false, lastActive: '' };
+  const resolveOpener = () => (rememberedOpener?.isConnected ? rememberedOpener : (rememberedOpener?.id ? document.getElementById(rememberedOpener.id) : null));
+  if (resolveOpener()) {
+    // requestAnimationFrame stalls while the window is occluded, unfocused or
+    // busy repainting a large list (seen on slow Windows runners), so retries
+    // are driven from timers as well. Other code can also move focus right
+    // after a drawer closes (a list re-asserting its own row, the closed
+    // control losing focus late), so keep returning it to the opener for a
+    // bounded time instead of stopping at the first foreign focus target. Only
+    // a modal that is open now, or a text field the person is typing in, is
+    // left alone.
+    let attempts = 0;
     const restoreOpenerFocus = () => {
+      const opener = resolveOpener();
+      trace.runs += 1;
+      if (!opener || document.activeElement === opener) { trace.landed = Boolean(opener); return; }
+      const active = document.activeElement;
+      const typing = active?.matches?.('input,textarea,select,[contenteditable="true"]') && !active.closest('.hidden');
+      if (typing || topmostVisibleModal()) return;
       try { opener.focus({ preventScroll: true }); } catch { opener.focus(); }
+      trace.landed = document.activeElement === opener;
+      trace.lastActive = document.activeElement?.id || document.activeElement?.tagName || '';
+      if (document.activeElement !== opener && ++attempts < 20) setTimeout(restoreOpenerFocus, 60);
     };
-    requestAnimationFrame(() => {
-      restoreOpenerFocus();
-      if (document.activeElement !== opener) setTimeout(restoreOpenerFocus, 60);
-    });
+    requestAnimationFrame(restoreOpenerFocus);
+    setTimeout(restoreOpenerFocus, 60);
   }
   return result;
 }
@@ -14786,8 +14816,17 @@ function pairingQrLink(pairing = sharingState.pairing) {
   pairing = activeJamPairing(pairing);
   const payload = pairing?.pairingPayload;
   if (!payload) return '';
-  const baseUrl = payload.remoteBaseUrl || payload.baseUrl || (payload.baseUrls || [])[0] || '';
+  // Keep every advertised route: the preferred address may be a VPN adapter
+  // that a phone on the same Wi-Fi cannot reach.
+  const baseUrls = [...new Set([
+    payload.remoteBaseUrl, payload.baseUrl, ...(payload.baseUrls || []),
+  ].filter(Boolean))];
+  const baseUrl = baseUrls[0] || '';
   if (!baseUrl || !payload.pairingCode || !payload.secret) return '';
+  if (baseUrls.length > 1) {
+    // Existing Android clients already understand this deep-link format.
+    return `pixelody://connect?u=${encodeURIComponent(baseUrl)}&c=${encodeURIComponent(payload.pairingCode)}&s=${encodeURIComponent(payload.secret)}&urls=${encodeURIComponent(baseUrls.slice(1).join(','))}`;
+  }
   return [
     'pxd1',
     encodeURIComponent(baseUrl),
@@ -14813,29 +14852,11 @@ function renderPairingVisualCode(qrText) {
   const qr = qrFactory(0, 'M');
   qr.addData(qrText);
   qr.make();
-  const size = qr.getModuleCount();
-  const bits = [];
-  for (let y = 0; y < size; y += 1) {
-    for (let x = 0; x < size; x += 1) {
-      bits.push(qr.isDark(y, x));
-    }
-  }
-  const quietZone = 4;
-  const renderedSize = size + quietZone * 2;
-  const renderedBits = [];
-  for (let y = 0; y < renderedSize; y += 1) {
-    for (let x = 0; x < renderedSize; x += 1) {
-      const sourceX = x - quietZone;
-      const sourceY = y - quietZone;
-      renderedBits.push(sourceX >= 0 && sourceY >= 0 && sourceX < size && sourceY < size
-        ? bits[sourceY * size + sourceX]
-        : false);
-    }
-  }
-  element.style.setProperty('--qr-size', renderedSize);
-  element.innerHTML = renderedBits.map((active) => `<i${active ? ' class="active"' : ''}></i>`).join('');
+  // Library-generated SVG keeps modules and the four-module quiet zone
+  // monochrome even when a development presentation styles the container.
+  element.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 16, scalable: true });
   element.dataset.qrText = qrText;
-  element.title = `Scan this QR code with Pixelody Android. Payload: ${qrText}`;
+  element.title = 'Scan this QR code with Pixelody Android.';
 }
 
 function updateJamPairingUi() {
@@ -21167,7 +21188,7 @@ function keyboardTargetIsEditable(target) {
 function topmostVisibleModal() {
   return ['#supportOwnOverlay', '#shortcutsOverlay', '#trackEditorOverlay', '#playlistPickerOverlay', '#playlistCreatorOverlay', '#batchEditorOverlay', '#metadataRepairOverlay', '#settingsOverlay', '#jamsOverlay']
     .map((selector) => $(selector))
-    .find((element) => element && !element.classList.contains('hidden')) || null;
+    .find((element) => element && !element.classList.contains('hidden') && element.dataset.prewarming !== 'true') || null;
 }
 document.addEventListener('keydown', (event) => {
   if (event.key !== 'Tab') return;
