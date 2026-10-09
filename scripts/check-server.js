@@ -1,4 +1,5 @@
 const fs = require('fs/promises');
+require('./check-pairing-qr');
 const http = require('http');
 const net = require('net');
 const os = require('os');
