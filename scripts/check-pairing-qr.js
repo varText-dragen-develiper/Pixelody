@@ -51,7 +51,7 @@ for (let y = -4; y < modules + 4; y++) {
   for (let i = 0; i < scale; i++) rows.push(row);
 }
 const fixture = `${text}\n${rows.join('\n')}\n`;
-const fixturePath = path.join(__dirname, '../https://github.com/varText-dragen-develiper/pixelody-android/blob/main/app/src/test/resources/pairing-desktop-qr.txt');
+const fixturePath = path.join(__dirname, '../scripts/fixtures/pairing-desktop-qr.txt');
 if (process.argv.includes('--write-fixture')) {
   fs.mkdirSync(path.dirname(fixturePath), { recursive: true });
   fs.writeFileSync(fixturePath, fixture);

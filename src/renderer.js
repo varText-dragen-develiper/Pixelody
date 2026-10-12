@@ -1399,7 +1399,7 @@ function installDevelopmentExplorer() {
   title.id = 'developmentPresentationsTitle';
   title.textContent = 'In development';
   const intro = document.createElement('span');
-  intro.textContent = 'Work in progress, not registered themes. Each opens on your own library. Singularity routes restart Pixelody, and nothing changed inside them alters how Studio looks.';
+  intro.textContent = 'Try these layouts with your library. Singularity restarts Pixelody; its appearance changes aren’t saved to Studio.';
   head.append(eyebrow, title, intro);
   section.append(head);
   if (developmentSessionIsolated && currentProfile) {
@@ -1869,9 +1869,9 @@ function trackIntelligenceSummary(track = {}, stats = {}) {
   const metadata = normalizeTrackSignalMetadata(track);
   const role = inferredTrackRole(track, stats);
   if (!rates.starts && !metadata.userTags.length && !metadata.moodTags.length && !metadata.contextTags.length) return 'No local signal yet. Add tags or play the track to teach Pixelody where it belongs.';
-  if (role === 'anchor') return 'Reliable session anchor: strong completion history makes this useful when Flow Shuffle needs stability.';
-  if (role === 'bridge') return 'Bridge candidate: metadata and listening signal can help this track connect different moods or genres.';
-  if (role === 'discovery') return 'Discovery candidate: low sample size keeps this track eligible for deeper-library resurfacing.';
+  if (role === 'anchor') return 'You often finish this track. Flow Shuffle can use it to steady the session.';
+  if (role === 'bridge') return 'This track may connect different moods or genres, based on its tags and your listening.';
+  if (role === 'discovery') return 'You haven’t played this much. Flow Shuffle may bring it back into rotation.';
   if (role === 'peak') return 'Peak track: energy and behavior suggest this can lift a session when momentum is needed.';
   if (role === 'comfort') return 'Comfort signal: low skip pressure and familiar behavior make this a safer pick.';
   if (role === 'background') return 'Background role: useful when the session needs lower-friction listening.';
@@ -2403,7 +2403,7 @@ function signalAuditFilterLabel() {
   return activeSignalAuditFilter === 'all' ? 'All' : activeSignalAuditFilter === 'active' ? 'Active' : 'Undone';
 }
 function signalAuditEmptyTimelineText(totalCount = 0) {
-  if (!totalCount) return 'No Signal import audits yet. Apply or merge a Signal Journal report to create the first local receipt.';
+  if (!totalCount) return 'No imports yet. Import or merge a Signal Journal report to see it here.';
   if (activeSignalAuditFilter === 'active') return 'No active imports match this filter. Undone imports may still appear under Undone or All.';
   if (activeSignalAuditFilter === 'undone') return 'No undone imports yet. Undo history will appear here after an import is rolled back.';
   return 'No Signal import audits match the current filter.';
@@ -3122,8 +3122,8 @@ function signalImportRecommendedMode(preview) {
   const confidence = Math.min(96, Math.max(56, 56 + Math.abs(mergeScore - replaceScore) * 6));
   const label = `${mode === 'replace' ? 'Replace' : 'Merge'} recommended`;
   const summary = mode === 'replace'
-    ? 'Replace looks reasonable because the import is clean and current local Signal conflict risk is low.'
-    : 'Merge is the safer recommendation because it preserves local learning while adding the import where safe.';
+    ? 'Replace is suggested: the report is clean and has few conflicts with your local data.'
+    : 'Merge is suggested to keep your local listening data while adding this report.';
   return {
     mode,
     label,
@@ -3313,7 +3313,7 @@ function updateSignalImportModeUi() {
   setText('#signalMergeCapped', `${merge.summary.cappedEvents}`);
   setText('#signalMergeSummary', mergeMode
     ? `${merge.counts.events} total events after merge, ${merge.counts.trackStats} track intelligence profiles, ${merge.counts.shufflePicks} shuffle picks, and ${merge.counts.linkedOutcomes} linked outcomes. ${merge.summary.currentOnlyTrackStats} current-only track profile${merge.summary.currentOnlyTrackStats === 1 ? '' : 's'} preserved.`
-    : 'Replace restores the imported report exactly and skips current Signal learning that is not present in the import.');
+    : 'Replace uses the imported report. Local listening data missing from it will be removed.');
   setText('#signalDrilldownTitle', mergeMode
     ? `${pendingSignalReportImport.detailRows.length} merge detail example${pendingSignalReportImport.detailRows.length === 1 ? '' : 's'} from sanitized preview data.`
     : 'Replace mode still shows merge examples for comparison before applying.');
@@ -3518,7 +3518,7 @@ function updateSignalImportAuditUi() {
     setText('#signalAuditRecommended', '--');
     setText('#signalAuditIssues', '0');
     setText('#signalAuditApplied', 'Ready');
-    setText('#signalImportAuditSummary', 'Import or merge a Signal Journal report to create a local audit receipt. Nothing has been copied, restored, or sent anywhere.');
+    setText('#signalImportAuditSummary', 'Import or merge a Signal Journal report to see its details here.');
     const detailList = $('#signalImportAuditDetail');
     if (detailList) {
       detailList.innerHTML = [
@@ -3594,7 +3594,7 @@ function undoSignalImportSnapshot() {
     showToast('No Signal import undo snapshot.');
     return;
   }
-  if (!confirm('Undo the last Signal Journal import? Playback, queue, metadata, playlists, mini-player, and J.A.M. stay unchanged.')) return;
+  if (!confirm('Undo the last Signal Journal import? Your library and playback won’t change.')) return;
   state.signalJournal = normalizeSignalJournal(signalImportUndoSnapshot.signalJournal);
   state.signalSettings = normalizeSignalSettings(signalImportUndoSnapshot.signalSettings);
   state.flowShuffle = normalizeFlowShuffle(signalImportUndoSnapshot.flowShuffle);
@@ -9320,7 +9320,7 @@ function captureSpeakerRigValidationSample(reason = 'interval') {
   if (run.samples.length > SPEAKER_RIG_VALIDATION_MAX_SAMPLES) run.samples.splice(0, run.samples.length - SPEAKER_RIG_VALIDATION_MAX_SAMPLES);
   if (sample.elapsedSeconds >= SPEAKER_RIG_VALIDATION_DURATION_SECONDS && !speakerRigValidationState.readyNotified) {
     speakerRigValidationState.readyNotified = true;
-    showToast('30-minute capture is ready for the final listener checkpoint and Finish.');
+    showToast('30 minutes recorded. Check both outputs once more, then choose Finish.');
   }
   renderSpeakerRigValidation();
   return sample;
@@ -9329,7 +9329,7 @@ function startSpeakerRigValidation() {
   const system = activeSpeakerSystem();
   const prototype = browserMultiSinkPrototypeStatus(system);
   if (!system || !prototype.armed || audio.paused || !currentTrack()) {
-    showToast('Start a track with an armed, routed two-output rig before beginning physical validation.');
+    showToast('Start a track through both rig outputs before recording a listening test.');
     return;
   }
   const diagnostics = secondarySpeakerOutputDiagnostics();
@@ -9345,7 +9345,7 @@ function startSpeakerRigValidation() {
   stopSpeakerRigValidationTimer();
   speakerRigValidationState.timer = setInterval(() => captureSpeakerRigValidationSample('interval'), SPEAKER_RIG_VALIDATION_SAMPLE_INTERVAL_MS);
   renderSpeakerRigValidation();
-  showToast('Physical validation recording started. Record each scheduled listener checkpoint.');
+  showToast('Listening test started. Check both outputs at each scheduled checkpoint.');
 }
 function recordSpeakerRigValidationCheckpoint(result = 'audible') {
   const run = speakerRigValidationState.active;
@@ -9390,7 +9390,7 @@ function finishSpeakerRigValidation() {
   persistSpeakerRigValidationHistory();
   const analysis = speakerRigValidationAnalysis(run);
   renderSpeakerRigValidation();
-  showToast(analysis.candidatePass ? 'Physical run recorded for human evidence review; no release claim was changed.' : 'Physical run recorded with incomplete or attention evidence.');
+  showToast(analysis.candidatePass ? 'Listening test recorded. Review the results before marking it passed.' : 'Listening test recorded with missing checks or issues to review.');
 }
 function latestSpeakerRigValidationEvidence() {
   return speakerRigValidationState.active || speakerRigValidationState.history[speakerRigValidationState.history.length - 1] || null;
@@ -12359,7 +12359,7 @@ async function startRigMusicVerification(options = {}) {
   const system = activeSpeakerSystem();
   const preflight = rigMusicVerificationPreflight(system);
   if (!preflight.ok) { showToast(preflight.issues[0]); return; }
-  if (!currentTrack()) { showToast('Choose a familiar music track before starting verification.'); return; }
+  if (!currentTrack()) { showToast('Choose a track you know well before starting the listening check.'); return; }
   if (rigLevelMatchActiveFor(system)) cancelRigLevelMatch({ quiet: true });
   if (rigArrivalMatchActiveFor(system)) cancelRigArrivalMatch({ quiet: true });
   if (rigBassIntegrationActiveFor(system)) cancelRigBassIntegration({ quiet: true });
@@ -14918,11 +14918,11 @@ function updateJamNetworkGuidance(status = sharingState.status || {}) {
   if (status.visibility === 'lan') {
     const hasPrivate = (status.networkBaseUrls || []).some((entry) => entry.scope === 'private-network' || entry.scope === 'private-vpn');
     element.textContent = hasPrivate
-      ? 'Private-network mode is active. If a phone cannot connect, confirm both devices are on the same Wi-Fi/private VPN and allow Pixelody through Windows Firewall for private networks.'
-      : 'LAN mode is active, but no private IPv4 address was detected. Check Wi-Fi/private VPN status and Windows Firewall if pairing fails.';
+      ? 'Hosting on your private network. If your phone can’t connect, check Wi-Fi or your private VPN and allow Pixelody through Windows Firewall on private networks.'
+      : 'No private IPv4 address found. Check Wi-Fi or your private VPN, then Windows Firewall if pairing still fails.';
     return;
   }
-  element.textContent = 'Localhost mode is active. Use this PC or emulator port forwarding; phones on Wi-Fi need private-network hosting.';
+  element.textContent = 'Hosting on this PC only. For a phone on Wi-Fi, turn on private-network hosting. Emulators can use port forwarding.';
 }
 
 function updateJamNetworkDiagnostics(status = sharingState.status || {}) {
@@ -15087,7 +15087,7 @@ function updateSharingUi() {
   setText('#jamsButtonStatus', jamSession.active ? 'Session' : status.enabled ? (visibility === 'lan' ? (quest ? 'LINK' : 'Private') : (quest ? 'LOCAL' : 'Local')) : 'Off');
   setText('#jamHostSignal', jamSession.active ? 'Session live' : status.enabled ? (quest ? 'Linked' : 'Host ready') : (quest ? 'No link' : 'Offline'));
   setText('#jamHostBadge', jamSession.active ? 'Single-host J.A.M. active' : status.enabled ? 'Private host ready' : (quest ? 'No link cable active' : 'No active J.A.M.'));
-  setText('#jamHostSummary', jamSession.active ? `${jamSession.participants?.length || 0} participants / ${jamSession.queue?.length || 0} shared queue items / Windows owns every source` : status.enabled ? `${snapshot.tracks || 0} host tracks ready; start an explicit session when guests should join.` : (quest ? 'Power a private link when this PC is the source console.' : 'Start a private host when this PC is the music source.'));
+  setText('#jamHostSummary', jamSession.active ? `${jamSession.participants?.length || 0} participants / ${jamSession.queue?.length || 0} shared queue items / Windows owns every source` : status.enabled ? `${snapshot.tracks || 0} host tracks ready. Start a J.A.M. session when you want guests to join.` : (quest ? 'Power a private link when this PC is the source console.' : 'Start hosting to share music from this PC on your private network.'));
   setText('#jamHostMode', status.enabled ? (quest ? questModeLabel : modeLabel) : (quest ? 'Local gate closed' : 'Localhost gated'));
   setText('#jamTrustedSummary', devices.length ? (quest ? `${activeDevices} lit / ${devices.length} slots` : `${activeDevices} active / ${devices.length} trusted`) : (quest ? 'No slots paired' : 'None paired'));
   setText('#jamStreamSummary', status.enabled ? (quest ? 'Keyed stream route' : 'Authenticated seekable streams') : (quest ? 'Boot after link power' : 'Ready after host start'));
@@ -15521,7 +15521,7 @@ async function deleteSharingDevice(deviceId) {
   if (!deviceId) return;
   const device = (sharingState.status?.devices || []).find((item) => item.id === deviceId);
   const name = device?.name || 'this trusted device';
-  if (!confirm(`Delete ${name} from Trusted devices? Its saved access will stop working and the record will be removed from this list.`)) return;
+  if (!confirm(`Delete ${name} from Trusted devices? It will lose its saved access.`)) return;
   try {
     const result = await window.desktop.deleteSharingDevice(deviceId);
     if (result?.devices) {
@@ -16270,7 +16270,7 @@ function renderHero() {
   const collectionType = playlist.collectionType || (playlist.virtual ? 'Smart collection' : 'Playlist');
   $('#collectionType').textContent = collectionType.toUpperCase();
   $('#playlistMeta').textContent = `${count} track${count === 1 ? '' : 's'} · ${playlist.collectionType || (playlist.virtual ? 'Smart collection' : 'Local playlist')}`;
-  const descriptions = { all: 'Your private, uncompromised listening library.', favorites: 'The tracks you never want to lose.', recent: 'A chronological trail of your listening.' };
+  const descriptions = { all: 'All the music in your library.', favorites: 'The tracks you’ve marked as favorites.', recent: 'What you’ve listened to recently.' };
   $('#playlistDescription').textContent = playlist.description || descriptions[playlist.id] || (playlist.collectionType === 'Album' ? 'Every track from this album, gathered automatically.' : playlist.collectionType === 'Artist' ? 'Every track by this artist in your local library.' : 'A personal collection tuned your way.');
   const hero = $('#playlistHero'); const cover = $('#playlistCover');
   const artwork = collectionArtworkFor(playlist);
@@ -17131,7 +17131,7 @@ function renderWatchedFoldersUi() {
   if (!list) return;
   const folders = Array.isArray(state.watchedFolders) ? state.watchedFolders : [];
   if (!folders.length) {
-    list.innerHTML = '<p class="watched-folders-empty" id="watchedFoldersEmpty">No watched folders configured yet.</p>';
+    list.innerHTML = '<p class="watched-folders-empty" id="watchedFoldersEmpty">No watched folders added yet.</p>';
     return;
   }
   list.innerHTML = folders.map((folderPath) => `
@@ -17956,7 +17956,7 @@ async function handleSharingRemoteCommand(command = {}) {
 
 async function chooseBackground(playlistId = state.activePlaylistId) {
   if (playlistId === DAILY_CURATED_COLLECTION_ID) {
-    showToast('Daily Curated uses a procedural local cover so themes can reinterpret it safely.');
+    showToast('Today’s mix uses generated artwork.');
     return;
   }
   const path = await window.desktop.chooseImage(); if (!path) return;
@@ -20992,7 +20992,7 @@ $('#resetSignalJournal').onclick = () => {
   showToast('Signal Journal deleted.');
 };
 $('#resetFlowLearning').onclick = () => {
-  if (!confirm('Reset local Flow learning and listening outcomes? Your queue plan, music files, metadata, playlists, favorites, and audio settings stay unchanged.')) return;
+  if (!confirm('Reset Flow learning and listening results? Your library, queue, and audio settings will be kept.')) return;
   state.signalJournal = normalizeSignalJournal(null);
   state.flowShuffle.lastPick = null;
   signalRuntime.currentPlay = null;

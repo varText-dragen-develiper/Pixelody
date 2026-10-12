@@ -42,7 +42,7 @@ function createModuleShop({ app, BrowserWindow, dialog, applyEdition }) {
     contents.on('did-fail-load', (_event, code, description, _url, isMainFrame) => {
       if (!isMainFrame || code === -3) return; // -3 is a cancelled navigation, not a failure
       if (webWin && !webWin.isDestroyed()) webWin.destroy();
-      if (dialog.showMessageBox) dialog.showMessageBox(win && !win.isDestroyed() ? win : undefined, { type: 'info', title: 'Shop unavailable', message: 'The shop could not load. Check your connection and choose Open shop to try again. Your music and notes are not affected.' }).catch(() => {});
+      if (dialog.showMessageBox) dialog.showMessageBox(win && !win.isDestroyed() ? win : undefined, { type: 'info', title: 'Shop unavailable', message: 'Couldn’t load the shop. Check your connection, then choose Open shop to try again. Your music and notes are still available.' }).catch(() => {});
     });
     webWin.on('closed', () => { webWin = null; });
     webWin.loadURL(pkg.entry);
@@ -89,7 +89,7 @@ function createModuleShop({ app, BrowserWindow, dialog, applyEdition }) {
         else storage.install(data);
       }
       return { ok: true, state: snapshot() };
-    } catch (error) { return { ok: false, error: error.code ? 'The local file could not be read or saved. Existing notes were preserved.' : error.message }; }
+    } catch (error) { return { ok: false, error: error.code ? 'Couldn’t read or save the local file. Your saved notes are still there.' : error.message }; }
   }
   return { open, authorized, handle };
 }

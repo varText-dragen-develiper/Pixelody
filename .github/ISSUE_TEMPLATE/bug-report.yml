@@ -1,12 +1,12 @@
 name: Bug report
-description: Help us reproduce a problem with this app.
+description: Tell me what went wrong and how I can try it too.
 title: "[Bug]: "
 labels: [bug]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for trying Pixelody. Share only what is needed to reproduce the problem.
+        Thanks for trying Pixelody. Tell me where it went wrong and what you tried.
         Do not post music files, passwords, pairing tokens, private paths or personal screenshots.
         Report security concerns using SECURITY.md instead of this public form.
   - type: input
@@ -27,7 +27,7 @@ body:
     id: steps
     attributes:
       label: Steps to reproduce
-      description: Start from opening the app and describe each action.
+      description: Start from opening the app, then walk me through what you did.
     validations:
       required: true
   - type: textarea
@@ -50,7 +50,7 @@ body:
   - type: textarea
     id: diagnostics
     attributes:
-      label: Optional redacted diagnostics
+      label: Logs or screenshots, if you have them
       description: Remove credentials, private paths and personal information before sharing.
   - type: checkboxes
     id: privacy

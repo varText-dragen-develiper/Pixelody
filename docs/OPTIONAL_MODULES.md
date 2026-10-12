@@ -1,8 +1,7 @@
 # Downloaded modules
 
-The module manager is part of the base Android and Windows apps. A shop is not
-installed by default. Download a supported `.pixelody-module` package from the
-Pixelody website, then import it using the module manager.
+Download a supported `.pixelody-module` package from the Pixelody website,
+then import it through Modules on Windows or Android. The shop is optional.
 
 ## Find the importer
 
@@ -29,10 +28,9 @@ Android shows an in-page notice with Reload. Installed modules keep working.
 
 ## Build and version troubleshooting
 
-The importer was initially available only in an isolated candidate. Earlier main
-builds and the old Pixelody Commerce Test app do not contain it. Updating source
-does not update a running desktop process or an already installed Android APK.
-Restart Windows Pixelody after updating, and install a newly compiled Android APK.
+If you can’t find Modules, check your build's release notes. Earlier builds and the
+old Pixelody Commerce Test app don't have this importer. Restart Windows Pixelody
+after updating; on Android, install the newly compiled APK.
 
 Normal Android debug builds keep `com.pixelody.app`. To build an isolated copy,
 pass `-PmoduleTestBuild=true`; it uses `com.pixelody.app.modules`. Internal module

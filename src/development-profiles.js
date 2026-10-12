@@ -14,7 +14,7 @@ const STUDIO = Object.freeze({
   label: 'Pixelody Studio',
   group: 'ready',
   status: 'Ready',
-  summary: 'The registered presentation, for everyday listening.',
+  summary: 'The built-in layout for everyday listening.',
   isolated: false,
   launch: Object.freeze({ flags: Object.freeze([]), env: Object.freeze({}) }),
 });
@@ -25,7 +25,7 @@ const PROFILES = Object.freeze([
     label: 'Canvas Studio',
     group: 'active',
     status: 'Active',
-    summary: 'Compose modules on a near-blank canvas. Includes the 27 baseline theme ports.',
+    summary: 'Arrange modules on a canvas. Includes 27 development theme layouts.',
     isolated: false,
     // Canvas is seeded on every development launch, so a Studio session can
     // open and leave it in place; the flag only matters when restarting
@@ -38,7 +38,7 @@ const PROFILES = Object.freeze([
     label: 'Singularity · Graph',
     group: 'active',
     status: 'Active · Stage 3',
-    summary: 'Route H-B: complete panels pulled toward a central ring. Awaiting the owner route comparison.',
+    summary: 'Try full panels around a central ring. Still awaiting review.',
     isolated: true,
     launch: Object.freeze({ flags: Object.freeze(['--pixelody-singularity-probe=graph']), env: Object.freeze({}) }),
   }),
@@ -47,7 +47,7 @@ const PROFILES = Object.freeze([
     label: 'Singularity · Proxy',
     group: 'active',
     status: 'Active · Stage 3',
-    summary: 'Route H-A: calmer proxies that lend one real panel to a portal. Awaiting the owner route comparison.',
+    summary: 'Preview panels around the ring, then open one in a portal. Still awaiting review.',
     isolated: true,
     launch: Object.freeze({ flags: Object.freeze(['--pixelody-singularity-probe=proxy']), env: Object.freeze({}) }),
   }),
