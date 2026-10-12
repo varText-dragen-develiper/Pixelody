@@ -1,11 +1,11 @@
 # Getting help
 
-Use this repository's [Issues](https://github.com/varText-dragen-develiper/Pixelody/issues) for reproducible problems with Pixelody for Windows. Start with [Getting started](docs/GETTING_STARTED.md), and identify your app version/source commit.
+If something isn’t working in Pixelody for Windows, tell me through this repository’s [Issues](https://github.com/varText-dragen-develiper/Pixelody/issues). Start with [Getting started](docs/GETTING_STARTED.md), and include your app version or source commit.
 
-For ideas and general listening questions, use the [shared Pixelody Discussions forum](https://github.com/varText-dragen-develiper/Pixelody/discussions). The [website](https://pixelody-web.pixelody101.workers.dev) also links the existing community. No response-time guarantee is established; community support depends on maintainer availability.
+Share listening ideas in [Pixelody Discussions](https://github.com/varText-dragen-develiper/Pixelody/discussions), or find the community through the [website](https://pixelody-web.pixelody101.workers.dev). I’ll take a look when I can, though I can’t promise a response time.
 
-Useful reports include device/OS, build source, steps, expected/actual behavior, frequency, and whether reopening helped. For host/phone problems include both app versions and whether they are on the same supported private network.
+Tell me what you were trying to do, what you expected, and what happened. Include your device, OS, build, and steps I can follow so I can try it too. Let me know how often it happens and whether reopening helps. For phone/host problems, include both app versions and the network you’re using.
 
-Do not attach credentials, pairing tokens, private music files, unredacted logs or personal library screenshots. Security reports belong in the private route described in [SECURITY.md](SECURITY.md).
+Keep credentials, pairing tokens, private music, and personal details out of reports and screenshots. Report security problems privately using [SECURITY.md](SECURITY.md).
 
-Public source licensing does not establish that a compiled build is signed, store-listed or release-ready. Use the platform's release page for the exact artifact and installation instructions.
+Use the platform's release page for download, signing, and installation details.

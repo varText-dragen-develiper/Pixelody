@@ -1,10 +1,10 @@
 # Getting started with Pixelody for Windows
 
-Pixelody for Windows is the player and primary library host. The [Android companion](https://github.com/varText-dragen-develiper/Pixelody-android) is a separate app. You can start with local Windows listening without enabling hosting.
+Start by listening on Windows. If you want your library on your phone too, connect the [Android app](https://github.com/varText-dragen-develiper/Pixelody-android) later.
 
 ## Choose source or a published build
 
-Check [Windows Releases](https://github.com/varText-dragen-develiper/Pixelody/releases) for an artifact and its instructions. No GitHub release was published when checked on October 2, 2026; the steps below are for building public source, not installing a signed public release.
+Check [Windows Releases](https://github.com/varText-dragen-develiper/Pixelody/releases) for an artifact and its instructions. As of October 10, 2026, the Windows 0.1.1 x64 preview is published under `unsigned-main` and is unsigned. Read that release’s installation notes if you’re trying the preview. The steps below are for building from source.
 
 ## Run from source
 
@@ -21,13 +21,13 @@ For source checks run **pnpm run check** and **pnpm run check:themes**. A passin
 
 ## Try ordinary listening first
 
-Import a small folder of music you have permission to use. Choose a track, confirm audible playback, change the queue, and try the mini-player. Close and reopen to check expected library, queue and settings behavior. Note the first confusing or broken step.
+Import a small folder of music you have permission to use. Play a track, change the queue, and try the mini-player. Reopen the app and check your library and settings. If you get stuck, tell me where it first went wrong and what you tried.
 
-Studio is the currently registered built-in presentation. Development Canvas profiles and archived theme studies are separate from the normal built-in catalog. Keep customization claims tied to the build you are actually using.
+Studio is the built-in layout. Canvas layouts are development work, and older designs are archived. Check your build's release notes for availability.
 
 ## Connect Android later
 
-Keep the Windows app running and follow its visible hosting/pairing controls on a supported private network. Use the companion's current pairing instructions. Do not publish credentials or enable internet exposure just to get local pairing working. J.A.M. permissions are controlled by the host; shared controls are not a guarantee of synchronized audio output.
+Keep Windows Pixelody running on the same supported private network as your phone. Follow the Android pairing instructions and keep credentials private. The host sets J.A.M. permissions; shared controls don't establish synchronized audio output.
 
 ## Optional modules and help
 

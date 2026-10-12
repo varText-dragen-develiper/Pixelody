@@ -6,7 +6,7 @@ async function request(op, extra = {}) {
   for (const button of document.querySelectorAll('button')) button.disabled = true;
   try {
     const result = await window.moduleShop.request({ op, ...extra });
-    if (!result.ok) throw new Error(result.error || 'Operation failed.');
+    if (!result.ok) throw new Error(result.error || 'Couldn’t complete that action. Please try again.');
     if (result.canceled) { $('status').textContent = 'Import canceled.'; return; }
     const state = result.state;
     $('editions').hidden = !state.editions?.length;
@@ -28,8 +28,8 @@ async function request(op, extra = {}) {
     if (state.installed) $('prompt').textContent = state.installed.prompt;
     $('count').textContent = `${state.text.length} / 20,000`;
     $('status').textContent = op === 'save' ? 'Saved on this device.' : op === 'remove' ? 'Module removed. Your notes are kept on this device.' : state.shop ? 'Shop module installed. Choose Open shop above.' : state.installed ? 'Listening Notes is installed and ready.' : 'Import a downloaded module to get started.';
-    if (op === 'apply-edition') $('status').textContent = 'Application requested. Check the player for the theme or a draft warning.';
-    else if (op === 'remove-edition') $('status').textContent = 'Edition launcher removed. Switch to Studio in the player to leave the appearance.';
+    if (op === 'apply-edition') $('status').textContent = 'Check the player for the layout. If you have a Composition Mode draft, finish or discard it first.';
+    else if (op === 'remove-edition') $('status').textContent = 'Edition launcher removed. Return to Studio in the player to leave this layout.';
     else if (op === 'import' && state.editions?.length) $('status').textContent = 'Edition installed. Choose Apply in player to test it.';
   } catch(error) { $('status').textContent = error.message; }
   finally { document.getElementById('note').readOnly = false; for (const button of document.querySelectorAll('button')) button.disabled = false; }

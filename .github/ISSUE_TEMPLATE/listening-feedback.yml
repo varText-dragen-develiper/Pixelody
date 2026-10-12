@@ -1,7 +1,12 @@
 name: Listening and setup feedback
-description: Tell us where ordinary listening or getting started could be better.
+description: Tell me what would make listening or getting started easier.
 title: "[Feedback]: "
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for giving it a try. Tell me what you were trying to do and where it got awkward.
+        Please leave private library details out of this public report.
   - type: input
     id: build
     attributes:
@@ -12,7 +17,7 @@ body:
     id: task
     attributes:
       label: What were you trying to do?
-      description: Tell us about your listening workflow rather than just naming a feature.
+      description: Tell me how you were listening and what you wanted to do next.
     validations:
       required: true
   - type: textarea

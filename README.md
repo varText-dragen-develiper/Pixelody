@@ -1,13 +1,13 @@
 # Pixelody
 
-Pixelody is a Windows music player for lossless libraries. It reports the signal path honestly, applies per-track and per-output EQ, and has correction profiles for different playback systems. It pairs with [Pixelody for Android](https://github.com/varText-dragen-develiper/Pixelody-android), which browses and controls the library on your Windows PC.
+I'm building Pixelody, a music player for Windows. Organise albums and playlists, adjust the sound for your tracks and outputs, and keep playback close with the mini-player. Pair [Pixelody for Android](https://github.com/varText-dragen-develiper/Pixelody-android) to browse and control your Windows library.
 
-This repository is the open-source edition of the Windows app. It is licensed under the GNU General Public License v3.0 only (see [LICENSE](LICENSE) and [NOTICE](NOTICE)). The Pixelody name and logo have separate trademark guidance; see [TRADEMARKS.md](TRADEMARKS.md) for what that means if you fork or redistribute this code.
+This repository is the open-source edition of the Windows app. It is licensed under the GNU General Public License v3.0 only (see [LICENSE](LICENSE) and [NOTICE](NOTICE)). If you fork or redistribute it, read the name and logo guidance in [TRADEMARKS.md](TRADEMARKS.md).
 
 ## Start here
 
 - [Getting started](docs/GETTING_STARTED.md): requirements, source build and first listening session.
-- [Windows releases](https://github.com/varText-dragen-develiper/Pixelody/releases): exact binaries and release notes when published. No GitHub release was published as of October 2, 2026.
+- [Windows releases](https://github.com/varText-dragen-develiper/Pixelody/releases): build files and their release notes. The unsigned Windows 0.1.1 x64 preview is under `unsigned-main` as of October 10, 2026; read its signing and installation notes before trying it.
 - [Support](SUPPORT.md) and [shared discussions](https://github.com/varText-dragen-develiper/Pixelody/discussions): report problems or share listening ideas.
 - [Release preparation](docs/RELEASE_PREPARATION.md): what still needs verification before distributing a binary.
 
@@ -38,7 +38,7 @@ Packaging for Windows (and the macOS and Linux builder configs) is described in 
 
 ## Contributing and security
 
-Pull requests are welcome. Follow the Contributor License Agreement requirements in [CONTRIBUTING.md](CONTRIBUTING.md). Report security problems privately as described in [SECURITY.md](SECURITY.md), not in a public issue.
+Want to help with a fix? Thanks for taking a look. Start with [CONTRIBUTING.md](CONTRIBUTING.md), including the Contributor License Agreement. Report security problems privately using [SECURITY.md](SECURITY.md).
 
 ## Third-party assets
 

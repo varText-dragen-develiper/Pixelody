@@ -1,11 +1,11 @@
-# Contributing To pixelody
+# Contributing to Pixelody
 
-Issue reports, design discussion, documentation fixes and pull requests are
-welcome.
+Found a problem, have an idea, or want to work on a fix? I’d appreciate the help,
+whether it’s a bug report, a guide update, a design idea, or a pull request.
 
 ## Contributor License Agreement
 
-pixelody is released under GPL-3.0-only. The owner also ships official free and
+Pixelody is released under GPL-3.0-only. The owner also ships official free and
 paid builds (including through app stores) under other terms, so every
 contribution needs a signed Contributor License Agreement (CLA).
 
