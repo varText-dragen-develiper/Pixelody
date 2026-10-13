@@ -370,5 +370,7 @@
     };
   }
 
-  return Object.freeze({ PORTS, KEYS: Object.freeze(PORTS.map((port) => port.key)), get, normalizeKey, graphForPort });
+  // Explicit owner-authorized production cohort. Other ports remain development-only.
+  const RELEASE_KEYS = Object.freeze(['obsession', 'cartridge-quest']);
+  return Object.freeze({ PORTS, KEYS: Object.freeze(PORTS.map((port) => port.key)), RELEASE_KEYS, get, normalizeKey, graphForPort });
 }));

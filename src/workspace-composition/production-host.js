@@ -607,7 +607,7 @@
           workspaceState = presetCommit.state;
           workspaceRevision = presetCommit.state.revision;
         }
-        session = createWorkspaceSession(workspaceState.graph, requestedPreset?.graph || workspaceState.creatorDefaultGraph);
+        session = createWorkspaceSession(workspaceState.graph, requestedPreset?.creatorGraph || requestedPreset?.graph || workspaceState.creatorDefaultGraph);
         if (studioEnabled && !studio) studio = canvasStudio.createStudio({ document: documentObject, bridge: studioBridge() });
         mountGraph(workspaceState.graph);
         studio?.mount(documentObject.body);
@@ -731,7 +731,7 @@
       }
       workspaceState = result.state;
       workspaceRevision = result.state.revision;
-      session = createWorkspaceSession(result.state.graph, preset.graph);
+      session = createWorkspaceSession(result.state.graph, preset.creatorGraph || preset.graph);
       applyGraph(result.state.graph);
       setStatus(`${preset.label || preset.key} stock composition restored. Use Mode is locked.`, 'success');
       return { ok: true, status: 'applied', state: result.state };

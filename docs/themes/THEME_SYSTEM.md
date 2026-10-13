@@ -1,17 +1,28 @@
 # Pixelody Theme System
 
+## Android appearance boundary
+
+Android named themes are complete authored looks. Palette, typeface and screen
+background mixers belong to Pixelody Studio; switching to another theme preserves
+those saved choices but does not render them. Text size and high contrast remain
+available everywhere. Studio's per-screen image editor reviews opacity, derived
+colors, heading type and framing before applying a Custom look. This Android boundary does not change desktop theme availability.
+
 ## Current Reality
 
 The 2026-08-25 Studio foundation reset remains active. Pixelody Studio is the only
-registered and selectable built-in presentation. `STUDIO_REBUILD_MODE` in
+entry in the rebuilt-shell `themes` registry. Obsession Mode and Cartridge Quest
+are selectable production composition presentations in the separate
+`compositionPresentations` registry. `STUDIO_REBUILD_MODE` in
 `src/renderer.js` is `true`, stale durable theme selections fail closed to Studio,
-and the Settings picker contains one Studio card.
+and Settings offers Studio plus those two allowlisted recipes.
 
 The live main and mini shells load shared product styles plus
 `src/studio-rebuild.css` / `src/mini-studio-rebuild.css`. Retired per-theme and
 community-package stylesheets are detached. The Canvas sheets
-remain linked but disabled, and may be enabled only by the development-only
-runtime profile.
+remain linked but disabled until a permitted composition is active. The two
+released recipes can activate them in packaged builds; other ports and the
+experimental profile picker remain development-only.
 
 Development builds add an explorer to Settings > Themes: Studio under "Ready to
 use", then Canvas Studio, the two Singularity routes under
@@ -28,7 +39,8 @@ the archive's Library / Stage / Inspector order and proportions, measured gap
 and padding, Stage-contained signal field, Inspector/Queue utility relationship,
 and player height/column sizing. The evidence and translation boundary are in
 `CANVAS_THEME_PORT_BASELINE_EVIDENCE.md`. Port switching commits that stock graph
-atomically; later user edits remain graph-authoritative and Restore Creator
+atomically, restoring a saved per-presentation graph when present; later user
+edits remain graph-authoritative and Restore Creator
 returns to the selected port's stock arrangement. It does not register a
 built-in theme or load the archived implementation. The five later experimental
 candidates (Axis Break, Tideplot, Counterform Choir, Aftergarden, and Vesperfold)

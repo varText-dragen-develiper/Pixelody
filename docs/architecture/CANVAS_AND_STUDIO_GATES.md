@@ -8,10 +8,13 @@ markup in `src/index.html` / `src/mini-player.html`.
 
 The Studio foundation reset remains active. The live boundary is:
 
-- `src/themes/built-in-themes.json` registers Studio only.
+- `src/themes/built-in-themes.json` keeps Studio in `themes` and the two
+  released recipes in `compositionPresentations`.
 - `STUDIO_REBUILD_MODE` is `true`; stale saved built-in or package selections
   fail closed to Studio.
-- Settings exposes one Studio card. Theme search/filter controls and My Themes
+- Settings exposes Studio plus Obsession Mode and Cartridge Quest. The two
+  named presentations are separately allowlisted composition recipes. Theme
+  search/filter controls and My Themes
   remain present for future recovery but hidden.
 - The main and mini windows load shared product CSS plus the Studio rebuild
   layer. Retired theme and community-package stylesheets are not linked.
@@ -21,35 +24,46 @@ The Studio foundation reset remains active. The live boundary is:
   from `src/theme-runtime/canvas-theme-ports.js`. These are Canvas presentation
   recipes, not built-in registrations: they reuse current palette data and
   manifest-authored traits without relinking the retired theme stylesheets.
+  Obsession Mode and Cartridge Quest are also available through the ordinary
+  packaged picker. The other 25 ports remain development-only.
   Each recipe also owns a normalized stock composition graph with explicit
-  module placement and sizing. Switching ports atomically installs that stock
-  graph; an unsaved Composition Mode draft blocks the switch rather than being
+  module placement and sizing. Switching ports atomically restores that
+  presentation's saved graph, or its stock graph on first use. An unsaved
+  Composition Mode draft blocks the switch rather than being
   discarded.
 
 The September 10 next-theme plan and its platform audit both record this same
 Studio-only registry. A historical family list in an older handoff was not
 authorization to restore the archived runtime.
 
-## Canvas is a separate development gate
+## Production presentations and development gates
 
 `src/main.js` computes three independent inputs:
 
 - `canvasRequested`: a Canvas argument/profile was supplied.
-- `composableThemeExperimentEnabled`: the development workspace authority is
-  seeded. Ordinary development launches may seed it so Settings can offer the
-  Canvas entry without a relaunch.
+- `composableThemeExperimentEnabled`: ordinary launches seed the composition
+  authority so the packaged Settings picker can activate the two released
+  presentations. Archived integration scenarios retain their own authorities.
 - `composableThemeExperimentLaunchFlag`: the launch should open directly into
   Canvas.
 
 The renderer activates Canvas only when its runtime authority is ready and the
-launch flag or persisted opt-in is on. This does not register Canvas as a built-in
-theme and does not weaken the Studio reset for ordinary or packaged operation.
+launch flag or persisted opt-in is on. Packaged activation additionally requires
+`desktopThemePresentations` to contain the selected key. No arbitrary port or
+experimental launch flag bypasses that allowlist. Studio remains the fallback.
+The registry records these recipes under `compositionPresentations`; the
+rebuilt-shell `themes` registry still contains Studio only.
 
 Canvas CSS is linked disabled and enabled only while Canvas is active. The mini
 player follows the broadcast theme/profile and toggles its disabled development
 layers independently. `canvas-theme-ports.css` and its mini companion are also
 disabled by default and remain inert unless Canvas is active with an explicitly
 selected port.
+
+Ordinary Windows builds accept `--pixelody-profile-directory=<absolute-path>`
+for a separate portable library/profile. This changes only storage location;
+relative or empty paths are rejected. It allows release inspection without
+opening an existing installation's data.
 
 ## Theme explorer
 
@@ -94,7 +108,7 @@ to its launcher and guards the isolation and exit rules.
 
 | Launcher | Result |
 | --- | --- |
-| `Pixelody.lnk`, `Start Pixelody.cmd` | Studio shell; Canvas is available from Settings in development |
+| `Pixelody.lnk`, `Start Pixelody.cmd` | Saved presentation or Studio; Obsession Mode and Cartridge Quest are available in Settings |
 | `Start Pixelody Canvas.cmd` | Opens Canvas Studio |
 | `Start Pixelody Singularity Graph.cmd` / `Proxy.cmd` | Singularity probe modes |
 
@@ -110,7 +124,8 @@ persisted-opt-in issue from a host failure.
 The archived theme registry, picker, and styles must never leak back into the live
 shell. `scripts/check-theme-packages.js` must keep package
 parsing/storage intact while the package UI remains unavailable. After a relevant
-change run `npm run check`, `npm run check:themes`, and the appropriate
+change run `npm run check`, `npm run check:themes`,
+`npm run check:desktop-presentations`, and the appropriate
 Canvas/Studio Electron scenario.
 
 The checkout contains a month of unrelated uncommitted work. Never use checkout,

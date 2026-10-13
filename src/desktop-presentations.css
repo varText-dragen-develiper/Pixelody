@@ -1,0 +1,229 @@
+/* Production listening layouts. Theme materials and mechanics remain in their
+   own sheets. Only finite shell regions are bounded here; content lists scroll. */
+.desktop-panel-navigation { display:none; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .desktop-panel-navigation { position:relative; z-index:2; }
+body[data-desktop-presentation] :is(#counterformNowPlayingResize,#counterformTrackInfoResize) { display:none!important; }
+body[data-theme="foreground"][data-canvas-theme-port="obsession"][data-desktop-presentation] .quest-cabinet-stack { display:none!important; }
+body[data-theme="foreground"][data-canvas-theme-port="obsession"][data-desktop-presentation] .quest-boot-message { display:none!important; }
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"][data-desktop-presentation] #nowPlayingSummary > div:nth-child(2) { background:#d6d2ca; border:2px solid #77727b; box-shadow:inset 2px 2px #f0ece4; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] #nowPlayingSummary #playerTitle { padding-top:0; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-track-info { display:none!important; transform:none!important; opacity:1!important; pointer-events:auto!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation][data-desktop-track-info] .hero-track-info { display:block!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-track-info :is(h2,h3,.metadata-album) { max-height:none; overflow:visible; overflow-wrap:anywhere; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] { --desktop-header:64px; --desktop-nav:36px; }
+body[data-desktop-presentation] .desktop-panel-navigation {
+  display:flex; align-items:center; gap:6px; height:var(--desktop-nav);
+  padding:2px 12px; background:var(--bg); border-bottom:1px solid var(--gold);
+}
+body[data-desktop-presentation] .desktop-panel-navigation button {
+  min-height:30px; padding:4px 14px; color:var(--text); background:var(--surface);
+  border:1px solid var(--gold); font:12px "Segoe UI",sans-serif;
+}
+body[data-desktop-presentation] .desktop-panel-navigation button[aria-pressed="true"] { color:var(--bg); background:var(--gold); }
+body[data-desktop-presentation] :is(button,input,select,a,[tabindex]):focus-visible { outline:2px solid var(--text)!important; outline-offset:2px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .topbar { height:var(--desktop-header); min-height:var(--desktop-header); }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:not([data-composition-mode="edit"]) .workspace {
+  height:calc(100dvh - var(--desktop-header) - var(--desktop-nav))!important;
+  min-height:0; margin:0; padding:0; display:block;
+}
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:not([data-composition-mode="edit"]) :is(.cw-canvas,.cw-root) { height:100%!important; min-height:0!important; overflow:visible!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:not([data-composition-mode="edit"]) .cw-canvas { padding:6px!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:not([data-composition-mode="edit"]) .cw-root > .cw-split { height:100%; grid-template-rows:minmax(0,1fr) auto!important; gap:6px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:not([data-composition-mode="edit"]):not([data-desktop-custom]) [data-cw-node-id="canvas-field"] {
+  height:100%!important; margin:0!important; padding:0!important; gap:8px!important;
+  grid-template-columns:minmax(210px,21fr) minmax(0,58fr) minmax(230px,21fr)!important;
+  grid-template-rows:minmax(0,1fr)!important; grid-auto-rows:auto!important; overflow:visible!important;
+}
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:not([data-composition-mode="edit"]):not([data-desktop-custom]) [data-cw-node-id="canvas-field"] > .cw-node { margin:0!important; grid-row:1!important; min-height:0!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:not([data-composition-mode="edit"]):not([data-desktop-custom]) [data-cw-node-id="canvas-field"] > [data-cw-module-key="library.browser"] { grid-column:1!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:not([data-composition-mode="edit"]):not([data-desktop-custom]) [data-cw-node-id="canvas-field"] > [data-cw-node-id$="-stage"] { grid-column:2!important; grid-template-columns:1fr!important; grid-template-rows:minmax(0,1fr)!important; grid-auto-rows:auto!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:not([data-composition-mode="edit"]):not([data-desktop-custom]) [data-cw-node-id$="-stage"] > .cw-node { grid-column:1!important; grid-row:1!important; margin:0!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:not([data-composition-mode="edit"]):not([data-desktop-custom]) [data-cw-node-id="canvas-field"] > [data-cw-node-id$="-utility-stack"] { grid-column:3!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .cw-studio-chrome { position:fixed; left:auto!important; right:8px!important; top:calc(var(--desktop-header) + 3px)!important; bottom:auto!important; transform:none!important; padding:0!important; border:0!important; box-shadow:none!important; clip-path:none!important; flex-direction:row!important; gap:4px; background:none; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .cw-studio-chrome :is(.cw-studio-tag-grip,.cw-studio-tag-name) { display:none!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .cw-studio-chrome :is(.cw-studio-launcher,.cw-studio-legacy-launcher) { position:static!important; min-height:28px; font:11px "Segoe UI",sans-serif; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .cw-module { opacity:1; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .cw-dock[data-cw-anchored=".player"] { padding:0!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .cw-dock[data-cw-anchored=".player"] > .player {
+  box-sizing:border-box; width:100%!important; height:128px!important; min-height:128px!important; margin:0!important;
+  display:grid!important; grid-template-columns:minmax(210px,28fr) minmax(290px,43fr) minmax(250px,29fr)!important;
+  grid-template-rows:1fr!important; grid-template-areas:"identity playback output"!important; gap:8px!important; padding:10px!important;
+}
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .player > [data-cw-module-key="now-playing"] { grid-area:identity!important; height:100%; align-self:stretch; overflow:visible!important; clip-path:none; border:0; box-shadow:none; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .player > [data-cw-module-key="transport.controls"] { grid-area:playback!important; align-self:center; overflow:visible!important; clip-path:none; border:0; box-shadow:none; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .player .playing-info {
+  display:flex!important; align-items:center; gap:8px; position:relative!important; height:100%!important;
+  min-height:0!important; overflow:visible!important; padding:8px!important; box-sizing:border-box;
+}
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] #nowPlayingSummary > div:nth-child(2) {
+  position:static!important; display:flex!important; flex:1; flex-direction:column; justify-content:center!important;
+  min-width:0; width:auto!important; height:auto!important; min-height:0!important; max-height:none!important;
+  padding:6px!important; overflow:visible!important; transition:none!important;
+}
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] #nowPlayingSummary :is(strong,span) { white-space:normal!important; overflow-wrap:anywhere; line-height:1.25; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] #playerTitle { font:600 14px/1.25 "Segoe UI",sans-serif; display:-webkit-box!important; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] #playerMeta { font:12px/1.25 "Segoe UI",sans-serif; display:-webkit-box!important; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .playing-info .mini-cover { width:44px!important; height:44px!important; flex:0 0 44px!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .playing-info::before { top:0!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .playing-info::after { top:4px!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .player > .volume {
+  position:static!important; grid-area:output!important; width:auto!important; height:auto!important; min-width:0!important;
+  transform:none!important; display:grid!important; grid-template-columns:44px 65px 32px minmax(60px,1fr)!important;
+  grid-template-rows:32px 30px!important; align-self:center; padding:4px!important; gap:6px!important;
+}
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .volume #miniPlayerButton { grid-column:1!important; grid-row:1!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .volume #queueButton { grid-column:2!important; grid-row:1!important; width:auto!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .volume #muteButton { grid-column:3!important; grid-row:1!important; width:32px!important; height:30px!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .volume .quest-volume-meter { display:flex!important; grid-column:4!important; grid-row:1!important; min-width:0; align-items:center; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .volume #volume { grid-column:4!important; grid-row:1!important; width:100%!important; min-width:0!important; height:28px!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .volume #playerSystemsButton { grid-column:1/-1!important; grid-row:2!important; width:100%!important; min-width:0!important; max-width:none!important; min-height:28px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .volume :is(.quest-output-status,.quest-output-label,.quest-output-readout) { display:none!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .volume #qualityBadge { position:absolute; right:4px; top:-12px; font-size:10px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .transport { height:90px!important; min-width:0!important; padding:0!important; display:grid; grid-template-rows:54px 30px!important; gap:4px!important; overflow:visible!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .transport-buttons { display:flex!important; justify-content:center; gap:8px!important; width:100%!important; padding:0!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .transport-buttons button { min-width:32px!important; flex:0 0 36px; height:40px!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .transport-buttons #playButton { width:52px!important; height:50px!important; flex-basis:52px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .timeline { grid-template-columns:32px minmax(0,1fr) 32px!important; min-width:0!important; gap:4px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] #seek { width:100%; min-width:0; height:24px!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .quest-hotbar-hud { display:none!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:not([data-composition-mode="edit"]) .main-stage { min-height:0!important; display:flex; flex-direction:column; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:not([data-composition-mode="edit"]) .main-stage > .view-enter:not(.hidden) { display:flex; flex:1; flex-direction:column; min-height:0!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:not([data-composition-mode="edit"]) .collection-body { flex:1 1 auto; min-height:0!important; overflow:auto!important; padding:12px!important; overscroll-behavior:contain; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .playlist-hero { height:220px!important; min-height:220px!important; flex:0 0 220px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-content { position:relative!important; display:flex!important; align-items:center; gap:16px; inset:auto!important; height:100%; padding:18px 58px 18px 18px; box-sizing:border-box; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-content > .playlist-cover { position:relative!important; inset:auto!important; width:100px!important; height:100px!important; flex:0 0 100px!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-content > .hero-copy { position:relative!important; inset:auto!important; min-width:0; flex:1; max-width:none!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-copy #playlistTitle { font-size:clamp(24px,2.5vw,36px)!important; line-height:1.1; margin:4px 0; max-height:none!important; overflow-wrap:anywhere; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-copy :is(p,small) { font-size:11px!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-copy #playlistDescription { font:12px/1.3 "Segoe UI",sans-serif; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-copy .quest-boot-message { font-size:10px; margin:0; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .quest-cabinet-stack { position:relative!important; inset:auto!important; display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr)); width:100%!important; gap:4px; margin-top:8px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .quest-cabinet-handle { min-height:30px; font-size:10px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .quest-cabinet-handle b { font:600 10px "Segoe UI",sans-serif; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .quest-cabinet-handle > small { display:none; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .quest-info-cabinet.is-cabinet-promoted { position:fixed!important; inset:calc(var(--desktop-header) + var(--desktop-nav) + 8px) 18px auto auto!important; width:min(440px,calc(100vw - 36px))!important; max-height:calc(100dvh - var(--desktop-header) - var(--desktop-nav) - 160px)!important; z-index:1200!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .quest-info-cabinet.is-cabinet-open > .quest-cabinet-body { max-height:none!important; overflow:visible!important; font:12px "Segoe UI",sans-serif; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .quest-info-cabinet.is-cabinet-open .quest-cabinet-body :is(b,small,em) { font-size:11px!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .quest-info-cabinet.desktop-cabinet {
+  display:block!important; left:var(--desktop-cabinet-left,16px)!important; top:var(--desktop-cabinet-top,110px)!important; right:auto!important; bottom:auto!important;
+  width:min(440px,calc(100vw - 32px))!important; max-width:none!important; max-height:calc(100dvh - 270px)!important; overflow:auto!important;
+  margin:0!important; padding:6px!important; border:4px solid #d6d2ca; background:#10162a; color:#f0ece4;
+  box-shadow:5px 5px #262a3b; font:12px/1.4 "Segoe UI",sans-serif; z-index:1200!important;
+}
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .desktop-cabinet > .quest-cabinet-body { display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; padding:10px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .desktop-cabinet .quest-cabinet-body > span { display:grid; gap:4px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .desktop-cabinet[data-quest-cabinet="route"] > .quest-cabinet-body { display:flex!important; flex-wrap:wrap; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .quest-cabinet-stack { margin-top:4px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-content { padding-block:8px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-copy > #playlistMeta { margin-top:4px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-copy .quest-boot-message { line-height:1; padding:3px 6px; min-height:0; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .desktop-quest-log { position:fixed!important; inset:auto 16px 154px auto!important; width:min(460px,calc(100vw - 32px)); z-index:1200; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation][data-desktop-quest-log] .desktop-quest-log { display:grid!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .desktop-quest-log :is(.quest-stat-tip,.quest-log-recap) { position:static; opacity:1; transform:none; white-space:normal; width:auto; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .desktop-quest-log .quest-stats { grid-template-columns:repeat(4,minmax(0,1fr)); }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .desktop-quest-log .quest-stats :is(b,small) { font:11px/1.3 "Segoe UI",sans-serif; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .desktop-quest-log-close { min-height:30px; grid-column:1/-1; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] :is(.playing-info,.volume,.transport,.cw-module)::after { pointer-events:none; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-track-info { position:fixed!important; inset:calc(var(--desktop-header) + var(--desktop-nav) + 8px) 16px 150px auto!important; width:min(480px,calc(100vw - 32px))!important; max-height:none!important; overflow:auto!important; padding:48px 20px 20px!important; z-index:1100!important; clip-path:none; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .metadata-toggle { display:grid!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-track-info .metadata-close { position:sticky; top:-36px; float:right; z-index:2; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .library-rail :is(.rail-import,.library-filters,.rail-tools) { max-height:none!important; opacity:1!important; visibility:visible!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] :is(.library-rail,.inspector,#queueDrawer) { overscroll-behavior:contain; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .inspector :is(.quality-card,.tuning-card) { max-height:none!important; overflow:visible!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .inspector { overflow:auto!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .collection-actions { flex-wrap:wrap; gap:6px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .collection-actions .filter-row { margin-left:0; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .collection-actions :is(button,select) { min-height:32px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] :is(.context-menu,.track-menu,.playlist-menu) { max-height:calc(100dvh - 24px); overflow:auto; clip-path:none; }
+@media(max-width:1180px) {
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:not([data-composition-mode="edit"]):not([data-desktop-custom]) [data-cw-node-id="canvas-field"] { display:block!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:not([data-composition-mode="edit"]):not([data-desktop-custom]) [data-cw-node-id="canvas-field"] > .cw-node { display:none!important; height:100%!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation][data-desktop-panel="tracks"]:not([data-composition-mode="edit"]):not([data-desktop-custom]) [data-cw-node-id="canvas-field"] > [data-cw-node-id$="-stage"] { display:grid!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation][data-desktop-panel="library"]:not([data-composition-mode="edit"]):not([data-desktop-custom]) [data-cw-node-id="canvas-field"] > [data-cw-module-key="library.browser"] { display:flex!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:is([data-desktop-panel="information"],[data-desktop-panel="queue"]):not([data-composition-mode="edit"]):not([data-desktop-custom]) [data-cw-node-id="canvas-field"] > [data-cw-node-id$="-utility-stack"] { display:flex!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .cw-dock[data-cw-anchored=".player"] > .player { grid-template-columns:minmax(150px,1fr) minmax(260px,2fr)!important; grid-template-rows:80px 36px!important; grid-template-areas:"identity playback" "output output"!important; height:146px!important; min-height:146px!important; padding:6px!important; gap:4px!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .player > .volume { grid-template-columns:44px 65px 32px minmax(60px,1fr) 150px!important; grid-template-rows:32px!important; padding:0!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .volume #playerSystemsButton { grid-column:5!important; grid-row:1!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .volume #qualityBadge { display:none; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .transport { height:76px!important; grid-template-rows:44px 28px!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .transport-buttons #playButton { height:42px!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .library-rail :is(.playlist-copy,.rail-heading strong,.create-button) { display:block!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .library-rail .playlist-item { grid-template-columns:44px minmax(0,1fr) 20px!important; }
+}
+@media(max-width:600px) {
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] { --desktop-header:72px; --desktop-nav:34px; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .topbar { display:grid; grid-template-columns:32px minmax(0,1fr) 75px 70px; gap:4px; padding:4px; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .topbar .window-drag { display:none; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .topbar .brand-mark { display:none; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .topbar .profile-button { width:30px; height:30px; font-size:14px; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .topbar .global-search { grid-column:2/-1; height:30px; min-width:0; padding:3px; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .topbar .global-search input { font:12px "Segoe UI",sans-serif; width:100%; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .topbar .jams-trigger { grid-column:2; grid-row:2; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .topbar .settings-trigger { grid-column:3; grid-row:2; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .topbar .top-quality { grid-column:4; grid-row:2; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .desktop-panel-navigation { padding:2px 4px; gap:3px; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .desktop-panel-navigation button { padding:4px 7px; font-size:11px; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .cw-studio-chrome { display:none!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .cw-dock[data-cw-anchored=".player"] > .player { grid-template-columns:1fr!important; grid-template-rows:34px 62px 32px!important; grid-template-areas:"identity" "playback" "output"!important; height:144px!important; min-height:144px!important; gap:3px!important; padding:3px!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .player .playing-info { padding:2px!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .playing-info .mini-cover { width:26px!important; height:26px!important; flex-basis:26px!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] #nowPlayingSummary > div:nth-child(2) { display:grid!important; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:6px; padding:2px!important; border:0; background:transparent; box-shadow:none; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] :is(#playerTitle,#playerMeta) { font-size:11px!important; -webkit-line-clamp:2; margin:0; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .playing-info :is(.quest-rare-cue)::before,body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .playing-info::before,body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .playing-info::after { display:none; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .transport { height:62px!important; grid-template-rows:32px 26px!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .transport-buttons button { height:30px!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .transport-buttons #playButton { height:32px!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .volume { font-size:10px; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .player > .volume :is(#miniPlayerButton,#queueButton,#muteButton,#playerSystemsButton) { height:30px!important; min-height:0!important; max-height:30px!important; padding-block:2px!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .player > .volume { grid-template-columns:32px 56px 28px minmax(35px,1fr) 80px!important; gap:3px!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .volume #muteButton { width:28px!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .volume #playerSystemsButton { font-size:10px; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .playlist-hero { height:192px!important; min-height:192px!important; flex-basis:192px; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-content { gap:8px; padding:12px 46px 12px 12px; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-content > .playlist-cover { width:54px!important; height:54px!important; flex-basis:54px!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-copy #playlistTitle { font-size:22px!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .quest-cabinet-handle b { font-size:9px; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-track-info { bottom:154px!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .settings-drawer { width:100%!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .settings-layout { grid-template-columns:1fr; }
+}
+@media(max-height:540px) {
+  /* At 200% zoom on the supported minimum window there is less than a hero's
+     height left. This is a single intentional content scroll, with panels and
+     transport outside it, rather than stacked undiscoverable windows. */
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:not([data-composition-mode="edit"]) .main-stage > .view-enter:not(.hidden) { overflow:auto!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation]:not([data-composition-mode="edit"]) .collection-body { overflow:visible!important; flex:0 0 auto; }
+}
+
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation][data-desktop-custom]:not([data-composition-mode="edit"]) [data-cw-node-id="canvas-field"] { overflow:auto!important; min-height:0; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-copy { display:flex; flex-direction:column; gap:2px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-copy > :is(p,small,span,h1) { margin-block:0!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-copy .quest-cabinet-stack { margin-top:4px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .desktop-panel-navigation [hidden] { display:none!important; }
+
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] :is(.settings-drawer,.track-editor,.playlist-creator,.context-menu) { background:var(--surface); color:var(--text); }
+
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .volume button { box-sizing:border-box; }
+
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] :is(.hero-edit,.metadata-toggle) { z-index:4; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .background-cabinet { position:fixed; top:calc(var(--desktop-header) + var(--desktop-nav) + 12px); right:16px; width:min(340px,calc(100vw - 32px)); max-height:calc(100dvh - 280px); overflow:auto; z-index:1100; background:var(--surface); box-sizing:border-box; }
+
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .hero-content > .hero-copy { inset:auto!important; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .transport-buttons { height:100%!important; min-height:0!important; box-sizing:border-box; }
+@media(max-width:600px) {
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .topbar :is(.jams-trigger,.settings-trigger,.top-quality) { height:30px!important; min-height:0!important; padding:3px!important; font:10px/1 "Segoe UI",sans-serif; white-space:nowrap; overflow:hidden; }
+}
+
+@media(max-width:600px) {
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .cw-module::after { display:none; }
+}
+
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] #miniPlayerButton .player-control-label { display:block!important; font:10px/1 "Segoe UI",sans-serif; }
+@media(max-width:600px) {
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] #jamsButton b { display:block!important; font:11px/1 "Segoe UI",sans-serif; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .topbar :is(#jamsButton,#settingsButton) > .public-icon { display:none; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] #systemsButton { width:100%!important; min-width:0!important; }
+  body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] #systemsButton::after { content:"Audio"; font:10px/1 "Segoe UI",sans-serif; }
+}
+
+body[data-theme="foreground"][data-canvas-theme-port="obsession"][data-desktop-presentation] .quest-cabinet-stack { display:none!important; }

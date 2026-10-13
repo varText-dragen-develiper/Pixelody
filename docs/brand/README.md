@@ -85,6 +85,9 @@ purple range, with Ultraviolet as the default:
   Style palette by default, including Studio. The six authored themes and nine
   preset palettes have exact generated launcher colors. Arbitrary custom colors
   use the nearest baked launcher shade; the in-app mark uses the exact accent.
+  Studio's image-led Custom look uses the Home image's accent as the stable
+  automatic launcher identity (nearest generated shade for arbitrary RGB).
+  Changing pages does not change the launcher alias; explicit logo choices win.
   Selecting a purple swatch disables "Follow theme and palette" and becomes an
   explicit override. Turning following back on retains that saved manual color.
   Older manual choices without a following preference stay manual. One of twenty

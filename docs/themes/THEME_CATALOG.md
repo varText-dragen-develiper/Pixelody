@@ -5,8 +5,10 @@ This catalog preserves creative intent for every built-in theme.
 Pixelody is currently in a Studio foundation reset. Only Pixelody Studio is
 registered in `../src/themes/built-in-themes.json`; the entries below preserve
 creative intent and reconstruction guidance, not current runtime availability.
-Canvas Studio and named composition profiles are development-only paths, not
-registered built-in themes.
+Obsession Mode and Cartridge Quest are production composition presentations
+listed separately in `compositionPresentations`. Their ordinary Settings route
+uses the live Canvas host. Other named ports and experimental profiles remain
+development-only.
 
 Canvas now offers baseline ports for the 27 catalog entries from Dev Lab through
 Harmonic Registry. Those ports preserve palette and manifest-authored traits in

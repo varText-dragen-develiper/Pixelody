@@ -864,14 +864,156 @@ const CANVAS_OPT_IN_KEY = 'pixelody.canvasStudioOptIn';
 let canvasOptIn = readPersistedString(CANVAS_OPT_IN_KEY, '') === 'on';
 let canvasLaunchDismissed = false;
 function canvasRuntimeReady() {
-  return runtimeInfo.isDevelopment === true && runtimeInfo.composableThemeExperimentTheme === CANVAS_STAGE_THEME;
+  return (runtimeInfo.isDevelopment === true || runtimeInfo.desktopThemePresentations?.length > 0) && runtimeInfo.composableThemeExperimentTheme === CANVAS_STAGE_THEME;
 }
 function canvasStageActive() {
-  return canvasRuntimeReady() && !canvasLaunchDismissed && (canvasOptIn || runtimeInfo.composableThemeExperimentLaunchFlag === true);
+  const permitted = runtimeInfo.isDevelopment === true || runtimeInfo.desktopThemePresentations?.includes(appearance.canvasThemePort);
+  return permitted && canvasRuntimeReady() && !canvasLaunchDismissed && (canvasOptIn || runtimeInfo.composableThemeExperimentLaunchFlag === true);
 }
 
 function activeCanvasThemePort() {
   return canvasStageActive() ? canvasThemePortDomain.get(appearance.canvasThemePort) : null;
+}
+
+let applyDesktopPortSelection = null;
+let desktopPresentationChanging = false;
+function rememberCanvasThemeGraph() {
+  const key = appearance.canvasThemePort;
+  const snapshot = productionWorkspaceHost?.snapshot?.().session;
+  if (key && !snapshot?.dirty && snapshot?.graph?.id === `canvas-port-${key}-root`) {
+    appearance.desktopThemeGraphs = { ...appearance.desktopThemeGraphs, [key]: snapshot.graph };
+  }
+}
+async function selectDesktopPresentation(key) {
+  if (!canvasThemePortDomain.RELEASE_KEYS.includes(key) || !canvasRuntimeReady() || desktopPresentationChanging) return;
+  desktopPresentationChanging = true;
+  try {
+    if (!canvasStageActive()) {
+      rememberCanvasThemeGraph();
+      appearance.canvasThemePort = key;
+      canvasOptIn = true;
+      canvasLaunchDismissed = false;
+      setLocalStorageItem(CANVAS_OPT_IN_KEY, 'on');
+      enableCanvasStageStyles();
+      await selectTheme(CANVAS_STAGE_THEME);
+      await syncProductionWorkspaceHost();
+    }
+    const select = $('#canvasThemePortSelect');
+    if (select) select.value = key;
+    await applyDesktopPortSelection?.();
+    syncDesktopPresentationNavigation();
+  } finally { desktopPresentationChanging = false; }
+}
+
+function installDesktopPresentations() {
+  const grid = $('#themeSetting');
+  if (!grid || grid.querySelector('[data-desktop-theme]')) return;
+  canvasThemePortDomain.RELEASE_KEYS.forEach((key) => {
+    const port = canvasThemePortDomain.get(key);
+    const button = document.createElement('button');
+    button.type = 'button'; button.className = 'theme-option'; button.dataset.desktopTheme = key;
+    const preview = document.createElement('span'); preview.className = `theme-preview ${key}-preview`;
+    const name = document.createElement('b'); name.textContent = port.name;
+    const summary = document.createElement('small'); summary.textContent = port.summary;
+    button.append(preview, name, summary);
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      try { await selectDesktopPresentation(key); closeSettings(); }
+      catch (error) { showToast(error.message || 'The theme could not be applied.'); }
+      finally { button.disabled = false; }
+    });
+    grid.append(button);
+  });
+  const editLayout = document.createElement('button');
+  editLayout.id = 'desktopEditLayoutButton'; editLayout.type = 'button'; editLayout.className = 'quiet-button'; editLayout.textContent = 'Edit current layout';
+  editLayout.addEventListener('click', async () => { closeSettings(); await waitForPaint(); $('.cw-studio-launcher')?.click(); });
+  grid.after(editLayout);
+  const nav = document.createElement('nav');
+  nav.className = 'desktop-panel-navigation'; nav.setAttribute('aria-label', 'Listening panels');
+  [['library','Library'],['tracks','Tracks'],['information','Track info'],['queue','Queue']].forEach(([key,label]) => {
+    const button = document.createElement('button'); button.type = 'button'; button.textContent = label;
+    button.dataset.desktopPanel = key;
+    button.addEventListener('click', () => {
+      document.body.dataset.desktopPanel = key;
+      const utility = key === 'information' || key === 'queue';
+      if (utility) {
+        const tabs = [...document.querySelectorAll('[data-cw-node-id$="-utility-stack"] .cw-stack-tab')];
+        tabs[key === 'queue' ? 1 : 0]?.click();
+        if (key === 'queue') openQueue(button);
+      }
+      syncDesktopPresentationNavigation();
+      const selector = key === 'library' ? '.library-rail' : key === 'tracks' ? '.main-stage' : key === 'queue' ? '#queueDrawer' : '.inspector';
+      const panel = document.querySelector(selector);
+      if (document.body.hasAttribute('data-desktop-custom') && panel) {
+        const field = document.querySelector('[data-cw-node-id="canvas-field"]');
+        if (field) field.scrollTop += panel.getBoundingClientRect().top - field.getBoundingClientRect().top;
+      }
+      panel?.querySelector('button:not(:disabled),input,[tabindex="0"]')?.focus({preventScroll:true});
+    });
+    nav.append(button);
+  });
+  $('.topbar')?.after(nav);
+  const logButton = document.createElement('button'); logButton.type = 'button'; logButton.textContent = 'Quest log'; logButton.id = 'desktopQuestLogButton';
+  logButton.setAttribute('aria-expanded','false');
+  logButton.addEventListener('click', () => {
+    const open = !document.body.hasAttribute('data-desktop-quest-log');
+    document.body.toggleAttribute('data-desktop-quest-log',open); logButton.setAttribute('aria-expanded',String(open));
+  });
+  nav.append(logButton);
+  const summary = $('#nowPlayingSummary');
+  summary?.addEventListener('click', () => { if (document.body.hasAttribute('data-desktop-presentation')) $('#metadataToggle').click(); });
+  summary?.addEventListener('keydown', event => {
+    if (document.body.hasAttribute('data-desktop-presentation') && ['Enter',' '].includes(event.key)) { event.preventDefault(); $('#metadataToggle').click(); }
+  });
+  new MutationObserver(syncDesktopPresentationNavigation).observe(document.body, {attributes:true,attributeFilter:['data-canvas-theme-port','data-composition-mode']});
+  new MutationObserver(syncDesktopPresentationNavigation).observe($('#playlistHero'), {attributes:true,attributeFilter:['class']});
+  syncDesktopPresentationNavigation();
+}
+
+function syncDesktopPresentationNavigation() {
+  const port = activeCanvasThemePort();
+  const active = canvasThemePortDomain.RELEASE_KEYS.includes(port?.key);
+  document.body.toggleAttribute('data-desktop-presentation', active);
+  if ($('#desktopEditLayoutButton')) $('#desktopEditLayoutButton').hidden = !active;
+  const info = $('#heroTrackInfo');
+  let origin = $('#desktopTrackInfoOrigin');
+  if (active && info && !origin) {
+    origin = document.createElement('span'); origin.id = 'desktopTrackInfoOrigin'; origin.hidden = true;
+    info.before(origin);
+    document.body.append(info);
+  } else if (!active && origin && info) { origin.replaceWith(info); }
+  const artwork = $('#backgroundCabinet');
+  let artworkOrigin = $('#desktopArtworkOrigin');
+  if (active && artwork && !artworkOrigin) {
+    artworkOrigin = document.createElement('span'); artworkOrigin.id = 'desktopArtworkOrigin'; artworkOrigin.hidden = true;
+    artwork.before(artworkOrigin); document.body.append(artwork);
+  } else if (!active && artworkOrigin && artwork) { artworkOrigin.replaceWith(artwork); }
+  document.body.toggleAttribute('data-desktop-track-info', active && $('#playlistHero').classList.contains('track-info-open'));
+  const log = $('.quest-hotbar-hud');
+  const questActive = port?.key === 'cartridge-quest';
+  let logOrigin = $('#desktopQuestLogOrigin');
+  if (active && questActive && log && !logOrigin) {
+    logOrigin = document.createElement('span'); logOrigin.id = 'desktopQuestLogOrigin'; logOrigin.hidden = true;
+    log.before(logOrigin); document.body.append(log); log.classList.add('desktop-quest-log');
+    if (!log.querySelector('.desktop-quest-log-close')) {
+      const close = document.createElement('button'); close.type = 'button'; close.className = 'desktop-quest-log-close'; close.textContent = 'Close quest log';
+      close.onclick = () => { document.body.removeAttribute('data-desktop-quest-log'); $('#desktopQuestLogButton')?.setAttribute('aria-expanded','false'); $('#desktopQuestLogButton')?.focus(); };
+      log.append(close);
+    }
+  } else if ((!active || !questActive) && logOrigin && log) {
+    logOrigin.replaceWith(log); log.classList.remove('desktop-quest-log'); document.body.removeAttribute('data-desktop-quest-log');
+  }
+  if ($('#desktopQuestLogButton')) $('#desktopQuestLogButton').hidden = !questActive;
+  const graph = productionWorkspaceHost?.snapshot?.().session?.graph;
+  const geometry = node => node ? [node.id,node.type,node.axis || null,node.columns || null,['columnStart','rowStart','columnSpan','rowSpan'].map(key => node.placement?.[key] ?? (key.endsWith('Span') ? 1 : null)),(node.children || []).map(geometry)] : null;
+  document.body.toggleAttribute('data-desktop-custom', active && graph && JSON.stringify(geometry(graph)) !== JSON.stringify(geometry(canvasThemePortDomain.graphForPort(port.key))));
+  if (!active && activeQuestInfoCabinet?.classList.contains('desktop-cabinet')) setReleasedQuestCabinet(null, false);
+  if (!document.body.dataset.desktopPanel) document.body.dataset.desktopPanel = 'tracks';
+  document.querySelectorAll('button[data-desktop-panel]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.desktopPanel === document.body.dataset.desktopPanel)));
+  document.querySelectorAll('[data-desktop-theme]').forEach(button => {
+    const selected = button.dataset.desktopTheme === port?.key;
+    button.classList.toggle('active', selected); button.setAttribute('aria-pressed', String(selected));
+  });
 }
 
 function activePresentationKey() {
@@ -1194,7 +1336,7 @@ function installCanvasStudioControl() {
   baseOption.value = '';
   baseOption.textContent = 'Canvas Base';
   portSelect.append(baseOption);
-  canvasThemePortDomain.PORTS.forEach((port) => {
+  canvasThemePortDomain.PORTS.filter(port => runtimeInfo.isDevelopment || canvasThemePortDomain.RELEASE_KEYS.includes(port.key)).forEach((port) => {
     const option = document.createElement('option');
     option.value = port.key;
     option.textContent = port.name;
@@ -1221,6 +1363,9 @@ function installCanvasStudioControl() {
     const previousKey = appearance.canvasThemePort;
     const nextKey = canvasThemePortDomain.normalizeKey(portSelect.value);
     const nextPort = canvasThemePortDomain.get(nextKey);
+    const previousSnapshot = productionWorkspaceHost?.snapshot?.().session;
+    if (previousSnapshot?.dirty) { paintPort(); showToast('Save or discard your composition before switching themes.'); return; }
+    rememberCanvasThemeGraph();
     portSelect.disabled = true;
     // The same themed loading screen as any theme change, with the new port's
     // colours and the recoloured logo, before the stock composition swaps in.
@@ -1253,7 +1398,8 @@ function installCanvasStudioControl() {
           presetResult = await productionWorkspaceHost?.applyThemePreset?.({
             key: nextPort.key,
             label: nextPort.name,
-            graph: canvasThemePortDomain.graphForPort(nextPort.key),
+            graph: appearance.desktopThemeGraphs?.[nextPort.key] || canvasThemePortDomain.graphForPort(nextPort.key),
+            creatorGraph: canvasThemePortDomain.graphForPort(nextPort.key),
           });
         } catch (error) {
           presetResult = { ok: false, error: error?.message || 'The stock Canvas composition could not be applied.' };
@@ -1270,6 +1416,7 @@ function installCanvasStudioControl() {
       }
       appearance.canvasThemePort = nextKey;
       applyAppearance();
+      syncDesktopPresentationNavigation();
       if (navigationDispatcher.setMechanic(activeTrackNavigationMechanic())) {
         syncTrackHeaderVisibility();
         renderTracks({ preserveOrder: true });
@@ -1283,6 +1430,7 @@ function installCanvasStudioControl() {
     }
   };
   portSelect.addEventListener('change', applyPortSelection);
+  applyDesktopPortSelection = applyPortSelection;
   let editionApplying = false;
   window.desktop.onThemeEditionRequest?.(async (key) => {
     if (!['cosmic-cinema', 'neon-burst'].includes(key) || !canvasRuntimeReady()) return;
@@ -1332,6 +1480,7 @@ function installCanvasStudioControl() {
     paintPort();
   });
   group.append(button, note, portLabel, portNote);
+  group.hidden = !runtimeInfo.isDevelopment;
   const notice = host.querySelector('.studio-rebuild-notice');
   if (notice) notice.insertAdjacentElement('afterend', group);
   else host.prepend(group);
@@ -4922,13 +5071,13 @@ function canvasHostProfileIdentity() {
 function canvasHostThemePreset() {
   const port = activeCanvasThemePort();
   if (!port) return null;
-  return { key: port.key, label: port.name, graph: canvasThemePortDomain.graphForPort(port.key) };
+  return { key: port.key, label: port.name, graph: appearance.desktopThemeGraphs?.[port.key] || canvasThemePortDomain.graphForPort(port.key), creatorGraph: canvasThemePortDomain.graphForPort(port.key) };
 }
 
 async function syncProductionWorkspaceHost() {
   const serial = ++productionWorkspaceSyncSerial;
   const devLabEligible = runtimeInfo.isDevelopment === true && appearance.theme === 'dev-lab';
-  const eligible = devLabEligible || (runtimeInfo.isDevelopment === true && appearance.theme === canvasHostThemeKey());
+  const eligible = devLabEligible || (canvasRuntimeReady() && canvasStageActive() && appearance.theme === canvasHostThemeKey());
   if (eligible && !productionWorkspaceHost) {
     productionWorkspaceHost = workspaceProductionDomain.createHost({
       document,
@@ -4964,12 +5113,13 @@ async function syncProductionWorkspaceHost() {
         await selectTheme('studio');
       },
       onFailure: (error) => showToast(`Pixelody Canvas returned to the legacy workspace: ${error.message}`),
+      onStatus: () => syncDesktopPresentationNavigation(),
     });
   }
   if (!productionWorkspaceHost) return;
   await productionWorkspaceHost.setActive(eligible);
   if (serial !== productionWorkspaceSyncSerial) {
-    const currentEligibility = (runtimeInfo.isDevelopment === true && appearance.theme === 'dev-lab') || (runtimeInfo.isDevelopment === true && appearance.theme === canvasHostThemeKey());
+    const currentEligibility = (runtimeInfo.isDevelopment === true && appearance.theme === 'dev-lab') || (canvasRuntimeReady() && canvasStageActive() && appearance.theme === canvasHostThemeKey());
     await productionWorkspaceHost.setActive(currentEligibility);
   }
   // The host's controls keep describing Composition Mode on <body> after it
@@ -7041,6 +7191,11 @@ function navigateBack() {
     .find((key) => Boolean(before[key]) && !after[key]);
   if (!closedKey && before.view === 'systems' && after.view === 'library') closedKey = 'systems';
   if (closedKey === 'supportOwn') supportOwnTarget = null;
+  if (closedKey === 'queue' && document.body.hasAttribute('data-desktop-presentation')) {
+    document.querySelector('[data-cw-node-id$="-utility-stack"] .cw-stack-tab')?.click();
+    if (document.body.dataset.desktopPanel === 'queue') document.body.dataset.desktopPanel = 'tracks';
+    syncDesktopPresentationNavigation();
+  }
   syncCoreNavigationDisclosureState();
   // The remembered control can be replaced while its drawer is open (the
   // player controls re-render when the window or zoom changes), so fall back
@@ -15825,6 +15980,7 @@ async function initializeRuntimeInfo() {
       // once the canvas is opened.
       enableCanvasStageStyles();
       installCanvasStudioControl();
+      installDesktopPresentations();
     }
     installDevelopmentExplorer();
     if (canvasStageActive()) {
@@ -19335,6 +19491,11 @@ function syncRepeatButton() { $('#repeatButton').classList.toggle('active', stat
 syncRepeatButton();
 $('#repeatButton').onclick = () => { state.repeat = state.repeat === 'off' ? 'all' : state.repeat === 'all' ? 'one' : 'off'; syncRepeatButton(); persist(); showToast(`Repeat ${state.repeat}.`); };
 function openQueue(opener = document.activeElement) {
+  if (document.body.hasAttribute('data-desktop-presentation')) {
+    document.body.dataset.desktopPanel = 'queue';
+    document.querySelectorAll('[data-cw-node-id$="-utility-stack"] .cw-stack-tab')[1]?.click();
+    syncDesktopPresentationNavigation();
+  }
   const queueDrawer = prepareSurfaceForOpen('#queueDrawer');
   if (queueDrawer?.classList.contains('hidden')) pushNavigationState();
   rememberNavigationOpener('queue', opener);
@@ -19745,6 +19906,7 @@ audio.onratechange = () => mirrorPrimaryPlaybackStateToSecondaries('primary-rate
 $('#search').oninput = renderTracks;
 document.querySelectorAll('.filter').forEach((button) => button.onclick = () => { document.querySelectorAll('.filter').forEach((item) => item.classList.remove('active')); button.classList.add('active'); state.filter = button.dataset.filter; renderTracks(); });
 function openSystemsView(opener = document.activeElement) {
+  if (document.body.hasAttribute('data-desktop-presentation')) { document.body.dataset.desktopPanel = 'tracks'; syncDesktopPresentationNavigation(); }
   rememberNavigationOpener('systems', opener);
   setLibraryVisible(false);
   refreshOutputs({ requestLabels: true }).catch((error) => {
@@ -20382,6 +20544,13 @@ async function selectThemeFromSettings(theme) {
   if (developmentSessionIsolated && theme === 'studio') {
     await restartIntoDevelopmentProfile('studio');
     return;
+  }
+  if (theme === 'studio' && canvasStageActive()) {
+    if (productionWorkspaceHost?.snapshot?.().session?.dirty) { showToast('Save or discard your composition before leaving this theme.'); return; }
+    rememberCanvasThemeGraph();
+    canvasOptIn = false; canvasLaunchDismissed = true;
+    setLocalStorageItem(CANVAS_OPT_IN_KEY, 'off');
+    disableCanvasStageStyles();
   }
   const settingsOverlay = $('#settingsOverlay');
   if (settingsOverlay && !settingsOverlay.classList.contains('hidden')) {
@@ -21440,6 +21609,8 @@ let questCabinetPlaceholder = null;
 const questCabinetMoveAnimations = new WeakMap();
 const questCabinetRevealAnimations = new WeakMap();
 const questCabinetMoveDuration = 220;
+let questCabinetFocusSuppressed = false;
+let questCabinetDismissed = null;
 function clearQuestCabinetPlaceholder() {
   questCabinetPlaceholder?.remove();
   questCabinetPlaceholder = null;
@@ -21508,6 +21679,10 @@ function cancelQuestCabinetReveal(cabinet) {
   questCabinetRevealAnimations.delete(cabinet);
 }
 function setQuestInfoCabinetOpen(target, open) {
+  if (cartridgeQuestExperienceActive() || activeQuestInfoCabinet?.classList.contains('desktop-cabinet')) {
+    setReleasedQuestCabinet(target, open);
+    return;
+  }
   if (!open && target && target !== activeQuestInfoCabinet) return;
   if (open && target === activeQuestInfoCabinet) return;
   const nextTarget = target && open ? target : null;
@@ -21553,26 +21728,74 @@ function setQuestInfoCabinetOpen(target, open) {
     else reveal();
   }
 }
+function setReleasedQuestCabinet(target, open) {
+  if (!open && target && target !== activeQuestInfoCabinet) return;
+  if (open && target === activeQuestInfoCabinet) return;
+  clearTimeout(questInfoCabinetTimer); clearTimeout(questCabinetExpansionTimer);
+  const previous = activeQuestInfoCabinet;
+  if (previous) {
+    questCabinetFocusSuppressed = true;
+    cancelQuestCabinetReveal(previous);
+    questCabinetPlaceholder?.replaceWith(previous); questCabinetPlaceholder = null;
+    previous.classList.remove('desktop-cabinet','is-cabinet-promoted','is-cabinet-open','is-cabinet-pinned');
+    previous.querySelector('.quest-cabinet-handle')?.setAttribute('aria-expanded','false');
+    questCabinetFocusSuppressed = false;
+  }
+  if (!open) questCabinetDismissed = previous;
+  activeQuestInfoCabinet = open ? target : null;
+  if (!open || !target) return;
+  const bounds = target.getBoundingClientRect();
+  questCabinetPlaceholder = document.createElement('span');
+  questCabinetPlaceholder.className = 'quest-cabinet-placeholder';
+  questCabinetPlaceholder.style.height = `${bounds.height}px`;
+  target.before(questCabinetPlaceholder);
+  const focused = target.contains(document.activeElement) ? document.activeElement : null;
+  questCabinetFocusSuppressed = true;
+  document.body.append(target);
+  target.style.removeProperty('position');
+  target.classList.add('desktop-cabinet','is-cabinet-promoted','is-cabinet-open');
+  target.querySelector('.quest-cabinet-handle')?.setAttribute('aria-expanded','true');
+  // Open beside the original handle without placing the popup beneath a
+  // clipped/perspective hero ancestor. The portal retains the real DOM/state.
+  const width = Math.min(440, innerWidth - 32);
+  target.style.setProperty('--desktop-cabinet-left', `${Math.max(16, Math.min(bounds.left, innerWidth - width - 16))}px`);
+  target.style.setProperty('--desktop-cabinet-top', `${Math.max(110, Math.min(bounds.top, innerHeight - 320))}px`);
+  focused?.focus({preventScroll:true});
+  questCabinetFocusSuppressed = false;
+}
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape' || !activeQuestInfoCabinet?.classList.contains('desktop-cabinet')) return;
+  const handle = activeQuestInfoCabinet.querySelector('.quest-cabinet-handle');
+  setReleasedQuestCabinet(null, false);
+  questCabinetFocusSuppressed = true; handle?.focus({preventScroll:true}); questCabinetFocusSuppressed = false;
+  event.preventDefault();
+});
 questInfoCabinets.forEach((cabinet) => {
   const handle = cabinet.querySelector('.quest-cabinet-handle');
-  cabinet.addEventListener('pointerenter', () => {
+  cabinet.addEventListener('pointerenter', (event) => {
+    if (event.pointerType === 'touch' || questCabinetFocusSuppressed || questCabinetDismissed === cabinet) return;
     clearTimeout(questInfoCabinetTimer);
     questInfoCabinetTimer = setTimeout(() => setQuestInfoCabinetOpen(cabinet, true), 80);
   });
   cabinet.addEventListener('pointerleave', () => {
+    if (questCabinetDismissed === cabinet) questCabinetDismissed = null;
     clearTimeout(questInfoCabinetTimer);
     if (cabinet.classList.contains('is-cabinet-pinned')) return;
     questInfoCabinetTimer = setTimeout(() => setQuestInfoCabinetOpen(cabinet, false), 240);
   });
   cabinet.addEventListener('focusin', () => {
+    if (questCabinetFocusSuppressed || questCabinetDismissed === cabinet) return;
     clearTimeout(questInfoCabinetTimer);
     setQuestInfoCabinetOpen(cabinet, true);
   });
   cabinet.addEventListener('focusout', (event) => {
+    if (questCabinetFocusSuppressed) return;
+    if (!cabinet.contains(event.relatedTarget) && questCabinetDismissed === cabinet) questCabinetDismissed = null;
     if (cabinet.contains(event.relatedTarget) || cabinet.classList.contains('is-cabinet-pinned')) return;
     setQuestInfoCabinetOpen(cabinet, false);
   });
   handle?.addEventListener('click', () => {
+    questCabinetDismissed = null;
     const shouldPin = !cabinet.classList.contains('is-cabinet-pinned');
     questInfoCabinets.forEach((item) => item.classList.remove('is-cabinet-pinned'));
     cabinet.classList.toggle('is-cabinet-pinned', shouldPin);
