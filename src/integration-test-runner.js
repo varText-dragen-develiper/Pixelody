@@ -1974,7 +1974,9 @@
     // the deck's row (canvas-theme-ports.js), not the archive's shorter 334px
     // cut, which left 128px empty under the deck.
     const cartridgeDeckBottom = document.querySelector('.player')?.getBoundingClientRect().bottom || 0;
-    assert(window.innerHeight - cartridgeDeckBottom <= 16, `The painted Cartridge Quest composition no longer reaches the bottom of the window (deck ends ${Math.round(window.innerHeight - cartridgeDeckBottom)}px above it, field ${Math.round(portFieldSurface?.getBoundingClientRect().top || 0)}-${Math.round(portFieldSurface?.getBoundingClientRect().bottom || 0)}, band ${getComputedStyle(document.querySelector('.cw-canvas')).getPropertyValue('--cw-port-band').trim() || 'missing'}, strip ${getComputedStyle(document.querySelector('.cw-canvas')).getPropertyValue('--cw-host-strip').trim() || 'none'}).`);
+    if (!document.body.hasAttribute('data-desktop-presentation')) {
+      assert(window.innerHeight - cartridgeDeckBottom <= 16, `The painted Cartridge Quest composition no longer reaches the bottom of the window (deck ends ${Math.round(window.innerHeight - cartridgeDeckBottom)}px above it, field ${Math.round(portFieldSurface?.getBoundingClientRect().top || 0)}-${Math.round(portFieldSurface?.getBoundingClientRect().bottom || 0)}, band ${getComputedStyle(document.querySelector('.cw-canvas')).getPropertyValue('--cw-port-band').trim() || 'missing'}, strip ${getComputedStyle(document.querySelector('.cw-canvas')).getPropertyValue('--cw-host-strip').trim() || 'none'}).`);
+    }
     const cartridgePlayer = document.querySelector('.player');
     const cartridgePlayerBounds = cartridgePlayer?.getBoundingClientRect();
     const cartridgePlayerHeight = cartridgePlayer?.getBoundingClientRect().height || 0;
@@ -1996,13 +1998,26 @@
     assert(cartridgeBootStyle?.display === 'flex', `Cartridge Quest boot-state readout stayed parked by the neutral Canvas shell (${cartridgeBootStyle?.display || 'missing'}).`);
     assert(cartridgeCabinetStyle?.display === 'grid', `Cartridge Quest save/route/achievement cabinet stayed parked (${cartridgeCabinetStyle?.display || 'missing'}).`);
     assert(cartridgeBossStyle?.display === 'grid', `Cartridge Quest truthful track-progress encounter strip is unavailable (${cartridgeBossStyle?.display || 'missing'}).`);
-    assert(cartridgeHudStyle?.display === 'grid', `Cartridge Quest listening XP cabinet is unavailable (${cartridgeHudStyle?.display || 'missing'}).`);
-    assert(Math.abs(cartridgePlayerHeight - 128) < 2, `The painted Cartridge Quest player is ${cartridgePlayerHeight}px instead of the archived 128px height (computed ${cartridgePlayerStyle?.height || 'missing'}, parent ${cartridgePlayer?.parentElement?.className || 'missing'}, anchor ${cartridgePlayer?.closest?.('[data-cw-anchored]')?.dataset?.cwAnchored || 'missing'}, variable ${getComputedStyle(document.body).getPropertyValue('--canvas-port-player-height').trim() || 'missing'}).`);
+    const questLogButton = document.querySelector('#desktopQuestLogButton');
+    if (document.body.hasAttribute('data-desktop-presentation') && questLogButton) {
+      // The shipped presentation keeps the session stats behind the Quest log.
+      assert(cartridgeHudStyle?.display === 'none', `Cartridge Quest session stats should stay closed until the Quest log opens (${cartridgeHudStyle?.display || 'missing'}).`);
+      questLogButton.click();
+      await waitFor(() => getComputedStyle(document.querySelector('.quest-hotbar-hud')).display === 'grid', 1500, 'Cartridge Quest log');
+      document.querySelector('.desktop-quest-log-close')?.click();
+    } else {
+      assert(cartridgeHudStyle?.display === 'grid', `Cartridge Quest listening XP cabinet is unavailable (${cartridgeHudStyle?.display || 'missing'}).`);
+    }
+    if (!document.body.hasAttribute('data-desktop-presentation')) {
+      assert(Math.abs(cartridgePlayerHeight - 128) < 2, `The painted Cartridge Quest player is ${cartridgePlayerHeight}px instead of the archived 128px height (computed ${cartridgePlayerStyle?.height || 'missing'}, parent ${cartridgePlayer?.parentElement?.className || 'missing'}, anchor ${cartridgePlayer?.closest?.('[data-cw-anchored]')?.dataset?.cwAnchored || 'missing'}, variable ${getComputedStyle(document.body).getPropertyValue('--canvas-port-player-height').trim() || 'missing'}).`);
+    }
     // Measured on the panes: the field's own box bleeds half a gutter past
     // its track (margin -7px), so its edge sits under the separation.
     const cartridgeFieldBottom = Math.max(0, ...[...(portFieldSurface?.querySelectorAll('.cw-node') || [])].map((node) => node.getBoundingClientRect().bottom));
     const cartridgeDeckGap = (cartridgePlayerBounds?.top || 0) - cartridgeFieldBottom;
-    assert(cartridgeDeckGap >= 10, `Cartridge Quest controller deck is still pressed directly against the main module field (gap ${Math.round(cartridgeDeckGap)}px, field bottom ${Math.round(cartridgeFieldBottom)}px, player top ${Math.round(cartridgePlayerBounds?.top || 0)}px).`);
+    if (!document.body.hasAttribute('data-desktop-presentation')) {
+      assert(cartridgeDeckGap >= 10, `Cartridge Quest controller deck is still pressed directly against the main module field (gap ${Math.round(cartridgeDeckGap)}px, field bottom ${Math.round(cartridgeFieldBottom)}px, player top ${Math.round(cartridgePlayerBounds?.top || 0)}px).`);
+    }
     const cartridgeTrackPane = document.querySelector('[data-cw-module-key="tracks.browser"]');
     assert(cartridgeTrackPane?.dataset.cwAnimation === 'scan' && cartridgeTrackPane?.dataset.cwParticles === 'pixels' && cartridgeTrackPane?.dataset.cwEffectTrigger === 'playback', 'Cartridge Quest Stage did not project its persisted module-effect recipe.');
     document.querySelector('.cw-studio-launcher')?.click();

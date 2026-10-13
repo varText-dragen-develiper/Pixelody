@@ -10,7 +10,7 @@ body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"]{--mini-a
 body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-shell{grid-template-columns:86px minmax(170px,1fr) 118px;gap:12px;align-items:center;overflow:hidden;padding:28px 14px 14px;clip-path:none;border:5px solid #34343d;border-radius:4px;background:linear-gradient(180deg,#b8b5b0 0 22px,#8f8d95 22px 100%);box-shadow:inset 3px 3px #d6d2ca,inset -4px -4px #5f5d66,6px 6px #10131f}
 body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-shell::before{content:"CQ-16 // LINK DECK";position:absolute;left:18px;top:7px;width:auto;height:auto;background:none;color:#34343d;font:6px "Quest Pixel",sans-serif;letter-spacing:.08em}
 body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-shell::after{content:"";position:absolute;z-index:2;right:64px;top:8px;width:7px;height:7px;border-radius:0;background:#55c98a;box-shadow:0 0 0 2px #34343d,0 0 7px #55c98a88}
-body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-shell>*:not(.mini-glow):not(.mini-drag-strip):not(.mini-resize-grip){position:relative;z-index:1}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-shell>*:not(.mini-glow):not(.mini-drag-strip):not(.mini-resize-grip):not(.window-actions){position:relative;z-index:1}
 body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-glow{position:absolute;inset:22px 5px 5px;background:linear-gradient(90deg,transparent,#7b68c91f 48%,#f2c94c18 62%,transparent);pointer-events:none;filter:none}
 body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-drag-strip{position:absolute;z-index:8;top:0;right:60px;left:0;height:24px}
 body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-resize-grip{position:absolute;z-index:9;opacity:.9}
@@ -50,6 +50,7 @@ body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-co
 body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"].playing .mini-copy::after{background:#f2c94c;box-shadow:-9px 0 #55c98a,0 0 6px #f2c94c88}
 body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-copy small{color:#f2c94c;font-size:6px;line-height:1;letter-spacing:.08em}
 body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-copy strong{margin-top:5px;color:#fff7c4;font-size:11px;line-height:1.15;text-transform:uppercase}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-copy>*{flex-shrink:0}
 body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-copy>span{margin-top:4px;color:#b8b5b0;font-size:7px;line-height:1.2}
 body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .mini-time{margin-top:3px;color:#8c8990;font-size:6px}
 

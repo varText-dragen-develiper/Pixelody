@@ -1,7 +1,7 @@
 const { app, BrowserWindow, dialog, ipcMain, Menu, nativeImage, screen, session, shell } = require('electron');
 const path = require('path');
 const moduleShop = require('./module-shop/window').createModuleShop({ app, BrowserWindow, dialog, applyEdition: async (recipe) => {
-  if (!composableThemeExperimentEnabled || singularityProbeMode || !mainWindow || mainWindow.isDestroyed()) throw new Error('Theme editions require a Windows Canvas development session.');
+  if (!isDevelopment || !composableThemeExperimentEnabled || singularityProbeMode || !mainWindow || mainWindow.isDestroyed()) throw new Error('Theme editions require a Windows Canvas development session.');
   mainWindow.webContents.send('theme:edition-request', recipe);
   mainWindow.show(); mainWindow.focus();
 } });
@@ -32,6 +32,7 @@ const {
 } = require('./electron-security');
 const releaseIdentity = require('./release-identity');
 const builtInThemeRegistry = require('./themes/built-in-themes.json');
+const desktopThemePorts = require('./theme-runtime/canvas-theme-ports');
 const brandMark = require('./brand-mark');
 const musicBrainz = require('./musicbrainz');
 
@@ -132,6 +133,11 @@ const developmentUserDataArgument = process.argv.find((argument) => argument.sta
 const developmentUserDataPath = !app.isPackaged && !integrationTestMode && developmentUserDataArgument && path.isAbsolute(developmentUserDataArgument)
   ? path.resolve(developmentUserDataArgument)
   : '';
+// An explicit separate profile is useful for portable libraries and evaluating
+// a release without opening or downgrading an existing installation's data.
+const profileDirectoryArgument = process.argv.find(argument => argument.startsWith('--pixelody-profile-directory='))?.slice('--pixelody-profile-directory='.length);
+if (profileDirectoryArgument !== undefined && !path.isAbsolute(profileDirectoryArgument)) throw new Error('Profile directory must be an absolute path.');
+const profileDirectoryPath = profileDirectoryArgument ? path.resolve(profileDirectoryArgument) : '';
 const integrationReportCandidate = integrationTestMode && integrationReportArgument && path.isAbsolute(integrationReportArgument) ? path.resolve(integrationReportArgument) : '';
 const integrationReportRelative = integrationUserDataPath && integrationReportCandidate ? path.relative(integrationUserDataPath, integrationReportCandidate) : '';
 const integrationReportPath = integrationTestMode && integrationUserDataPath && integrationReportCandidate
@@ -153,6 +159,8 @@ if (integrationTestMode && integrationUserDataPath) {
   // not authoritative here because Pixelody pins its durable state directory;
   // this development-only absolute path provides a safe painted-test profile.
   app.setPath('userData', developmentUserDataPath);
+} else if (profileDirectoryPath) {
+  app.setPath('userData', profileDirectoryPath);
 } else {
   app.setPath('userData', path.join(app.getPath('appData'), releaseIdentity.userDataDirectoryName));
 }
@@ -178,53 +186,32 @@ const developmentZoomFactor = isDevelopment && developmentZoomArgument
 // --pixelody-canvas opens Canvas Studio: a near-blank canvas plus the rail
 // that builds one. PIXELODY_CANVAS_PROFILE=foreground-stage selects the earlier
 // fixed preset instead, for comparison. --pixelody-canvas-foreground is kept as
-// an alias so existing launchers keep working. All of it is development only;
-// none of it widens the packaged runtime, and the Counterspace Relay path is
-// unchanged when no canvas flag is passed.
+// an alias so existing launchers keep working. These launch overrides remain
+// development-only; packaged Settings has its separate presentation allowlist.
 const canvasRequested = process.argv.includes('--pixelody-canvas')
   || process.argv.includes('--pixelody-canvas-foreground')
   || Boolean(process.env.PIXELODY_CANVAS_PROFILE);
-const canvasProfile = process.env.PIXELODY_CANVAS_PROFILE === 'foreground-stage'
+const canvasProfile = isDevelopment && process.env.PIXELODY_CANVAS_PROFILE === 'foreground-stage'
   ? foregroundStageExperiment
   : canvasStudioPreset;
-// The canvas runtime is *seeded* on every development launch, flag or not.
-// Two rounds were lost to a launch argument that never arrived, and there is
-// no good reason for the authority's readiness to depend on how the app was
-// started. Seeding is additive: it owns its own durable key and nothing
-// activates until the renderer is told to. What the flag still controls is
-// whether Pixelody *opens* into the canvas; without it the choice lives in
-// Settings, which is where a product decision belongs anyway.
-// The archived workspace-production integration scenario proves the original
-// C8 authority and must not be silently migrated to Canvas Studio's one-pane
-// creator graph. Ordinary development launches still seed Canvas Studio so
-// the visible Settings entry can activate it without a relaunch.
-const composableThemeExperimentEnabled = isDevelopment && (
+// Ordinary launches seed the composition authority so the two released listening
+// presentations can be selected in Settings. Development launch flags still
+// control experimental profiles. Preserve the archived integration authorities.
+const composableThemeExperimentEnabled = !integrationTestMode || (isDevelopment && (
   canvasRequested
-  // Ordinary development launches seed Canvas too, and that is what makes the
-  // Settings route above actually exist. canvasRuntimeReady() in renderer.js
-  // keys off composableThemeExperimentTheme, which ships as '' whenever this
-  // constant is false -- so while this was gated on canvasRequested alone, a
-  // flagless launch installed no Canvas entry in Settings and left the user in
-  // the pre-modularisation shell with no way forward. Opening into the canvas
-  // is still flag-only; that decision is composableThemeExperimentLaunchFlag
-  // and canvasOptIn in the renderer, not this constant.
-  // Scoped to !integrationTestMode deliberately: the workspace-production
-  // scenario's archived C8 authority must keep the seeding it has today, so
-  // the harness scenarios stay listed explicitly below.
-  || !integrationTestMode
   || integrationTestScenario === 'workspace-theme-experiment'
   || integrationTestScenario === 'workspace-canvas-studio'
-);
+));
 // Counterspace Relay stays the profile for its own flag AND for the
 // workspace-theme-experiment scenario, which selects it by scenario name and
 // never passes the flag -- scripts/check-windows-integration.js builds its
 // expected authority from theme-experiment.js directly, so seeding anything
 // else here fails that scenario at activate() with "the isolated
 // composable-theme authority was not active".
-const composableThemeRelayRequested = process.argv.includes('--pixelody-composable-theme-experiment')
-  || integrationTestScenario === 'workspace-theme-experiment';
+const composableThemeRelayRequested = isDevelopment && (process.argv.includes('--pixelody-composable-theme-experiment')
+  || integrationTestScenario === 'workspace-theme-experiment');
 const composableThemeProfile = composableThemeRelayRequested ? composableThemeExperiment : canvasProfile;
-const composableThemeExperimentVersion = composableThemeExperimentEnabled && Number(process.env.PIXELODY_COMPOSABLE_EXPERIMENT_VERSION) >= 2 ? 2 : 1;
+const composableThemeExperimentVersion = isDevelopment && composableThemeExperimentEnabled && Number(process.env.PIXELODY_COMPOSABLE_EXPERIMENT_VERSION) >= 2 ? 2 : 1;
 // The theme explorer's development entries (Settings > Themes). Integration
 // scenarios pass the same flags as the launchers but keep their own evidence
 // contract, so they neither list the entries nor get the isolated-session
@@ -1383,6 +1370,7 @@ registerHandle('app:runtime-info', () => ({
   isPackaged: app.isPackaged,
   isDevelopment,
   composableThemeExperiment: composableThemeExperimentEnabled,
+  desktopThemePresentations: [...desktopThemePorts.RELEASE_KEYS],
   composableThemeExperimentVersion: composableThemeExperimentEnabled ? composableThemeExperimentVersion : 0,
   composableThemeExperimentProfile: composableThemeExperimentEnabled ? composableThemeProfile.PROFILE_ID : '',
   composableThemeExperimentLabel: composableThemeExperimentEnabled ? composableThemeProfile.LABEL : '',
@@ -1466,7 +1454,7 @@ registerOn('state:load-sync', (event) => {
   }
   try {
     event.returnValue = { ...(durableStateStartupLoad || stateStore().loadSync()), presentation: {
-      canvasAllowed: isDevelopment && composableThemeExperimentEnabled && composableThemeProfile.THEME_ID === 'foreground',
+      canvasAllowed: composableThemeExperimentEnabled && composableThemeProfile.THEME_ID === 'foreground',
       canvasRequested: isDevelopment && canvasRequested,
     } };
     durableStateStartupLoad = null;
