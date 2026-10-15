@@ -6,14 +6,14 @@
   'use strict';
 
   const VERSION = 1;
-  const KINDS = new Set(['candidate', 'planned', 'priority', 'forward', 'previous', 'stop']);
+  const KINDS = new Set(['candidate', 'planned', 'priority', 'forward', 'previous', 'repeat', 'stop']);
   const MODES = new Set(['flow', 'discovery', 'comfort', 'energy', 'genre-weave', 'deep-library']);
   const SHAPES = new Set(['auto', 'steady', 'rise', 'wave', 'wind-down']);
   const DIRECTIONS = new Set(['unknown', 'rising', 'falling', 'steady']);
   const SIGNALS = new Set(['tempo', 'key', 'energy', 'genre', 'artist', 'mood']);
   const DIVERSITY = new Set(['unknown', 'spaced', 'repeat', 'available', 'pressure']);
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
-  const finite = (value, fallback = null) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const finite = (value, fallback = null) => (typeof value === 'number' || (typeof value === 'string' && value.trim() !== '')) && Number.isFinite(Number(value)) ? Number(value) : fallback;
   const integer = (value, min, max, fallback = 0) => clamp(Math.round(Number(value) || fallback), min, max);
   const text = (value, max = 160) => String(value || '').slice(0, max);
   const nullableText = (value, max = 32) => value === null || value === undefined || value === '' ? null : text(value, max);
@@ -34,11 +34,15 @@
     const keyCurrent = nullableText(keyInput.current);
     const keyCandidate = nullableText(keyInput.candidate);
     const keyAvailable = keyInput.available === true && Boolean(keyCurrent && keyCandidate);
+    const energyAvailable = energyInput.available === true && energyCandidate !== null;
+    const bpmPoints = bpmAvailable ? integer(bpmInput.points, -4, 4) : 0;
+    const energyPoints = energyAvailable ? integer(energyInput.points, -20, 20) : 0;
+    const keyPoints = keyAvailable ? integer(keyInput.points, -6, 6) : 0;
     return {
-      bpm: { current: bpmAvailable ? bpmCurrent : null, candidate: bpmAvailable ? bpmCandidate : null, delta: bpmAvailable ? integer(bpmInput.delta, -400, 400, bpmCandidate - bpmCurrent) : null, points: integer(bpmInput.points, -4, 4), available: bpmAvailable },
-      energy: { current: energyCurrent, candidate: energyCandidate, target: energyTarget, points: integer(energyInput.points, -20, 20), available: energyInput.available === true && energyCandidate !== null, direction: DIRECTIONS.has(energyInput.direction) ? energyInput.direction : 'unknown' },
-      key: { current: keyAvailable ? keyCurrent : null, candidate: keyAvailable ? keyCandidate : null, points: integer(keyInput.points, -6, 6), available: keyAvailable },
-      totalPoints: integer(input.totalPoints, -32, 32),
+      bpm: { current: bpmAvailable ? bpmCurrent : null, candidate: bpmAvailable ? bpmCandidate : null, delta: bpmAvailable ? integer(bpmInput.delta, -400, 400, bpmCandidate - bpmCurrent) : null, points: bpmPoints, available: bpmAvailable },
+      energy: { current: energyCurrent, candidate: energyCandidate, target: energyTarget, points: energyPoints, available: energyAvailable, direction: energyAvailable && energyCurrent !== null && DIRECTIONS.has(energyInput.direction) ? energyInput.direction : 'unknown' },
+      key: { current: keyAvailable ? keyCurrent : null, candidate: keyAvailable ? keyCandidate : null, points: keyPoints, available: keyAvailable },
+      totalPoints: bpmPoints + energyPoints + keyPoints,
     };
   }
 
@@ -54,6 +58,12 @@
       shape: SHAPES.has(input.shape) ? input.shape : 'steady',
       trackId: text(input.trackId, 300),
       fromTrackId: text(input.fromTrackId, 300),
+      entryId: text(input.entryId, 300),
+      fromEntryId: text(input.fromEntryId, 300),
+      decisionId: text(input.decisionId, 300),
+      playbackAttemptId: text(input.playbackAttemptId, 300),
+      policyVersion: text(input.policyVersion, 80),
+      configVersion: text(input.configVersion, 80),
       planPosition: integer(input.planPosition, 0, 10),
       horizon: integer(input.horizon, 5, 10, 6),
       fitScore: integer(input.fitScore, -1000, 1000),

@@ -47,6 +47,7 @@
   <link rel="stylesheet" href="canvas-listening-editions.css" disabled>
   <link rel="stylesheet" href="singularity-probe.css">
   <link rel="stylesheet" href="desktop-presentations.css">
+  <link rel="stylesheet" href="desktop-theme-controls.css">
 </head>
 <body data-readiness="booting" data-performance="balanced" data-visibility="visible">
   <div class="topbar">
@@ -182,6 +183,12 @@
             <strong id="backgroundCabinetStatus" role="status" aria-live="polite" aria-atomic="true">Theme artwork is active</strong>
             <p>Choose a local image, or remove it to reveal this theme's artwork and color treatment.</p>
             <div class="background-cabinet-actions"><button id="chooseBackgroundImage" type="button"><span class="pixel-icon icon-image" aria-hidden="true"></span>Choose image...</button><button class="background-cabinet-remove" id="clearBackgroundImage" type="button">Use theme artwork</button></div>
+            <fieldset class="background-layout-options" id="backgroundLayoutOptions"><legend>Image layout</legend>
+              <label><input type="radio" name="background-layout" value="fit"><b>Fit</b><small>Show the whole image</small></label>
+              <label><input type="radio" name="background-layout" value="fill"><b>Fill</b><small>Fill the area; crop the edges</small></label>
+              <label><input type="radio" name="background-layout" value="stretch"><b>Stretch</b><small>Stretch to the area's shape</small></label>
+              <label><input type="radio" name="background-layout" value="tile"><b>Tile</b><small>Repeat a small copy</small></label>
+            </fieldset>
           </div>
           <button class="metadata-toggle" id="metadataToggle" title="Toggle track details"><span class="public-icon icon-info" aria-hidden="true"></span><span class="hero-action-label">Track info</span></button>
           <aside class="hero-track-info" id="heroTrackInfo">
@@ -1168,6 +1175,7 @@
   <script src="renderer-domains/library-workflow.js"></script>
   <script src="renderer-domains/navigation-controller.js"></script>
   <script src="renderer-domains/playback-controller.js"></script>
+  <script src="renderer-domains/listening-intervals.js"></script>
   <script src="renderer-domains/diagnostics-controller.js"></script>
   <script src="renderer-domains/output-mode.js"></script>
   <script src="renderer-domains/accessibility-controller.js"></script>
@@ -1222,6 +1230,7 @@
   <script src="workspace-composition/singularity-graph-projection-probe.js"></script>
   <script src="workspace-composition/singularity-live-host.js"></script>
   <script src="accessibility.js"></script>
+  <script src="desktop-theme-controls.js"></script>
   <script src="renderer.js"></script>
 </body>
 </html>

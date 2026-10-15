@@ -1,0 +1,35 @@
+'use strict';
+const assert = require('node:assert/strict');
+const fs = require('node:fs'), os = require('node:os'), path = require('node:path');
+const { createWindowsTaskbarFrameSession } = require('../src/windows-taskbar-frames');
+const root = fs.mkdtempSync(path.join(os.tmpdir(), 'pixelody-motion-resource-test-'));
+const app = { isPackaged: false, getPath: () => root };
+const image = { resize: () => image, toPNG: () => Buffer.from('generated-frame-pixels') };
+(async () => {
+  const properties = [], notifications = [];
+  const session = createWindowsTaskbarFrameSession({ app, identity: { appUserModelId: 'io.pixelody.desktop' }, profileDirectory: root, windows: () => [{ isDestroyed: () => false, setAppDetails: value => properties.push(value) }, { isDestroyed: () => true }], platform: 'win32', refresh: async value => notifications.push(value) });
+  await assert.rejects(session.publish(image, 18, 18), /Invalid/, 'Only the established final-color path can publish the last frame.');
+  await session.publish(image, 1, 18);
+  const file = properties[0].appIconPath;
+  assert.equal(properties.some(value => Object.hasOwn(value, 'appId')), false, 'Animation must keep the established window identity fixed.');
+  assert.ok(fs.readFileSync(file).subarray(22).equals(image.toPNG()), 'Use exact generated frame pixels.');
+  assert.equal(notifications[0].animationFrame, true, 'Intermediate notifications may return without waiting for Shell rendering.');
+  await assert.rejects(session.publish(image, 1, 18), /immutable/);
+  await session.publish(image, 2, 18);
+  const second = properties[1].appIconPath;
+  assert.notEqual(file, second, 'Every intermediate frame needs a distinct Shell resource.');
+  assert.ok(fs.existsSync(file), 'Earlier resources remain valid until final publication is acknowledged.');
+  session.dispose();
+  assert.equal(fs.existsSync(file), false);assert.equal(fs.existsSync(second), false);
+  const foreign = createWindowsTaskbarFrameSession({ app, identity: { appUserModelId: 'io.pixelody.desktop' }, windows: () => [], platform: 'win32', refresh: async () => { throw new Error('Shell failed'); } });
+  await assert.rejects(foreign.publish(image, 1, 18), /Shell failed/);
+  const directory = fs.readdirSync(path.join(root, 'brand-icons')).map(name => path.join(root, 'brand-icons', name))[0];
+  const keep = path.join(directory, 'keep.txt');fs.writeFileSync(keep, 'foreign file');
+  foreign.dispose();assert.equal(fs.readFileSync(keep, 'utf8'), 'foreign file', 'Cleanup must never recurse over unknown files.');
+  const noWindows = createWindowsTaskbarFrameSession({ platform: 'linux' });await noWindows.publish(image, 1, 18);
+  console.log('Windows taskbar frames passed: immutable resources, stable window identity, final-color ownership, failure retention and scoped cleanup.');
+})().catch(error => { console.error(error); process.exitCode = 1; }).finally(() => {
+  const resolved = path.resolve(root);
+  if (!resolved.startsWith(path.resolve(os.tmpdir()) + path.sep) || !path.basename(resolved).startsWith('pixelody-motion-resource-test-')) throw new Error('Unsafe fixture cleanup');
+  fs.rmSync(resolved, { recursive: true, force: true });
+});

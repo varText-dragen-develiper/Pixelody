@@ -8,6 +8,7 @@
   const MODES = new Set(['flow', 'discovery', 'comfort', 'energy', 'genre-weave', 'deep-library']);
   const SHAPES = new Set(['auto', 'steady', 'rise', 'wave', 'wind-down']);
   const unique = (values) => [...new Set((Array.isArray(values) ? values : []).map(String).filter(Boolean))];
+  const occurrences = (values) => (Array.isArray(values) ? values : []).filter((id) => typeof id === 'string' && id.length > 0);
   function normalizeSnapshot(source = {}) {
     const plan = source.plan && typeof source.plan === 'object' ? source.plan : {};
     const session = source.session && typeof source.session === 'object' ? source.session : {};
@@ -27,7 +28,7 @@
         generation: Math.max(0, Math.round(Number(plan.generation) || 0)),
         cursor: Math.max(-1, Math.round(Number(plan.cursor) || 0)),
         sourceQueueIds: unique(plan.sourceQueueIds),
-        order: unique(plan.order),
+        order: occurrences(plan.order),
         future: unique(plan.future),
         priorityIds: unique(source.priorityIds),
       },
@@ -37,12 +38,15 @@
     const normalized = normalizeSnapshot(source);
     const publicId = typeof publicIdFor === 'function' ? publicIdFor : (id) => id;
     const mapIds = (ids) => ids.map(publicId).filter(Boolean);
+    const mappedOrder = normalized.plan.order.map(publicId);
+    const cursor = mappedOrder.slice(0, normalized.plan.cursor + 1).filter(Boolean).length - 1;
     return {
       ...normalized,
       plan: {
         ...normalized.plan,
         sourceQueueIds: mapIds(normalized.plan.sourceQueueIds),
-        order: mapIds(normalized.plan.order),
+        order: mappedOrder.filter(Boolean),
+        cursor,
         future: mapIds(normalized.plan.future),
         priorityIds: mapIds(normalized.plan.priorityIds),
       },

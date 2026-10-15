@@ -79,7 +79,7 @@ test('repeat all starts a new cycle only after exhausting the first', () => {
   assert.deepEqual(prepared.candidateIds, ['a', 'b']);
 });
 
-test('queue synchronization removes stale IDs from all engine state', () => {
+test('queue synchronization removes stale eligibility and preserves actual history tombstones', () => {
   const state = engine.normalizeState({
     cycle: ['a', 'gone', 'b'],
     history: ['gone', 'a'],
@@ -87,9 +87,9 @@ test('queue synchronization removes stale IDs from all engine state', () => {
   });
   const synced = engine.syncToQueue(state, ['a', 'b']);
   assert.deepEqual(synced.cycle, ['a', 'b']);
-  assert.deepEqual(synced.history, ['a']);
+  assert.deepEqual(synced.history, ['gone', 'a']);
   assert.deepEqual(synced.plan.sourceQueueIds, ['a', 'b']);
-  assert.deepEqual(synced.plan.order, ['b']);
+  assert.deepEqual(synced.plan.order, ['gone', 'b']);
 });
 
 test('standard plans persist one complete seeded traversal', () => {
@@ -149,7 +149,7 @@ test('previous and next traverse an existing plan without destroying forward his
   assert.equal(next.trackId, 'c');
 });
 
-test('queue mutations preserve traversal already committed and remove unavailable entries', () => {
+test('queue mutations preserve traversal already committed and mark unavailable history', () => {
   const ids = ['a', 'b', 'c', 'd'];
   let state = engine.resetPlan({}, ids, 'a', { style: 'flow', seed: 'mutation-fixture' });
   state = engine.commitPlayback(state, ids, 'a', 'b', { style: 'flow' });
@@ -157,8 +157,9 @@ test('queue mutations preserve traversal already committed and remove unavailabl
   assert.deepEqual(moved.plan.order, ['a', 'b']);
   assert.deepEqual(moved.plan.sourceQueueIds, ['d', 'a', 'b', 'c']);
   const removed = engine.syncToQueue(moved, ['d', 'a', 'c']);
-  assert.deepEqual(removed.plan.order, ['a']);
-  assert.equal(removed.plan.cursor, 0);
+  assert.deepEqual(removed.plan.order, ['a', 'b']);
+  assert.equal(removed.plan.cursor, 1);
+  assert.equal(engine.stagePrevious(removed, ['d', 'a', 'c'], 'b').trackId, 'a');
 });
 
 test('manual priority is selected before scored Flow candidates and cleared after commit', () => {
@@ -176,11 +177,11 @@ test('planner pruning preserves tied-candidate order and independent remaining s
   const candidates = Array.from({ length: 40 }, (_, index) => ({ id: `perf-${index}`, artist: `Artist ${index % 7}`, album: `Album ${index % 4}` }));
   const original = JSON.parse(JSON.stringify(candidates));
   const plan = planner.planSession({ candidates, horizon: 10, shape: 'wave' });
-  // Frozen from the eager-copy planner before the allocation repair. These
-  // overlapping beams must retain their own consumed units and stable ties.
-  assert.deepEqual(plan.ids, ['perf-0', 'perf-1', 'perf-10', 'perf-11', 'perf-19', 'perf-16', 'perf-13', 'perf-14', 'perf-17', 'perf-15']);
-  assert.equal(plan.score, -14);
-  assert.deepEqual(plan.steps.map(step => step.diversityPoints), [0, 0, 0, 0, -7, 0, 0, 0, -7, 0]);
+  // Planner v2 uses portable ordinal ID sequences and album-level identity.
+  // Equal album names belonging to different artists are separate albums.
+  assert.deepEqual(plan.ids, ['perf-0', 'perf-1', 'perf-10', 'perf-11', 'perf-12', 'perf-13', 'perf-14', 'perf-15', 'perf-16', 'perf-17']);
+  assert.equal(plan.score, 0);
+  assert.deepEqual(plan.steps.map(step => step.diversityPoints), Array(10).fill(0));
   assert.deepEqual(plan.steps.map(step => step.previousTrackId), ['', ...plan.ids.slice(0, -1)]);
   assert.deepEqual(candidates, original, 'Planning must not consume or mutate the input library');
 });
@@ -410,8 +411,8 @@ test('Bayesian evidence keeps one outcome close to neutral and gains influence w
 
 test('identity normalization groups featured artists and ISRC recordings safely', () => {
   assert.equal(learning.artistIdentity({ artist: 'Example Artist feat. Guest' }), learning.artistIdentity({ artist: 'Example Artist' }));
-  assert.equal(learning.recordingIdentity({ isrc: 'US-ABC-12-34567' }), 'isrc:us abc 12 34567');
-  assert.equal(learning.albumIdentity({ artist: 'Example Artist', album: 'Great Album' }), 'example artist / great album');
+  assert.equal(learning.recordingIdentity({ isrc: 'US-ABC-12-34567' }), 'isrc:USABC1234567');
+  assert.equal(learning.albumIdentity({ artist: 'Example Artist', album: 'Great Album' }), '["album","example artist","great album"]');
 });
 
 test('freshness decays and context tags only match the current time window', () => {
@@ -426,6 +427,267 @@ test('exploration and exposure remain bounded and measurable', () => {
   assert.ok(learning.explorationBoost({ starts: 12 }, 'discovery') === 0);
   const exposure = learning.exposureMetrics({ a: { starts: 1 }, b: { starts: 0 } }, ['a', 'b', 'c']);
   assert.deepEqual(exposure, { eligible: 3, played: 1, neverPlayed: 2, coverage: 1 / 3, starts: 1 });
+});
+
+test('legacy surfaces expose the actual universal occurrence-based policy', () => {
+  const universal = require('../src/shuffle/universal');
+  assert.equal(engine.universalPolicy, universal);
+  assert.equal(planner.universalPolicy, universal);
+  assert.equal(typeof engine.universalPolicy.stage, 'function');
+});
+
+test('v1 UTF-16 FNV, Mulberry32 and Fisher-Yates outputs remain frozen', () => {
+  const seed = 'rng-📀-v1';
+  assert.deepEqual(Array.from({ length: 5 }, engine.createSeededRandom(seed)), [0.1842358405701816, 0.4647476961836219, 0.09166321717202663, 0.3780513496603817, 0.20994370011612773]);
+  assert.deepEqual(engine.shuffledIds(['a', 'b', 'c', 'd', 'e', '東京', 'é', 'a|b'], engine.createSeededRandom(seed)), ['e', 'é', 'c', '東京', 'a|b', 'a', 'd', 'b']);
+});
+
+test('missing energy remains unavailable while actual zero survives planning and receipts', () => {
+  for (const energy of [null, undefined, '', '  ', false, [], {}, NaN, Infinity]) {
+    const transition = planner.transitionBreakdown({ energy }, { energy });
+    assert.equal(transition.energy.current, null);
+    assert.equal(transition.energy.candidate, null);
+    assert.equal(transition.energy.available, false);
+    assert.equal(transition.energy.points, 0);
+    const stored = decision.normalizeTransition({ energy: { current: energy, candidate: energy, target: null, available: true, points: 5 }, totalPoints: 5 });
+    assert.equal(stored.energy.candidate, null);
+    assert.equal(stored.energy.target, null);
+    assert.equal(stored.energy.available, false);
+    assert.equal(stored.totalPoints, 0);
+  }
+  const zero = planner.transitionBreakdown({ energy: 0 }, { energy: 0 });
+  assert.equal(zero.energy.current, 0);
+  assert.equal(zero.energy.candidate, 0);
+  assert.equal(zero.energy.available, true);
+  assert.equal(decision.normalizeTransition(zero).energy.candidate, 0);
+});
+
+test('musical keys preserve enharmonics, mode and all supported Camelot values', () => {
+  for (const [first, second] of [['F#', 'Gb'], ['C# minor', 'D♭ min'], ['B#', 'C'], ['Cb', 'B'], ['E#', 'F'], ['Fb', 'E'], ['Am', '8A'], ['C major', '8B']]) {
+    assert.deepEqual(planner.parseMusicalKey(first), planner.parseMusicalKey(second), `${first} must equal ${second}`);
+  }
+  const minor = [8, 3, 10, 5, 0, 7, 2, 9, 4, 11, 6, 1];
+  const major = [11, 6, 1, 8, 3, 10, 5, 0, 7, 2, 9, 4];
+  for (let number = 1; number <= 12; number += 1) {
+    assert.equal(planner.parseMusicalKey(`${number}A`).pitchClass, minor[number - 1]);
+    assert.equal(planner.parseMusicalKey(`${number}B`).pitchClass, major[number - 1]);
+  }
+  assert.equal(planner.parseMusicalKey('AM').mode, 'major');
+  assert.equal(planner.parseMusicalKey('A MINOR').mode, 'minor');
+  assert.equal(planner.keyCompatibility({ musicalKey: 'Am' }, { musicalKey: 'A' }), 0);
+  assert.equal(planner.keyCompatibility({ musicalKey: '8A' }, { musicalKey: '8B' }), 3);
+  assert.equal(planner.keyCompatibility({ musicalKey: 'F#' }, { musicalKey: 'C' }), -3);
+  for (const value of ['', null, 'unknown', 'H', '13A', '0B', 'A dorian', 'key of C', 'C/G', '8', 'C##']) {
+    assert.equal(planner.parseMusicalKey(value), null);
+    assert.equal(planner.transitionBreakdown({ musicalKey: value }, { musicalKey: 'C' }).key.available, false);
+  }
+});
+
+test('Unicode artist identities stay meaningful and title matching cannot merge recordings', () => {
+  assert.equal(learning.artistIdentity({ artist: '東京事変' }), '東京事変');
+  assert.equal(learning.artistIdentity({ artist: 'Молчат Дома' }), 'молчат дома');
+  assert.notEqual(learning.artistIdentity({ artist: '東京事変' }), learning.artistIdentity({ artist: '宇多田ヒカル' }));
+  assert.equal(learning.artistIdentity({ artist: 'Beyonce\u0301' }), learning.artistIdentity({ artist: 'Beyoncé' }));
+  assert.equal(learning.artistIdentity({}), '');
+  assert.equal(learning.albumIdentity({ album: 'Unknown performer' }), '');
+  assert.equal(learning.recordingIdentity({ artist: 'A', title: 'Song' }), '');
+  assert.equal(learning.recordingIdentity({ isrc: 'not an ISRC' }), '');
+  assert.notEqual(learning.recordingIdentity({ recordingId: 'id|one' }), learning.recordingIdentity({ recordingId: 'id' }));
+});
+
+test('planner ties use portable ordinal opaque IDs independent of Intl collation', () => {
+  const ids = ['a|b', 'a', 'é', 'e\u0301', '東京', 'Z', 'z', '😀'];
+  const source = require('node:fs').readFileSync(require.resolve('../src/flow-shuffle-planner'), 'utf8');
+  const context = { Intl: { Collator() { throw new Error('Locale collation is forbidden'); } } };
+  require('node:vm').runInNewContext(source, context);
+  const plan = context.PixelodyFlowShufflePlanner.planSession({ candidates: ids.map((id) => ({ id })), horizon: 10 });
+  assert.deepEqual(Array.from(plan.ids), ids.slice().sort());
+  assert.equal(plan.score, 0);
+});
+
+test('delimiter-containing membership cannot collide during future invalidation', () => {
+  const first = ['a|b', 'c', 'next'];
+  const second = ['a', 'b|c', 'next'];
+  let state = engine.resetPlan({}, first, 'c', { style: 'flow', seed: 'delimiters' });
+  state = engine.setFuturePlan(state, first, ['next']);
+  assert.deepEqual(engine.syncToQueue(state, second).plan.future, []);
+});
+
+test('actual A B A occurrence history survives previous, forward, restore and duplicate callbacks', () => {
+  const ids = ['a', 'b', 'c'];
+  let state = engine.resetPlan({}, ids, 'a', { style: 'flow', seed: 'occurrence-history' });
+  state = engine.commitPlayback(state, ids, 'a', 'b', { playbackAttemptId: 'play-b' });
+  state = engine.markPriority(state, 'a', { front: true });
+  const replay = engine.stageNext(state, ids, 'b', { repeat: 'off' });
+  state = engine.commitPlayback(replay.state, ids, 'b', 'a', { playbackAttemptId: 'replay-a' });
+  assert.deepEqual(state.plan.order, ['a', 'b', 'a']);
+  assert.deepEqual(state.history, ['a', 'b', 'a']);
+  assert.equal(state.plan.cursor, 2);
+  const restored = engine.normalizeState(JSON.parse(JSON.stringify(state)));
+  assert.deepEqual(restored.plan.order, ['a', 'b', 'a']);
+  assert.deepEqual(engine.commitPlayback(restored, ids, 'b', 'a', { playbackAttemptId: 'replay-a' }), restored);
+  const previous = engine.stagePrevious(restored, ids, 'a');
+  assert.equal(previous.trackId, 'b');
+  state = engine.commitPlayback(previous.state, ids, 'a', 'b', { playbackAttemptId: 'previous-b' });
+  assert.equal(state.plan.cursor, 1);
+  const forward = engine.stageNext(state, ids, 'b', { repeat: 'off' });
+  assert.equal(forward.trackId, 'a');
+  state = engine.commitPlayback(forward.state, ids, 'b', 'a', { playbackAttemptId: 'forward-a' });
+  assert.equal(state.plan.cursor, 2);
+  assert.deepEqual(state.history, ['a', 'b', 'a', 'b', 'a']);
+});
+
+test('history tombstones remain recoverable while navigation skips unavailable media', () => {
+  const ids = ['a', 'b', 'c'];
+  let state = engine.resetPlan({}, ids, 'a', { style: 'flow', seed: 'tombstones' });
+  state = engine.commitPlayback(state, ids, 'a', 'b');
+  state = engine.commitPlayback(state, ids, 'b', 'c');
+  state = engine.syncToQueue(state, ['a', 'c']);
+  assert.deepEqual(state.history, ['a', 'b', 'c']);
+  assert.deepEqual(state.plan.order, ['a', 'b', 'c']);
+  const previous = engine.stagePrevious(state, ['a', 'c'], 'c');
+  assert.equal(previous.trackId, 'a');
+  assert.deepEqual(previous.unavailableIds, ['b']);
+  state = engine.commitPlayback(previous.state, ['a', 'c'], 'c', 'a');
+  assert.equal(engine.stageNext(state, ['a', 'b', 'c'], 'a', { repeat: 'off' }).trackId, 'b');
+});
+
+test('Standard honors Play Next and preserves untouched v1 traversal after the priority', () => {
+  const ids = ['a', 'b', 'c', 'd', 'e'];
+  let state = engine.resetPlan({}, ids, 'a', { style: 'standard', seed: 'priority-standard' });
+  const original = state.plan.order.slice();
+  const priorityId = original[original.length - 1];
+  state = engine.markPriority(state, priorityId, { front: true });
+  assert.equal(engine.displayOrder(state, ids)[1], priorityId);
+  const staged = engine.stageNext(state, ids, 'a', { repeat: 'off', style: 'standard' });
+  assert.equal(staged.kind, 'priority');
+  assert.equal(staged.trackId, priorityId);
+  assert.deepEqual(staged.state.cycle, ['a']);
+  state = engine.commitPlayback(staged.state, ids, 'a', priorityId, { style: 'standard', playbackAttemptId: 'priority' });
+  assert.deepEqual(state.plan.order, ['a', priorityId, ...original.slice(1).filter((id) => id !== priorityId)]);
+  assert.equal(state.plan.cursor, 1);
+  assert.deepEqual(state.priorityIds, []);
+});
+
+test('four-track Standard repeat-off completes once and repeat-all reserves without consuming', () => {
+  const ids = ['a', 'b', 'c', 'd'];
+  let state = engine.resetPlan({}, ids, 'a', { style: 'standard', seed: 'four-standard' });
+  const original = state.plan.order.slice();
+  let current = 'a';
+  for (let index = 1; index < ids.length; index += 1) {
+    const staged = engine.stageNext(state, ids, current, { repeat: 'off', style: 'standard' });
+    assert.equal(staged.trackId, original[index]);
+    assert.deepEqual(staged.state.cycle, state.cycle);
+    state = engine.commitPlayback(staged.state, ids, current, staged.trackId, { style: 'standard', playbackAttemptId: `track-${index}` });
+    current = staged.trackId;
+  }
+  assert.equal(engine.stageNext(state, ids, current, { repeat: 'off', style: 'standard' }).stopped, true);
+  const generation = state.plan.generation;
+  const staged = engine.stageNext(state, ids, current, { repeat: 'all', style: 'standard' });
+  const restaged = engine.stageNext(JSON.parse(JSON.stringify(staged.state)), ids, current, { repeat: 'all', style: 'standard' });
+  assert.equal(staged.trackId, restaged.trackId);
+  assert.equal(staged.state.plan.generation, generation);
+  assert.deepEqual(staged.state.history, state.history);
+  assert.deepEqual(staged.state.cycle, state.cycle);
+  state = engine.commitPlayback(restaged.state, ids, current, restaged.trackId, { style: 'standard', playbackAttemptId: 'generation-2' });
+  assert.equal(state.plan.generation, generation + 1);
+  assert.deepEqual(state.cycle, [current, restaged.trackId]);
+  assert.deepEqual(engine.commitPlayback(state, ids, current, restaged.trackId, { style: 'standard', playbackAttemptId: 'generation-2' }), state);
+});
+
+test('singleton repeat One replays without generation and All advances only on commit', () => {
+  for (const style of ['standard', 'flow']) {
+    const initial = engine.resetPlan({}, ['a'], 'a', { style, seed: `single-${style}` });
+    assert.equal(engine.stageNext(initial, ['a'], 'a', { repeat: 'off', fromEnded: true, style }).stopped, true);
+    const one = engine.stageNext(initial, ['a'], 'a', { repeat: 'one', fromEnded: true, style });
+    assert.equal(one.kind, 'repeat');
+    const replayed = engine.commitPlayback(one.state, ['a'], 'a', 'a', { style, playbackAttemptId: 'one-replay' });
+    assert.equal(replayed.plan.generation, initial.plan.generation);
+    assert.deepEqual(replayed.plan.order, ['a', 'a']);
+    const all = engine.stageNext(initial, ['a'], 'a', { repeat: 'all', fromEnded: true, style });
+    assert.equal(all.state.plan.generation, initial.plan.generation);
+    const next = engine.commitPlayback(all.state, ['a'], 'a', 'a', { style, playbackAttemptId: 'all-replay' });
+    assert.equal(next.plan.generation, initial.plan.generation + 1);
+  }
+});
+
+test('100 short restored Standard sessions finish the existing 1000-track entitlement', () => {
+  const ids = Array.from({ length: 1000 }, (_, index) => `short-${index}`);
+  let state = engine.resetPlan({}, ids, ids[0], { style: 'standard', seed: 'persistent-short-sessions' });
+  let current = ids[0];
+  const offered = [current];
+  for (let index = 1; index < ids.length; index += 1) {
+    if (index % 10 === 0) state = engine.normalizeState(JSON.parse(JSON.stringify(state)));
+    const staged = engine.stageNext(state, ids, current, { repeat: 'off', style: 'standard' });
+    assert.deepEqual(staged.state.cycle, state.cycle, 'unconfirmed activation cannot consume entitlement');
+    if (index % 31 === 0) {
+      const retried = engine.stageNext(staged.state, ids, current, { repeat: 'off', style: 'standard' });
+      assert.equal(retried.trackId, staged.trackId, 'retry retains the offered traversal position');
+    }
+    state = engine.commitPlayback(staged.state, ids, current, staged.trackId, { style: 'standard', playbackAttemptId: `short-${index}` });
+    current = staged.trackId;
+    offered.push(current);
+  }
+  assert.equal(offered.length, 1000);
+  assert.equal(new Set(offered).size, 1000);
+  assert.equal(state.cycle.length, 1000);
+  assert.equal(engine.stageNext(state, ids, current, { repeat: 'off', style: 'standard' }).stopped, true);
+});
+
+test('compilation and multi-disc album continuation survives horizon, queue edits and restart', () => {
+  const album = Array.from({ length: 12 }, (_, index) => ({ id: `album-${index + 1}`, artist: `Performer ${index}`, albumArtist: 'Various Artists', album: 'Compilation', discNumber: index < 6 ? 1 : 2, trackNumber: index % 6 + 1 }));
+  const other = { id: 'other', artist: 'Other', album: 'Other' };
+  const candidates = [...album.slice().reverse(), other];
+  const plan = planner.planSession({ current: { id: 'album-0', artist: 'Intro performer', albumArtist: 'Various Artists', album: 'Compilation' }, candidates, baseScores: { other: 1000 }, horizon: 5, albumPolicy: 'album' });
+  assert.deepEqual(plan.ids, album.slice(0, 5).map((track) => track.id));
+  assert.deepEqual(plan.albumContinuation.ids, album.slice(5).map((track) => track.id));
+  assert.equal(plan.albumContinuation.orderKnown, true);
+  const ids = ['album-0', ...album.map((track) => track.id), other.id];
+  let state = engine.resetPlan({}, ids, 'album-0', { style: 'flow', seed: 'long-album' });
+  state = engine.setFuturePlan(state, ids, plan.ids, { albumContinuation: plan.albumContinuation });
+  let current = 'album-0';
+  for (let index = 0; index < album.length; index += 1) {
+    state = engine.normalizeState(JSON.parse(JSON.stringify(state)));
+    if (index === 2) state = engine.syncToQueue(state, ids.slice().reverse());
+    const staged = engine.stageNext(state, ids, current, { repeat: 'off', style: 'flow' });
+    assert.equal(staged.trackId, album[index].id);
+    state = engine.commitPlayback(staged.state, ids, current, staged.trackId, { playbackAttemptId: `album-${index}` });
+    current = staged.trackId;
+  }
+  assert.equal(state.plan.albumContinuation, null);
+  assert.deepEqual(engine.stageNext(state, ids, current, { repeat: 'off', style: 'flow' }).candidateIds, ['other']);
+  const continuation = planner.planSession({ current: album[4], candidates: [other, ...album.slice(5)], baseScores: { other: 1000 }, horizon: 5, albumPolicy: 'album' });
+  assert.equal(continuation.ids[0], album[5].id, 'legacy callers which replan from metadata also continue the current album');
+});
+
+test('unknown album sequence preserves source order and does not invent disc/track evidence', () => {
+  const candidates = [{ id: 'second', artist: 'A', album: 'One', trackNumber: 2 }, { id: 'unknown', artist: 'A', album: 'One' }, ...Array.from({ length: 5 }, (_, index) => ({ id: `tail-${index}`, artist: 'A', album: 'One', trackNumber: index + 3 }))];
+  const plan = planner.planSession({ candidates, horizon: 5, albumPolicy: 'album' });
+  assert.deepEqual(plan.ids, candidates.slice(0, 5).map((track) => track.id));
+  assert.equal(plan.albumContinuation.orderKnown, false);
+  assert.equal(planner.albumIdentity({ artist: 'A', album: 'Same' }) === planner.albumIdentity({ artist: 'B', album: 'Same' }), false);
+});
+
+test('receipt normalization retains supplied occurrence provenance and removes unavailable signal points', () => {
+  const receipt = decision.normalizeDecision({ trackId: 'a', fromTrackId: 'a', entryId: 'replay-a', fromEntryId: 'first-a', decisionId: 'decision|1', playbackAttemptId: 'attempt-1', policyVersion: 'v2.1', configVersion: '1', transition: { bpm: { available: false, points: 4 }, key: { available: false, points: 4 }, energy: { candidate: null, available: true, points: 5 }, totalPoints: 13 } });
+  assert.equal(receipt.entryId, 'replay-a');
+  assert.equal(receipt.fromEntryId, 'first-a');
+  assert.equal(receipt.decisionId, 'decision|1');
+  assert.equal(receipt.transition.totalPoints, 0);
+});
+
+test('public snapshots retain replay occurrences and adjust cursor after private media mapping', () => {
+  const snapshot = contract.publicSnapshot({ plan: { order: ['private', 'a', 'b', 'a'], sourceQueueIds: ['a', 'b'], cursor: 3 } }, (id) => id === 'private' ? '' : `public-${id}`);
+  assert.deepEqual(snapshot.plan.order, ['public-a', 'public-b', 'public-a']);
+  assert.equal(snapshot.plan.cursor, 2);
+});
+
+test('learning preserves observed coverage and ignores interruption and non-listening events', () => {
+  assert.equal(learning.classifyOutcome('completed', 0.17, 'natural-end').percent, 0.17);
+  for (const reason of ['buffering', 'crash', 'focus-loss', 'pause', 'preview', 'remote-action']) assert.equal(learning.classifyOutcome('skipped', 0.1, reason).kind, 'ignored');
+  assert.equal(learning.classifyOutcome('offered', 0).kind, 'ignored');
+  assert.equal(learning.freshnessPressure('corrupt', 1000, 1000), 0);
+  assert.equal(learning.freshnessPressure(new Date(2000).toISOString(), 1000, 1000), 1, 'clock rollback clamps age to zero');
 });
 
 if (!process.exitCode) console.log('Flow Shuffle engine checks passed.');

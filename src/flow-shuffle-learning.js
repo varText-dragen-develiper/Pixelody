@@ -5,33 +5,48 @@
 }(typeof globalThis !== 'undefined' ? globalThis : this, function createFlowShuffleLearning() {
   'use strict';
 
-  const VERSION = 1;
+  const VERSION = 2;
   const IGNORED_OUTCOME_REASONS = new Set([
     'connection-lost',
+    'buffering',
+    'crash',
+    'focus-loss',
     'host-unreachable',
     'missing-file',
     'network-disconnect',
+    'pause',
     'permission-revoked',
     'playback-error',
     'route-failure',
+    'preview',
+    'remote-action',
     'seek',
     'shutdown',
     'token-expired',
     'vpn-failure',
   ]);
-  const normalizedText = (value = '') => String(value || '').toLowerCase().replace(/\b(feat\.?|featuring|with)\b.*$/i, '').replace(/[^a-z0-9]+/g, ' ').trim();
-  const artistIdentity = (track = {}) => normalizedText(track.albumArtist || track.artist);
-  const albumIdentity = (track = {}) => [artistIdentity(track), normalizedText(track.album)].filter(Boolean).join(' / ');
+  const normalizedText = (value = '') => String(value || '').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}\p{M}]+/gu, ' ').trim();
+  const artistIdentity = (track = {}) => normalizedText(String(track.albumArtist || track.artist || '').replace(/\b(feat\.?|featuring|with)\b.*$/i, ''));
+  const albumIdentity = (track = {}) => {
+    if (typeof track.albumId === 'string' && track.albumId) return JSON.stringify(['album-id', track.albumId]);
+    const artist = artistIdentity(track);
+    const album = normalizedText(track.album);
+    return artist && album ? JSON.stringify(['album', artist, album]) : '';
+  };
   const recordingIdentity = (track = {}) => {
-    const isrc = normalizedText(track.isrc);
-    return isrc ? `isrc:${isrc}` : [artistIdentity(track), normalizedText(track.title)].filter(Boolean).join(' / ');
+    if (typeof track.recordingId === 'string' && track.recordingId) return JSON.stringify(['recording-id', track.recordingId]);
+    const isrc = typeof track.isrc === 'string' ? track.isrc.replace(/[-\s]/g, '').toUpperCase() : '';
+    // Only a syntactically valid catalog recording identifier groups versions.
+    // A matching title is not evidence that a live/remastered recording is equal.
+    return /^[A-Z]{2}[A-Z0-9]{3}[0-9]{7}$/.test(isrc) ? `isrc:${isrc}` : '';
   };
 
   function classifyOutcome(outcome, percentCompleted, reason = '') {
     const percent = Math.max(0, Math.min(1, Number(percentCompleted) || 0));
     const normalizedReason = String(reason || '').toLowerCase();
     if (IGNORED_OUTCOME_REASONS.has(normalizedReason)) return { kind: 'ignored', percent, reason: normalizedReason };
-    if (outcome === 'completed') return { kind: 'completed', percent: Math.max(percent, 0.98), reason: normalizedReason || 'natural-end' };
+    if (outcome === 'completed') return { kind: 'completed', percent, reason: normalizedReason || 'natural-end' };
+    if (outcome !== 'skipped') return { kind: 'ignored', percent, reason: normalizedReason || 'non-listening-event' };
     if (percent >= 0.85) return { kind: 'near-completion', percent, reason: normalizedReason || 'late-skip' };
     if (percent < 0.22) return { kind: 'early-skip', percent, reason: normalizedReason || 'manual-switch' };
     return { kind: 'mid-skip', percent, reason: normalizedReason || 'manual-switch' };
@@ -54,9 +69,10 @@
   }
 
   function freshnessPressure(lastPlayedAt, now = Date.now(), cooldownMs = 86400000) {
-    const playedAt = new Date(lastPlayedAt || 0).getTime();
-    if (!playedAt || playedAt > now) return 0;
-    return Math.max(0, Math.min(1, 1 - (now - playedAt) / Math.max(1, Number(cooldownMs) || 1)));
+    if (lastPlayedAt === null || lastPlayedAt === undefined || lastPlayedAt === '') return 0;
+    const playedAt = new Date(lastPlayedAt).getTime();
+    if (!Number.isFinite(playedAt) || !Number.isFinite(Number(now))) return 0;
+    return Math.max(0, Math.min(1, 1 - Math.max(0, Number(now) - playedAt) / Math.max(1, Number(cooldownMs) || 1)));
   }
 
   function matchingContextTags(tags = [], date = new Date()) {

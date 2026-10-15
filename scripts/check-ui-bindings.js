@@ -85,3 +85,4 @@ if (missing.size || startupGuardErrors.length) {
 } else {
   console.log('Renderer event binding targets are present and startup reveal guards are bounded.');
 }
+require('./check-desktop-theme-controls');

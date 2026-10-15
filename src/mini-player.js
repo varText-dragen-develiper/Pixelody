@@ -275,6 +275,11 @@ window.desktop.onPlayerState((state) => {
     integrationMiniCommandSent = true;
     setTimeout(async () => {
       const config = await integrationMiniConfig;
+      if (config?.enabled && config.scenario === 'flow-runtime') {
+        $('#miniNext').click();
+        await window.desktop.integrationTest.report('mini-command', { command: 'next', receivedState: true, runtimeSecurity: window.desktop.runtimeSecurity });
+        return;
+      }
       if (!config?.enabled || !['core', 'workspace-production'].includes(config.scenario)) return;
       $('#miniPlay').click();
       await window.desktop.integrationTest.report('mini-command', { command: 'toggle', receivedState: true, runtimeSecurity: window.desktop.runtimeSecurity });

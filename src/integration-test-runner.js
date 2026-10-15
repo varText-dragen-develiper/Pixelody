@@ -1015,12 +1015,72 @@
   }
 
   async function scenarioFlowRuntime(startupMs) {
-    assert(state.tracks.length === 2 && state.queue.length === 2, 'Flow runtime fixture library or queue did not load.');
+    assert(state.tracks.length === 4 && state.queue.length === 4, 'Flow runtime four-track fixture library or queue did not load.');
     const firstId = 'fixture-tone-a';
     const secondId = 'fixture-tone-b';
     const first = trackById(firstId);
     const second = trackById(secondId);
     assert(first && second, 'Flow runtime fixture tracks were not present.');
+
+    // The current renderer paints queue rows when its drawer is visible.
+    $('#queueButton').click();
+    await waitFor(() => !$('#queueDrawer').classList.contains('hidden'), 2000, 'open actual queue drawer');
+
+    const standardIds = ['fixture-tone-a', 'fixture-tone-b', 'fixture-tone-c', 'fixture-tone-d'];
+    state.queue = standardIds.slice();
+    state.repeat = 'off';
+    setShuffleStyle('standard');
+    await playTrack(firstId, { source: 'integration-standard-start' });
+    state.flowShuffle = flowShuffleEngine.resetPlan(state.flowShuffle, state.queue, firstId, { style: 'standard', seed: 'windows-w0-four-track' });
+    renderQueue();
+    const standardOrder = state.flowShuffle.plan.order.slice();
+    const queueOrder = () => Array.from(document.querySelectorAll('#queueList .queue-item')).map((item) => decodeURIComponent(item.dataset.id));
+    assert(JSON.stringify(queueOrder()) === JSON.stringify(standardOrder), 'Standard queue did not project the authoritative permutation.');
+    const failedCandidate = adjacentTrack(1);
+    const failedPath = failedCandidate.path;
+    const beforeFailedTraversal = JSON.stringify(state.flowShuffle);
+    const beforeFailedOutcomes = state.signalJournal.events.filter((event) => event.type === 'track_skipped').length;
+    failedCandidate.path = `${failedPath}.missing`;
+    await playTrack(failedCandidate.id, { source: 'integration-standard-failed-start' });
+    assert(currentFixture() === firstId && JSON.stringify(state.flowShuffle) === beforeFailedTraversal, 'Failed Standard activation consumed traversal.');
+    assert(state.signalJournal.events.filter((event) => event.type === 'track_skipped').length === beforeFailedOutcomes, 'Failed activation taught a personal skip.');
+    failedCandidate.path = failedPath;
+    failedCandidate.missing = false;
+    const standardHeard = [firstId];
+    for (const expectedId of standardOrder.slice(1)) {
+      $('#nextButton').click();
+      await waitFor(() => currentFixture() === expectedId && !audio.paused, 3500, 'four-track Standard next');
+      assert(state.flowShuffle.plan.style === 'standard', 'Successful Standard activation changed the plan style.');
+      standardHeard.push(currentFixture());
+      const journalPick = state.signalJournal.events.filter((event) => event.type === 'shuffle_pick').at(-1);
+      assert(journalPick?.fromTrackId === standardHeard.at(-2) && journalPick?.decision?.trackId === expectedId && journalPick?.occurrenceId, 'Real Standard journal lost origin, occurrence or decision.');
+    }
+    assert(new Set(standardHeard).size === 4 && adjacentTrack(1) === null && adjacentTrack(1, true) === null, 'Four-track Standard repeat-off did not exhaust once.');
+    $('#prevButton').click();
+    await waitFor(() => currentFixture() === standardOrder[2], 3500, 'Standard Previous');
+    $('#nextButton').click();
+    await waitFor(() => currentFixture() === standardOrder[3], 3500, 'Standard retained forward Next');
+    const generationBeforeNatural = state.flowShuffle.plan.generation;
+    state.repeat = 'all';
+    audio.currentTime = audio.duration - 0.08;
+    await waitFor(() => state.flowShuffle.plan.generation === generationBeforeNatural + 1 && !audio.paused, 3500, 'real Standard repeat-all natural end');
+    assert(state.flowShuffle.plan.style === 'standard', 'Repeat-all natural activation changed Standard style.');
+    const priorityId = standardIds.find((id) => id !== currentFixture());
+    assert(handleRemoteQueueCommand({ action: 'addnext', trackId: priorityId }, { auth: { kind: 'guest', deviceId: 'fixture-standard-remote' } }), 'Standard remote Play Next failed.');
+    renderQueue();
+    const priorityPick = adjacentTrack(1);
+    assert(priorityPick?.id === priorityId && queueOrder()[queueOrder().indexOf(currentFixture()) + 1] === priorityId, `Standard manual priority and queue projection diverged: ${JSON.stringify({ expected: priorityId, picked: priorityPick?.id, current: currentFixture(), queue: queueOrder(), plan: state.flowShuffle.plan, priorities: state.flowShuffle.priorityIds })}`);
+    await playTrack(priorityId, remoteSignalContext({ auth: { kind: 'guest', deviceId: 'fixture-standard-remote' } }));
+    const beforeMini = currentFixture();
+    const miniNext = adjacentTrack(1)?.id;
+    assert(miniNext && miniNext !== beforeMini, 'Standard mini-player fixture had no next item.');
+    await window.desktop.openMiniPlayer();
+    await waitFor(async () => (await bridge.getStatus()).miniOpen, 3500, 'shuffle mini-player window');
+    await waitFor(() => currentFixture() === miniNext && !audio.paused, 3500, 'actual mini-player Next IPC');
+    assert(state.flowShuffle.plan.style === 'standard', 'Mini-player Next changed Standard style.');
+    await bridge.action('close-mini');
+    await waitFor(async () => !(await bridge.getStatus()).miniOpen, 2500, 'shuffle mini-player close');
+    await report('standard-four-track-runtime', { sourceIds: standardIds, committedOrder: standardHeard, repeatOffExhausted: true, previousForward: true, failedStartUnconsumed: true, actualNaturalEnd: true, repeatAllGeneration: state.flowShuffle.plan.generation, manualPriority: true });
 
     Object.assign(first, { bpm: 96, musicalKey: '8A', energyLevel: 42, genre: 'Ambient' });
     Object.assign(second, { bpm: null, musicalKey: '', energyLevel: null, genre: '' });
@@ -1117,8 +1177,13 @@
 
     const remoteResult = await handleRemotePlaybackCommand({ action: 'next' }, { auth: { kind: 'guest', deviceId: 'fixture-remote' } });
     assert(typeof remoteResult === 'boolean', 'Remote J.A.M. Next did not return a command result.');
-    const remoteQueueResult = handleRemoteQueueCommand({ action: 'addnext', trackId: secondId }, { auth: { kind: 'guest', deviceId: 'fixture-remote' } });
-    assert(remoteQueueResult === true && state.flowShuffle.priorityIds.includes(secondId), 'Remote J.A.M. addnext did not create manual priority.');
+    const remotePriorityId = state.queue.find((id) => id !== currentFixture());
+    assert(remotePriorityId, 'Remote Play Next fixture needs a queued track beyond the current track.');
+    const remoteQueueResult = handleRemoteQueueCommand({ action: 'addnext', trackId: remotePriorityId }, { auth: { kind: 'guest', deviceId: 'fixture-remote' } });
+    assert(remoteQueueResult === true && state.flowShuffle.priorityIds.includes(remotePriorityId), 'Remote J.A.M. addnext did not create manual priority.');
+    assert(adjacentTrack(1)?.id === remotePriorityId, 'Remote Play Next priority did not become the actual transport target.');
+    assert(await handleRemotePlaybackCommand({ action: 'next' }, { auth: { kind: 'guest', deviceId: 'fixture-remote' } }) === true, 'Remote Play Next activation failed.');
+    await waitFor(() => currentFixture() === remotePriorityId && !audio.paused, 5000, 'remote Play Next confirmed output');
 
     const exported = signalJournalExportPayload();
     assert(exported?.raw?.flowShuffle?.lastPick?.decision?.version === 1, 'Signal Journal export omitted the decision receipt.');
@@ -1187,6 +1252,10 @@
     audio.pause();
     return {
       startupMs: Math.round(startupMs),
+      standardFourTrackRepeatOffAll: true,
+      standardJournalOriginAndDecision: true,
+      standardActualNaturalEnd: true,
+      standardMiniNextIpc: true,
       emptyQueue: true,
       oneTrackQueue: true,
       mixedMetadata: true,

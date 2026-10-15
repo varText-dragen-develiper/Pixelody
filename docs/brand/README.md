@@ -98,10 +98,68 @@ purple range, with Ultraviolet as the default:
   unless the user turns off "Let other themes recolor the in-app logo". Desktop themes also recolour the running window/taskbar icon in memory
   using the generated mark. Installer and pinned shortcuts keep their baked colours. Android follows the separate automatic-icon rules above.
 
+Windows matching shortcuts follow the effective logo color; native helpers retain canonical identity.
+
 The list is defined in `src/brand-mark.js`, `tools/brand/logo-colors.json`
 (written by the generator) and Android's `ui/brand/PixelodyLogoColor.kt`.
 The development repository's checks fail if these, the Settings swatches, the
 window icons, the launcher aliases or the Android colour resources disagree.
+
+Selecting a logo color applies that color immediately and saves it for restart.
+The next explicit theme selection resumes theme following; returning to Studio
+restores the selected purple. The toggle can also resume theme following within
+the current theme.
+On Windows, the running app also supplies its taskbar relaunch icon through
+`setAppDetails`, using an ICO wrapper around the generated mark's PNG pixels.
+These small icon files live under the profile's `brand-icons` directory, with
+distinct resource paths for each color to avoid reusing old image pixels.
+Windows can resolve the taskbar icon from the installed shortcut instead of
+the running window. The helper updates only icon fields on existing shortcuts
+whose target and app ID match this installation and whose arguments are empty.
+Matching shortcuts and window relaunch/icon properties are updated before the
+window AppUserModel.ID is set. Microsoft defines setting that ID as the taskbar
+refresh trigger and requires the related properties to precede it. Electron's
+combined `setAppDetails` call sets ID first, so the helper uses separate calls.
+Renderer requests serialize and only successful acknowledgments enter the cache.
+Reapplying an unchanged window ID alone can leave the old group icon cached.
+After both windows and their shortcuts agree, a hidden persistent Windows worker
+sends `SHCNE_ASSOCCHANGED`, followed by `SHCNE_UPDATEITEM` for each matching
+shortcut, including pinned and implicit shortcuts. This follows Chromium's
+Windows shortcut refresh sequence; shortcut notification alone did not refresh
+the visible taskbar in local testing. The Shell can briefly redraw its icons.
+The refresh runs once per acknowledged color change, and exits with the app.
+The sequence is also used by [Chromium's Windows shortcut implementation](https://raw.githubusercontent.com/chromium/chromium/main/chrome/browser/profiles/profile_shortcut_manager_win.cc).
+The process, window and shortcut IDs stay stable. Shortcut discovery is cached
+and matched targets are revalidated on every update to avoid resolving unrelated
+shortcuts through COM during each color change.
+Explicit separate profiles
+use a stable taskbar ID derived from their profile path, keeping the normal
+installation ID unchanged. Their branded shortcuts are updated only when both
+the executable and exact profile argument match; a preview never modifies the
+owner's shortcut. Original links are backed up once under
+`brand-icons/shortcut-backups`.
+
+The Windows color transition uses the live window icon instead of
+reloading shortcut resources for every frame. A private helper saves the main
+and mini window properties, temporarily suppresses relaunch icon resolution
+through the window's `PreventPinning` property, and retains the canonical app
+identity. Pinning is restored when the transition settles. Native
+`setIcon` frames then animate without per-frame shortcut writes or Shell cache
+invalidation. Final publication restores the canonical identity and shortcut
+color; cancellation or failure rolls back the saved window properties. Startup,
+unchanged colors, reduced motion and disabled reactions bypass this route.
+Transitions use 66 eased frames over approximately 1.1 seconds. The taskbar
+entry refreshes once at the start, with a 150ms pause between removing the
+group and adding it back so Explorer can process the removal. Successful
+native animation finishes with
+notifications only for matching shortcuts. Immediate and fallback updates
+retain the full Shell refresh. The user confirmed actual Public Test theme
+switching animates smoothly with one pop-up and no second pop-up at the end.
+The normal installed build uses the same path. After the removal pause was
+added, the owner confirmed Studio, Cartridge Quest and Obsession transitions
+animate and end on the correct color after reporting a Windows Search launch
+regression. Native transitions, manual colors and motion-disabled updates were
+also checked in an isolated profile.
 
 ## Regenerating
 

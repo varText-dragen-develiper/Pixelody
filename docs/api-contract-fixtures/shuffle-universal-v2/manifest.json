@@ -1,0 +1,36 @@
+{
+  "version": 2,
+  "policyVersion": "universal-shuffle-v2.1",
+  "files": [
+    {
+      "name": "machine-contract.json",
+      "sha256": "c617aa04102e0e7571341ec2d962e0d652967aa0efbae4a52f027f76b20591be",
+      "bytes": 12408
+    },
+    {
+      "name": "schemas.json",
+      "sha256": "9be77e20fad4329eb02caf6b921a581bb77a345f69cc35db0278345ceae429f8",
+      "bytes": 49580
+    },
+    {
+      "name": "traces.json",
+      "sha256": "0194df522e233d18ff399856f41ea1eb0fb05a49246ffa7fe927ca90e08a2926",
+      "bytes": 1032244
+    },
+    {
+      "name": "learning-contract.json",
+      "sha256": "9429211de0da684781e107ef556bd1c9032492c5ee61aa47b3ddc43691471255",
+      "bytes": 15879
+    },
+    {
+      "name": "learning-traces.json",
+      "sha256": "a95613c93f315c35ccbe7c25789db796d32a63042e9cf25e6888b0276f08b54b",
+      "bytes": 130923
+    },
+    {
+      "name": "catalog-fixtures.json",
+      "sha256": "850b043b64117f3b9385c60b03002c5822ee3515fd07383e6cfa54c37d08d4cc",
+      "bytes": 487357
+    }
+  ]
+}

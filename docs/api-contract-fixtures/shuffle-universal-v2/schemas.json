@@ -1,0 +1,2242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pixelody:shuffle-universal-v2.1",
+  "$defs": {
+    "key": {
+      "type": "object",
+      "properties": {
+        "pitchClass": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 11
+        },
+        "mode": {
+          "enum": [
+            "major",
+            "minor"
+          ]
+        }
+      },
+      "required": [
+        "pitchClass",
+        "mode"
+      ],
+      "additionalProperties": false
+    },
+    "entry": {
+      "type": "object",
+      "properties": {
+        "entryId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "trackId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "recordingId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          ]
+        },
+        "artistId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "albumArtistId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "albumId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "sourceIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "discNumber": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000
+            }
+          ]
+        },
+        "trackNumber": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100000
+            }
+          ]
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "genreId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "contextTags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "features": {
+          "type": "object",
+          "properties": {
+            "tempo": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "anyOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "integer",
+                      "minimum": 20000,
+                      "maximum": 400000
+                    }
+                  ]
+                },
+                "provenance": {
+                  "enum": [
+                    "manual",
+                    "tagged",
+                    "measured",
+                    "derived",
+                    "unknown"
+                  ]
+                },
+                "version": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100000
+                },
+                "confidencePermille": {
+                  "anyOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000
+                    }
+                  ]
+                },
+                "unit": {
+                  "const": "milli-bpm"
+                }
+              },
+              "required": [
+                "value",
+                "provenance",
+                "version",
+                "confidencePermille",
+                "unit"
+              ],
+              "additionalProperties": false
+            },
+            "energy": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "anyOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000
+                    }
+                  ]
+                },
+                "provenance": {
+                  "enum": [
+                    "manual",
+                    "tagged",
+                    "measured",
+                    "derived",
+                    "unknown"
+                  ]
+                },
+                "version": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100000
+                },
+                "confidencePermille": {
+                  "anyOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000
+                    }
+                  ]
+                },
+                "unit": {
+                  "const": "permille"
+                }
+              },
+              "required": [
+                "value",
+                "provenance",
+                "version",
+                "confidencePermille",
+                "unit"
+              ],
+              "additionalProperties": false
+            },
+            "key": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "anyOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "$ref": "#/$defs/key"
+                    }
+                  ]
+                },
+                "provenance": {
+                  "enum": [
+                    "manual",
+                    "tagged",
+                    "measured",
+                    "derived",
+                    "unknown"
+                  ]
+                },
+                "version": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100000
+                },
+                "confidencePermille": {
+                  "anyOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000
+                    }
+                  ]
+                },
+                "unit": {
+                  "const": "pitch-class-mode"
+                }
+              },
+              "required": [
+                "value",
+                "provenance",
+                "version",
+                "confidencePermille",
+                "unit"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "tempo",
+            "energy",
+            "key"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "entryId",
+        "trackId",
+        "recordingId",
+        "artistId",
+        "albumArtistId",
+        "albumId",
+        "sourceIndex",
+        "discNumber",
+        "trackNumber",
+        "available",
+        "genreId",
+        "contextTags",
+        "features"
+      ],
+      "additionalProperties": false
+    },
+    "rng": {
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "const": "fnv1a-utf16-mulberry32-fy-v1"
+        },
+        "state": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "draws": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "seedHash": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      },
+      "required": [
+        "algorithm",
+        "state",
+        "draws",
+        "seedHash"
+      ],
+      "additionalProperties": false
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "preset": {
+          "enum": [
+            "flow",
+            "discovery",
+            "comfort",
+            "energy",
+            "genre-weave",
+            "deep-library"
+          ]
+        },
+        "shape": {
+          "enum": [
+            "auto",
+            "steady",
+            "rise",
+            "wave",
+            "wind-down"
+          ]
+        },
+        "preserveAlbumRuns": {
+          "type": "boolean"
+        },
+        "contextTag": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "preset",
+        "shape",
+        "preserveAlbumRuns",
+        "contextTag"
+      ],
+      "additionalProperties": false
+    },
+    "albumLock": {
+      "type": "object",
+      "properties": {
+        "albumId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "entryIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "ordering": {
+          "enum": [
+            "disc-track",
+            "source-order-missing-numbers"
+          ]
+        }
+      },
+      "required": [
+        "albumId",
+        "entryIds",
+        "ordering"
+      ],
+      "additionalProperties": false
+    },
+    "manual": {
+      "type": "object",
+      "properties": {
+        "entryId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "kind": {
+          "enum": [
+            "priority",
+            "move"
+          ]
+        },
+        "intentId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "position": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "entryId",
+        "kind",
+        "intentId",
+        "position"
+      ],
+      "additionalProperties": false
+    },
+    "scoreParts": {
+      "type": "object",
+      "properties": {
+        "taste": {
+          "type": "integer",
+          "minimum": -12,
+          "maximum": 12
+        },
+        "novelty": {
+          "type": "integer",
+          "minimum": -12,
+          "maximum": 12
+        },
+        "freshness": {
+          "type": "integer",
+          "minimum": -12,
+          "maximum": 12
+        },
+        "tempo": {
+          "type": "integer",
+          "minimum": -12,
+          "maximum": 12
+        },
+        "energy": {
+          "type": "integer",
+          "minimum": -12,
+          "maximum": 12
+        },
+        "key": {
+          "type": "integer",
+          "minimum": -12,
+          "maximum": 12
+        },
+        "context": {
+          "type": "integer",
+          "minimum": -12,
+          "maximum": 12
+        },
+        "preset": {
+          "type": "integer",
+          "minimum": -12,
+          "maximum": 12
+        }
+      },
+      "required": [
+        "taste",
+        "novelty",
+        "freshness",
+        "tempo",
+        "energy",
+        "key",
+        "context",
+        "preset"
+      ],
+      "additionalProperties": false
+    },
+    "decision": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 2
+        },
+        "policyVersion": {
+          "const": "universal-shuffle-v2.1"
+        },
+        "configVersion": {
+          "const": 1
+        },
+        "decisionId": {
+          "type": "string"
+        },
+        "scopeId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "cycleId": {
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "off",
+            "random",
+            "balanced",
+            "flow",
+            "album"
+          ]
+        },
+        "preset": {
+          "enum": [
+            "flow",
+            "discovery",
+            "comfort",
+            "energy",
+            "genre-weave",
+            "deep-library"
+          ]
+        },
+        "kind": {
+          "enum": [
+            "automatic",
+            "previous",
+            "forward",
+            "manual",
+            "play-now",
+            "repeat-one",
+            "album-continuation"
+          ]
+        },
+        "entryId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "trackId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "originEntryId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          ]
+        },
+        "originOccurrenceId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "explicitException": {
+          "type": "boolean"
+        },
+        "intentionalDuplicate": {
+          "type": "boolean"
+        },
+        "strategy": {
+          "enum": [
+            "off",
+            "random",
+            "balanced",
+            "flow",
+            "album",
+            "weighted",
+            "exploration",
+            "manual",
+            "play-now",
+            "previous",
+            "forward",
+            "repeat-one",
+            "album-continuation"
+          ]
+        },
+        "exploration": {
+          "type": "boolean"
+        },
+        "candidateCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "relaxations": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "album",
+              "artist",
+              "recording"
+            ]
+          }
+        },
+        "signalCoverage": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "tempo",
+              "energy",
+              "key",
+              "context",
+              "genre",
+              "taste",
+              "novelty",
+              "freshness",
+              "exposure"
+            ]
+          }
+        },
+        "scoreParts": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/scoreParts"
+            }
+          ]
+        },
+        "weight": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          ]
+        },
+        "albumOrdering": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "policyVersion",
+        "configVersion",
+        "decisionId",
+        "scopeId",
+        "cycleId",
+        "mode",
+        "preset",
+        "kind",
+        "entryId",
+        "trackId",
+        "originEntryId",
+        "originOccurrenceId",
+        "explicitException",
+        "intentionalDuplicate",
+        "strategy",
+        "exploration",
+        "candidateCount",
+        "relaxations",
+        "signalCoverage",
+        "scoreParts",
+        "weight",
+        "albumOrdering"
+      ],
+      "additionalProperties": false
+    },
+    "history": {
+      "type": "object",
+      "properties": {
+        "occurrenceId": {
+          "type": "string"
+        },
+        "entryId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "trackId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "artistId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "albumId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "recordingId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          ]
+        },
+        "decisionId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "kind": {
+          "type": "string"
+        },
+        "tombstone": {
+          "type": "boolean"
+        },
+        "receipt": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/decision"
+            }
+          ]
+        }
+      },
+      "required": [
+        "occurrenceId",
+        "entryId",
+        "trackId",
+        "artistId",
+        "albumId",
+        "recordingId",
+        "decisionId",
+        "kind",
+        "tombstone",
+        "receipt"
+      ],
+      "additionalProperties": false
+    },
+    "pending": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 2
+        },
+        "attemptId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "advanceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "decisionId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "membershipRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "authorityId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "authorityEpoch": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "entryId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "trackId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "kind": {
+          "type": "string"
+        },
+        "historyIndex": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          ]
+        },
+        "newCycle": {
+          "type": "boolean"
+        },
+        "rngAfter": {
+          "$ref": "#/$defs/rng"
+        },
+        "futureAfter": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "albumLockAfter": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/albumLock"
+            }
+          ]
+        },
+        "manualIndex": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": -1
+            }
+          ]
+        },
+        "receipt": {
+          "$ref": "#/$defs/decision"
+        }
+      },
+      "required": [
+        "version",
+        "attemptId",
+        "advanceId",
+        "decisionId",
+        "revision",
+        "membershipRevision",
+        "authorityId",
+        "authorityEpoch",
+        "entryId",
+        "trackId",
+        "kind",
+        "historyIndex",
+        "newCycle",
+        "rngAfter",
+        "futureAfter",
+        "albumLockAfter",
+        "manualIndex",
+        "receipt"
+      ],
+      "additionalProperties": false
+    },
+    "undo": {
+      "type": "object",
+      "properties": {
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entry"
+          }
+        },
+        "remaining": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "manual": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/manual"
+          }
+        },
+        "exclusions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "generatedFuture": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "albumLock": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/albumLock"
+            }
+          ]
+        },
+        "membershipRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "entries",
+        "remaining",
+        "manual",
+        "exclusions",
+        "generatedFuture",
+        "albumLock",
+        "membershipRevision"
+      ],
+      "additionalProperties": false
+    },
+    "state": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 2
+        },
+        "policyVersion": {
+          "const": "universal-shuffle-v2.1"
+        },
+        "configVersion": {
+          "const": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "scopeId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "authorityId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "authorityEpoch": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "membershipRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "mode": {
+          "enum": [
+            "off",
+            "random",
+            "balanced",
+            "flow",
+            "album"
+          ]
+        },
+        "repeat": {
+          "enum": [
+            "off",
+            "all",
+            "one"
+          ]
+        },
+        "options": {
+          "$ref": "#/$defs/options"
+        },
+        "cycle": {
+          "type": "object",
+          "properties": {
+            "generation": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "cycleId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "generation",
+            "cycleId"
+          ],
+          "additionalProperties": false
+        },
+        "rng": {
+          "$ref": "#/$defs/rng"
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entry"
+          }
+        },
+        "remaining": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/history"
+          }
+        },
+        "cursor": {
+          "type": "integer",
+          "minimum": -1
+        },
+        "occurrenceSequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "generatedFuture": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "manual": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/manual"
+          }
+        },
+        "exclusions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "albumLock": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/albumLock"
+            }
+          ]
+        },
+        "pending": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/pending"
+            }
+          ]
+        },
+        "lastConfirmedPositionMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "eventSequences": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "producerId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              },
+              "sequence": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "eventId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              }
+            },
+            "required": [
+              "producerId",
+              "sequence",
+              "eventId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "quarantine": {
+          "type": "object",
+          "properties": {
+            "advanceId": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1024
+                }
+              ]
+            },
+            "entryIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              }
+            }
+          },
+          "required": [
+            "advanceId",
+            "entryIds"
+          ],
+          "additionalProperties": false
+        },
+        "undo": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/undo"
+            }
+          ]
+        },
+        "paused": {
+          "type": "boolean"
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "imported": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "policyVersion",
+        "configVersion",
+        "sessionId",
+        "scopeId",
+        "authorityId",
+        "authorityEpoch",
+        "revision",
+        "membershipRevision",
+        "mode",
+        "repeat",
+        "options",
+        "cycle",
+        "rng",
+        "entries",
+        "remaining",
+        "history",
+        "cursor",
+        "occurrenceSequence",
+        "generatedFuture",
+        "manual",
+        "exclusions",
+        "albumLock",
+        "pending",
+        "lastConfirmedPositionMs",
+        "eventSequences",
+        "quarantine",
+        "undo",
+        "paused",
+        "diagnostics",
+        "imported"
+      ],
+      "additionalProperties": false
+    },
+    "event": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "stage",
+            "activate-success",
+            "activate-failure",
+            "mutation",
+            "mode-change",
+            "repeat-change",
+            "explicit-new-cycle",
+            "reshuffle-remaining",
+            "membership-change",
+            "session-change",
+            "authority-change",
+            "position-checkpoint",
+            "restore"
+          ]
+        },
+        "eventId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "producerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "attemptId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "advanceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "decisionId": {
+          "type": "string"
+        },
+        "authorityId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "authorityEpoch": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "direction": {
+          "enum": [
+            "next",
+            "previous"
+          ]
+        },
+        "entryId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "naturalEnd": {
+          "type": "boolean"
+        },
+        "repeat": {
+          "enum": [
+            "off",
+            "one",
+            "all"
+          ]
+        },
+        "mode": {
+          "type": "string"
+        },
+        "options": {
+          "$ref": "#/$defs/options"
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entry"
+          }
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "membershipRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "positionMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "action": {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "enum": [
+                "priority",
+                "move",
+                "remove",
+                "insert",
+                "clear",
+                "exclude",
+                "include",
+                "undo"
+              ]
+            },
+            "entryId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "intentId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "index": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "entry": {
+              "type": "object"
+            }
+          },
+          "additionalProperties": false
+        },
+        "occurrenceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16384
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "stage"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "attemptId"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "activate-success"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "attemptId",
+              "decisionId",
+              "authorityId",
+              "authorityEpoch"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "activate-failure"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "attemptId",
+              "decisionId",
+              "authorityId",
+              "authorityEpoch"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "mutation"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "action"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "mode-change"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "mode"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "repeat-change"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "repeat"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "membership-change"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "entries"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "session-change"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "sessionId"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "authority-change"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "authorityId",
+              "authorityEpoch"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "position-checkpoint"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "positionMs",
+              "occurrenceId"
+            ]
+          }
+        }
+      ]
+    },
+    "learningTrack": {
+      "type": "object",
+      "properties": {
+        "trackId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "offered": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "activated": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "heardOccurrences": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "naturalEnds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "deliberateSkips": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "replays": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "positiveUnits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120
+        },
+        "negativeUnits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120
+        },
+        "evidenceAtMs": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          ]
+        },
+        "lastHeardAtMs": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          ]
+        },
+        "explicitPreference": {
+          "enum": [
+            -1,
+            0,
+            1
+          ]
+        },
+        "explicitPreferenceAtMs": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          ]
+        },
+        "opportunityDebt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12
+        },
+        "heardWallMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      },
+      "required": [
+        "trackId",
+        "offered",
+        "activated",
+        "heardOccurrences",
+        "naturalEnds",
+        "deliberateSkips",
+        "replays",
+        "positiveUnits",
+        "negativeUnits",
+        "evidenceAtMs",
+        "lastHeardAtMs",
+        "explicitPreference",
+        "explicitPreferenceAtMs",
+        "opportunityDebt",
+        "heardWallMs"
+      ],
+      "additionalProperties": false
+    },
+    "learningOccurrence": {
+      "type": "object",
+      "properties": {
+        "occurrenceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16384
+        },
+        "trackId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "activatedAtMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "durationMs": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 86400000
+            }
+          ]
+        },
+        "replay": {
+          "type": "boolean"
+        },
+        "wallMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "coverageRanges": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "clocks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "clockId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              },
+              "throughMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "clockId",
+              "throughMs"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "heardCredited": {
+          "type": "boolean"
+        },
+        "ended": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "occurrenceId",
+        "trackId",
+        "activatedAtMs",
+        "durationMs",
+        "replay",
+        "wallMs",
+        "coverageRanges",
+        "clocks",
+        "heardCredited",
+        "ended"
+      ],
+      "additionalProperties": false
+    },
+    "learningJournal": {
+      "type": "object",
+      "required": [
+        "eventId",
+        "type",
+        "timestampMs",
+        "applied"
+      ],
+      "properties": {
+        "eventId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "type": {
+          "type": "string"
+        },
+        "timestampMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "applied": {
+          "type": "boolean"
+        },
+        "trackId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "occurrenceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16384
+        },
+        "outcome": {
+          "type": "string"
+        },
+        "suppressed": {
+          "enum": [
+            "disabled",
+            "nonpersonal",
+            "infrastructure"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "ledger": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 2
+        },
+        "policyVersion": {
+          "const": "universal-shuffle-v2.1"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "learningEpoch": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "clockFloorMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "resetAtMs": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          ]
+        },
+        "tracks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/learningTrack"
+          }
+        },
+        "occurrences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/learningOccurrence"
+          }
+        },
+        "producers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "producerId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              },
+              "through": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "pending": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              }
+            },
+            "required": [
+              "producerId",
+              "through",
+              "pending"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "seenEventIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "journal": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/learningJournal"
+          }
+        },
+        "diagnostics": {
+          "type": "object",
+          "properties": {
+            "clockRollbacks": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647
+            },
+            "futureClamps": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647
+            },
+            "coverageUnderflows": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647
+            },
+            "prunedOccurrences": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647
+            }
+          },
+          "required": [
+            "clockRollbacks",
+            "futureClamps",
+            "coverageUnderflows",
+            "prunedOccurrences"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "policyVersion",
+        "enabled",
+        "learningEpoch",
+        "revision",
+        "clockFloorMs",
+        "resetAtMs",
+        "tracks",
+        "occurrences",
+        "producers",
+        "seenEventIds",
+        "journal",
+        "diagnostics"
+      ],
+      "additionalProperties": false
+    },
+    "learningEvent": {
+      "type": "object",
+      "required": [
+        "schemaVersion",
+        "eventId",
+        "type"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": 2
+        },
+        "eventId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "producerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "timestampMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "learningEpoch": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "type": {
+          "enum": [
+            "offered",
+            "activated",
+            "interval",
+            "outcome",
+            "preference",
+            "learning-enabled",
+            "learning-reset",
+            "history-delete",
+            "track-delete"
+          ]
+        },
+        "trackId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "occurrenceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16384
+        },
+        "personal": {
+          "type": "boolean"
+        },
+        "source": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "durationMs": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 86400000
+            }
+          ]
+        },
+        "replay": {
+          "type": "boolean"
+        },
+        "monotonicClockId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "monotonicStartMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "monotonicEndMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "mediaStartMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "mediaEndMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "speedPermille": {
+          "type": "integer",
+          "minimum": 250,
+          "maximum": 4000
+        },
+        "playing": {
+          "type": "boolean"
+        },
+        "discontinuity": {
+          "type": "boolean"
+        },
+        "outcome": {
+          "enum": [
+            "natural-end",
+            "deliberate-skip",
+            "replay",
+            "interrupted"
+          ]
+        },
+        "userInitiated": {
+          "type": "boolean"
+        },
+        "value": {
+          "enum": [
+            -1,
+            0,
+            1
+          ]
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "offered"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "trackId"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "activated"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "trackId",
+              "occurrenceId"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "interval"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "trackId",
+              "occurrenceId",
+              "monotonicClockId",
+              "monotonicStartMs",
+              "monotonicEndMs",
+              "mediaStartMs",
+              "mediaEndMs"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "outcome"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "trackId",
+              "occurrenceId",
+              "outcome"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "preference"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "trackId",
+              "value"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "learning-enabled"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "enabled"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "track-delete"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "trackId"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "$ref": "#/$defs/state"
+}

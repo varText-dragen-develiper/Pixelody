@@ -30,6 +30,7 @@ const libraryWorkflowDomain = window.PixelodyLibraryWorkflow;
 let libraryWorkflow = null;
 const navigationDomain = window.PixelodyNavigationController;
 const playbackDomain = window.PixelodyPlaybackController;
+const listeningIntervalsDomain = window.PixelodyListeningIntervals;
 const diagnosticsDomain = window.PixelodyDiagnosticsController;
 const jamDomain = window.PixelodyJamController;
 const appearanceDomain = window.PixelodyAppearanceController;
@@ -1415,6 +1416,7 @@ function installCanvasStudioControl() {
         }
       }
       appearance.canvasThemePort = nextKey;
+      appearance.logoFollowsTheme = true;
       applyAppearance();
       syncDesktopPresentationNavigation();
       if (navigationDispatcher.setMechanic(activeTrackNavigationMechanic())) {
@@ -1466,6 +1468,7 @@ function installCanvasStudioControl() {
     canvasLaunchDismissed = wasActive;
     setLocalStorageItem(CANVAS_OPT_IN_KEY, canvasOptIn ? 'on' : 'off');
     if (canvasOptIn) enableCanvasStageStyles();
+    appearance.logoFollowsTheme = true;
     await selectTheme(canvasOptIn ? CANVAS_STAGE_THEME : 'studio');
     await syncProductionWorkspaceHost();
     // Leaving turns off the sheets only the open canvas uses (a port's
@@ -2090,6 +2093,20 @@ const signalRuntime = {
   pendingShufflePick: null,
 };
 const flowShuffleRuntime = { pending: null, controlUndo: null };
+let universalShuffleController = null;
+const signalListeningTracker = listeningIntervalsDomain.createTracker({
+  now: () => performance.now(),
+  onInterval: (interval) => universalShuffleController?.interval({ ...interval, monotonicClockId: signalRuntime.sessionId }),
+});
+function signalMediaObservation(overrides = {}) {
+  return { occurrenceId: signalRuntime.currentPlay?.occurrenceId || '', trackId: signalRuntime.currentPlay?.trackId || '',
+    position: Number(audio.currentTime) || 0, duration: Number.isFinite(audio.duration) ? audio.duration : null,
+    rate: audio.playbackRate || 1, playing: !audio.paused && !audio.ended, ...overrides };
+}
+function sampleSignalListening(overrides = {}) {
+  if (!signalRuntime.currentPlay) return null;
+  return signalListeningTracker.sample(signalMediaObservation(overrides));
+}
 let pendingSignalReportImport = null;
 let activeSignalImportMode = 'merge';
 const flowShuffleModes = {
@@ -4019,6 +4036,7 @@ function updateSignalStats(event) {
     const percent = Math.max(0, Math.min(1, Number(event.percentCompleted) || 0));
     stats.totalListenSeconds += seconds;
     stats.totalListenPercent += percent;
+    if (event.outcomeClass === 'ignored') { stats.ignoredOutcomes += 1; return; }
     if (event.type === 'track_completed') {
       stats.completions += 1;
       stats.lastCompletedAt = event.timestamp;
@@ -4112,6 +4130,7 @@ function beginSignalPlayback(track, source = 'manual', options = {}) {
   const provenance = jamLearningContract.eventContext({ eventType: 'track_started', source, ...options });
   signalRuntime.currentPlay = {
     trackId: track.id,
+    occurrenceId: pendingPick?.occurrenceId || `play-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     startedAt: Date.now(),
     source,
     startedPosition: Number(audio.currentTime) || 0,
@@ -4121,18 +4140,22 @@ function beginSignalPlayback(track, source = 'manual', options = {}) {
     shuffleMode: pendingPick?.mode || '',
     ...provenance,
   };
+  signalListeningTracker.begin(signalMediaObservation());
   signalRuntime.pendingShufflePick = null;
-  recordSignalEvent('track_started', { trackId: track.id, source, ...provenance, shufflePickId: pendingPick?.pickId || '', shufflePickEventId: pendingPick?.pickEventId || '', shuffleMode: pendingPick?.mode || '', genre: track.genre || '', metadata: normalizeTrackSignalMetadata(track) });
+  recordSignalEvent('track_started', { trackId: track.id, occurrenceId: signalRuntime.currentPlay.occurrenceId, source, ...provenance, shufflePickId: pendingPick?.pickId || '', shufflePickEventId: pendingPick?.pickEventId || '', shuffleMode: pendingPick?.mode || '', genre: track.genre || '', metadata: normalizeTrackSignalMetadata(track) });
 }
 function finalizeSignalPlayback(outcome, reason = '', options = {}) {
   const play = signalRuntime.currentPlay;
   const track = play?.trackId ? trackById(play.trackId) : currentTrack();
   if (!play || !track || !state.signalSettings.enabled) return;
-  const duration = Number(audio.duration || track.duration) || 0;
-  const current = Math.max(play.maxPosition || 0, Number(audio.currentTime) || 0);
-  const listenedSeconds = duration ? Math.min(duration, Math.max(0, current - (play.startedPosition || 0))) : Math.max(0, (Date.now() - play.startedAt) / 1000);
-  const percentCompleted = duration ? Math.max(0, Math.min(1, current / duration)) : 0;
-  const classification = flowShuffleLearning.classifyOutcome(outcome, percentCompleted, reason);
+  const observation = options.observation || { duration: audio.duration, position: audio.currentTime };
+  const duration = Number(observation.duration || track.duration) || 0;
+  const finalizedMeasurement = signalListeningTracker.finalize({ ...signalMediaObservation(), position: Number(observation.position) || 0, duration, naturallyEnded: outcome === 'completed', reason });
+  const measured = observation.listening || finalizedMeasurement;
+  const listenedSeconds = measured?.listenedWallSeconds || 0;
+  const percentCompleted = measured?.coverageRatio || 0;
+  const credibleCompletion = percentCompleted >= 0.8 && listenedSeconds >= Math.min(60, duration * 0.5);
+  const classification = flowShuffleLearning.classifyOutcome(outcome === 'completed' && !credibleCompletion ? 'interrupted' : outcome, percentCompleted, reason);
   const provenance = jamLearningContract.eventContext({
     eventType: outcome === 'completed' ? 'track_completed' : 'track_skipped',
     source: options.source || play.source,
@@ -4151,6 +4174,10 @@ function finalizeSignalPlayback(outcome, reason = '', options = {}) {
     shufflePickEventId: play.shufflePickEventId || '',
     shuffleMode: play.shuffleMode || '',
     listenedSeconds,
+    occurrenceId: play.occurrenceId,
+    coveredSeconds: measured?.coveredSeconds || 0,
+    mediaExposureSeconds: measured?.mediaExposureSeconds || 0,
+    measurementVersion: measured?.measurementVersion || '',
     percentCompleted,
     outcomeClass: classification.kind,
     outcomeReason: classification.reason,
@@ -4158,6 +4185,9 @@ function finalizeSignalPlayback(outcome, reason = '', options = {}) {
     metadata: normalizeTrackSignalMetadata(track),
   });
   attachShuffleOutcomeLink(play, outcomeEvent);
+  universalShuffleController?.outcome({ trackId: track.id, occurrenceId: play.occurrenceId,
+    outcome: outcome === 'completed' ? 'natural-end' : outcome === 'replay' ? 'replay' : classification.kind === 'ignored' ? 'interrupted' : 'deliberate-skip',
+    reason, userInitiated: outcome !== 'completed' && classification.kind !== 'ignored', personal: provenance.personalLearning !== false });
   signalRuntime.currentPlay = null;
 }
 function trackEnergy(track = {}) {
@@ -4426,6 +4456,12 @@ function flowShuffleSummary(track, current, score, mode) {
   return `${modeLabel} chose a ${confidence} by balancing metadata, listening behavior, and recent queue context${from}.`;
 }
 function flowExplanationFromPick(pick = {}, mode = state.flowShuffle.mode || 'flow') {
+  if (pick.style === 'standard') return {
+    summary: pick.reasons?.[0] || 'Next in the seeded Standard permutation.',
+    confidence: 'Seeded order', transition: 'Standard does not weight musical features or taste.',
+    sources: pick.decision?.source || 'confirmed Standard traversal',
+    signals: [], learnedSignals: [], alternates: [], decision: pick.decision || null,
+  };
   const track = trackById(pick.trackId) || { title: pick.trackTitle || 'Selected track' };
   const current = pick.fromTrackId ? trackById(pick.fromTrackId) : null;
   const stats = trackStatRates(track.id);
@@ -4599,9 +4635,11 @@ function chooseFlowShuffleNext(queue, fromEnded = false) {
     const planPosition = prepared.kind === 'planned' ? Math.max(1, (state.flowShuffle.plan?.future || []).indexOf(track.id) + 1) : 0;
     flowShuffleRuntime.pending = {
       kind: prepared.kind,
+      style: 'flow',
       trackId: track.id,
       fromTrackId: current.id,
       fromTrackTitle: current.title,
+      fromOccurrenceId: signalRuntime.currentPlay?.occurrenceId || '',
       pickedAt: new Date().toISOString(),
       priority: prepared.kind === 'priority',
       score: scored.score,
@@ -4639,10 +4677,12 @@ function chooseFlowShuffleNext(queue, fromEnded = false) {
   if (!pick?.track) return null;
   flowShuffleRuntime.pending = {
     kind: 'candidate',
+    style: 'flow',
     trackId: pick.track.id,
     trackTitle: pick.track.title,
     fromTrackId: current.id,
     fromTrackTitle: current.title,
+    fromOccurrenceId: signalRuntime.currentPlay?.occurrenceId || '',
     mode: state.flowShuffle.mode || 'flow',
     score: pick.score,
     decision: flowDecisionReceipt(pick.track, current, pick, { kind: 'candidate', position: Math.max(1, rolling.ids.indexOf(pick.track.id) + 1), horizon: rolling.horizon, shape: rolling.shape, step: rolling.steps?.find((step) => step.trackId === pick.track.id) }),
@@ -4654,14 +4694,10 @@ function chooseFlowShuffleNext(queue, fromEnded = false) {
   return pick.track;
 }
 function commitStagedFlowShufflePlayback(track, pending) {
-  if (!track || !pending || pending.trackId !== track.id) return;
-  state.flowShuffle = flowShuffleEngine.commitPlayback(state.flowShuffle, state.queue, pending.fromTrackId, track.id, { style: 'flow' });
+  if (!track || !pending || pending.trackId !== track.id || pending !== flowShuffleRuntime.pending) return;
+  const style = pending.style || state.shuffleStyle || state.flowShuffle.plan?.style || 'flow';
+  state.flowShuffle = flowShuffleEngine.commitPlayback(pending.preparedState || state.flowShuffle, state.queue, pending.fromTrackId, track.id, { style });
   flowShuffleRuntime.pending = null;
-  if (pending.kind === 'forward' || pending.kind === 'previous') {
-    persist();
-    updateFlowShuffleUi();
-    return;
-  }
   const pickId = `pick-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const payload = {
     pickId,
@@ -4669,6 +4705,9 @@ function commitStagedFlowShufflePlayback(track, pending) {
     trackTitle: track.title,
     fromTrackId: pending.fromTrackId || '',
     fromTrackTitle: pending.fromTrackTitle || '',
+    fromOccurrenceId: pending.fromOccurrenceId || signalRuntime.currentPlay?.occurrenceId || '',
+    occurrenceId: pending.occurrenceId || pickId,
+    style,
     mode: state.flowShuffle.mode || 'flow',
     score: Number.isFinite(Number(pending.score)) ? pending.score : 100,
     decision: pending.decision || null,
@@ -4681,11 +4720,11 @@ function commitStagedFlowShufflePlayback(track, pending) {
   state.flowShuffle.lastPick = payload;
   state.signalJournal.lastShuffle = payload;
   if (state.signalSettings.enabled) {
-    const pickEvent = recordSignalEvent('shuffle_pick', { pickId, trackId: track.id, mode: payload.mode, score: payload.score, reasons: payload.reasons, reasonDetails: payload.reasonDetails, pool: payload.pool, explanation: payload.explanation, message: `Flow picked: ${track.title}`, detail: payload.reasons[0] || 'Weighted local signal chose this track.' });
+    const pickEvent = recordSignalEvent('shuffle_pick', { ...payload, message: `${style === 'standard' ? 'Standard' : 'Flow'} picked: ${track.title}`, detail: payload.reasons[0] || 'Retained queue traversal.' });
     payload.pickEventId = pickEvent?.id || '';
     state.flowShuffle.lastPick = payload;
     state.signalJournal.lastShuffle = payload;
-    signalRuntime.pendingShufflePick = { pickId, pickEventId: payload.pickEventId, trackId: track.id, mode: payload.mode };
+    signalRuntime.pendingShufflePick = { pickId, pickEventId: payload.pickEventId, trackId: track.id, occurrenceId: payload.occurrenceId, mode: payload.mode };
     persistSignalJournal();
     persist();
   } else {
@@ -4703,7 +4742,7 @@ function previousFlowShuffleTrack() {
   if (prepared.stopped) return null;
   const track = trackById(prepared.trackId);
   if (!track) return null;
-  flowShuffleRuntime.pending = { kind: 'previous', trackId: track.id, fromTrackId: current.id, fromTrackTitle: current.title, pickedAt: new Date().toISOString() };
+  flowShuffleRuntime.pending = { kind: 'previous', style: state.shuffleStyle, trackId: track.id, fromTrackId: current.id, fromTrackTitle: current.title, fromOccurrenceId: signalRuntime.currentPlay?.occurrenceId || '', pickedAt: new Date().toISOString(), reasons: ['Previous follows confirmed playback history'] };
   return track;
 }
 function activeParametricBands(values = {}) {
@@ -4749,6 +4788,7 @@ Object.keys(state.spatialProfiles).forEach((id) => { state.spatialProfiles[id] =
 state.speakerSystems = normalizeSpeakerSystems(state.speakerSystems);
 if (state.activeSpeakerSystemId && !state.speakerSystems.some((system) => system.id === state.activeSpeakerSystemId)) state.activeSpeakerSystemId = state.speakerSystems[0]?.id || '';
 window.addEventListener('beforeunload', () => {
+  finalizeSignalPlayback('interrupted', 'shutdown');
   clearSecondarySpeakerOutputElements('app-closing');
   flushPersist();
 });
@@ -6082,8 +6122,53 @@ function applyAppearance() {
 
 // Base Pixelody (Studio) shows the user's purple-range logo colour. Any other
 // active theme may recolour the in-app mark with its accent, unless the user
-// has switched that off. The running window/taskbar icon follows the same resolution.
-let appliedBrandIconColor = '';
+// has switched that off. The running window/taskbar icon follows the same color.
+function createBrandIconSynchronizer({ apply, schedule = setTimeout, cancel = clearTimeout, onError = () => {}, retryDelays = [120, 360, 900] }) {
+  let requested = null;
+  let appliedIdentity = '';
+  let running = false;
+  let retryTimer = null;
+  let failureCount = 0;
+  const update = async () => {
+    if (running || !requested || requested.identity === appliedIdentity) return;
+    running = true;
+    const request = requested;
+    try {
+      const result = await apply(request.logoColor, request.accent, request.transition);
+      if (result?.ok !== true || result?.applied !== true) throw new Error('The window icon was not applied.');
+      // A newer choice may have arrived during IPC. Only the current choice
+      // earns a cache entry; after an older response, send the latest choice.
+      appliedIdentity = requested === request ? request.identity : '';
+      if (requested === request) failureCount = 0;
+    } catch (error) {
+      // A failed update may have changed some native surfaces before failing.
+      // Invalidate the old cache so returning to that color still reapplies it.
+      appliedIdentity = '';
+      if (requested === request) {
+        onError(error);
+        if (failureCount < retryDelays.length) {
+          retryTimer = schedule(() => { retryTimer = null; update(); }, retryDelays[failureCount++]);
+        }
+      }
+    } finally {
+      running = false;
+      if (requested !== request) update();
+    }
+  };
+  return (logoColor, accent = '', transition = 'none') => {
+    const identity = `${logoColor}:${accent}`;
+    if (requested?.identity !== identity) {
+      requested = { identity, logoColor, accent, transition };
+      failureCount = 0;
+      if (retryTimer !== null) { cancel(retryTimer); retryTimer = null; }
+    }
+    if (retryTimer === null) update();
+  };
+}
+const synchronizeBrandIcon = createBrandIconSynchronizer({
+  apply: (logoColor, accent, transition) => window.desktop.setBrandIcon(logoColor, accent, transition),
+  onError: (error) => console.warn('Pixelody window icon update failed:', error),
+});
 function applyBrandMark(themeAccent) {
   const mark = brandMarkDomain.resolveMarkColor({ logoColor: appearance.logoColor, logoFollowsTheme: appearance.logoFollowsTheme, themeAccent });
   document.documentElement.style.setProperty('--brand-mark', mark.hex);
@@ -6098,14 +6183,11 @@ function applyBrandMark(themeAccent) {
   const status = $('#logoColorStatus');
   if (status) {
     const chosen = brandMarkDomain.LOGO_COLORS.find((color) => color.key === appearance.logoColor);
-    status.textContent = mark.source === 'theme' ? `Logo and window icon follow the active theme.` : `${chosen.name} logo.`;
+    status.textContent = mark.source === 'theme' ? 'Logo and window icon follow the active theme.' : `${chosen.name} logo.`;
   }
   const iconAccent = mark.source === 'theme' ? mark.hex : '';
-  const iconIdentity = `${appearance.logoColor}:${iconAccent}`;
-  if (appliedBrandIconColor !== iconIdentity && window.desktop?.setBrandIcon) {
-    appliedBrandIconColor = iconIdentity;
-    window.desktop.setBrandIcon(appearance.logoColor, iconAccent).catch((error) => console.warn('Pixelody window icon update failed:', error));
-  }
+  const iconTransition = motionDisabled() || motionEffects.reactions === false ? 'none' : appearance.theme === 'foreground' && appearance.canvasThemePort === 'cartridge-quest' ? 'quest' : 'sweep';
+  if (window.desktop?.setBrandIcon) synchronizeBrandIcon(appearance.logoColor, iconAccent, iconTransition);
 }
 
 function applyProfileImage() {
@@ -16278,7 +16360,11 @@ function tracksInActiveShuffleOrder(tracks) {
   const sourceIds = new Set(state.flowShuffle.plan.sourceQueueIds || []);
   if (!tracks.every((track) => sourceIds.has(track.id))) return tracks;
   const tracksById = new Map(tracks.map((track) => [track.id, track]));
-  return flowShuffleEngine.displayOrder(state.flowShuffle, tracks.map((track) => track.id)).map((id) => tracksById.get(id)).filter(Boolean);
+  const order = flowShuffleEngine.displayOrder(state.flowShuffle, tracks.map((track) => track.id));
+  const priority = state.flowShuffle.priorityIds.filter((id) => id !== currentTrack()?.id);
+  const committed = [...new Set(state.flowShuffle.plan.order.slice(0, Math.max(0, state.flowShuffle.plan.cursor + 1)).filter((id) => !priority.includes(id)).reverse())].reverse();
+  const projected = committed.concat(priority, order.filter((id) => !committed.includes(id) && !priority.includes(id)));
+  return projected.map((id) => tracksById.get(id)).filter(Boolean);
 }
 function preserveCurrentTrackRowOrder(tracks) {
   // The order last handed to the track browser rather than the rows in the
@@ -16293,7 +16379,7 @@ function preserveCurrentTrackRowOrder(tracks) {
     .map((item) => item.track);
 }
 function groupedLibraryCollections(mode) {
-  if (mode === 'smart') return smartCollections();
+  if (mode === 'smart') return [dailyCuratedCollection(), ...smartCollections()];
   const groups = new Map();
   state.tracks.forEach((track) => {
     const name = collectionName(track, mode);
@@ -16343,7 +16429,6 @@ function questSaveSlotMeta(playlist, index) {
 }
 function activeCollectionIndex(playlist) {
   const collections = state.libraryMode === 'playlists' ? [
-    dailyCuratedCollection(),
     { id: 'favorites' },
     { id: 'recent' },
     ...state.playlists,
@@ -16375,7 +16460,6 @@ function applyThemeGlyph(element, seed) {
 }
 function renderPlaylists() {
   const collections = state.libraryMode === 'playlists' ? [
-    dailyCuratedCollection(),
     { id: 'favorites', name: 'Favorites', trackIds: state.favorites, background: state.collectionBackgrounds.favorites || null, virtual: true, glyph: 'F' },
     { id: 'recent', name: 'Recently Played', trackIds: state.history, background: state.collectionBackgrounds.recent || null, virtual: true, glyph: 'R' },
     ...state.playlists,
@@ -17529,6 +17613,7 @@ async function playTrack(id, options = {}) {
   const stagedFlowPick = flowShuffleRuntime.pending?.trackId === id ? flowShuffleRuntime.pending : null;
   if (flowShuffleRuntime.pending && !stagedFlowPick) flowShuffleRuntime.pending = null;
   const previousTrack = currentTrack();
+  let outgoingSignalObservation = { duration: audio.duration, position: audio.currentTime, occurrenceId: signalRuntime.currentPlay?.occurrenceId || '', listening: sampleSignalListening() };
   syncConfirmedPublishedFromMedia('play-request-preflight', { activeId: previousTrack?.id || null });
   confirmedOutputTransitionRuntime.syncActive(previousTrack?.id || null, 'play-request-host-sync');
   confirmedOutputTransitionRuntime.begin(id, requestSerial, {
@@ -17550,7 +17635,6 @@ async function playTrack(id, options = {}) {
     track.missing = true; persist(); renderTracks({ preserveOrder: true, activationPendingId: null, activationFailedId: id }); showToast('This music file is missing or unavailable.'); return;
   }
   if (requestSerial !== trackPlayRequestSerial) return;
-  if (previousTrack && previousTrack.id !== id && !options.naturalAdvance) finalizeSignalPlayback('skipped', 'manual-switch', options);
   if (!state.queue.includes(id)) state.queue = visibleTracks().map((track) => track.id);
   if (track.artworkPath && !track.customArtwork && !track.artworkOptimized) {
     // Resizing a large cover runs on the main process; playback must not wait for it.
@@ -17585,6 +17669,7 @@ async function playTrack(id, options = {}) {
   resetPlaybackTransition();
   confirmedOutputTransitionRuntime.note('media-pause-requested', requestSerial, confirmedOutputUiSnapshot());
   try { audio.pause(); } catch {}
+  outgoingSignalObservation = { duration: audio.duration, position: audio.currentTime, occurrenceId: signalRuntime.currentPlay?.occurrenceId || '', listening: signalListeningTracker.suspend(signalMediaObservation(), 'source-switch') };
   diagnosticsState.lastPlaybackError = '';
   clearSecondarySpeakerOutputElements(previousTrack?.id === track.id ? 'track-source-reloading' : 'track-source-changing');
   audio.src = window.desktop.fileUrl(track.path);
@@ -17622,6 +17707,7 @@ async function playTrack(id, options = {}) {
     currentTime: Number(audio.currentTime) || 0,
   });
   if (!confirmation.committed) return;
+  if (previousTrack && signalRuntime.currentPlay && !options.naturalAdvance) finalizeSignalPlayback(previousTrack.id === id ? 'replay' : 'skipped', previousTrack.id === id ? 'replay' : 'manual-switch', { ...options, observation: outgoingSignalObservation });
   state.index = index;
   syncLegacyPlaybackClass(true);
   startPlaybackMonitor();
@@ -17683,6 +17769,7 @@ async function playTrack(id, options = {}) {
   persist(); syncEqControls(); applyEq(); updateCalibrationUi(); renderTracks({ preserveOrder: true }); renderQueue(); setOutputStatus(diagnosticsState.outputStatus || 'routed', diagnosticsState.outputMessage || 'System Default routed', diagnosticsState.outputError);
   broadcastPlayerState();
   observeConfirmedOutputTransition('host-active-published', { requestSerial, committedId: id });
+  return true;
 }
 
 function broadcastPlayerState() {
@@ -17809,7 +17896,7 @@ function syncQuestOutputModule() {
   const outputLabel = outputState.activeLabel || outputState.preferredLabel || 'System Default';
   const compactOutput = outputLabel.toUpperCase().replace(/\s+/g, ' ').slice(0, 16);
   module.style.setProperty('--quest-volume-level', `${volume * 100}%`);
-  module.dataset.questVolume = volume <= 0.01 ? 'muted' : volume >= .78 ? 'hot' : 'ready';
+  module.dataset.questVolume = volume <= 0.01 ? 'muted' : volume >= .58 ? 'hot' : 'ready';
   module.dataset.questQueue = queueLength > 0 ? 'loaded' : 'empty';
   module.dataset.questMini = questMiniLinkActive ? 'linked' : 'dock';
   module.dataset.questQuality = track ? (isHiRes(track) ? 'hires' : isLossless(track) ? 'lossless' : 'standard') : 'ready';
@@ -17880,10 +17967,26 @@ function adjacentTrack(offset, fromEnded = false) {
   if (state.shuffle && offset > 0 && queue.length > 1) {
     if (state.shuffleStyle === 'standard') {
       const current = currentTrack();
-      const prepared = flowShuffleEngine.stageNext(state.flowShuffle, queue.map((track) => track.id), current?.id || '', { fromEnded, repeat: state.repeat, style: 'standard' });
-      state.flowShuffle = prepared.state;
+      if (state.repeat === 'off' && state.flowShuffle.plan?.cursor >= state.flowShuffle.plan?.order.length - 1 && !state.flowShuffle.priorityIds.length) return null;
+      const priorityId = state.flowShuffle.priorityIds.find((id) => id !== current?.id && queue.some((track) => track.id === id) && !state.flowShuffle.sessionExcludedIds.includes(id));
+      let prepared = flowShuffleEngine.stageNext(state.flowShuffle, queue.map((track) => track.id), current?.id || '', { fromEnded, repeat: state.repeat, style: 'standard' });
+      if (priorityId) {
+        const plan = prepared.state.plan;
+        const cursor = plan.cursor;
+        const committed = plan.order.slice(0, cursor + 1);
+        const remaining = plan.order.slice(cursor + 1).filter((id) => id !== priorityId);
+        prepared = { ...prepared, kind: 'priority', trackId: priorityId, stopped: false, state: { ...prepared.state, plan: { ...plan, cursor, order: committed.concat(priorityId, remaining) } } };
+      }
       const track = trackById(prepared.trackId);
-      if (track && current) flowShuffleRuntime.pending = { kind: 'forward', trackId: track.id, fromTrackId: current.id, fromTrackTitle: current.title, pickedAt: new Date().toISOString() };
+      if (track && current) flowShuffleRuntime.pending = {
+        kind: prepared.kind, style: 'standard', preparedState: prepared.state,
+        trackId: track.id, fromTrackId: current.id, fromTrackTitle: current.title,
+        fromOccurrenceId: signalRuntime.currentPlay?.occurrenceId || '', pickedAt: new Date().toISOString(),
+        decision: flowShuffleDecision.normalizeDecision({ kind: prepared.kind, source: 'seeded Standard permutation', trackId: track.id, fromTrackId: current.id, availableSignals: [] }),
+        priority: prepared.kind === 'priority',
+        reasons: [prepared.kind === 'priority' ? 'Manual queue priority' : 'Next in the seeded Standard permutation'],
+        reasonDetails: [{ text: 'seeded permutation; no taste or musical feature weighting', points: 0, category: 'metadata' }],
+      };
       return track || null;
     }
     return chooseFlowShuffleNext(queue, fromEnded);
@@ -17896,6 +17999,32 @@ function buildQueue(tracks, startId = null) {
   queueRenderLimit = QUEUE_RENDER_STEP;
   resetFlowShuffleCycle(startId || '');
   persist(); renderQueue();
+}
+async function requestPlaybackTraversal(direction, options = {}) {
+  const naturalEnd = options.naturalEnd === true;
+  const track = adjacentTrack(direction === 'previous' ? -1 : 1, naturalEnd);
+  if (!track) return false;
+  return (await playTrack(track.id, { ...options, naturalAdvance: naturalEnd })) === true;
+}
+function moveQueueEntry(id, toIndex) {
+  const source = activeQueue();
+  const projected = state.shuffle ? tracksInActiveShuffleOrder(source).map((track) => track.id) : source.map((track) => track.id);
+  const fromIndex = projected.indexOf(id);
+  if (fromIndex < 0) return false;
+  const currentIndex = projected.indexOf(currentTrack()?.id || '');
+  if (state.shuffle && fromIndex <= currentIndex) return false;
+  const minimum = state.shuffle ? currentIndex + 1 : 0;
+  const target = Math.max(minimum, Math.min(projected.length - 1, Math.round(Number(toIndex) || 0)));
+  projected.splice(fromIndex, 1);
+  projected.splice(target, 0, id);
+  state.queue = projected;
+  if (state.shuffle && state.flowShuffle.plan) {
+    const plan = state.flowShuffle.plan;
+    const future = projected.slice(currentIndex + 1);
+    state.flowShuffle = { ...state.flowShuffle, priorityIds: future, plan: { ...plan, sourceQueueIds: projected.slice(), future: [], order: projected.slice(), cursor: currentIndex } };
+    flowShuffleRuntime.pending = null;
+  }
+  return true;
 }
 function syncQueuePlaybackState(options = {}) {
   const published = confirmedPublishedOutputSnapshot();
@@ -17932,8 +18061,9 @@ let queueRenderLimit = QUEUE_RENDER_STEP;
 let queueListStale = false;
 function flushQueueRender() { if (queueListStale) renderQueue(); }
 function renderQueue() {
-  const queue = activeQueue();
-  syncFlowShuffleQueue(queue);
+  const sourceQueue = activeQueue();
+  syncFlowShuffleQueue(sourceQueue);
+  const queue = state.shuffle ? tracksInActiveShuffleOrder(sourceQueue) : sourceQueue;
   if (flowShuffleRuntime.pending && !queue.some((track) => track.id === flowShuffleRuntime.pending.trackId)) {
     flowShuffleRuntime.pending = null;
   }
@@ -18003,16 +18133,16 @@ async function handleRemotePlaybackCommand(payload = {}, command = {}) {
     return true;
   }
   if (action === 'next') {
-    const track = adjacentTrack(1);
-    if (track) await playTrack(track.id, signalContext);
-    return Boolean(track);
+    return requestPlaybackTraversal('next', signalContext);
   }
-  if (action === 'not-session') applyFlowControl('not-session', trackById(id));
-  if (action === 'less-like') applyFlowControl('less-like', trackById(id));
+  if (action === 'not-session' || action === 'less-like') {
+    const track = trackById(payload.trackId || currentTrack()?.id || '');
+    if (!track) return false;
+    applyFlowControl(action, track);
+    return true;
+  }
   if (action === 'previous') {
-    const track = adjacentTrack(-1);
-    if (track) await playTrack(track.id, signalContext);
-    return Boolean(track);
+    return requestPlaybackTraversal('previous', signalContext);
   }
   if (action === 'seek') {
     if (Number.isFinite(Number(payload.seconds)) && audio.duration) {
@@ -18026,8 +18156,7 @@ async function handleRemotePlaybackCommand(payload = {}, command = {}) {
   }
   if (action === 'playtrack' && payload.trackId && trackById(payload.trackId)) {
     if (!state.queue.includes(payload.trackId)) state.queue.push(payload.trackId);
-    await playTrack(payload.trackId, signalContext);
-    return true;
+    return (await playTrack(payload.trackId, signalContext)) === true;
   }
   return false;
 }
@@ -18054,23 +18183,14 @@ function handleRemoteQueueCommand(payload = {}, command = {}) {
   const action = String(payload.action || '').toLowerCase();
   const trackId = payload.trackId;
   if ((action === 'addtrack' || action === 'addnext') && trackId && trackById(trackId)) {
-    if (!state.queue.includes(trackId)) {
-      const currentIndex = state.queue.indexOf(currentTrack()?.id || '');
-      if (action === 'addnext' && currentIndex >= 0) state.queue.splice(currentIndex + 1, 0, trackId);
-      else state.queue.push(trackId);
-    }
-    state.flowShuffle = flowShuffleEngine.markPriority(state.flowShuffle, trackId, { front: action === 'addnext' });
+    enqueueQueueTracks([trackId], { next: action === 'addnext' });
     recordSignalEvent('track_queued', { trackId, ...signalContext, intentType: action === 'addnext' ? 'play-next' : 'queue' });
   } else if (action === 'removetrack' && trackId) {
     state.queue = state.queue.filter((id) => id !== trackId);
     state.flowShuffle.cycle = state.flowShuffle.cycle.filter((id) => id !== trackId);
     state.flowShuffle.history = state.flowShuffle.history.filter((id) => id !== trackId);
   } else if (action === 'movetrack' && trackId && Number.isFinite(Number(payload.toIndex))) {
-    const fromIndex = state.queue.indexOf(trackId);
-    if (fromIndex >= 0) {
-      const [id] = state.queue.splice(fromIndex, 1);
-      state.queue.splice(Math.max(0, Math.min(state.queue.length, Number(payload.toIndex))), 0, id);
-    }
+    if (!moveQueueEntry(trackId, Number(payload.toIndex))) return false;
   } else if (action === 'clear') {
     state.queue = currentTrack() ? [currentTrack().id] : [];
     resetFlowShuffleCycle(currentTrack()?.id || '');
@@ -18122,6 +18242,26 @@ async function chooseBackground(playlistId = state.activePlaylistId) {
   state.activePlaylistId = playlistId;
   const collection = activePlaylist();
   persist(); renderTracks(); showToast(`Background updated for ${collection.name}`);
+  setBackgroundCabinetOpen(true, { focusLayout: true });
+}
+function backgroundLayoutContext() {
+  return { collectionId: state.activePlaylistId, theme: activePresentationKey(), artwork: collectionArtworkFor() };
+}
+function syncBackgroundLayoutControls() {
+  const domain = window.PixelodyDesktopThemeControls;
+  if (!domain) return;
+  const { collectionId, theme, artwork } = backgroundLayoutContext();
+  const value = domain.imageLayout(appearance, collectionId, theme, artwork);
+  const style = domain.layouts[value];
+  $('#playlistHero').style.setProperty('--collection-image-size', style.size);
+  $('#playlistHero').style.setProperty('--collection-image-repeat', style.repeat);
+  document.querySelectorAll('#backgroundLayoutOptions input').forEach(input => { input.checked = input.value === value; });
+}
+function selectBackgroundLayout(value) {
+  const { collectionId, theme, artwork } = backgroundLayoutContext();
+  if (!window.PixelodyDesktopThemeControls.saveImageLayout(appearance, collectionId, theme, artwork, value)) return;
+  syncBackgroundLayoutControls();
+  scheduleDurableStatePersist(0, 'settings-change');
 }
 function customBackgroundFor(playlistId = state.activePlaylistId) {
   const playlist = state.playlists.find((item) => item.id === playlistId);
@@ -18130,6 +18270,7 @@ function customBackgroundFor(playlistId = state.activePlaylistId) {
 function syncBackgroundCabinet() {
   const cabinet = $('#backgroundCabinet');
   if (!cabinet) return;
+  syncBackgroundLayoutControls();
   const hasCustomImage = Boolean(customBackgroundFor());
   const hasArtwork = Boolean(collectionArtworkFor());
   const artworkState = $('#playlistCover')?.dataset.artworkState;
@@ -18142,11 +18283,17 @@ function setBackgroundCabinetOpen(open, options = {}) {
   const cabinet = $('#backgroundCabinet');
   const trigger = $('#backgroundButton');
   if (!cabinet || !trigger) return;
+  if (!open && cabinet.matches(':popover-open')) cabinet.hidePopover();
   cabinet.hidden = !open;
   trigger.setAttribute('aria-expanded', String(open));
   if (open) {
     syncBackgroundCabinet();
-    setTimeout(() => (customBackgroundFor() ? $('#clearBackgroundImage') : $('#chooseBackgroundImage'))?.focus({ preventScroll: true }), 0);
+    cabinet.setAttribute('popover', 'manual');
+    cabinet.showPopover();
+    const bounds = trigger.getBoundingClientRect();
+    cabinet.style.left = `${Math.max(12, Math.min(bounds.right - cabinet.offsetWidth, window.innerWidth - cabinet.offsetWidth - 12))}px`;
+    cabinet.style.top = `${Math.max(12, Math.min(bounds.bottom + 8, window.innerHeight - cabinet.offsetHeight - 12))}px`;
+    setTimeout(() => (options.focusLayout ? $('#backgroundLayoutOptions input:checked') : customBackgroundFor() ? $('#clearBackgroundImage') : $('#chooseBackgroundImage'))?.focus({ preventScroll: true }), 0);
   } else if (options.restoreFocus) {
     setTimeout(() => trigger.focus({ preventScroll: true }), 0);
   }
@@ -18161,6 +18308,7 @@ function clearBackground(playlistId = state.activePlaylistId) {
   persist();
   renderTracks();
   showToast(hadCustomImage ? 'Custom image removed. Theme artwork restored.' : 'Theme artwork selected.');
+  setBackgroundCabinetOpen(true, { focusLayout: true });
   return hadCustomImage;
 }
 function selectPlaylist(id) {
@@ -18378,7 +18526,7 @@ function confirmPlaylistPickerCreation() {
 function selectLibraryMode(mode) {
   state.libraryMode = mode;
   if (mode === 'playlists') {
-    if (state.activePlaylistId.startsWith('album:') || state.activePlaylistId.startsWith('artist:') || state.activePlaylistId.startsWith('smart:')) state.activePlaylistId = 'all';
+    if (state.activePlaylistId === DAILY_CURATED_COLLECTION_ID || state.activePlaylistId.startsWith('album:') || state.activePlaylistId.startsWith('artist:') || state.activePlaylistId.startsWith('smart:')) state.activePlaylistId = 'all';
   } else {
     const first = groupedLibraryCollections(mode)[0];
     state.activePlaylistId = first ? first.id : 'all';
@@ -19166,8 +19314,9 @@ $('#playlistList').onclick = (event) => { const item = event.target.closest('.pl
 $('#playlistList').oncontextmenu = (event) => { const item = event.target.closest('.playlist-item'); if (item) showPlaylistMenu(event, item.dataset.playlist); };
 $('#playlistMore').onclick = (event) => showPlaylistMenu(event);
 $('#backgroundButton').onclick = () => setBackgroundCabinetOpen($('#backgroundCabinet').hidden);
-$('#chooseBackgroundImage').onclick = async () => { setBackgroundCabinetOpen(false); await chooseBackground(); };
-$('#clearBackgroundImage').onclick = () => { clearBackground(); setBackgroundCabinetOpen(false, { restoreFocus: true }); };
+$('#chooseBackgroundImage').onclick = async () => { await chooseBackground(); };
+$('#backgroundLayoutOptions').addEventListener('change', event => { if (event.target.matches('input')) selectBackgroundLayout(event.target.value); });
+$('#clearBackgroundImage').onclick = () => { clearBackground(); };
 $('#closeBackgroundCabinet').onclick = () => setBackgroundCabinetOpen(false, { restoreFocus: true });
 $('#backgroundCabinet').addEventListener('keydown', (event) => {
   if (event.key !== 'Escape') return;
@@ -19298,12 +19447,7 @@ $('#trackMenu').onclick = (event) => {
   if (action === 'move-up') moveTrackInPlaylist(id, -1);
   if (action === 'move-down') moveTrackInPlaylist(id, 1);
   if (action === 'next') {
-    if (!state.queue.includes(id)) {
-      const currentIndex = state.queue.indexOf(currentTrack()?.id || '');
-      if (currentIndex >= 0) state.queue.splice(currentIndex + 1, 0, id);
-      else state.queue.unshift(id);
-    }
-    state.flowShuffle = flowShuffleEngine.markPriority(state.flowShuffle, id, { front: true });
+    enqueueQueueTracks([id], { next: true });
     recordSignalEvent('track_queued', { trackId: id, source: 'track-menu-play-next' }); persist(); renderTracks(); renderQueue(); showToast('Will play next.');
   }
   if (action === 'queue') {
@@ -19428,17 +19572,26 @@ function afterBulkMetadataChange(ids) {
   if (playing && ids.includes(playing.id)) syncCurrentTrackMetadataView(playing);
   persist(); renderTracks({ preserveOrder: true }); renderQueue(); renderMigrationReport(); broadcastPlayerState();
 }
-function queueTracks(ids, { next = false } = {}) {
-  const fresh = [...new Set(ids)].filter((id) => trackById(id) && !state.queue.includes(id));
-  if (!fresh.length) { showToast('Those tracks are already in the queue.'); return; }
+function enqueueQueueTracks(ids, { next = false } = {}) {
+  const playingId = currentTrack()?.id || '';
+  const selected = [...new Set(ids)].filter((id) => trackById(id) && (next ? id !== playingId : !state.queue.includes(id)));
+  if (!selected.length) return [];
   if (next) {
-    const currentIndex = state.queue.indexOf(currentTrack()?.id || '');
+    if (!state.shuffle) state.queue = state.queue.filter((id) => !selected.includes(id));
+    const fresh = selected.filter((id) => !state.queue.includes(id));
+    const currentIndex = state.queue.indexOf(playingId);
     state.queue.splice(currentIndex >= 0 ? currentIndex + 1 : 0, 0, ...fresh);
-    [...fresh].reverse().forEach((id) => { state.flowShuffle = flowShuffleEngine.markPriority(state.flowShuffle, id, { front: true }); });
+    [...selected].reverse().forEach((id) => { state.flowShuffle = flowShuffleEngine.markPriority(state.flowShuffle, id, { front: true }); });
   } else {
-    state.queue.push(...fresh);
-    fresh.forEach((id) => { state.flowShuffle = flowShuffleEngine.markPriority(state.flowShuffle, id); });
+    state.queue.push(...selected);
+    selected.forEach((id) => { state.flowShuffle = flowShuffleEngine.markPriority(state.flowShuffle, id); });
   }
+  flowShuffleRuntime.pending = null;
+  return selected;
+}
+function queueTracks(ids, { next = false } = {}) {
+  const fresh = enqueueQueueTracks(ids, { next });
+  if (!fresh.length) { showToast('Those tracks are already in the queue.'); return; }
   fresh.forEach((id) => recordSignalEvent('track_queued', { trackId: id, source: 'selection' }));
   persist(); renderTracks(); renderQueue();
   showToast(`${next ? 'Playing next' : 'Added to queue'}: ${libraryBatchDomain.describeCount(fresh.length, 'track')}.`);
@@ -19481,8 +19634,8 @@ $('#heroPlay').onclick = async () => { if (!(await toggleCurrentPlayback())) awa
 $('#playButton').onclick = async () => { if (!(await toggleCurrentPlayback())) await playFirstVisibleTrack(); };
 $('#dailyCuratedPlay').onclick = () => { void playDailyCuratedMix(); };
 $('#dailyCuratedSave').onclick = saveDailyCuratedMix;
-$('#prevButton').onclick = () => { const track = adjacentTrack(-1); if (track) playTrack(track.id); };
-$('#nextButton').onclick = () => { const track = adjacentTrack(1); if (track) playTrack(track.id); };
+$('#prevButton').onclick = () => requestPlaybackTraversal('previous');
+$('#nextButton').onclick = () => requestPlaybackTraversal('next');
 $('#shuffleButton').classList.toggle('active', state.shuffle);
 syncQuestPlaybackModeReadouts();
 syncQuestBossBar();
@@ -19513,14 +19666,15 @@ $('#queueList').onclick = (event) => {
   if (event.target.closest('[data-queue-more]')) { queueRenderLimit += QUEUE_RENDER_STEP; renderQueue(); return; }
   const item = event.target.closest('.queue-item'); if (!item) return; const id = decodeURIComponent(item.dataset.id); const action = event.target.dataset.queueAction;
   if (!action) { playTrack(id); return; }
-  const index = state.queue.indexOf(id);
+  const projected = state.shuffle ? tracksInActiveShuffleOrder(activeQueue()).map((track) => track.id) : state.queue;
+  const index = projected.indexOf(id);
   if (action === 'remove') {
-    state.queue.splice(index, 1);
+    state.queue = state.queue.filter((trackId) => trackId !== id);
     state.flowShuffle.cycle = state.flowShuffle.cycle.filter((trackId) => trackId !== id);
     state.flowShuffle.history = state.flowShuffle.history.filter((trackId) => trackId !== id);
   }
-  if (action === 'up' && index > 0) [state.queue[index - 1], state.queue[index]] = [state.queue[index], state.queue[index - 1]];
-  if (action === 'down' && index < state.queue.length - 1) [state.queue[index + 1], state.queue[index]] = [state.queue[index], state.queue[index + 1]];
+  if (action === 'up' && index > 0) moveQueueEntry(id, index - 1);
+  if (action === 'down' && index < projected.length - 1) moveQueueEntry(id, index + 1);
   persist(); renderTracks(); renderQueue();
 };
 $('#sortSelect').onchange = (event) => { setActiveSort(event.target.value); persist(); renderTracks(); };
@@ -19727,8 +19881,16 @@ audio.onplay = () => {
     recordSignalEvent('track_resumed', { trackId: play.trackId });
   }
 };
-audio.onended = () => { finalizeSignalPlayback('completed', 'natural-end'); issueSharedPlaybackCommand('ended', { trackId: currentTrack()?.id || '' }); syncLegacyPlaybackClass(false); stopPlaybackMonitor(); syncInterfaceSoundEngine(); syncThemePreloader(); syncTrackBrowserAuthoritativeState(); updateMemeCue(null); const track = adjacentTrack(1, true); if (track) playTrack(track.id, { naturalAdvance: true }); else { stopQuestStatsTicker(); syncPlayVisual(true); setQuestBootMessage('GAME CLEAR', 'idle', 2200); broadcastPlayerState(); scheduleSharingSnapshot('playback-ended'); } };
+audio.onended = async () => {
+  finalizeSignalPlayback('completed', 'natural-end');
+  issueSharedPlaybackCommand('ended', { trackId: currentTrack()?.id || '' });
+  syncLegacyPlaybackClass(false); stopPlaybackMonitor(); syncInterfaceSoundEngine(); syncThemePreloader(); syncTrackBrowserAuthoritativeState(); updateMemeCue(null);
+  if (!(await requestPlaybackTraversal('next', { naturalEnd: true }))) {
+    stopQuestStatsTicker(); syncPlayVisual(true); setQuestBootMessage('GAME CLEAR', 'idle', 2200); broadcastPlayerState(); scheduleSharingSnapshot('playback-ended');
+  }
+};
 audio.onpause = () => {
+  signalListeningTracker.suspend(signalMediaObservation(), audio.ended ? 'natural-end' : 'pause');
   resetPlaybackTransition();
   const pendingTransition = confirmedOutputTransitionRuntime.snapshot().pending;
   if (pendingTransition) confirmedOutputTransitionRuntime.note('media-pause', pendingTransition.requestSerial, confirmedOutputUiSnapshot());
@@ -19743,6 +19905,7 @@ audio.onpause = () => {
   }
 };
 audio.onerror = () => {
+  signalListeningTracker.suspend(signalMediaObservation(), 'playback-error');
   resetPlaybackTransition();
   const pendingTransition = confirmedOutputTransitionRuntime.snapshot().pending;
   if (pendingTransition) {
@@ -19773,6 +19936,7 @@ audio.onerror = () => {
   broadcastPlayerState();
 };
 audio.onstalled = () => {
+  signalListeningTracker.suspend(signalMediaObservation(), 'buffering');
   const pendingTransition = confirmedOutputTransitionRuntime.snapshot().pending;
   if (pendingTransition) {
     confirmedOutputTransitionRuntime.note('media-stalled', pendingTransition.requestSerial, confirmedOutputUiSnapshot({ requestedId: pendingTransition.requestedId }));
@@ -19809,6 +19973,7 @@ function updatePlaybackProgress() {
   syncListeningEdition();
 }
 audio.ontimeupdate = () => {
+  sampleSignalListening();
   maintainCalibrationLoop();
   maintainPlaybackTransition();
   if (!playbackProgressFrame) playbackProgressFrame = requestAnimationFrame(updatePlaybackProgress);
@@ -19868,6 +20033,7 @@ $('#seek').oninput = (event) => {
   });
 };
 audio.onseeked = () => {
+  if (!audio.paused && !confirmedOutputTransitionRuntime.snapshot().pending) signalListeningTracker.resume(signalMediaObservation());
   resetPlaybackTransition();
   mirrorPrimaryPlaybackStateToSecondaries('primary-seeked');
   syncQuestBossBar();
@@ -19877,6 +20043,12 @@ audio.onseeked = () => {
   }
   scheduleSharingSnapshot('playback-seek');
 };
+audio.addEventListener('seeking', () => sampleSignalListening({ seeking: true }));
+audio.addEventListener('waiting', () => signalListeningTracker.suspend(signalMediaObservation(), 'buffering'));
+audio.addEventListener('playing', () => {
+  if (signalRuntime.currentPlay && !confirmedOutputTransitionRuntime.snapshot().pending) signalListeningTracker.resume(signalMediaObservation());
+});
+audio.addEventListener('ratechange', () => sampleSignalListening());
 let lastAudibleVolume = Math.max(0.05, readPersistedNumber('pixelody.lastAudibleVolume', 0.85));
 function syncMuteUi() {
   const muted = audio.volume <= 0.001;
@@ -20557,6 +20729,7 @@ async function selectThemeFromSettings(theme) {
     closeSettings();
     await waitForPaint();
   }
+  appearance.logoFollowsTheme = true;
   await selectTheme(theme);
 }
 function openJams(opener = document.activeElement) {
@@ -20995,7 +21168,13 @@ $('#wantedList').onclick = (event) => {
 };
 $('#previewJamConnection').onclick = previewJamConnection;
 document.querySelectorAll('[data-palette]').forEach((button) => button.onclick = () => { appearance.palette = button.dataset.palette; applyAppearance(); });
-document.querySelectorAll('[data-logo-color]').forEach((button) => button.onclick = () => { appearance.logoColor = brandMarkDomain.normalizeLogoColor(button.dataset.logoColor); applyAppearance(); });
+function selectLogoColor(logoColor) {
+  appearance.logoColor = brandMarkDomain.normalizeLogoColor(logoColor);
+  appearance.logoFollowsTheme = false;
+  applyAppearance();
+  scheduleDurableStatePersist(0, 'settings-change');
+}
+document.querySelectorAll('[data-logo-color]').forEach((button) => button.onclick = () => selectLogoColor(button.dataset.logoColor));
 $('#logoFollowsTheme').onchange = (event) => { appearance.logoFollowsTheme = event.target.checked; applyAppearance(); };
 document.querySelectorAll('[data-theme-option]').forEach((button) => {
   button.addEventListener('pointerenter', () => { syncThemePreloader(); themePreloader?.warmTheme(button.dataset.themeOption, { priority: true }); });

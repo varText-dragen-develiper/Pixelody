@@ -5,6 +5,8 @@ const { inspectAppFile, inspectContent, sourceIncluded, sourceInventory, artifac
 const identity = require('../release/windows-identity.json');
 const version = require('../package.json').version;
 const harmless = Buffer.from('original package content');
+for (const file of ['src/windows-shell-icons.ps1', 'src/windows-live-icon.ps1']) assert.doesNotThrow(() => inspectAppFile(file, harmless));
+assert.throws(() => inspectAppFile('src/unrecognized-worker.ps1', harmless), /Unclassified source/);
 const hostilePaths = ['src/private-assets/art.png', 'src/PRIVATE_DO_NOT_SHIP/art.png', 'src/evidence/capture.png', 'src/.env', 'src/signing.pfx', 'src/private.wav', 'src/test-profiles/state.json', 'unexpected.js'];
 for (const file of hostilePaths) assert.throws(() => inspectAppFile(file, harmless), undefined, file);
 for (const file of ['src/integration-test-runner.js', 'src/security-probe-preload.js', 'src/security-probe.html']) {

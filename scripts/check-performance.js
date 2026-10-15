@@ -118,7 +118,7 @@ assert.ok(/if \(cartridgeQuestExperienceActive\(\) && !motionDisabled\(\)\) \{\s
   // Baseline rankings include metadata ties, Unicode/delimiter IDs and album
   // units truncated at the horizon. Optimization must preserve the plan.
   const planner = require('../src/flow-shuffle-planner');
-  const fixtures = [{"albumPolicy":"track","horizon":5,"rich":false,"ids":["a|b12","a|b17","a|b2","a|b22","a|b27"],"score":0},{"albumPolicy":"track","horizon":5,"rich":true,"ids":["a|b17","E26","track-34","track-79","a|b7"],"score":52},{"albumPolicy":"track","horizon":7,"rich":false,"ids":["a|b12","a|b17","a|b2","a|b22","a|b27","a|b32","a|b42"],"score":0},{"albumPolicy":"track","horizon":7,"rich":true,"ids":["a|b17","A8","é70","é25","track-34","a|b52","track-44"],"score":69},{"albumPolicy":"track","horizon":10,"rich":false,"ids":["a|b12","a|b17","a|b2","a|b22","a|b27","a|b32","a|b42","a|b37","a|b47","a|b52"],"score":0},{"albumPolicy":"track","horizon":10,"rich":true,"ids":["a|b17","A8","é70","track-79","track-34","E26","a|b32","é15","a|b7","a|b52"],"score":95},{"albumPolicy":"album","horizon":5,"rich":false,"ids":["a|b12","a|b17","a|b2","a|b22","a|b27"],"score":0},{"albumPolicy":"album","horizon":5,"rich":true,"ids":["a|b17","E26","track-34","track-79","a|b7"],"score":52},{"albumPolicy":"album","horizon":7,"rich":false,"ids":["a|b12","a|b17","a|b2","a|b22","a|b27","a|b32","a|b42"],"score":0},{"albumPolicy":"album","horizon":7,"rich":true,"ids":["a|b17","A8","é70","é25","track-34","a|b52","track-44"],"score":69},{"albumPolicy":"album","horizon":10,"rich":false,"ids":["a|b12","a|b17","a|b2","a|b22","a|b27","a|b32","a|b42","a|b37","a|b47","a|b52"],"score":0},{"albumPolicy":"album","horizon":10,"rich":true,"ids":["a|b17","A8","é70","track-79","track-34","E26","a|b32","é15","a|b7","a|b52"],"score":95}];
+  const fixtures = require('./fixtures/flow-shuffle-ranking-v2.json');
   for (const fixture of fixtures) {
     const { albumPolicy, horizon, rich } = fixture;
     const candidates = Array.from({ length: 80 }, (_, i) => ({
@@ -128,8 +128,8 @@ assert.ok(/if \(cartridgeQuestExperienceActive\(\) && !motionDisabled\(\)\) \{\s
       bpm: rich ? 80 + i % 70 : undefined, musicalKey: rich ? ['Am', 'C', 'F#'][i % 3] : undefined,
     }));
     const plan = planner.planSession({ candidates, current: candidates[17], horizon, beamWidth: 8, albumPolicy, preserveAlbumRuns: albumPolicy === 'album', shape: 'wave' });
-    assert.deepEqual(plan.ids, fixture.ids, 'cached tie keys must preserve the baseline ranking');
-    assert.equal(plan.score, fixture.score, 'cached tie keys must preserve the baseline score');
+    assert.deepEqual(plan.ids, fixture.ids, 'cached scoring must preserve the current metadata ranking');
+    assert.equal(plan.score, fixture.score, 'cached scoring must preserve the current metadata score');
   }
 }
 

@@ -3,3 +3,6 @@
 # scripts/check-workspace-composition.js. Store and check out exactly as
 # committed so Windows line-ending conversion cannot change the hashes.
 /Images/** -text
+
+# Golden contract fixtures must remain byte-comparable on Windows.
+docs/api-contract-fixtures/** text eol=lf

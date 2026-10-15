@@ -35,6 +35,8 @@ const OBJECT_VALUE_KEYS = new Set([
   'pixelody.signalJournal',
   'pixelody.signalSettings',
   'pixelody.flowShuffle',
+  'pixelody.shuffleSession',
+  'pixelody.shuffleLedger',
   'pixelody.appearance',
   'pixelody.motionEffects',
   'pixelody.eqModes',
@@ -85,6 +87,14 @@ const KNOWN_VALUE_KEYS = new Set([
   ...STRING_VALUE_KEYS,
   ...BOOLEAN_VALUE_KEYS,
   ...NUMBER_VALUE_KEYS,
+]);
+
+// Version-1 backups predate the universal traversal and private learning
+// ledger. Their omission says nothing about either value. Their reset/import
+// authority is separate; an explicit supplied value still wins a restore.
+const LEGACY_BACKUP_RETAINED_VALUE_KEYS = new Set([
+  'pixelody.shuffleSession',
+  'pixelody.shuffleLedger',
 ]);
 
 function isPlainObject(value) {
@@ -235,6 +245,9 @@ function backupV1ToValues(backup, options = {}) {
     };
   const workspaceStateKey = options.workspaceStateKey || WORKSPACE_STATE_KEY;
   if (plainBackupWorkspace(backup.workspaceComposition)) values[workspaceStateKey] = backup.workspaceComposition;
+  for (const [field, key] of [['shuffleSession', 'pixelody.shuffleSession'], ['shuffleLedger', 'pixelody.shuffleLedger']]) {
+    if (Object.prototype.hasOwnProperty.call(backup, field)) values[key] = backup[field];
+  }
   return {
     ok: true,
     values,
@@ -331,6 +344,21 @@ class PixelodyStateStore {
     this.ensureDirectories();
     const workspaceOptions = { workspaceAuthority: this.workspaceAuthority, workspaceStateKey: this.workspaceStateKey };
     const current = readJsonCandidate(this.paths.current, workspaceOptions);
+    const pending = readJsonCandidate(this.paths.temporary, workspaceOptions);
+    const previous = readJsonCandidate(this.paths.previous, workspaceOptions);
+    // A newer application may have stopped between any two renames. Inspect
+    // every candidate before recovery or schema-upgrade writes, including a
+    // newer pending/previous next to a valid old current. Opening an older
+    // app must not overwrite that newer state on its first routine save.
+    const future = [['current', current], ['pending', pending], ['previous', previous]]
+      .find(([, candidate]) => candidate.kind === 'future-schema');
+    if (future) {
+      this.cachedEnvelope = null;
+      this.fragments = null;
+      this.fragmentsFor = null;
+      this.lastLoad = { ok: false, status: 'unsupported-future-schema', needsLegacyMigration: false, readOnly: true, diagnostics: this.diagnostics('unsupported-future-schema', { readOnly: true, recoveredFrom: future[0], message: future[1].error }) };
+      return this.loadResult();
+    }
     if (current.ok) {
       this.cachedEnvelope = current.envelope;
       if (current.upgraded) {
@@ -346,14 +374,8 @@ class PixelodyStateStore {
       this.lastLoad = { ok: true, status: current.upgraded ? 'upgraded' : 'ready', needsLegacyMigration: false, readOnly: false, diagnostics: this.diagnostics(current.upgraded ? 'upgraded' : 'ready') };
       return this.loadResult();
     }
-    if (current.kind === 'future-schema') {
-      this.lastLoad = { ok: false, status: 'unsupported-future-schema', needsLegacyMigration: false, readOnly: true, diagnostics: this.diagnostics('unsupported-future-schema', { readOnly: true, message: current.error }) };
-      return this.loadResult();
-    }
-
     let quarantined = false;
     if (current.exists) quarantined = this.quarantine(this.paths.current, 'current-invalid');
-    const pending = readJsonCandidate(this.paths.temporary, workspaceOptions);
     if (pending.ok) {
       this.promoteCandidate(this.paths.temporary, pending.envelope);
       try { fs.rmSync(this.paths.temporary, { force: true }); } catch {}
@@ -363,13 +385,13 @@ class PixelodyStateStore {
     }
     if (pending.exists) quarantined = this.quarantine(this.paths.temporary, 'pending-invalid') || quarantined;
 
-    const previous = readJsonCandidate(this.paths.previous, workspaceOptions);
     if (previous.ok) {
       this.promoteCandidate(this.paths.previous, previous.envelope);
       this.cachedEnvelope = previous.envelope;
       this.lastLoad = { ok: true, status: 'recovered', needsLegacyMigration: false, readOnly: false, diagnostics: this.diagnostics('recovered', { recoveredFrom: 'previous', quarantined }) };
       return this.loadResult();
     }
+    if (previous.exists) quarantined = this.quarantine(this.paths.previous, 'previous-invalid') || quarantined;
 
     this.cachedEnvelope = null;
     const status = quarantined ? 'recovery-defaults' : 'fresh';
@@ -516,10 +538,12 @@ class PixelodyStateStore {
     // own authority and its own commit path, and a v1 backup taken before
     // Canvas existed has nothing to say about it. A backup that does carry
     // workspaceComposition still overwrites it, because normalizedValues wins.
+    // The universal session/ledger likewise survive a legacy backup's omission;
+    // a backup that explicitly carries either object can replace that object.
     const retainedValues = {};
     if (options.replaceKnownValues) {
       for (const [key, value] of Object.entries(currentValues)) {
-        if (!KNOWN_VALUE_KEYS.has(key) || key === this.workspaceStateKey) retainedValues[key] = value;
+        if (!KNOWN_VALUE_KEYS.has(key) || key === this.workspaceStateKey || LEGACY_BACKUP_RETAINED_VALUE_KEYS.has(key)) retainedValues[key] = value;
       }
     }
     const mergedValues = options.replaceKnownValues

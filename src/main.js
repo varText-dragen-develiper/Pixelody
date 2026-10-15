@@ -35,6 +35,14 @@ const builtInThemeRegistry = require('./themes/built-in-themes.json');
 const desktopThemePorts = require('./theme-runtime/canvas-theme-ports');
 const brandMark = require('./brand-mark');
 const musicBrainz = require('./musicbrainz');
+const { createBrandIconAnimator } = require('./brand-icon-transition');
+const { createWindowsLiveIconController } = require('./windows-live-icon');
+const { applyWindowsTaskbarIcon, taskbarIdentityForProfile } = require('./windows-taskbar-icon');
+const { refreshWindowsShellIcons, shutdownWindowsShellIcons } = require('./windows-shell-icons');
+app.once('will-quit', shutdownWindowsShellIcons);
+const profileDirectoryArgument = process.argv.find(argument => argument.startsWith('--pixelody-profile-directory='))?.slice('--pixelody-profile-directory='.length);
+if (profileDirectoryArgument !== undefined && !path.isAbsolute(profileDirectoryArgument)) throw new Error('Profile directory must be an absolute path.');
+const profileDirectoryPath = profileDirectoryArgument ? path.resolve(profileDirectoryArgument) : '';
 
 app.enableSandbox();
 // Low-memory & V8 size optimization switches to constrain idle heap and GPU texture allocations
@@ -42,8 +50,7 @@ app.commandLine.appendSwitch('js-flags', '--max-old-space-size=256 --optimize-fo
 app.commandLine.appendSwitch('disable-gpu-memory-buffer-video-frames');
 let musicMetadata;
 let mainWindow = null;
-// Logo colour chosen in Settings > Style. Only the baked purple-range icons in
-// src/assets/brand supply the geometry; a validated theme accent may tint it in memory.
+// The generated mark uses the saved purple or the active theme's accent.
 let activeLogoColor = brandMark.DEFAULT_LOGO_COLOR;
 let activeThemeMarkAccent = '';
 
@@ -51,14 +58,12 @@ function brandIconPath(key = activeLogoColor) {
   return path.join(__dirname, 'assets', 'brand', `window-icon-${brandMark.normalizeLogoColor(key)}.png`);
 }
 
-function applyBrandIcon(win) {
+function brandIconImage() {
   let image = nativeImage.createFromPath(brandIconPath());
   if (activeThemeMarkAccent) {
-    // Recolour the generated mark in memory. The graphite tile and geometry
-    // remain the generator's; no arbitrary image path crosses IPC.
     image = nativeImage.createFromPath(brandIconPath(brandMark.DEFAULT_LOGO_COLOR));
     const bitmap = image.toBitmap();
-    const rgb = activeThemeMarkAccent.slice(1).match(/../g).map((value) => parseInt(value, 16));
+    const rgb = activeThemeMarkAccent.slice(1).match(/../g).map(value => parseInt(value, 16));
     for (let i = 0; i < bitmap.length; i += 4) {
       const blue = bitmap[i], green = bitmap[i + 1], red = bitmap[i + 2];
       if (blue <= red + 8 || blue <= green + 8) continue;
@@ -69,6 +74,22 @@ function applyBrandIcon(win) {
     }
     image = nativeImage.createFromBitmap(bitmap, image.getSize());
   }
+  return image;
+}
+
+const brandIconAnimator = createBrandIconAnimator({
+  nativeImage,
+  getBaseImage: () => nativeImage.createFromPath(brandIconPath(brandMark.DEFAULT_LOGO_COLOR)),
+  windows: () => [mainWindow, miniWindow],
+});
+const liveIconController = createWindowsLiveIconController({ app, appId: taskbarIdentityForProfile(releaseIdentity, profileDirectoryPath) });
+app.once('will-quit', () => liveIconController.shutdown());
+app.whenReady().then(() => liveIconController.prepare()).catch(error => console.warn('Pixelody native icon animation unavailable:', error.message));
+let brandIconSequence = Promise.resolve();
+let brandIconGeneration = 0;
+
+async function applyBrandIcon(win, shortcutPaths = new Set()) {
+  const image = brandIconImage();
   if (image.isEmpty()) return false;
   if (process.platform === 'darwin') {
     if (app.dock) app.dock.setIcon(image);
@@ -76,6 +97,10 @@ function applyBrandIcon(win) {
   }
   if (!win || win.isDestroyed()) return false;
   win.setIcon(image);
+  if (process.platform === 'win32') {
+    const color = activeThemeMarkAccent || brandMark.logoColorHex(activeLogoColor);
+    await applyWindowsTaskbarIcon({ win, image, app, identity: releaseIdentity, color, profileDirectory: profileDirectoryPath, shell, onShortcut: shortcut => shortcutPaths.add(shortcut) });
+  }
   return true;
 }
 let miniWindow = null;
@@ -106,7 +131,7 @@ if (integrationTestMode && !integrationVisualMode) {
   app.commandLine.appendSwitch('use-angle', 'swiftshader');
 }
 if (!integrationTestMode) app.setName(releaseIdentity.productName);
-if (process.platform === 'win32' && !integrationTestMode) app.setAppUserModelId(releaseIdentity.appUserModelId);
+if (process.platform === 'win32' && !integrationTestMode) app.setAppUserModelId(taskbarIdentityForProfile(releaseIdentity, profileDirectoryPath));
 const integrationArgument = (name) => {
   const prefix = `--${name}=`;
   const value = process.argv.find((argument) => argument.startsWith(prefix));
@@ -135,9 +160,7 @@ const developmentUserDataPath = !app.isPackaged && !integrationTestMode && devel
   : '';
 // An explicit separate profile is useful for portable libraries and evaluating
 // a release without opening or downgrading an existing installation's data.
-const profileDirectoryArgument = process.argv.find(argument => argument.startsWith('--pixelody-profile-directory='))?.slice('--pixelody-profile-directory='.length);
-if (profileDirectoryArgument !== undefined && !path.isAbsolute(profileDirectoryArgument)) throw new Error('Profile directory must be an absolute path.');
-const profileDirectoryPath = profileDirectoryArgument ? path.resolve(profileDirectoryArgument) : '';
+
 const integrationReportCandidate = integrationTestMode && integrationReportArgument && path.isAbsolute(integrationReportArgument) ? path.resolve(integrationReportArgument) : '';
 const integrationReportRelative = integrationUserDataPath && integrationReportCandidate ? path.relative(integrationUserDataPath, integrationReportCandidate) : '';
 const integrationReportPath = integrationTestMode && integrationUserDataPath && integrationReportCandidate
@@ -678,6 +701,9 @@ function createMiniWindow() {
   });
   applyBrandIcon(miniWindow);
   miniWindow.setMenu(null);
+  // A mini-player opened after the theme was applied still needs its current
+  // native icon, even when the renderer has correctly cached that color.
+  applyBrandIcon(miniWindow).catch(error => console.warn('Pixelody mini-player icon update failed:', error));
   miniWindow.setMenuBarVisibility(false);
   miniWindow.setAlwaysOnTop(true, 'floating');
   configureWindowSecurity(miniWindow, 'mini-player.html');
@@ -834,11 +860,58 @@ async function prepareDevelopmentSession() {
 }
 
 registerHandle('mini:open', () => { createMiniWindow(); return true; });
-registerHandle('app:set-brand-icon', (event, logoColor, themeAccent = '') => {
-  activeLogoColor = brandMark.normalizeLogoColor(logoColor);
-  activeThemeMarkAccent = /^#[0-9a-f]{6}$/i.test(themeAccent) ? themeAccent.toLowerCase() : '';
-  const applied = [mainWindow, miniWindow].map((win) => applyBrandIcon(win)).some(Boolean);
-  return { ok: true, logoColor: activeLogoColor, themeAccent: activeThemeMarkAccent, applied };
+registerHandle('app:set-brand-icon', (event, logoColor, themeAccent = '', transition = 'none') => {
+  const generation = ++brandIconGeneration;
+  const update = async () => {
+    if (generation !== brandIconGeneration) return { ok: false, applied: false, superseded: true };
+    activeLogoColor = brandMark.normalizeLogoColor(logoColor);
+    activeThemeMarkAccent = /^#[0-9a-f]{6}$/i.test(themeAccent) ? themeAccent.toLowerCase() : '';
+    let entered = false;
+    const enrolled = new Set();
+    const ensureLiveWindows = async () => {
+      if (process.platform !== 'win32') return;
+      const windows = [mainWindow, miniWindow].filter(win => win && !win.isDestroyed() && !enrolled.has(win.id));
+      if (!windows.length) return;
+      await liveIconController.begin(windows);
+      entered = true;
+      for (const win of windows) {
+        if (win.isDestroyed()) continue;
+        enrolled.add(win.id);
+      }
+      // Refresh the whole group once, including an open mini-player. Removing
+      // and readding each window individually would leave the old group cached.
+      try {
+        for (const win of windows) if (!win.isDestroyed()) win.setSkipTaskbar(true);
+        // Allow Explorer to consume the group removal before adding it again.
+        await new Promise(resolve => setTimeout(resolve, 150));
+      } finally {
+        for (const win of windows) if (!win.isDestroyed()) win.setSkipTaskbar(false);
+      }
+    };
+    try {
+      const animation = await brandIconAnimator.apply({ image: brandIconImage(), color: activeThemeMarkAccent || brandMark.logoColorHex(activeLogoColor), effect: transition, onStart: ensureLiveWindows, onFrame: ensureLiveWindows, isCurrent: () => generation === brandIconGeneration }).catch(error => {
+        console.warn('Pixelody icon transition skipped:', error.message);
+        return { frames: 0, effect: 'none' };
+      });
+      if (animation.cancelled) return { ok: false, applied: false, superseded: true };
+      const shortcutPaths = new Set();
+      const applied = (await Promise.all([mainWindow, miniWindow].map(win => applyBrandIcon(win, shortcutPaths)))).some(Boolean);
+      const usedLiveWindow = entered;
+      if (entered) {
+        await liveIconController.commit(); entered = false;
+      }
+      // A live transition already changes back to the canonical window identity.
+      // Notify its shortcuts without another broad cache invalidation. Startup
+      // and immediate/fallback updates retain the established full refresh.
+      if (process.platform === 'win32' && applied) await refreshWindowsShellIcons({ app, shortcuts: [...shortcutPaths], notifyAssociations: !usedLiveWindow });
+      return { ok: true, logoColor: activeLogoColor, themeAccent: activeThemeMarkAccent, applied, animation };
+    } finally {
+      if (entered) await liveIconController.rollback();
+    }
+  };
+  const result = brandIconSequence.then(update, update);
+  brandIconSequence = result.catch(() => {});
+  return result;
 });
 registerOn('mini:close', () => { if (miniWindow && !miniWindow.isDestroyed()) miniWindow.close(); });
 function revealMainWindow() {

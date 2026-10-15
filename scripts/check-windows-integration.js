@@ -178,6 +178,12 @@ function fixtureValues(fixtureDirectory, scenario = '') {
     { id: 'fixture-tone-a', path: path.join(fixtureDirectory, 'fixture-a.wav'), title: 'Fixture A', artist: 'Pixelody Test', album: 'Generated Signals', format: 'WAV', codec: 'PCM', duration: 4, sampleRate: 44100, bitDepth: 16, bitrate: 705600, channels: 1, lossless: true, metadataVersion: 1, missing: false, dateAdded: 1 },
     { id: 'fixture-tone-b', path: path.join(fixtureDirectory, 'fixture-b.wav'), title: 'Fixture B', artist: 'Pixelody Test', album: 'Generated Signals', format: 'WAV', codec: 'PCM', duration: 4, sampleRate: 44100, bitDepth: 16, bitrate: 705600, channels: 1, lossless: true, metadataVersion: 1, missing: false, dateAdded: 2 },
   ];
+  if (scenario === 'flow-runtime') {
+    tracks.forEach((track) => { track.duration = 30; });
+    for (const [index, letter] of ['c', 'd'].entries()) {
+      tracks.push({ ...tracks[0], id: `fixture-tone-${letter}`, path: path.join(fixtureDirectory, `fixture-${letter}.wav`), title: `Fixture ${letter.toUpperCase()}`, dateAdded: index + 3 });
+    }
+  }
   return {
     'aurelia.library': tracks,
     'aurelia.playlists': hostileTheme ? [
@@ -235,8 +241,13 @@ async function createOwnedProfile(label, options = {}) {
   const fixtures = path.join(testRoot, 'fixtures');
   await fsp.mkdir(profile, { recursive: true });
   await fsp.mkdir(fixtures, { recursive: true });
-  await fsp.writeFile(path.join(fixtures, 'fixture-a.wav'), createWaveBuffer(330));
-  await fsp.writeFile(path.join(fixtures, 'fixture-b.wav'), createWaveBuffer(550));
+  const flowRuntime = options.scenario === 'flow-runtime';
+  await fsp.writeFile(path.join(fixtures, 'fixture-a.wav'), createWaveBuffer(330, flowRuntime ? 30 : 4));
+  await fsp.writeFile(path.join(fixtures, 'fixture-b.wav'), createWaveBuffer(550, flowRuntime ? 30 : 4));
+  if (flowRuntime) {
+    await fsp.writeFile(path.join(fixtures, 'fixture-c.wav'), createWaveBuffer(770, 30));
+    await fsp.writeFile(path.join(fixtures, 'fixture-d.wav'), createWaveBuffer(990, 30));
+  }
   const artFixtures = [
     ['art-bright.svg', '#fffdf7', '#2f4dff'],
     ['art-dark.svg', '#17102f', '#32d8c4'],

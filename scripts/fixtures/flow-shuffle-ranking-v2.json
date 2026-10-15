@@ -1,0 +1,186 @@
+[
+  {
+    "albumPolicy": "track",
+    "horizon": 5,
+    "rich": false,
+    "ids": [
+      "A13",
+      "A18",
+      "A23",
+      "A28",
+      "A3"
+    ],
+    "score": 0
+  },
+  {
+    "albumPolicy": "track",
+    "horizon": 5,
+    "rich": true,
+    "ids": [
+      "a|b17",
+      "E26",
+      "A8",
+      "E6",
+      "a|b7"
+    ],
+    "score": 52
+  },
+  {
+    "albumPolicy": "track",
+    "horizon": 7,
+    "rich": false,
+    "ids": [
+      "A13",
+      "A18",
+      "A23",
+      "A28",
+      "A3",
+      "A33",
+      "A43"
+    ],
+    "score": 0
+  },
+  {
+    "albumPolicy": "track",
+    "horizon": 7,
+    "rich": true,
+    "ids": [
+      "a|b17",
+      "A8",
+      "E26",
+      "track-44",
+      "a|b42",
+      "track-34",
+      "A43"
+    ],
+    "score": 72
+  },
+  {
+    "albumPolicy": "track",
+    "horizon": 10,
+    "rich": false,
+    "ids": [
+      "A13",
+      "A18",
+      "A23",
+      "A28",
+      "A3",
+      "A33",
+      "A43",
+      "A48",
+      "A53",
+      "A38"
+    ],
+    "score": 0
+  },
+  {
+    "albumPolicy": "track",
+    "horizon": 10,
+    "rich": true,
+    "ids": [
+      "a|b17",
+      "A8",
+      "E26",
+      "track-44",
+      "a|b62",
+      "é60",
+      "a|b52",
+      "A43",
+      "E51",
+      "é35"
+    ],
+    "score": 98
+  },
+  {
+    "albumPolicy": "album",
+    "horizon": 5,
+    "rich": false,
+    "ids": [
+      "a|b17",
+      "A13",
+      "A18",
+      "A23",
+      "A28"
+    ],
+    "score": 0
+  },
+  {
+    "albumPolicy": "album",
+    "horizon": 5,
+    "rich": true,
+    "ids": [
+      "a|b17",
+      "E26",
+      "A8",
+      "E6",
+      "a|b7"
+    ],
+    "score": 52
+  },
+  {
+    "albumPolicy": "album",
+    "horizon": 7,
+    "rich": false,
+    "ids": [
+      "a|b17",
+      "A13",
+      "A18",
+      "A23",
+      "A28",
+      "A3",
+      "A33"
+    ],
+    "score": 0
+  },
+  {
+    "albumPolicy": "album",
+    "horizon": 7,
+    "rich": true,
+    "ids": [
+      "a|b17",
+      "A8",
+      "E26",
+      "track-44",
+      "a|b42",
+      "track-34",
+      "A43"
+    ],
+    "score": 72
+  },
+  {
+    "albumPolicy": "album",
+    "horizon": 10,
+    "rich": false,
+    "ids": [
+      "a|b17",
+      "A13",
+      "A18",
+      "A23",
+      "A28",
+      "A3",
+      "A33",
+      "A43",
+      "A48",
+      "A53"
+    ],
+    "score": 0
+  },
+  {
+    "albumPolicy": "album",
+    "horizon": 10,
+    "rich": true,
+    "ids": [
+      "a|b17",
+      "A8",
+      "E26",
+      "track-44",
+      "a|b62",
+      "é60",
+      "a|b52",
+      "A43",
+      "E51",
+      "é35"
+    ],
+    "score": 98
+  }
+]

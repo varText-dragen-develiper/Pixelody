@@ -204,7 +204,7 @@ const desktopApi = {
   },
   fileUrl: toApprovedFileUrl,
   openMiniPlayer: () => ipcRenderer.invoke('mini:open'),
-  setBrandIcon: (logoColor, themeAccent = '') => ipcRenderer.invoke('app:set-brand-icon', String(logoColor || ''), String(themeAccent || '')),
+  setBrandIcon: (logoColor, themeAccent = '', transition = 'none') => ipcRenderer.invoke('app:set-brand-icon', String(logoColor || ''), String(themeAccent || ''), String(transition || 'none')),
   relaunchDevelopmentProfile: (profileId) => ipcRenderer.invoke('app:relaunch-development-profile', String(profileId || '')),
   sendPlayerState: (playerState) => ipcRenderer.send('player:state', playerState),
   onPlayerCommand: (callback) => {

@@ -209,7 +209,7 @@ function validateIpcArguments(channel, args) {
       && validString(identity.hash, 64, { nonEmpty: true }) && /^[a-f0-9]{64}$/.test(identity.hash);
     return valid ? pass() : fail('Theme-package identity is invalid.');
   }
-  if (channel === 'app:set-brand-icon') return (args.length === 1 || args.length === 2) && LOGO_COLOR_KEYS.includes(args[0]) && (args.length === 1 || args[1] === '' || (typeof args[1] === 'string' && /^#[0-9a-f]{6}$/i.test(args[1]))) ? pass() : fail('Unknown logo colour or invalid theme accent.');
+  if (channel === 'app:set-brand-icon') return args.length >= 1 && args.length <= 3 && LOGO_COLOR_KEYS.includes(args[0]) && (args.length === 1 || args[1] === '' || (typeof args[1] === 'string' && /^#[0-9a-f]{6}$/i.test(args[1]))) && (args.length < 3 || ['none', 'sweep', 'quest'].includes(args[2])) ? pass() : fail('Unknown logo colour, theme accent, or transition.');
   if (channel === 'app:relaunch-development-profile') return args.length === 1 && DEVELOPMENT_PROFILE_IDS.includes(args[0]) ? pass() : fail('Unknown development presentation.');
   if (channel === 'mini:command') return args.length === 1 && ['previous', 'toggle', 'next'].includes(args[0]) ? pass() : fail('Invalid transport command.');
   if (channel === 'player:state') return args.length === 1 && isPlainRecord(args[0]) && boundedJson(args[0], 128 * 1024, { maxDepth: 8, maxEntries: 512, maxArrayLength: 64, maxStringLength: 4096 }) ? pass() : fail('Player state is invalid or oversized.');
