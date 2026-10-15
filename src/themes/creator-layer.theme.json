@@ -1,0 +1,9 @@
+{
+  "$schema": "./theme.schema.json", "schemaVersion": 1, "id": "pixelody.creator-layer", "name": "Creator Layer", "author": "Pixelody",
+  "description": "A dark voice-room media companion for dual-monitor setups, built to sit naturally beside chat and community apps.",
+  "palette": { "primary": "#5865f2", "secondary": "#23a55a", "base": "#1e1f22" },
+  "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
+  "hud": { "layout": "compact", "controls": "minimal", "corners": "soft" },
+  "typography": { "profile": "technical", "font": null },
+  "motion": { "profile": "pulse", "intensity": "calm" }
+}

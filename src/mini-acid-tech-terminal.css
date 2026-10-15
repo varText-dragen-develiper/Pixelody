@@ -1,0 +1,281 @@
+body[data-theme="graphite-loadout"]{background:#07080a;font-family:Inter,"Segoe UI",sans-serif}
+body[data-theme="graphite-loadout"] .mini-shell{background:#0d0f13;border:1px solid #444851;border-top:3px solid #d9ff00;box-shadow:inset 0 3px 0 #17191e;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
+body[data-theme="graphite-loadout"] .mini-shell::before{color:#777d87;content:"OPEN SOURCE / AUDIO-04"}
+body[data-theme="graphite-loadout"] .mini-shell::after{opacity:.05;background:repeating-linear-gradient(90deg,transparent 0 63px,#66e9ef 63px 64px)}
+body[data-theme="graphite-loadout"] .mini-art{border:1px solid #454953;box-shadow:4px 4px 0 #20232a;clip-path:polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px)}
+body[data-theme="graphite-loadout"] .mini-copy{background:transparent;border:0;backdrop-filter:none}
+body[data-theme="graphite-loadout"] .mini-copy small{color:#66e9ef}
+body[data-theme="graphite-loadout"] .mini-copy strong{font-family:"Rajdhani","Segoe UI",sans-serif;color:#eef0f1}
+body[data-theme="graphite-loadout"] .mini-copy>span{color:#9ba1aa}
+body[data-theme="graphite-loadout"] .mini-controls button{color:#afb4bc;background:#121419;border:1px solid #363a43}
+body[data-theme="graphite-loadout"] .mini-controls .mini-play{color:#08090a;background:#d9ff00;box-shadow:4px 4px 0 #ff4fa3}
+body[data-theme="graphite-loadout"] .mini-progress{background:#22252b;border:0}
+body[data-theme="graphite-loadout"] .mini-progress i{background:#66e9ef}
+
+/* Graphite Loadout mini revamp: compact graphite audio chassis. */
+body[data-theme="graphite-loadout"]{
+  --mm-bg:#07090c;
+  --mm-panel:#11151a;
+  --mm-panel-2:#171b22;
+  --mm-paper:#e7ebe8;
+  --mm-ink:#f3f6f4;
+  --mm-muted:#89919b;
+  --mm-line:#343a44;
+  --mm-lime:#d9ff00;
+  --mm-cyan:#77dce8;
+  --mm-safety:#ff7a35;
+  --mm-cut:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  background:
+    radial-gradient(circle at 80% -12%,rgba(119,220,232,.14),transparent 42%),
+    var(--mm-bg);
+}
+
+body[data-theme="graphite-loadout"] .mini-shell{
+  height:134px;
+  grid-template-columns:98px 1fr 84px;
+  color:var(--mm-ink);
+  background:
+    linear-gradient(90deg,#0b0e12 0 25%,#121821 25% 75%,#0b0e12 75%),
+    var(--mm-panel);
+  border:1px solid #48515d;
+  border-top:3px solid var(--mm-lime);
+  box-shadow:inset 0 3px 0 #181e26,0 16px 34px rgba(0,0,0,.48);
+  clip-path:var(--mm-cut);
+}
+
+body[data-theme="graphite-loadout"] .mini-shell::before{
+  content:"M-04 / LOCAL AUDIO";
+  top:5px;
+  right:13px;
+  color:var(--mm-muted);
+  font:6px ui-monospace,"Cascadia Mono",Consolas,monospace;
+  letter-spacing:.14em;
+}
+
+body[data-theme="graphite-loadout"] .mini-shell::after{
+  opacity:.08;
+  background:
+    linear-gradient(90deg,transparent 0 70%,rgba(217,255,0,.35) 70% 71%,transparent 71%),
+    repeating-linear-gradient(90deg,transparent 0 63px,var(--mm-cyan) 63px 64px);
+}
+
+body[data-theme="graphite-loadout"] .mini-art{
+  border:1px solid #515a66;
+  background:#0a0d11;
+  box-shadow:5px 5px 0 #1b2129;
+  clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+}
+
+body[data-theme="graphite-loadout"] .mini-copy{
+  min-width:0;
+  padding:7px 8px;
+  background:linear-gradient(90deg,rgba(17,21,26,.92),rgba(17,21,26,.36));
+  border-left:1px solid rgba(231,235,232,.16);
+  backdrop-filter:none;
+}
+
+body[data-theme="graphite-loadout"] .mini-copy small{
+  color:var(--mm-cyan);
+  font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;
+}
+
+body[data-theme="graphite-loadout"] .mini-copy strong{
+  color:var(--mm-ink);
+  font-family:"Rajdhani","Segoe UI",sans-serif;
+  letter-spacing:-.015em;
+}
+
+body[data-theme="graphite-loadout"] .mini-copy>span{
+  color:var(--mm-muted);
+}
+
+body[data-theme="graphite-loadout"] .mini-controls button{
+  color:#b8bec5;
+  background:linear-gradient(180deg,#151a20,#0f1318);
+  border:1px solid var(--mm-line);
+}
+
+body[data-theme="graphite-loadout"] .mini-controls .mini-play{
+  color:#080b0e;
+  background:var(--mm-paper);
+  border:0;
+  box-shadow:4px 4px 0 var(--mm-lime);
+  clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px);
+}
+
+body[data-theme="graphite-loadout"] .mini-progress{
+  height:5px;
+  background:#252b33;
+  border:0;
+}
+
+body[data-theme="graphite-loadout"] .mini-progress i{
+  background:linear-gradient(90deg,var(--mm-cyan),var(--mm-lime));
+}
+
+/* Graphite Loadout mini spectrum/isometric pass. */
+body[data-theme="graphite-loadout"]{
+  --mm-violet:#6f68ff;
+  --mm-spectrum:linear-gradient(135deg,var(--mm-lime) 0 18%,var(--mm-cyan) 38%,var(--mm-violet) 68%,var(--mm-safety) 100%);
+  --mm-mini-depth:5px 5px 0 rgba(5,7,10,.86),7px 7px 0 rgba(119,220,232,.18),9px 9px 0 rgba(217,255,0,.11);
+}
+
+body[data-theme="graphite-loadout"] .mini-shell{
+  border:1px solid transparent;
+  background:
+    linear-gradient(90deg,#0b0e12 0 25%,#121821 25% 75%,#0b0e12 75%) padding-box,
+    var(--mm-spectrum) border-box;
+  box-shadow:inset 0 3px 0 #181e26,0 16px 34px rgba(0,0,0,.48),0 0 0 1px rgba(231,235,232,.06);
+}
+
+body[data-theme="graphite-loadout"] :is(.mini-art,.mini-controls .mini-play){
+  border-color:transparent;
+  box-shadow:var(--mm-mini-depth);
+}
+
+body[data-theme="graphite-loadout"] .mini-art{
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(145deg,rgba(231,235,232,.96),rgba(145,153,160,.62) 42%,rgba(10,13,17,.92) 43% 100%) padding-box,
+    var(--mm-spectrum) border-box;
+}
+
+body[data-theme="graphite-loadout"] .mini-art::after{
+  content:"";
+  position:absolute;
+  right:0;
+  bottom:0;
+  z-index:4;
+  width:36%;
+  height:36%;
+  pointer-events:none;
+  background:
+    linear-gradient(135deg,transparent 0 43%,rgba(231,235,232,.52) 44% 47%,transparent 48%),
+    linear-gradient(135deg,rgba(119,220,232,.42),rgba(8,11,14,.88) 52%,rgba(217,255,0,.22));
+  clip-path:polygon(100% 0,100% 100%,0 100%);
+  opacity:.68;
+}
+
+body[data-theme="graphite-loadout"] .mini-controls .mini-play{
+  background:
+    linear-gradient(145deg,var(--mm-paper),#b9c0c3 52%,#0d1116 53% 100%) padding-box,
+    var(--mm-spectrum) border-box;
+  border:1px solid transparent;
+}
+
+body[data-theme="graphite-loadout"] .mini-progress{
+  background:
+    linear-gradient(180deg,#252b33,#10151b) padding-box,
+    linear-gradient(90deg,rgba(119,220,232,.50),rgba(217,255,0,.52),rgba(255,122,53,.34)) border-box;
+  border:1px solid transparent;
+}
+
+/* Graphite Loadout mini material pass: nylon shell with granite/marble polymer controls. */
+body[data-theme="graphite-loadout"]{
+  --mm-polymer-gloss:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.035) 28%,transparent 52%);
+}
+
+body[data-theme="graphite-loadout"] .mini-shell{
+  background-image:
+    var(--mm-polymer-gloss),
+    repeating-linear-gradient(35deg,rgba(255,255,255,.030) 0 1px,transparent 1px 8px),
+    repeating-linear-gradient(125deg,rgba(0,0,0,.16) 0 1px,transparent 1px 9px),
+    radial-gradient(circle at 18% 24%,rgba(231,235,232,.07) 0 1px,transparent 1.4px),
+    linear-gradient(90deg,#0b0e12 0 25%,#121821 25% 75%,#0b0e12 75%),
+    var(--mm-spectrum);
+  background-size:auto,auto,auto,37px 41px,auto,auto;
+  background-origin:padding-box,padding-box,padding-box,padding-box,padding-box,border-box;
+  background-clip:padding-box,padding-box,padding-box,padding-box,padding-box,border-box;
+  background-blend-mode:soft-light,overlay,normal,screen,normal,normal;
+}
+
+body[data-theme="graphite-loadout"] .mini-copy{
+  background-image:
+    repeating-linear-gradient(35deg,rgba(255,255,255,.024) 0 1px,transparent 1px 8px),
+    radial-gradient(circle at 34% 44%,rgba(119,220,232,.07) 0 1px,transparent 1.4px),
+    linear-gradient(90deg,rgba(17,21,26,.92),rgba(17,21,26,.36));
+  background-size:auto,31px 37px,auto;
+  background-blend-mode:overlay,screen,normal;
+}
+
+body[data-theme="graphite-loadout"] .mini-art:not(.has-image),
+body[data-theme="graphite-loadout"] .mini-controls .mini-play{
+  background-image:
+    radial-gradient(circle at 18% 21%,rgba(5,7,10,.34) 0 1px,transparent 1.4px),
+    radial-gradient(circle at 64% 38%,rgba(255,255,255,.58) 0 .8px,transparent 1.2px),
+    radial-gradient(circle at 37% 71%,rgba(119,220,232,.20) 0 .9px,transparent 1.3px),
+    var(--mm-polymer-gloss),
+    linear-gradient(145deg,rgba(231,235,232,.98),rgba(156,164,168,.72) 41%,rgba(9,12,16,.95) 42% 100%),
+    var(--mm-spectrum);
+  background-size:34px 38px,27px 31px,45px 49px,auto,auto,auto;
+  background-origin:padding-box,padding-box,padding-box,padding-box,padding-box,border-box;
+  background-clip:padding-box,padding-box,padding-box,padding-box,padding-box,border-box;
+  background-blend-mode:multiply,screen,screen,soft-light,normal,normal;
+}
+
+body[data-theme="graphite-loadout"] .mini-controls button:not(.mini-play){
+  background-image:
+    repeating-linear-gradient(35deg,rgba(255,255,255,.025) 0 1px,transparent 1px 8px),
+    radial-gradient(circle at 24% 34%,rgba(231,235,232,.06) 0 1px,transparent 1.4px),
+    linear-gradient(180deg,#151a20,#0f1318);
+  background-size:auto,34px 38px,auto;
+}
+
+body[data-theme="graphite-loadout"] .mini-progress{
+  background-image:
+    radial-gradient(circle at 17% 40%,rgba(231,235,232,.09) 0 1px,transparent 1.4px),
+    linear-gradient(180deg,#252b33,#10151b),
+    linear-gradient(90deg,rgba(119,220,232,.50),rgba(217,255,0,.52),rgba(255,122,53,.34));
+  background-size:29px 31px,auto,auto;
+  background-origin:padding-box,padding-box,border-box;
+  background-clip:padding-box,padding-box,border-box;
+}
+
+/* Graphite Loadout mini licensed texture map. */
+body[data-theme="graphite-loadout"]{
+  --mm-texture-nylon:url("assets/themes/graphite-loadout/textures/fabric-081c-color-ui.jpg");
+  --mm-texture-rubber:url("assets/themes/graphite-loadout/textures/rubber-004-color-ui.jpg");
+  --mm-texture-plastic:url("assets/themes/graphite-loadout/textures/plastic-010-color-ui.jpg");
+  --mm-texture-granite:url("assets/themes/graphite-loadout/textures/granite-002a-color-ui.jpg");
+}
+
+body[data-theme="graphite-loadout"] .mini-shell{
+  background-image:
+    linear-gradient(90deg,rgba(11,14,18,.96) 0 25%,rgba(18,24,33,.94) 25% 75%,rgba(11,14,18,.96) 75%),
+    var(--mm-texture-rubber),
+    var(--mm-spectrum);
+  background-size:auto,280px 280px,auto;
+  background-origin:padding-box,padding-box,border-box;
+  background-clip:padding-box,padding-box,border-box;
+  background-blend-mode:normal,soft-light,normal;
+}
+
+body[data-theme="graphite-loadout"] .mini-copy{
+  background-image:
+    linear-gradient(90deg,rgba(17,21,26,.94),rgba(17,21,26,.48)),
+    var(--mm-texture-nylon);
+  background-size:auto,320px 320px;
+  background-blend-mode:normal,multiply;
+}
+
+body[data-theme="graphite-loadout"] .mini-art:not(.has-image),
+body[data-theme="graphite-loadout"] .mini-controls .mini-play{
+  background-image:
+    linear-gradient(145deg,rgba(235,238,235,.76),rgba(181,188,190,.64) 42%,rgba(10,13,17,.92) 43% 100%),
+    var(--mm-texture-granite),
+    var(--mm-spectrum);
+  background-size:auto,240px 240px,auto;
+  background-origin:padding-box,padding-box,border-box;
+  background-clip:padding-box,padding-box,border-box;
+  background-blend-mode:normal,screen,normal;
+}
+
+body[data-theme="graphite-loadout"] .mini-controls button:not(.mini-play),
+body[data-theme="graphite-loadout"] .mini-progress{
+  background-image:
+    linear-gradient(180deg,rgba(21,26,32,.94),rgba(16,20,25,.96)),
+    var(--mm-texture-plastic);
+  background-size:auto,300px 300px;
+  background-blend-mode:normal,multiply;
+}

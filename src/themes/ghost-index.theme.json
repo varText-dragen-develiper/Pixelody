@@ -1,0 +1,28 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.ghost-index",
+  "name": "Ghost Index",
+  "author": "Pixelody",
+  "description": "A spectral systems archive of bone micrographics, process-ledger tracks, and rare green/coral wireframe depth.",
+  "palette": { "builtIn": "ghost-index" },
+  "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
+  "hud": { "layout": "compact", "controls": "technical", "corners": "square" },
+  "typography": { "profile": "editorial" },
+  "motion": { "profile": "signal", "intensity": "calm" },
+  "navigation": { "trackBrowser": "spectral-field" },
+  "tokens": {
+    "accentPrimary": "#ff596d",
+    "accentSecondary": "#e8e7e2",
+    "accentState": "#41ff68",
+    "heroTone": "#1b1f1d",
+    "canvas": "#020303",
+    "elevation1": "#080a0a",
+    "elevation2": "#111414",
+    "elevation3": "#1b1f1d",
+    "divider": "#303533",
+    "frame": "#e8e7e2",
+    "foreground": "#e8e7e2",
+    "foregroundMuted": "#969c98"
+  }
+}

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pixelody Theme Instrument Foundry</title>
+  <link rel="stylesheet" href="theme-instrument-foundry.css">
+</head>
+<body data-palette="signal" data-motion="full" data-detail="balanced" data-performance="balanced">
+  <a class="skip-link" href="#instrument-grid">Skip to instruments</a>
+  <header class="foundry-hero">
+    <div class="hero-index" aria-hidden="true">TI / 01</div>
+    <div class="hero-copy">
+      <p class="eyebrow">Pixelody systems workshop</p>
+      <h1>Theme instruments,<br><em>on the bench.</em></h1>
+      <p class="hero-intro">Twelve working pieces that separate truthful product jobs from their visual embodiment. Compare them here before any theme is allowed to claim them.</p>
+    </div>
+    <div class="hero-seal" aria-label="Foundry inventory">
+      <strong>12</strong><span>instruments</span><b>06 families · 02 each</b>
+    </div>
+  </header>
+
+  <section class="boundary-strip" aria-label="Evidence boundary">
+    <div><span>Truth source</span><strong>Deterministic local fixture</strong></div>
+    <div><span>Theme status</span><strong>Unassigned</strong></div>
+    <div><span>Failure rule</span><strong>Keep the baseline</strong></div>
+    <div><span>Acceptance</span><strong>Foundry evidence only</strong></div>
+  </section>
+
+  <section class="foundry-console" aria-labelledby="console-title">
+    <div>
+      <p class="eyebrow">Shared operating conditions</p>
+      <h2 id="console-title">Change the room, not the truth.</h2>
+    </div>
+    <div class="console-controls">
+      <label>Palette
+        <select id="palette-control">
+          <option value="signal">Signal night</option>
+          <option value="paper">Archive paper</option>
+          <option value="warm">Warm machine</option>
+          <option value="mono">High contrast mono</option>
+        </select>
+      </label>
+      <label>Motion
+        <select id="motion-control">
+          <option value="full">Full</option>
+          <option value="reduced">Reduced</option>
+          <option value="off">Off</option>
+        </select>
+      </label>
+      <label>Detail
+        <select id="detail-control">
+          <option value="sparse">Sparse</option>
+          <option value="balanced" selected>Balanced</option>
+          <option value="rich">Rich</option>
+        </select>
+      </label>
+      <label>Performance
+        <select id="performance-control">
+          <option value="balanced">Balanced</option>
+          <option value="conserve">Conserve</option>
+        </select>
+      </label>
+      <button id="reset-fixture" type="button">Reset fixture</button>
+    </div>
+    <p id="foundry-status" class="foundry-status" role="status">Foundry ready. All instruments share one read-only fixture.</p>
+  </section>
+
+  <main id="instrument-grid" class="instrument-grid" tabindex="-1"></main>
+
+  <footer class="foundry-footer">
+    <p><strong>This is a proving ground.</strong> It demonstrates contracts, fallback, input truth, interaction, and composition. It does not prove Electron integration, production-theme fit, assistive-technology acceptance, or independent-human preference.</p>
+    <span>PIXELody / THEME INFRASTRUCTURE / LOCAL FIRST</span>
+  </footer>
+
+  <script src="theme-instruments/registry.js"></script>
+  <script src="theme-instruments/fixtures.js"></script>
+  <script src="theme-instruments/instruments.js"></script>
+  <script src="theme-instrument-foundry.js"></script>
+</body>
+</html>

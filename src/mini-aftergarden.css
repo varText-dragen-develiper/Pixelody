@@ -1,0 +1,11 @@
+body[data-theme="aftergarden"]{--ag-ink:#08070a;--ag-confirm:#ffbd3d;--ag-focus:#7b2cff;background:#08070a;color:#f7f2fb}
+body[data-theme="aftergarden"] .mini-shell{background:#08070a;border:1px solid #f7f2fb;clip-path:polygon(0 0,97% 0,100% 18%,100% 100%,3% 100%,0 82%)}
+body[data-theme="aftergarden"] .mini-shell:before{content:"CONFIRMED CUTTING / AFTERGARDEN";position:absolute;left:16px;top:9px;color:var(--ag-confirm);font:7px Consolas,monospace;letter-spacing:.14em}
+body[data-theme="aftergarden"] .mini-glow{display:block;inset:0;background:linear-gradient(165deg,transparent 0 58%,#7b2cff22 58.2% 70%,transparent 70.2%)}
+body[data-theme="aftergarden"] .mini-art{position:relative;background:transparent!important;border:3px double var(--ag-confirm);border-radius:50% 40%!important;box-shadow:8px 7px 0 #7b2cff44;transform:rotate(18deg);overflow:hidden}
+body[data-theme="aftergarden"] .mini-art:before,body[data-theme="aftergarden"] .mini-art:after{content:"";position:absolute;inset:18%;border:1px solid var(--ag-confirm);border-radius:40% 60%;transform:rotate(62deg)}body[data-theme="aftergarden"] .mini-art:after{transform:rotate(124deg)}
+body[data-theme="aftergarden"] .mini-copy small{color:var(--ag-confirm);letter-spacing:.1em}body[data-theme="aftergarden"] .mini-copy strong{color:#fff}body[data-theme="aftergarden"] .mini-copy span{color:#aaa0ae}
+body[data-theme="aftergarden"] .mini-progress{border:1px solid #ffffff66;background:transparent}body[data-theme="aftergarden"] .mini-progress i{background:var(--ag-confirm)}
+body[data-theme="aftergarden"] .mini-controls button,body[data-theme="aftergarden"] .window-actions button{background:transparent;color:#fff;border:1px solid #ffffff77;border-radius:0}body[data-theme="aftergarden"] .mini-controls .mini-play{background:var(--ag-confirm);color:#08070a;border-color:var(--ag-confirm)}
+body[data-theme="aftergarden"] .mini-quest-stats{display:none}
+body[data-theme="aftergarden"][data-motion="off"] *{animation:none!important;transition:none!important}body[data-theme="aftergarden"][data-performance="conserve"] .mini-glow{display:none}@media(prefers-reduced-motion:reduce){body[data-theme="aftergarden"] *{animation:none!important;transition:none!important}}

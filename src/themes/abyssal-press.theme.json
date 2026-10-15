@@ -1,0 +1,19 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.abyssal-press",
+  "name": "Abyssal Press",
+  "author": "Pixelody",
+  "description": "A pressure-printed oceanographic record where typographic strata, translucent signal volumes, and utility rails make local playback state physical and literal.",
+  "palette": { "builtIn": "abyssal-press" },
+  "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
+  "hud": { "layout": "cinematic", "controls": "technical", "corners": "square" },
+  "typography": { "profile": "display" },
+  "motion": { "profile": "mechanical", "intensity": "expressive" },
+  "navigation": { "trackBrowser": "pressure-stack" },
+  "tokens": {
+    "accentPrimary": "#ff2d83", "accentSecondary": "#f3ead1", "accentState": "#76e9f2", "heroTone": "#2a1324",
+    "canvas": "#08060a", "elevation1": "#130b12", "elevation2": "#21101c", "elevation3": "#2a1324",
+    "divider": "#684354", "frame": "#f3ead1", "foreground": "#f3ead1", "foregroundMuted": "#b9a8b2"
+  }
+}

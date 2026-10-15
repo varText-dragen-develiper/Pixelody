@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "status": "legacy-idea-backlog",
+  "note": "Early concepts retained for reference. These are not implemented, scheduled, or authoritative.",
+  "themes": [
+    {
+      "id": "pixelody.signal-studio",
+      "name": "Signal Studio",
+      "palette": "gold",
+      "direction": "Precision audio hardware, measured signal motion, technical HUD framing."
+    },
+    {
+      "id": "pixelody.neon-current",
+      "name": "Neon Current",
+      "palette": "cobalt",
+      "direction": "Electric blue glass, flowing light paths, compact futuristic controls."
+    },
+    {
+      "id": "pixelody.bloom-night",
+      "name": "Bloom Night",
+      "palette": "cafe-night",
+      "direction": "Soft illustrated overlays, drifting particles, expressive framed artwork."
+    },
+    {
+      "id": "pixelody.forest-console",
+      "name": "Forest Console",
+      "palette": "verdant",
+      "direction": "Field-recorder materials, organic signal curves, restrained mechanical motion."
+    }
+  ]
+}

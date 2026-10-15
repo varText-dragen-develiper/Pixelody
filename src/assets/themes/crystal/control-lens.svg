@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+  <defs>
+    <radialGradient id="lens" cx=".32" cy=".22" r=".86">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".86"/>
+      <stop offset=".18" stop-color="#8cecff" stop-opacity=".48"/>
+      <stop offset=".48" stop-color="#d5c7ff" stop-opacity=".22"/>
+      <stop offset=".78" stop-color="#17254a" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#070c20" stop-opacity=".42"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".78"/>
+      <stop offset=".48" stop-color="#8cecff" stop-opacity=".42"/>
+      <stop offset="1" stop-color="#ff9bd8" stop-opacity=".36"/>
+    </linearGradient>
+  </defs>
+  <circle cx="80" cy="80" r="74" fill="url(#lens)" stroke="url(#rim)" stroke-width="2"/>
+  <path d="M38 44c30-22 72-14 92 12" fill="none" stroke="#fff" stroke-opacity=".38" stroke-width="5" stroke-linecap="round"/>
+  <path d="M32 94c28 18 72 18 100-4" fill="none" stroke="#8cecff" stroke-opacity=".18" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="54" cy="48" r="9" fill="#fff" opacity=".34"/>
+</svg>

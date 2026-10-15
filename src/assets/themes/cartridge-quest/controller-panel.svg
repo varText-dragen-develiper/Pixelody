@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" shape-rendering="crispEdges">
+  <path fill="#c8c4be" d="M74 44h572v36h28v140h-28v36H74v-36H46V80h28z"/>
+  <path fill="#2a2b38" d="M130 102h42V72h42v30h30v42h-30v42h-42v-42h-42z"/>
+  <g fill="#7b68c9"><rect x="488" y="91" width="50" height="50"/><rect x="558" y="139" width="50" height="50"/></g>
+  <g fill="#e34b4b"><rect x="348" y="126" width="60" height="18"/><rect x="420" y="126" width="44" height="18"/></g>
+  <g fill="#77727b"><rect x="100" y="220" width="520" height="12"/><rect x="92" y="68" width="536" height="8"/></g>
+  <g fill="#4d4b55"><rect x="276" y="92" width="8" height="72"/><rect x="292" y="92" width="8" height="72"/><rect x="308" y="92" width="8" height="72"/></g>
+  <g fill="#262a3b"><rect x="92" y="88" width="16" height="16"/><rect x="612" y="88" width="16" height="16"/><rect x="92" y="196" width="16" height="16"/><rect x="612" y="196" width="16" height="16"/></g>
+  <g fill="#f2c94c"><rect x="284" y="190" width="12" height="12"/><rect x="306" y="190" width="12" height="12"/></g>
+  <path fill="#55c98a" d="M330 184h10v24h-10z"/>
+</svg>

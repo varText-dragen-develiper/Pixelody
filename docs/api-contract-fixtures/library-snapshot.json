@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "revision": 3,
+  "revisions": {
+    "overall": 3,
+    "library": 1,
+    "playback": 2,
+    "queue": 1,
+    "favorites": 1,
+    "permissions": 1,
+    "deviceRefresh": 3
+  },
+  "generatedAt": "2026-07-02T00:00:00.000Z",
+  "hostName": "Pixelody on Studio PC",
+  "tracks": [
+    {
+      "id": "public-track-1",
+      "title": "Moonlit Circuit",
+      "artist": "Local Signal",
+      "album": "Private Library Tests",
+      "year": 2026,
+      "trackNumber": 1,
+      "duration": 264.0,
+      "format": "FLAC",
+      "codec": "FLAC",
+      "lossless": true,
+      "sampleRate": 96000,
+      "bitDepth": 24,
+      "bitrate": 2840000,
+      "channels": 2,
+      "replayGainDb": -3.8,
+      "artworkUrl": "/api/v1/tracks/public-track-1/artwork",
+      "streamUrl": "/api/v1/tracks/public-track-1/stream",
+      "dateAdded": 1782864000000,
+      "favorite": true,
+      "missing": false
+    },
+    {
+      "id": "public-track-2",
+      "title": "Sleeping Drive",
+      "artist": "Unavailable Source",
+      "album": "Diagnostics",
+      "year": null,
+      "trackNumber": null,
+      "duration": 301.0,
+      "format": "WAV",
+      "codec": "PCM",
+      "lossless": true,
+      "sampleRate": 48000,
+      "bitDepth": 24,
+      "bitrate": 2304000,
+      "channels": 2,
+      "replayGainDb": null,
+      "artworkUrl": null,
+      "streamUrl": null,
+      "dateAdded": null,
+      "favorite": false,
+      "missing": true
+    }
+  ],
+  "playlists": [
+    {
+      "id": "playlist-reference",
+      "name": "Reference Checks",
+      "virtual": false,
+      "collectionType": "",
+      "trackIds": ["public-track-1", "public-track-2"]
+    }
+  ],
+  "favorites": ["public-track-1"],
+  "queue": ["public-track-1"],
+  "playback": {
+    "currentTrackId": "public-track-1",
+    "playing": true,
+    "paused": false,
+    "currentTime": 12,
+    "positionSeconds": 12,
+    "duration": 264,
+    "durationSeconds": 264,
+    "positionUpdatedAt": "2026-07-02T00:00:01.000Z",
+    "estimatedStartedAt": "2026-07-01T23:59:49.000Z",
+    "shuffle": false,
+    "repeat": "off"
+  },
+  "audioProfiles": {}
+}

@@ -1,0 +1,48 @@
+body[data-singularity-probe="proxy"],body[data-singularity-probe="graph"]{
+  --mini-shell-radius:0;
+  --mini-shell-border:1px solid #8f9290;
+  --mini-shell-bg:radial-gradient(circle at 19% 50%,#fff 0 8%,#f4f3ee 30%,#e6e5e0 100%);
+  --mini-shell-shadow:0 18px 48px #1115,inset 0 0 0 1px #fff;
+  --mini-art-radius:50%;
+  --mini-art-border:1px solid #090a0b;
+  --mini-art-bg:radial-gradient(circle at 44% 38%,#303337 0 5%,#0c0d0f 36%,#000 76%);
+  --mini-art-shadow:0 0 0 5px #f4f3ee,0 0 0 6px #9da19e,0 12px 24px #1113;
+  --mini-art-glyph-color:#f4f3ee;
+  --mini-copy-eyebrow-color:#5e6261;
+  --mini-copy-title-color:#101214;
+  --mini-copy-meta-color:#565a58;
+  --mini-copy-time-color:#666a68;
+  --mini-progress-bg:#c7c9c5;
+  --mini-progress-fill:#101214;
+  --mini-btn-radius:0;
+  --mini-btn-border:1px solid #9a9d9a;
+  --mini-btn-bg:#efeee9;
+  --mini-btn-color:#111315;
+  --mini-play-radius:50%;
+  --mini-play-border:1px solid #090a0b;
+  --mini-play-bg:#101214;
+  --mini-play-color:#f7f6f1;
+  --mini-play-shadow:0 0 0 5px #f4f3ee,0 0 0 6px #9da19e;
+  color:#101214;
+  background:#f4f3ee;
+}
+body[data-theme="studio"][data-singularity-probe] .mini-shell{color:#101214;background:var(--mini-shell-bg);border:var(--mini-shell-border);border-radius:var(--mini-shell-radius);box-shadow:var(--mini-shell-shadow);backdrop-filter:none;clip-path:none}
+body[data-theme="studio"][data-singularity-probe] .mini-glow{background:radial-gradient(circle at 19% 50%,#1112,transparent 42%);opacity:.28}
+body[data-theme="studio"][data-singularity-probe] .mini-art{border:var(--mini-art-border);border-radius:var(--mini-art-radius);box-shadow:var(--mini-art-shadow);clip-path:none}
+body[data-theme="studio"][data-singularity-probe] .mini-copy small{color:var(--mini-copy-eyebrow-color);letter-spacing:var(--mini-copy-eyebrow-tracking)}
+body[data-theme="studio"][data-singularity-probe] .mini-copy strong{color:var(--mini-copy-title-color);font-weight:700;letter-spacing:-.02em}
+body[data-theme="studio"][data-singularity-probe] .mini-copy>span{color:var(--mini-copy-meta-color)}
+body[data-theme="studio"][data-singularity-probe] .mini-progress{background:var(--mini-progress-bg);border-radius:0}
+body[data-theme="studio"][data-singularity-probe] .mini-progress i{background:var(--mini-progress-fill);border-radius:0;box-shadow:none}
+body[data-theme="studio"][data-singularity-probe] :is(.mini-controls button,.window-actions button){color:var(--mini-btn-color);background:var(--mini-btn-bg);border:var(--mini-btn-border);border-radius:var(--mini-btn-radius)}
+body[data-theme="studio"][data-singularity-probe] .mini-controls .mini-play{color:var(--mini-play-color);background:var(--mini-play-bg);border:var(--mini-play-border);border-radius:var(--mini-play-radius);box-shadow:var(--mini-play-shadow)}
+body[data-singularity-probe="proxy"] .mini-shell::before,body[data-singularity-probe="graph"] .mini-shell::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,transparent 18.8%,#8f929055 19%,transparent 19.2%),linear-gradient(transparent 49.7%,#8f929033 50%,transparent 50.3%);
+  mask-image:radial-gradient(circle at 19% 50%,transparent 0 14%,#000 31%);
+}
+body[data-singularity-probe="proxy"] .mini-art,body[data-singularity-probe="graph"] .mini-art{box-shadow:0 0 0 5px #f4f3ee,0 0 0 6px #9da19e,0 12px 24px #1113}
+body[data-singularity-probe="proxy"] .mini-art::before,body[data-singularity-probe="graph"] .mini-art::before{content:"";position:absolute;inset:-28%;border:1px solid #9da19e66;border-radius:50%;pointer-events:none}
+body[data-singularity-probe="proxy"][data-motion="off"] *,body[data-singularity-probe="graph"][data-motion="off"] *{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){body[data-singularity-probe] *{animation:none!important;transition:none!important}}
+@media(forced-colors:active){body[data-singularity-probe="proxy"],body[data-singularity-probe="graph"]{--mini-shell-bg:Canvas;--mini-shell-border:1px solid CanvasText;--mini-art-bg:CanvasText;--mini-art-border:1px solid CanvasText;--mini-copy-title-color:CanvasText;--mini-copy-meta-color:CanvasText;--mini-btn-bg:Canvas;--mini-btn-color:CanvasText;--mini-btn-border:1px solid CanvasText;--mini-play-bg:CanvasText;--mini-play-color:Canvas;background:Canvas;color:CanvasText}body[data-singularity-probe] .mini-shell::before,body[data-singularity-probe] .mini-art::before{display:none}}

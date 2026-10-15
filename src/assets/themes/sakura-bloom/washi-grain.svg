@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="Original washi paper grain tile">
+  <defs>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency=".85 .18" numOctaves="4" seed="87"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.48 0 0 0 0 0.42 0 0 0 0 0.36 0 0 0 .22 0"/>
+    </filter>
+  </defs>
+  <rect width="180" height="180" fill="#d7d2c3"/>
+  <rect width="180" height="180" filter="url(#grain)" opacity=".42"/>
+  <g fill="none" stroke="#f4efe3" stroke-width="1" opacity=".22">
+    <path d="M-10 25 C30 18 54 34 88 25 C122 16 146 18 190 30"/>
+    <path d="M-8 84 C28 76 52 90 82 82 C120 72 144 76 188 88"/>
+    <path d="M-12 136 C22 126 62 144 96 132 C126 122 150 128 188 140"/>
+    <path d="M34-10 C28 28 42 58 34 94 C26 128 30 150 42 190"/>
+    <path d="M126-10 C116 24 132 60 124 92 C114 128 122 154 136 190"/>
+  </g>
+</svg>

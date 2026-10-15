@@ -1,0 +1,125 @@
+/* Shared structural CSS for the carousel navigation mechanic
+   (src/theme-runtime/navigation/carousel.js). Per the cascade order in
+   docs/themes/THEME_SYSTEM.md, shared behavior styles load before per-theme
+   files -- this defines layout/interaction mechanics only, no color or
+   texture opinions. Themes assigning the carousel mechanic (cartridge-quest,
+   cosmic-cinema as of Phase 3) layer decoration on top via
+   body[data-theme="..."] .carousel-card selectors, which win on
+   specificity regardless of load order.
+
+   #trackRows has no display rule of its own outside this file -- normal
+   (linear-list) rendering leaves it a plain block wrapping .track-row grid
+   children. .carousel-mounted (toggled by carousel.js's mount()/destroy())
+   is what switches it into a stacked, depth-carousel stage; nothing here
+   affects #trackRows when a different mechanic is mounted.
+
+   Revision: the original version laid cards out in normal flex flow and
+   only nudged the focused one a few px sideways -- reported (correctly) as
+   not reading as a carousel at all, since every card just sat in its own
+   sequential slot. This version stacks every card on the same center point
+   (position: absolute, left: 50%) and lets --card-offset/--card-distance
+   (still computed exactly as before by carousel.js -- this is a pure CSS
+   change) do all the positioning: offset fans cards out left/right from
+   center and twists them (rotateY), distance pushes them back in Z
+   (translateZ, via the container's perspective) and fades/shrinks them.
+   Previously-focused/played cards and not-yet-reached upcoming cards both
+   recede the same way in whichever direction they now sit -- there's
+   nothing playback-direction-specific here, focusIndex is the only thing
+   that moves. */
+
+#trackRows.carousel-mounted {
+  position: relative;
+  display: block;
+  height: 280px;
+  padding: 24px 0 0;
+  overflow: hidden;
+  perspective: 1400px;
+}
+
+.carousel-card {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 180px;
+  cursor: pointer;
+  outline: none;
+  border-radius: 12px;
+  transform:
+    translateX(-50%)
+    translateX(calc(var(--card-offset, 0) * 140px))
+    translateZ(calc(var(--card-distance, 0) * -70px))
+    rotateY(calc(var(--card-offset, 0) * -10deg))
+    scale(calc(1 - var(--card-distance, 0) * 0.1));
+  opacity: calc(1 - var(--card-distance, 0) * 0.2);
+  z-index: calc(20 - var(--card-distance, 0));
+  transition: transform 220ms ease, opacity 220ms ease, box-shadow 160ms ease, z-index 0ms;
+}
+
+body[data-motion="off"] .carousel-card {
+  transition: none;
+}
+
+.carousel-card:focus-visible {
+  box-shadow: 0 0 0 2px var(--gold, #d8b66a);
+}
+
+.carousel-card.is-playing {
+  box-shadow: 0 0 0 2px var(--green, #65d6a1);
+}
+
+.carousel-card:active {
+  transform:
+    translateX(-50%)
+    translateX(calc(var(--card-offset, 0) * 140px))
+    translateZ(calc(var(--card-distance, 0) * -70px))
+    rotateY(calc(var(--card-offset, 0) * -10deg))
+    scale(calc(1 - var(--card-distance, 0) * 0.1 - 0.03));
+}
+
+body[data-motion="off"] .carousel-card:active {
+  transform:
+    translateX(-50%)
+    translateX(calc(var(--card-offset, 0) * 140px))
+    translateZ(calc(var(--card-distance, 0) * -70px))
+    rotateY(calc(var(--card-offset, 0) * -10deg))
+    scale(calc(1 - var(--card-distance, 0) * 0.1));
+}
+
+.carousel-card-art {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--surface2, #181a1d);
+}
+
+.carousel-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 8px;
+  min-width: 0;
+}
+
+.carousel-card-title {
+  font-size: 13px;
+  color: var(--text, #f5f3ef);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.carousel-card-meta {
+  font-size: 11px;
+  color: var(--muted, #a2a5aa);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.carousel-card-duration {
+  font-size: 10px;
+  color: var(--muted, #a2a5aa);
+  opacity: 0.8;
+}

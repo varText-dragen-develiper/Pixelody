@@ -1,0 +1,18 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.lo-fi-cafe",
+  "name": "Lo-Fi Café",
+  "author": "Pixelody",
+  "description": "A rainy walnut listening nook for calm second-monitor sessions, with dark wood structure, paper-soft content surfaces, amber playback light, moss status accents, muted rain-glass depth, licensed cafe photography, and slow low-noise motion.",
+  "palette": { "primary": "#c48a4a", "secondary": "#5d704f", "base": "#100b08" },
+  "assets": {
+    "backgroundTexture": "../assets/themes/lo-fi-cafe/study-desk-stocksnap-XGXORJWZIX-cc0.jpg",
+    "heroOverlay": "../assets/themes/lo-fi-cafe/cafe-interior-stocksnap-THXU08ODDE-cc0.jpg",
+    "panelFrame": null,
+    "iconSet": null
+  },
+  "hud": { "layout": "studio", "controls": "ornamental", "corners": "soft" },
+  "typography": { "profile": "editorial", "font": null },
+  "motion": { "profile": "drift", "intensity": "calm" }
+}

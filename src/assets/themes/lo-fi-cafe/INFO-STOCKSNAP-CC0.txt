@@ -1,0 +1,16 @@
+Lo-Fi Cafe StockSnap CC0 photographs
+
+Files:
+- cafe-interior-stocksnap-THXU08ODDE-cc0.jpg
+  Source: https://stocksnap.io/photo/restaurant-bar-THXU08ODDE
+  Creator: Afta Putta Gunawan
+
+- study-desk-stocksnap-XGXORJWZIX-cc0.jpg
+  Source: https://stocksnap.io/photo/computer-office-XGXORJWZIX
+  Creator: StockSnap contributor listed through Openverse/StockSnap
+
+License: Creative Commons Zero 1.0 (CC0)
+License URL: https://stocksnap.io/license
+Downloaded: 2026-06-27
+
+Pixelody includes attribution voluntarily. The image files are unmodified on disk and composited by CSS.

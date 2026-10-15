@@ -1,0 +1,32 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.dead-signal",
+  "name": "Dead Signal",
+  "author": "Pixelody",
+  "description": "Retained broadcast-archive palette and layout baseline; previous artwork is retired pending an original redesign.",
+  "palette": {
+    "primary": "#1bd7d0",
+    "secondary": "#d09a3a",
+    "base": "#020202"
+  },
+  "assets": {
+    "backgroundTexture": null,
+    "heroOverlay": null,
+    "panelFrame": null,
+    "iconSet": null
+  },
+  "hud": {
+    "layout": "cinematic",
+    "controls": "technical",
+    "corners": "square"
+  },
+  "typography": {
+    "profile": "display",
+    "font": null
+  },
+  "motion": {
+    "profile": "signal",
+    "intensity": "calm"
+  }
+}

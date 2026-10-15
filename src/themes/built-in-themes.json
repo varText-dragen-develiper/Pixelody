@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "note": "Studio uses the rebuilt shell. The two production composition presentations use product-owned Canvas recipes; the retired 33-theme runtime remains detached. The pre-reset 33-theme catalog is intentionally detached from runtime selection.",
+  "compositionPresentations": [
+    { "runtimeKey": "obsession", "name": "Obsession Mode", "host": "foreground", "recipe": "../theme-runtime/canvas-theme-ports.js", "mainStyles": ["../foreground.css", "../canvas-theme-ports.css", "../canvas-obsession.css", "../canvas-listening-editions.css", "../desktop-presentations.css"], "miniStyles": ["../mini-foreground.css", "../mini-canvas-theme-ports.css", "../mini-canvas-obsession.css"] },
+    { "runtimeKey": "cartridge-quest", "name": "Cartridge Quest", "host": "foreground", "recipe": "../theme-runtime/canvas-theme-ports.js", "mainStyles": ["../foreground.css", "../canvas-theme-ports.css", "../canvas-cartridge-quest.css", "../desktop-presentations.css"], "miniStyles": ["../mini-foreground.css", "../mini-canvas-theme-ports.css", "../mini-canvas-cartridge-quest.css"] }
+  ],
+  "themes": [
+    { "runtimeKey": "studio", "paletteKey": "gold", "name": "Pixelody Studio", "category": "core", "tags": ["original", "quiet", "rebuild"], "manifest": "studio.theme.json", "mainStyles": ["../styles.css", "../precision-pixel.css", "../studio-rebuild.css"], "miniStyles": ["../mini-player.css", "../mini-studio-rebuild.css"] }
+  ]
+}

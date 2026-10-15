@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 2,
+  "policyVersion": "universal-shuffle-v2.1",
+  "source": "src/shuffle/learning.js",
+  "global": "PixelodyShuffleLearningV2",
+  "module": "CommonJS and browser UMD",
+  "api": {
+    "VERSION": 2,
+    "POLICY_VERSION": "universal-shuffle-v2.1",
+    "CONFIG": "immutable exported integer policy constants; authoritative values are reproduced below",
+    "createLedger(options={nowMs:0,enabled:true,learningEpoch:0})": "returns new serializable version2 ledger",
+    "normalizeEvent(event,{nowMs})": "returns whitelisted normalized event or null; no wall clock or RNG calls",
+    "reduce(ledger,event,context={nowMs:ledger.clockFloorMs})": "pure; returns new ledger for first accepted event; returns identical input object for duplicate, invalid, stale epoch, unsupported schema/policy or retryable capacity rejection",
+    "trackSignals(ledger,trackId,context={nowMs:ledger.clockFloorMs})": "{tastePoints:int[-12,12],exposure:int[0,2147483647],noveltyPoints:int[0,12],lastHeardAtMs:int|null,confidencePermille:int[0,1000]}",
+    "coverageMs(occurrence)": "sum of disjoint observed media coverage ranges",
+    "summarize(ledger)": "local aggregate insight counts; no track identities",
+    "exposureMetrics(ledger,trackIds=ledger.tracks IDs)": "eligible, activated, heard, neverActivated, activationCoveragePermille, heardCoveragePermille; repeated IDs are deduplicated",
+    "exportLedger(ledger,{includePrivate:true})": "explicit private local export, returns deep serializable copy; missing opt-in throws",
+    "importLedger(objectOrJson)": "{ok:true,ledger} or {ok:false,reason,preserved}; validates exact current fields, ordering, counters, coverage and watermark invariants; preserves unsupported or invalid source without fabricating history or resetting",
+    "setEnabled(ledger,enabled,eventIdentity,context)": "idempotent control reducer; disable retains aggregates but closes all open occurrence measurements",
+    "resetLearning(ledger,eventIdentity,context)": "clears learning tracks, occurrences and detailed journal; increments learningEpoch; retains durable deduplication and enabled flag",
+    "deleteHistory(ledger,eventIdentity,context)": "deletes detailed journal, closed occurrences and lastHeardAtMs; retains compact aggregate taste/exposure and minimal deduplication tokens",
+    "deleteTrack(ledger,trackId,eventIdentity,context)": "deletes all track-specific learning, occurrence and detailed-journal rows; retains minimal deduplication tokens",
+    "deleteLedger(ledger,{enabled:false,nowMs})": "full private ledger deletion including deduplication; returns fresh disabled ledger with incremented epoch; adapters must rotate producer epoch"
+  },
+  "ids": {
+    "type": "opaque well-formed UTF16 string",
+    "minimumCodeUnits": 1,
+    "maximumCodeUnits": 1024,
+    "generatedOccurrenceException": "occurrenceId alone permits1..16384 well-formed UTF16 code units because the scheduler uses a JSON tuple of sessionId and playback sequence; track/event/producer/monotonicClock IDs retain1..1024",
+    "loneSurrogates": "rejected",
+    "normalization": "none; no trimming, case folding or NFC; combining sequences remain distinct",
+    "ordering": "ascending unsigned UTF16 code-unit lexicographic order; locale-independent",
+    "identityStorage": "arrays of explicit structured IDs; no delimiter concatenation or object-property ID indexing"
+  },
+  "eventCommon": {
+    "required": {"schemaVersion": 2, "eventId": "opaque ID", "type": "event type below"},
+    "optional": {"timestampMs": "safe nonnegative epoch integer, defaults injected effective now", "producerId": "opaque ID; requires sequence", "sequence": "safe integer>=1; requires producerId", "learningEpoch": "nonnegative integer; when supplied must equal ledger epoch", "personal": "boolean, defaults true", "source": "optional string; remote/session/preview suppress all personal evidence; other values removed", "reason": "optional string|null; known infrastructure reason retained; an unknown nonempty outcome reason normalizes to unclassified and suppresses implicit evidence"},
+    "unknownFields": "removed before journaling; title/path/URL/credentials/tokens/features are never copied from events",
+    "optionalBooleanValidation": "provided personal/replay/playing/discontinuity/userInitiated fields must be actual booleans or event rejects",
+    "controlAuthority": "nonpersonal/remote/session/preview reset, enable, history deletion and track deletion controls reject unchanged"
+  },
+  "eventTypes": {
+    "offered": {"required": {"trackId": "opaque ID"}, "effect": "increment offered and bounded opportunityDebt; never count heard or activated"},
+    "activated": {"required": {"trackId": "opaque ID", "occurrenceId": "new actual playback occurrence ID"}, "optional": {"durationMs": "integer1..86400000 or null; unknown defaults null", "replay": "boolean default false"}, "effect": "confirmed activation only; increment exposure once and clear opportunityDebt; duplicate occurrence ID does not increment; replay count is factual separate metric"},
+    "interval": {"required": {"trackId": "opaque ID", "occurrenceId": "previously activated actual occurrence ID", "monotonicClockId": "opaque service/audio process boot ID", "monotonicStartMs": "nonnegative safe integer", "monotonicEndMs": "nonnegative safe integer >= start and span<=60000", "mediaStartMs": "integer0..86400000", "mediaEndMs": "integer0..86400000"}, "optional": {"speedPermille": "integer250..4000, default1000", "playing": "must equal true to accrue", "discontinuity": "must not equal true to accrue"}, "effect": "clip previously observed monotonic overlap; add actual wall time separately from union of media ranges; no position-to-percent inference; require positive plausible media progress; seek/discontinuity/pause/buffer do not count; boot clock origins remain separate"},
+    "outcome": {"required": {"trackId": "opaque ID", "occurrenceId": "existing occurrence ID", "outcome": "natural-end|deliberate-skip|replay|interrupted"}, "optional": {"userInitiated": "must equal true for deliberate skip/replay implicit evidence"}, "effect": "close occurrence once; natural end is factual and earns evidence only with actual coverage and heard wall threshold; infrastructure/nonpersonal outcome closes measurement with no taste evidence"},
+    "preference": {"required": {"trackId": "opaque ID", "value": "-1|0|1"}, "effect": "track-scoped explicit preference; newest normalized timestamp wins; same timestamp uses serialized event order; never decays"},
+    "learning-enabled": {"required": {"enabled": "boolean"}},
+    "learning-reset": {},
+    "history-delete": {},
+    "track-delete": {"required": {"trackId": "opaque ID"}}
+  },
+  "ledgerFields": {
+    "schemaVersion": 2, "policyVersion": "universal-shuffle-v2.1", "enabled": "boolean",
+    "learningEpoch": "saturating int0..2147483647", "revision": "saturating int0..2147483647",
+    "clockFloorMs": "safe nonnegative integer, never decreases", "resetAtMs": "safe nonnegative integer<=clockFloorMs|null",
+    "tracks": "ordinal sorted unique track rows", "occurrences": "activation-order retained open/closed occurrence rows",
+    "producers": "ordinal sorted unique {producerId,through:int>=0,pending:sorted unique sequence integers>through+1}",
+    "seenEventIds": "oldest-to-newest bounded unique event IDs", "journal": "oldest-to-newest bounded normalized compact rows",
+    "diagnostics": "saturating counters {clockRollbacks,futureClamps,coverageUnderflows,prunedOccurrences}"
+  },
+  "trackFields": {
+    "trackId": "opaque ID", "offered": "counter", "activated": "counter", "heardOccurrences": "counter", "naturalEnds": "counter",
+    "deliberateSkips": "counter", "replays": "counter", "positiveUnits": "int0..120", "negativeUnits": "int0..120",
+    "evidenceAtMs": "safe timestamp|null; phase anchor for integer decay",
+    "lastHeardAtMs": "safe timestamp|null; max actual interval event time, never activation/planning time",
+    "explicitPreference": "-1|0|1", "explicitPreferenceAtMs": "safe timestamp|null",
+    "opportunityDebt": "int0..12", "heardWallMs": "counter; actual observed monotonic milliseconds"
+  },
+  "occurrenceFields": {
+    "occurrenceId": "opaque actual playback occurrence ID, distinct from stable queue entryId",
+    "trackId": "opaque ID", "activatedAtMs": "safe timestamp", "durationMs": "int1..86400000|null",
+    "replay": "boolean", "wallMs": "counter", "coverageRanges": "sorted disjoint nonadjacent [startMs,endMs] media intervals",
+    "clocks": "unique [{clockId,throughMs}] service boot monotonic overlap watermarks",
+    "heardCredited": "boolean; at least one actual interval counted", "ended": "boolean; late intervals and outcomes cannot change closed measurement"
+  },
+  "journalFields": {
+    "required": ["eventId", "type", "timestampMs", "applied"],
+    "optional": ["trackId", "occurrenceId", "outcome", "suppressed"],
+    "suppressedValues": ["disabled", "nonpersonal", "infrastructure"]
+  },
+  "formulas": {
+    "effectiveNowMs": "max(injected nowMs,ledger.clockFloorMs); negative event ages clamp zero",
+    "futureTimestamp": "timestamp>effectiveNow+300000 rejects without consuming event; timestamp in (effectiveNow,effectiveNow+300000] clamps to effectiveNow and increments futureClamps",
+    "decay": "periods=min(8,floor(max(0,effectiveNow-evidenceAtMs)/2419200000)); positive=floor(positiveUnits/2^periods), negative likewise; adding evidence advances phase only by elapsed whole periods, never postpones decay through frequent listening",
+    "lateEvidence": "new positive/negative contribution divided by 2^min(8,floor(max(0,effectiveNow-eventTimestamp)/decayPeriodMs)) before addition; each side capped120",
+    "implicitTaste": "trunc((decayedPositive-decayedNegative)*12/(decayedPositive+decayedNegative+24))",
+    "tastePoints": "clamp(explicitPreference*8+implicitTaste,-12,12)",
+    "confidencePermille": "floor((decayedPositive+decayedNegative)*1000/(decayedPositive+decayedNegative+24))",
+    "exposure": "lifetime confirmed activated counter; independent of offered and heard",
+    "noveltyPoints": "clamp(12-min(12,activated*2)+opportunityDebt,0,12); unseen track12; disabled ledger returns all neutral zero/null signals",
+    "completionCoverage": "floor(union media coverage*1000/known duration)>=800",
+    "completionWall": "wallMs>=min(60000,floor(knownDurationMs*500/1000)); unknown duration earns no completion evidence",
+    "naturalEndEvidence": "3 positive units iff completionCoverage AND completionWall",
+    "deliberateReplayEvidence": "1 positive unit iff userInitiated AND completionCoverage AND completionWall; activation replay counter remains factual separate",
+    "earlySkipEvidence": "2 negative units iff deliberate personal userInitiated skip, known duration, 3000<=heardWallMs<30000 and unique coverage permille<250; all other skip cases earn0",
+    "mediaProgressPlausibility": "positive forward media progress <=floor(fullWallMs*speedPermille/1000)+500; zero progress, backward progress and discontinuity do not accrue",
+    "intervalOverlap": "only monotonic range after throughMs for the same boot clock counts; media start clips proportionally with integer floor; genuine repeated sections add wall time but not duplicate unique coverage",
+    "coverageCompaction": "merge overlapping/adjacent ranges; if adding a disjoint range exceeds64, keep previous exact ranges and increment coverageUnderflows, conservatively undercount"
+  },
+  "idempotence": {
+    "preferred": "eventId plus durable producerId/sequence; serialize emitter sequence and rotate producerId per independently reset producer epoch",
+    "watermark": "accept out-of-order within1024; retain pending sequence set, advance through contiguous consumed prefix; all sequences<=through or already pending are forever duplicates even after event/journal eviction",
+    "bounds": "at most64 producers, no producer eviction; first/new sequence gap>1024 or producer capacity rejection is retryable and consumes no event ID",
+    "arbitraryIdsOnly": "deduplicate only most recent4096 accepted IDs; IDs outside retained window may apply again. Do not claim exactly once without durable producer sequences",
+    "occurrenceCallbacks": "retained occurrence identity prevents duplicate activation/outcome callback effects; finalized occurrence ring256; use durable sequences for callbacks replayed after pruning",
+    "reset": "learning reset retains deduplication and increments epoch; adapters should include learningEpoch to reject old-epoch events; full deletion intentionally clears deduplication and requires fresh producer epoch"
+  },
+  "config": {
+    "maxJournal": 512, "maxEventIds": 4096, "maxProducers": 64, "maxProducerGap": 1024,
+    "maxOpenOccurrences": 128, "maxClosedOccurrences": 256, "maxCoverageRanges": 64,
+    "maxClocksPerOccurrence": 8, "maxIntervalMs": 60000, "maxDurationMs": 86400000,
+    "maxFutureSkewMs": 300000, "maxCounter": 2147483647,
+    "implicitUnitCap": 120, "priorUnits": 24, "implicitScale": 12, "explicitPoints": 8,
+    "tasteLimit": 12, "decayPeriodMs": 2419200000, "maxDecayPeriods": 8,
+    "positiveCompletionUnits": 3, "positiveReplayUnits": 1, "negativeEarlySkipUnits": 2,
+    "completionCoveragePermille": 800, "completionWallPermille": 500,
+    "completionWallCapMs": 60000, "earlySkipMinimumMs": 3000,
+    "earlySkipMaximumMs": 30000, "earlySkipCoveragePermille": 250,
+    "noveltyLimit": 12, "exposureNoveltyStep": 2, "debtLimit": 12,
+    "confidenceScale": 1000, "speedMinimumPermille": 250, "speedMaximumPermille": 4000,
+    "mediaProgressToleranceMs": 500
+  },
+  "ignoredInfrastructureReasons": ["buffering", "connection-lost", "credential-loss", "crash", "decode-error", "focus-loss", "host-unreachable", "missing-file", "network-disconnect", "network-error", "pause", "permission-revoked", "playback-error", "preview", "remote-action", "route-failure", "seek", "shutdown", "token-expired", "vpn-failure"],
+  "recognizedPersonalOutcomeReasons": ["natural-end", "manual", "manual-next", "manual-skip", "manual-switch", "user-next", "user-skip", "user-replay", "replay", "early-skip", "late-skip", "track-change"],
+  "acceptance": {
+    "command": "node scripts/check-shuffle-universal-learning.js --write-receipt",
+    "testReceipt": ".artifacts/shuffle-universal/core/learning-tests.json",
+    "goldenTrace": ".artifacts/shuffle-universal/core/learning-vectors.json",
+    "platformRequirement": "service/audio adapter must close intervals at pause, seek, speed change, buffer, focus loss, source/route failure, disable and process boundary; use boot clock ID and actual activated occurrence ID; outcomes require reason/personal provenance",
+    "openGates": ["Windows and Android production adapters/lifecycle/persistence acceptance", "cross-language golden trace parity", "audible output and human preference acceptance"],
+    "productDefaults": "numerical defaults are conservative, tunable product policy; not universal musical perfection"
+  }
+}

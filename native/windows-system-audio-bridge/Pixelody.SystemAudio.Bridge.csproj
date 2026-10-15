@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>Pixelody.SystemAudio.Bridge</AssemblyName>
+    <RootNamespace>Pixelody.SystemAudio.Bridge</RootNamespace>
+    <!-- Keep the protocol stub offline-buildable. Release packaging chooses its runtime and signing model later. -->
+    <SelfContained>false</SelfContained>
+  </PropertyGroup>
+</Project>

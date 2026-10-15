@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pixelody.local/schemas/theme.schema.json",
+  "title": "Pixelody Theme",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "name", "author", "palette", "assets", "hud", "typography", "motion"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,63}$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "author": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "description": { "type": "string", "maxLength": 300 },
+    "palette": {
+      "oneOf": [
+        { "type": "object", "additionalProperties": false, "required": ["builtIn"], "properties": { "builtIn": { "type": "string" } } },
+        { "type": "object", "additionalProperties": false, "required": ["primary", "secondary", "base"], "properties": { "primary": { "$ref": "#/$defs/color" }, "secondary": { "$ref": "#/$defs/color" }, "base": { "$ref": "#/$defs/color" } } }
+      ]
+    },
+    "assets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "backgroundTexture": { "$ref": "#/$defs/assetPath" },
+        "heroOverlay": { "$ref": "#/$defs/assetPath" },
+        "panelFrame": { "$ref": "#/$defs/assetPath" },
+        "iconSet": { "$ref": "#/$defs/assetPath" }
+      }
+    },
+    "hud": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["layout", "controls", "corners"],
+      "properties": {
+        "layout": { "enum": ["studio", "compact", "cinematic", "arcade"] },
+        "controls": { "enum": ["pixel", "technical", "minimal", "ornamental"] },
+        "corners": { "enum": ["pixel-cut", "square", "soft", "framed"] }
+      }
+    },
+    "typography": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile"],
+      "properties": {
+        "profile": { "enum": ["pixel", "technical", "editorial", "display"] },
+        "font": { "$ref": "#/$defs/assetPath" }
+      }
+    },
+    "motion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile", "intensity"],
+      "properties": {
+        "profile": { "enum": ["signal", "drift", "pulse", "mechanical", "none"] },
+        "intensity": { "enum": ["off", "calm", "expressive"] }
+      }
+    },
+    "navigation": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Optional. Selects a registered navigation mechanic (see src/theme-runtime/navigation/contract.md) for browsing tracks/playlists. Omitting this entirely defaults to the 'linear-list' mechanic. Keys are validated against the live mechanic registry by scripts/check-themes.js, not against a fixed enum here, since the registry -- not this schema -- is the authoritative list of what exists.",
+      "properties": {
+        "trackBrowser": { "$ref": "#/$defs/mechanicKey" },
+        "playlistBrowser": { "$ref": "#/$defs/mechanicKey" }
+      }
+    },
+    "information": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Optional. Selects a registered read-only information composition profile (see src/theme-runtime/information/contract.md). The manifest may select a shipped profile key; it may not supply markup or executable projection code.",
+      "required": ["profile"],
+      "properties": {
+        "profile": { "$ref": "#/$defs/informationProfileKey" }
+      }
+    },
+    "tokens": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Optional. Semantic palette tokens (see src/theme-runtime/tokens.js), replacing the legacy gold/gold2/green/hero/bg/surface*/line/edge names with ones that say what they mean. Not yet read at runtime -- the running app has no runtime path to *.theme.json at all yet (same gap noted for navigation.trackBrowser in docs/themes/THEME_RUNTIME_ARCHITECTURE.md's Phase 2 section). Authors can start writing semantic tokens now; tokens.js's toLegacyPalette() is the tested, ready conversion for whenever manifest reads land. Keep in sync with tokens.js's LEGACY_TO_SEMANTIC value set -- scripts/check-tokens.js fails if they drift apart.",
+      "properties": {
+        "accentPrimary": { "$ref": "#/$defs/color" },
+        "accentSecondary": { "$ref": "#/$defs/color" },
+        "accentState": { "$ref": "#/$defs/color" },
+        "heroTone": { "$ref": "#/$defs/color" },
+        "canvas": { "$ref": "#/$defs/color" },
+        "elevation1": { "$ref": "#/$defs/color" },
+        "elevation2": { "$ref": "#/$defs/color" },
+        "elevation3": { "$ref": "#/$defs/color" },
+        "divider": { "$ref": "#/$defs/color" },
+        "frame": { "$ref": "#/$defs/color" },
+        "foreground": { "$ref": "#/$defs/color" },
+        "foregroundMuted": { "$ref": "#/$defs/color" }
+      }
+    }
+  },
+  "$defs": {
+    "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+    "assetPath": { "type": ["string", "null"], "pattern": "^(?![a-zA-Z]+:|[\\\\/]).+" },
+    "mechanicKey": { "type": "string", "pattern": "^[a-z][a-z0-9-]{1,39}$" },
+    "informationProfileKey": { "type": "string", "pattern": "^[a-z][a-z0-9-]{1,39}$" }
+  }
+}

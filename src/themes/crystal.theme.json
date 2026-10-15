@@ -1,0 +1,10 @@
+{
+  "$schema": "./theme.schema.json", "schemaVersion": 1, "id": "pixelody.crystal", "name": "Crystal Audio", "author": "Pixelody",
+  "description": "An aqueous prism hi-fi deck with contained caustic HUD layers, fixed panel glints, reflective album cases, and calm waterlight reactions.",
+  "palette": { "primary": "#8cecff", "secondary": "#d5c7ff", "base": "#070c20" },
+  "assets": { "backgroundTexture": "../assets/themes/crystal/prism-caustics.svg", "heroOverlay": "../assets/themes/crystal/prism-caustics.svg", "panelFrame": "../assets/themes/crystal/crystal-panel.svg", "iconSet": null },
+  "hud": { "layout": "studio", "controls": "minimal", "corners": "soft" },
+  "typography": { "profile": "editorial", "font": null },
+  "motion": { "profile": "drift", "intensity": "calm" },
+  "navigation": { "trackBrowser": "cover-flow" }
+}

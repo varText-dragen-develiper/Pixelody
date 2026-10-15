@@ -1,0 +1,205 @@
+# Pixelody Mark
+
+Status: **shipped.** The mark is Sampled Disc (A), the wordmark is W1, and the
+brand colour is Ultraviolet. It is now the desktop build icon, the desktop
+window/taskbar icon, the Android launcher icon (adaptive, with a themed-icon
+layer) and the Android splash emblem. Manual logo choices use the purple range described below. Android automatic
+icons also follow theme/palette accents unless overridden.
+
+![Pixelody logo sheet](pixelody-logo-sheet.png)
+
+## The idea: Sampled Disc
+
+A disc, read as a record, split by one cycle of a sine wave drawn as
+sample-and-hold steps. The disc is the melody, the steps are the pixels, and
+the whole thing says "digital audio, sampled honestly", which matches
+Pixelody's lossless, local-first stance.
+
+The wave is **cut out** of the disc (real holes in the geometry, not a painted
+stroke), so the mark works on any background without a matching fill.
+
+## Construction (24-unit grid)
+
+| Part | Geometry |
+| --- | --- |
+| Disc | circle centred `12,12`, r 8 |
+| Wave | one sine cycle over x 4→20, sampled at 12 points (`sin(2π(i+½)/12)`), amplitude 4.5, heights snapped to 0.5 units, entering and leaving at y 12 |
+| Cut | wave stroked 1.25 wide with square joins and subtracted from the disc; slivers under 2 square units are dropped |
+| Small cut (16–24 px) | 8 samples, cut 1.7 wide, so the steps survive tiny sizes |
+| App tile | 24 × 24, corner radius 5.25 |
+
+The wave is point-symmetric about the disc centre, so the two halves of the
+disc are identical rotated 180°.
+
+The geometry is generated, not hand-drawn. Regenerate it rather than editing
+the paths by hand if the numbers change.
+
+## Colour
+
+| Role | Value | Notes |
+| --- | --- | --- |
+| Brand (Ultraviolet) | `#6a3dff` | 3.4:1 on graphite, 5.1:1 on paper; both clear the 3:1 minimum for graphics |
+| Graphite | `#0e0f12` | dark ground; neutral black, not purple-tinted |
+| Paper | `#f4f4f6` | light ground |
+| Ink on dark | `#f5f5f7` | wordmark |
+| Ink on light | `#111114` | wordmark |
+
+Why this purple: the aim is a colour with broad, even appeal, the way Spotify's
+green doesn't skew toward any one audience. Pastel lavender (the round-3 draft)
+reads soft and narrows the audience. A saturated, slightly blue-leaning violet
+on neutral black/white reads as confident and techy instead. Two nearby purples
+were ruled out because big platforms already own them: `#9146ff` is Twitch's
+purple and `#5b5bff` sits next to Discord's blurple. `#7c5cff` (Electric Violet)
+is the runner-up if Ultraviolet ever looks too dim on dark surfaces.
+
+Only the mark carries colour. The wordmark stays neutral ink, and the purple is
+never used as a gradient or paired with pink.
+
+## Wordmark (W1)
+
+"pixelody" in lowercase Space Grotesk Bold (wght 700, tracking −20/1000),
+converted to outlines. In the lockup, the disc diameter is 1.56 × the cap
+height, centred on the cap height, with a gap of 0.42 × the cap height. Space
+Grotesk is OFL 1.1 and already bundled (see `THIRD_PARTY_ASSETS.md`); the OFL
+permits using outlined glyphs in a logo.
+
+## Logo colour setting
+
+The mark's shape never changes; its colour can. Five colours make up the
+purple range, with Ultraviolet as the default:
+
+| Key | Name | Hex |
+| --- | --- | --- |
+| `ultraviolet` | Ultraviolet | `#6a3dff` |
+| `electric` | Electric | `#7c5cff` |
+| `indigo` | Indigo | `#5b5bff` |
+| `grape` | Grape | `#8a3cf0` |
+| `lavender` | Lavender | `#a98cff` |
+
+- **Desktop:** Settings > Style > Logo color. This recolours the in-app mark
+  (startup screen and the setting's preview) and switches the window/taskbar
+  icon (the dock icon on macOS) to that colour's baked PNG. The installer and
+  pinned shortcuts keep the Ultraviolet `build/icon.png`, because Windows reads
+  those from the executable.
+- **Android:** Settings & Themes > Logo color follows the effective theme and
+  Style palette by default, including Studio. The six authored themes and nine
+  preset palettes have exact generated launcher colors. Arbitrary custom colors
+  use the nearest baked launcher shade; the in-app mark uses the exact accent.
+  Studio's image-led Custom look uses the Home image's accent as the stable
+  automatic launcher identity (nearest generated shade for arbitrary RGB).
+  Changing pages does not change the launcher alias; explicit logo choices win.
+  Selecting a purple swatch disables "Follow theme and palette" and becomes an
+  explicit override. Turning following back on retains that saved manual color.
+  Older manual choices without a following preference stay manual. One of twenty
+  launcher aliases is enabled, without killing playback. Android wallpaper-themed
+  icons and launcher icon packs can override the visible home-screen colors.
+- **Desktop themes:** on base Pixelody (Studio) the mark always uses the chosen
+  purple. Another active theme may recolour the in-app mark with its own accent
+  unless the user turns off "Let other themes recolor the in-app logo". Desktop themes also recolour the running window/taskbar icon in memory
+  using the generated mark. Installer and pinned shortcuts keep their baked colours. Android follows the separate automatic-icon rules above.
+
+Windows matching shortcuts follow the effective logo color; native helpers retain canonical identity.
+
+The list is defined in `src/brand-mark.js`, `tools/brand/logo-colors.json`
+(written by the generator) and Android's `ui/brand/PixelodyLogoColor.kt`.
+The development repository's checks fail if these, the Settings swatches, the
+window icons, the launcher aliases or the Android colour resources disagree.
+
+Selecting a logo color applies that color immediately and saves it for restart.
+The next explicit theme selection resumes theme following; returning to Studio
+restores the selected purple. The toggle can also resume theme following within
+the current theme.
+On Windows, the running app also supplies its taskbar relaunch icon through
+`setAppDetails`, using an ICO wrapper around the generated mark's PNG pixels.
+These small icon files live under the profile's `brand-icons` directory, with
+distinct resource paths for each color to avoid reusing old image pixels.
+Windows can resolve the taskbar icon from the installed shortcut instead of
+the running window. The helper updates only icon fields on existing shortcuts
+whose target and app ID match this installation and whose arguments are empty.
+Matching shortcuts and window relaunch/icon properties are updated before the
+window AppUserModel.ID is set. Microsoft defines setting that ID as the taskbar
+refresh trigger and requires the related properties to precede it. Electron's
+combined `setAppDetails` call sets ID first, so the helper uses separate calls.
+Renderer requests serialize and only successful acknowledgments enter the cache.
+Reapplying an unchanged window ID alone can leave the old group icon cached.
+After both windows and their shortcuts agree, a hidden persistent Windows worker
+sends `SHCNE_ASSOCCHANGED`, followed by `SHCNE_UPDATEITEM` for each matching
+shortcut, including pinned and implicit shortcuts. This follows Chromium's
+Windows shortcut refresh sequence; shortcut notification alone did not refresh
+the visible taskbar in local testing. The Shell can briefly redraw its icons.
+The refresh runs once per acknowledged color change, and exits with the app.
+The sequence is also used by [Chromium's Windows shortcut implementation](https://raw.githubusercontent.com/chromium/chromium/main/chrome/browser/profiles/profile_shortcut_manager_win.cc).
+The process, window and shortcut IDs stay stable. Shortcut discovery is cached
+and matched targets are revalidated on every update to avoid resolving unrelated
+shortcuts through COM during each color change.
+Explicit separate profiles
+use a stable taskbar ID derived from their profile path, keeping the normal
+installation ID unchanged. Their branded shortcuts are updated only when both
+the executable and exact profile argument match; a preview never modifies the
+owner's shortcut. Original links are backed up once under
+`brand-icons/shortcut-backups`.
+
+The Windows color transition uses the live window icon instead of
+reloading shortcut resources for every frame. A private helper saves the main
+and mini window properties, temporarily suppresses relaunch icon resolution
+through the window's `PreventPinning` property, and retains the canonical app
+identity. Pinning is restored when the transition settles. Native
+`setIcon` frames then animate without per-frame shortcut writes or Shell cache
+invalidation. Final publication restores the canonical identity and shortcut
+color; cancellation or failure rolls back the saved window properties. Startup,
+unchanged colors, reduced motion and disabled reactions bypass this route.
+Transitions use 66 eased frames over approximately 1.1 seconds. The taskbar
+entry refreshes once at the start, with a 150ms pause between removing the
+group and adding it back so Explorer can process the removal. Successful
+native animation finishes with
+notifications only for matching shortcuts. Immediate and fallback updates
+retain the full Shell refresh. The user confirmed actual Public Test theme
+switching animates smoothly with one pop-up and no second pop-up at the end.
+The normal installed build uses the same path. After the removal pause was
+added, the owner confirmed Studio, Cartridge Quest and Obsession transitions
+animate and end on the correct color after reporting a Windows Search launch
+regression. Native transitions, manual colors and motion-disabled updates were
+also checked in an isolated profile.
+
+## Regenerating
+
+Every logo file is written from one geometry by
+`tools/brand/generate_brand_assets.py` (needs `shapely` and `fonttools`); then
+`tools/brand/render_brand_pngs.js` rasterizes the PNGs using Playwright. To add
+or change a colour, edit `LOGO_COLORS` in the generator, mirror it in
+`src/brand-mark.js`, `PixelodyLogoColor.kt`, the Settings swatches in
+`src/index.html` and the aliases in `AndroidManifest.xml`, then run both
+scripts and `npm run check`. `scripts/create-release-icon.ps1` can rebuild
+`build/icon.png` from `build/icon.svg` on Windows without Node.
+
+## Files
+
+| File | Use |
+| --- | --- |
+| `pixelody-app-icon.svg` / `-512.png` | Reference app icon (graphite tile) |
+| `pixelody-app-icon-light.svg` | Paper tile |
+| `pixelody-app-icon-small.svg` | 16–24 px favicon/tray; coarser 8-sample cut |
+| `pixelody-mark.svg` | Tile-free mark in Ultraviolet |
+| `pixelody-mark-mono.svg` | Tile-free mark in `currentColor` |
+| `pixelody-wordmark.svg` | Wordmark alone, `currentColor` |
+| `pixelody-lockup.svg` / `-light.svg` | Mark + wordmark for dark / light grounds (transparent) |
+| `colors/` | App icon in each logo colour |
+
+Shipped copies generated from the same geometry: `build/icon.svg`/`.png`,
+`src/assets/brand/` (in-app mask and window icons), and in `android/app/src/main/res/`
+`drawable/ic_launcher_foreground_*.xml`, `mipmap-anydpi-v26/ic_launcher_*.xml`,
+`drawable/splash_brand_emblem.xml` and `values/brand_colors.xml`.
+
+## Clear space and minimums
+
+- Clear space: one quarter of the disc diameter on every side.
+- Use the small icon at 24 px and below. The lockup needs a height of at least 20 px.
+- Don't rotate the disc (the wave must rise first on the left), outline it,
+  add gradients, or recolour the wave cut.
+
+Android automatic accents are generated from the same mark using
+`python tools/brand/generate_brand_assets.py --android-theme-icons-only`.
+`ANDROID_THEME_COLORS`, `ThemeLauncherIcon.kt` and the automatic manifest aliases
+must agree; the development repository's checks cover colors, aliases, adaptive layers
+and unchanged geometry. Unit tests verify every effective theme/preset accent.
+Desktop's five-color manual list remains independent.

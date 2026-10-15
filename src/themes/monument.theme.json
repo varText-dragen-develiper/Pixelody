@@ -1,0 +1,10 @@
+{
+  "$schema": "./theme.schema.json", "schemaVersion": 1, "id": "pixelody.monument", "name": "Monument", "author": "Pixelody",
+  "description": "A private listening museum where albums sit on stone plinths, metadata becomes conservation labels, and playback is marked by measured light.",
+  "palette": { "primary": "#9f633d", "secondary": "#596d7d", "base": "#c9c5bb" },
+  "assets": { "backgroundTexture": "../assets/themes/monument/stone-grain.svg", "heroOverlay": "../assets/themes/monument/gallery-plinth.svg", "panelFrame": "../assets/themes/monument/conservation-label.svg", "iconSet": null },
+  "hud": { "layout": "cinematic", "controls": "minimal", "corners": "square" },
+  "typography": { "profile": "editorial", "font": null },
+  "motion": { "profile": "none", "intensity": "off" },
+  "navigation": { "trackBrowser": "carousel" }
+}

@@ -1,0 +1,229 @@
+/* Shared transport keys: the button silhouette, not just its glyph, is pixel art. */
+body :is(#prevButton,#nextButton,#miniPrev,#miniNext) {
+  --transport-pixel-cut:polygon(6px 0,calc(100% - 6px) 0,calc(100% - 6px) 3px,calc(100% - 3px) 3px,calc(100% - 3px) 6px,100% 6px,100% calc(100% - 6px),calc(100% - 3px) calc(100% - 6px),calc(100% - 3px) calc(100% - 3px),calc(100% - 6px) calc(100% - 3px),calc(100% - 6px) 100%,6px 100%,6px calc(100% - 3px),3px calc(100% - 3px),3px calc(100% - 6px),0 calc(100% - 6px),0 6px,3px 6px,3px 3px,6px 3px);
+  position:relative!important; display:grid!important; place-items:center!important;
+  min-width:34px!important; min-height:34px!important; padding:0!important;
+  border-radius:0!important; clip-path:var(--transport-pixel-cut)!important;
+  border:2px solid currentColor!important;
+  background:color-mix(in srgb,var(--surface,#17191f) 88%,currentColor)!important;
+  box-shadow:inset 2px 2px color-mix(in srgb,currentColor 25%,transparent),inset -2px -2px #0006!important;
+}
+body :is(#prevButton,#nextButton,#miniPrev,#miniNext):hover { filter:brightness(1.22); }
+body :is(#prevButton,#nextButton,#miniPrev,#miniNext):active { box-shadow:inset 2px 2px #0008!important; }
+body :is(#prevButton,#nextButton,#miniPrev,#miniNext):focus-visible { outline:0!important; background:color-mix(in srgb,var(--surface,#17191f) 55%,currentColor)!important; }
+/* Preserve row-local selected/playing state; remove the window-wide moving beam. */
+body[data-theme="foreground"][data-canvas-theme-port="obsession"]::after { content:none!important; display:none!important; }
+
+/* Image layout belongs to the selected collection/image, independent of theme CSS. */
+body #playlistHero {
+  background-size:var(--collection-image-size,cover)!important;
+  background-repeat:var(--collection-image-repeat,no-repeat)!important;
+  background-position:center!important;
+}
+.background-layout-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; margin:12px 0 0; padding:0; border:0; }
+.background-layout-options legend { padding:0 0 7px; font-size:12px; font-weight:700; }
+.background-layout-options label { display:grid; grid-template-columns:16px 1fr; gap:3px 7px; padding:7px; border:1px solid color-mix(in srgb,currentColor 30%,transparent); cursor:pointer; }
+.background-layout-options label:has(input:checked) { border-color:var(--gold); background:color-mix(in srgb,var(--gold) 12%,transparent); }
+.background-layout-options input { grid-row:span 2; margin:2px 0; accent-color:var(--gold); }
+.background-layout-options b { font-size:12px; }
+.background-layout-options small { font:11px/1.35 "Segoe UI",sans-serif; color:var(--muted); }
+body #backgroundCabinet { position:fixed; inset:auto; margin:0; width:min(320px,calc(100vw - 24px)); max-height:min(460px,calc(100dvh - 24px)); overflow-y:auto; box-sizing:border-box; }
+
+/* Canvas controls share the header; panel navigation lives in a small cabinet. */
+.desktop-canvas-actions { display:none; flex:none; align-items:center; gap:5px; -webkit-app-region:no-drag; }
+body[data-theme="foreground"][data-canvas-theme-port] .desktop-canvas-actions { display:flex; }
+body .desktop-canvas-actions :is(.cw-studio-launcher,.cw-studio-legacy-launcher) {
+  position:static!important; transform:none!important; width:auto!important; min-height:28px!important;
+  padding:4px 8px!important; margin:0!important; font:11px "Segoe UI",sans-serif!important; white-space:nowrap;
+}
+body .desktop-canvas-actions [hidden] { display:none!important; }
+.desktop-panel-cabinet { display:none; position:relative; flex:none; z-index:80; -webkit-app-region:no-drag; }
+body[data-desktop-presentation] .desktop-panel-cabinet { display:block; }
+.desktop-panel-cabinet summary { padding:6px 9px; border:1px solid var(--gold); background:var(--surface); color:var(--text); cursor:pointer; font:12px "Segoe UI",sans-serif; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] { --desktop-nav:0px; }
+body[data-theme="foreground"][data-canvas-theme-port][data-desktop-presentation] .desktop-panel-cabinet .desktop-panel-navigation {
+  position:fixed!important; right:auto; bottom:auto; margin:0; display:grid; height:auto;
+  min-width:150px; padding:7px; border:1px solid var(--gold); background:var(--surface,#111);
+  box-shadow:0 8px 24px #0008;
+}
+body .desktop-panel-cabinet:not([open]) .desktop-panel-navigation { display:none!important; }
+body .desktop-panel-cabinet .desktop-panel-navigation button { text-align:left; }
+body[data-desktop-presentation] .cw-studio-chrome:has(.cw-studio-tag-grip):not(:has(.cw-studio-launcher)) { display:none!important; }
+body[data-theme="foreground"][data-canvas-theme-port] .topbar .global-search { flex:1 1 220px; min-width:120px; max-width:520px; }
+@media(max-width:1100px) {
+  body[data-theme="foreground"][data-canvas-theme-port] .topbar { gap:6px; padding-inline:8px; }
+  body[data-theme="foreground"][data-canvas-theme-port] .desktop-canvas-actions { gap:3px; }
+  body .desktop-canvas-actions :is(.cw-studio-launcher,.cw-studio-legacy-launcher) { padding-inline:5px!important; font-size:10px!important; }
+}
+
+/* Keep artwork/detail glyphs centered in the collapsed key and in one row on reveal. */
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] { --hero-control-border:3px; }
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] { --hero-control-border:1px; }
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) :is(#backgroundButton,#metadataToggle) {
+  display:grid!important;
+  grid-template-columns:calc(38px - 2 * var(--hero-control-border)) max-content;
+  grid-template-rows:minmax(0,1fr);
+  align-items:center; justify-content:start; gap:0;
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) :is(#backgroundButton,#metadataToggle) :is(.pixel-icon,.public-icon) {
+  grid-column:1; grid-row:1; justify-self:center;
+  width:20px; height:20px; margin:0!important;
+  mask-size:20px 20px; vertical-align:0;
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) :is(#backgroundButton,#metadataToggle) .hero-action-label {
+  grid-column:2; grid-row:1; margin-right:10px;
+}
+
+/* The seek input precedes the badges in the DOM; assign all three cells explicitly. */
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .quest-boss-bar { grid-template-rows:minmax(0,1fr); }
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .quest-boss-bar b { grid-column:1; grid-row:1; }
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .quest-boss-bar input { grid-column:2; grid-row:1; height:100%!important; max-height:24px; align-self:center; }
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .quest-boss-bar em { grid-column:3; grid-row:1; }
+
+/* Theme-owned EQ hardware. Keep native ranges, keyboard steps and audio bindings. */
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) {
+  --eq-handle-width:26px;
+  --eq-handle-height:16px;
+  --eq-rail:#5a586b;
+  --eq-ticks:#77727b;
+  --eq-center:#f2c94c;
+  --eq-handle:#7b68c9;
+  --eq-handle-edge:#fff7c4;
+  --eq-handle-line:#fff7c4;
+  --eq-handle-cut:polygon(4px 0,calc(100% - 4px) 0,calc(100% - 4px) 2px,100% 2px,100% calc(100% - 2px),calc(100% - 4px) calc(100% - 2px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 2px),0 calc(100% - 2px),0 2px,4px 2px);
+}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] {
+  --eq-handle-width:12px;
+  --eq-handle-height:26px;
+  --eq-rail:#621722;
+  --eq-ticks:#6e4248;
+  --eq-center:#f2ece8;
+  --eq-handle:#21090e;
+  --eq-handle-edge:#ff5865;
+  --eq-handle-line:#f2ece8;
+  --eq-handle-cut:polygon(0 0,100% 0,100% calc(100% - 5px),50% 100%,0 calc(100% - 5px));
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) #inspectorPanel > :is(.quality-card,.tuning-card,.open-systems) { flex:0 0 auto; overflow:visible; }
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) :is(#trackEq,#systemEq) .eq-slider-shell {
+  position:relative; box-sizing:border-box; width:46px; height:116px;
+  margin:10px auto 12px; padding:5px 0; border-radius:0;
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) .eq-slider-shell::before {
+  content:""; position:absolute; left:5px; right:5px; top:50%; height:2px;
+  background:var(--eq-center); box-shadow:none; pointer-events:none;
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) .eq-control input[type="range"] {
+  display:block; box-sizing:border-box; appearance:none; -webkit-appearance:none;
+  writing-mode:vertical-lr; direction:rtl; width:40px; height:100%;
+  min-height:0; padding:0; margin:0 auto; border:0; border-radius:0;
+  background:transparent; cursor:ns-resize; touch-action:none;
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) .eq-control input[type="range"]::-webkit-slider-runnable-track {
+  width:40px; height:100%; border:0; border-radius:0;
+  background:linear-gradient(var(--eq-rail),var(--eq-rail)) center/6px 100% no-repeat,
+    repeating-linear-gradient(to top,var(--eq-ticks) 0 1px,transparent 1px 12px) center/24px calc(100% - 16px) no-repeat;
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) :is(.eq-control,.parametric-gain) input[type="range"]::-webkit-slider-thumb {
+  appearance:none; -webkit-appearance:none; box-sizing:border-box;
+  width:var(--eq-handle-width); height:var(--eq-handle-height);
+  border:2px solid var(--eq-handle-edge); border-radius:0;
+  clip-path:var(--eq-handle-cut);
+  background:linear-gradient(var(--eq-handle-line),var(--eq-handle-line)) center/calc(100% - 8px) 2px no-repeat,var(--eq-handle);
+  box-shadow:inset 0 2px #ffffff38,inset 0 -2px #0005;
+  cursor:grab;
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) :is(.eq-control,.parametric-gain) input[type="range"]:active::-webkit-slider-thumb { cursor:grabbing; filter:brightness(1.15); }
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) .eq-control input[type="range"]::-webkit-slider-thumb { margin-left:calc((40px - var(--eq-handle-width)) / 2); }
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) :is(.eq-control,.parametric-gain) input[type="range"]:focus-visible { outline:2px solid var(--eq-center); outline-offset:3px; }
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) :is(.eq-control,.parametric-gain) input[type="range"]:disabled { cursor:default; opacity:.45; }
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) :is(.eq-control strong,.parametric-gain output) { font-variant-numeric:tabular-nums; }
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) .eq-control > label { min-height:32px; }
+
+/* Cartridge Quest: a slotted cartridge with pixel detents and a stepped key. */
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .tuning-card::before {
+  position:static; display:block; box-sizing:border-box; width:fit-content;
+  max-width:calc(100% - 48px); margin:0 0 12px; pointer-events:none;
+}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .tuning-card::after {
+  top:20px; right:14px; width:30px; pointer-events:none;
+}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] :is(#trackEq,#systemEq) .eq-slider-shell {
+  border:2px solid #aaa7a3; background:#10162a;
+  box-shadow:inset 2px 2px #080b15,inset -2px -2px #34384b,2px 2px #080b15;
+}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .eq-control input[type="range"]::-webkit-slider-runnable-track {
+  background:repeating-linear-gradient(to top,#7b68c9 0 7px,#10162a 7px 10px) center/6px calc(100% - 16px) no-repeat,
+    repeating-linear-gradient(to top,#77727b 0 2px,transparent 2px 12px) center/24px calc(100% - 16px) no-repeat;
+}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .eq-control strong { min-width:0; padding:3px 2px; white-space:nowrap; font:9px/1.3 Consolas,monospace; }
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .eq-control::after {
+  clip-path:none; border-color:#68529a;
+  background:repeating-linear-gradient(90deg,transparent 0 5px,#10162a 5px 7px),
+    linear-gradient(90deg,#b495ff 0 var(--quest-power,50%),#252034 var(--quest-power,50%) 100%);
+}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .eq-control[data-quest-power]::after { box-shadow:0 0 5px #a78bfa40; }
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .eq-control:focus-within::after { filter:brightness(1.12); }
+
+/* Obsession: three stacked tension lines, each with a narrow crimson index tab. */
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .eq-controls { grid-template-columns:minmax(0,1fr); gap:14px; }
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .eq-control {
+  display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center;
+  min-width:0; padding:0 0 10px; border:0; border-bottom:1px solid #3d1118;
+  background:none; box-shadow:none; text-align:left;
+}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] :is(#trackEq,#systemEq) .eq-slider-shell {
+  grid-column:1/-1; grid-row:2; width:100%; height:36px;
+  margin:5px 0 0; padding:0; border:0; background:none; box-shadow:none;
+}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .eq-slider-shell::before {
+  left:50%; right:auto; top:9px; width:1px; height:18px; background:#f2ece866;
+}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .eq-control input[type="range"] {
+  writing-mode:horizontal-tb; direction:ltr; width:100%; height:36px; cursor:ew-resize;
+}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .eq-control input[type="range"]::-webkit-slider-runnable-track {
+  width:100%; height:36px;
+  background:linear-gradient(90deg,#3d1118,#c91527 50%,#3d1118) center/100% 2px no-repeat,
+    repeating-linear-gradient(90deg,#6e424866 0 1px,transparent 1px 16px) center/100% 8px no-repeat;
+}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] :is(.eq-control,.parametric-gain) input[type="range"]::-webkit-slider-thumb {
+  border:1px solid #ff5865;
+  background:linear-gradient(#f2ece8,#f2ece8) center/1px 10px no-repeat,#21090e;
+  box-shadow:inset 2px 0 #c91527,inset -2px 0 #621722;
+}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .eq-control input[type="range"]::-webkit-slider-thumb {
+  margin-left:0; margin-top:5px;
+}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .eq-control > label {
+  grid-column:1; grid-row:1; min-height:0; color:#c4aeac;
+  font:10px/1.5 Consolas,monospace; letter-spacing:.12em;
+}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .eq-control .eq-frequency {
+  display:inline; margin-left:9px; color:#9b8483; font:9px/1.5 Consolas,monospace; letter-spacing:0;
+}
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .eq-control strong {
+  grid-column:2; grid-row:1; padding:0 0 0 6px; color:#f2ece8;
+  font:11px/1.5 Consolas,monospace; white-space:nowrap;
+}
+
+/* Advanced gain uses the same handle, turned into a horizontal fader. */
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) .parametric-row { grid-template-columns:minmax(0,.6fr) minmax(0,1fr) minmax(0,.7fr); }
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) .parametric-gain { grid-column:1/-1; }
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) .parametric-gain input[type="range"] {
+  appearance:none; -webkit-appearance:none; display:block; box-sizing:border-box;
+  writing-mode:horizontal-tb; direction:ltr; width:100%; height:32px;
+  margin:0; padding:0; border:0; background:transparent; cursor:ew-resize;
+}
+body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) .parametric-gain input[type="range"]::-webkit-slider-runnable-track {
+  height:var(--eq-handle-height); border:0; border-radius:0;
+  background:linear-gradient(var(--eq-center),var(--eq-center)) center/2px 100% no-repeat,
+    linear-gradient(var(--eq-rail),var(--eq-rail)) center/100% 4px no-repeat,
+    repeating-linear-gradient(to right,var(--eq-ticks) 0 1px,transparent 1px 12px) center/100% 10px no-repeat;
+}
+body[data-theme="foreground"][data-canvas-theme-port="cartridge-quest"] .parametric-row { border:2px solid #5f5d66; background:#10162a; box-shadow:inset 2px 2px #080b15; }
+body[data-theme="foreground"][data-canvas-theme-port="obsession"] .parametric-row { border-color:#3d1118; background:#0b0607; }
+@media (forced-colors:active) {
+  body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) { --eq-center:Highlight; --eq-handle:ButtonFace; --eq-handle-edge:ButtonText; --eq-handle-line:ButtonText; }
+  body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) :is(.eq-control,.parametric-gain) input[type="range"]::-webkit-slider-runnable-track { background:Canvas; border:1px solid ButtonText; }
+  body[data-theme="foreground"]:is([data-canvas-theme-port="cartridge-quest"],[data-canvas-theme-port="obsession"]) :is(.eq-control,.parametric-gain) input[type="range"]::-webkit-slider-thumb { background:ButtonFace; border-color:ButtonText; clip-path:none; }
+}

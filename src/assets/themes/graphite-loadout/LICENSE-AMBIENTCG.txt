@@ -1,0 +1,37 @@
+ambientCG CC0 texture preview maps
+==================================
+
+Creator: Lennart Demes / ambientCG
+Source: https://ambientcg.com/
+License: Creative Commons CC0 1.0 Universal
+License details: https://docs.ambientcg.com/license/
+
+Bundled UI derivatives:
+- textures/fabric-081c-color-ui.jpg
+  Created using Fabric 081 C from ambientCG.com,
+  licensed under the Creative Commons CC0 1.0 Universal License.
+  Source: https://ambientcg.com/a/Fabric081C
+
+- textures/rubber-004-color-ui.jpg
+  Created using Rubber 004 from ambientCG.com,
+  licensed under the Creative Commons CC0 1.0 Universal License.
+  Source: https://ambientcg.com/a/Rubber004
+
+- textures/plastic-010-color-ui.jpg
+  Created using Plastic 010 from ambientCG.com,
+  licensed under the Creative Commons CC0 1.0 Universal License.
+  Source: https://ambientcg.com/a/Plastic010
+
+- textures/granite-002a-color-ui.jpg
+  Created using Granite 002 A from ambientCG.com,
+  licensed under the Creative Commons CC0 1.0 Universal License.
+  Source: https://ambientcg.com/a/Granite002A
+
+- textures/painted-metal-004-color-ui.jpg
+  Created using Painted Metal 004 from ambientCG.com,
+  licensed under the Creative Commons CC0 1.0 Universal License.
+  Source: https://ambientcg.com/a/PaintedMetal004
+
+Notes:
+- The bundled files are resized/recompressed 512px UI derivatives of ambientCG square color preview maps.
+- ambientCG does not require attribution for CC0 assets, but Pixelody includes credit voluntarily.

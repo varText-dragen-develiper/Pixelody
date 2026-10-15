@@ -1,0 +1,82 @@
+@font-face{font-family:"Obsidian Space";src:url("assets/themes/cosmic-cinema/SpaceGrotesk-Variable.ttf") format("truetype");font-weight:300 700;font-display:swap}
+@font-face{font-family:"Obsidian Mono";src:url("assets/themes/cosmic-cinema/IBMPlexMono-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
+
+body[data-theme="obsidian-glass"]{--mini-accent:#9fdcff;background:#020306;color:#f7f7f2;font-family:"Obsidian Space","Segoe UI",sans-serif}
+body[data-theme="obsidian-glass"] .mini-shell{
+  isolation:isolate;
+  overflow:hidden;
+  border:1px solid rgba(223,231,243,.24);
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 18% 16%,rgba(159,220,255,.16),transparent 30%),
+    linear-gradient(145deg,rgba(255,255,255,.14),rgba(12,16,24,.72) 48%,rgba(2,3,6,.82));
+  box-shadow:inset 0 1px rgba(255,255,255,.24),inset 0 -1px rgba(255,255,255,.04),0 22px 60px #0009;
+  backdrop-filter:blur(30px) saturate(1.18);
+}
+body[data-theme="obsidian-glass"] .mini-shell::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  right:20px;
+  top:-38px;
+  width:138px;
+  height:138px;
+  border:1px solid rgba(223,231,243,.18);
+  border-radius:50%;
+  background:conic-gradient(from 140deg,rgba(143,243,255,.26),rgba(216,189,255,.22),rgba(255,195,223,.16),rgba(193,255,236,.2),rgba(143,243,255,.26));
+  opacity:.4;
+  filter:drop-shadow(0 0 22px rgba(159,220,255,.16));
+  mask:radial-gradient(circle,transparent 36%,#000 37% 42%,transparent 43% 55%,#000 56% 58%,transparent 59%);
+}
+body[data-theme="obsidian-glass"] .mini-shell::after{
+  content:"";
+  position:absolute;
+  z-index:2;
+  left:12%;
+  right:12%;
+  top:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,#8ef3ffaa,#d8bdffaa,#ffc3df99,#c1ffec99,transparent);
+  opacity:.6;
+  filter:drop-shadow(0 0 5px rgba(159,220,255,.35));
+}
+body[data-theme="obsidian-glass"] .mini-shell>*{position:relative;z-index:1}
+body[data-theme="obsidian-glass"] .mini-glow{background:linear-gradient(90deg,transparent,rgba(159,220,255,.12),rgba(216,189,255,.08),transparent);filter:blur(8px)}
+body[data-theme="obsidian-glass"] .mini-art{
+  width:84px;
+  height:84px;
+  border:1px solid rgba(255,255,255,.34);
+  border-radius:22px;
+  background:linear-gradient(145deg,#edf6ff,#59677b 62%,#101722);
+  color:#061018;
+  box-shadow:inset 0 1px rgba(255,255,255,.85),0 12px 28px #0008,0 0 22px rgba(159,220,255,.14);
+}
+body[data-theme="obsidian-glass"] .mini-copy small{color:#9fdcff;font-family:"Obsidian Mono",Consolas,monospace;letter-spacing:.13em}
+body[data-theme="obsidian-glass"] .mini-copy strong{font-weight:680;letter-spacing:0}
+body[data-theme="obsidian-glass"] .mini-copy>span,
+body[data-theme="obsidian-glass"] .mini-time{color:#9ca7b5;font-family:"Obsidian Mono",Consolas,monospace}
+body[data-theme="obsidian-glass"] .mini-progress{height:3px;border-radius:999px;background:rgba(223,231,243,.14);overflow:hidden}
+body[data-theme="obsidian-glass"] .mini-progress i{border-radius:999px;background:linear-gradient(90deg,#9fdcff,#d8bdff,#ffc3df);box-shadow:0 0 10px rgba(159,220,255,.65)}
+body[data-theme="obsidian-glass"] .mini-controls{gap:7px}
+body[data-theme="obsidian-glass"] .mini-controls button{
+  position:relative;
+  overflow:hidden;
+  border-radius:50%;
+  color:#d9e2ef;
+}
+body[data-theme="obsidian-glass"] .mini-controls .mini-play{
+  border:1px solid rgba(255,255,255,.72);
+  background:radial-gradient(circle at 38% 30%,#fff,#e4ebf7 54%,#9fb0c6);
+  color:#05070a;
+  box-shadow:inset 0 1px #fff,0 8px 22px #0007,0 0 22px rgba(159,220,255,.28);
+}
+body[data-theme="obsidian-glass"] .window-actions button:hover,
+body[data-theme="obsidian-glass"] .mini-controls button:hover{color:#fff;text-shadow:0 0 8px rgba(159,220,255,.55)}
+body[data-theme="obsidian-glass"].playing .mini-shell::before{animation:mini-obsidian-ring 7s ease-in-out infinite}
+body[data-theme="obsidian-glass"].playing .mini-art{animation:mini-obsidian-art 5.2s ease-in-out infinite}
+body[data-theme="obsidian-glass"].playing .mini-shell::after{animation:mini-obsidian-edge 4.8s ease-in-out infinite}
+@keyframes mini-obsidian-ring{50%{opacity:.58;filter:hue-rotate(14deg) drop-shadow(0 0 28px rgba(159,220,255,.22));transform:rotate(5deg) scale(1.04)}}
+@keyframes mini-obsidian-art{50%{box-shadow:inset 0 1px #fff,0 14px 34px #0008,0 0 30px rgba(159,220,255,.24)}}
+@keyframes mini-obsidian-edge{50%{opacity:.88;filter:hue-rotate(18deg) drop-shadow(0 0 8px rgba(159,220,255,.42));transform:scaleX(.9)}}
+@media(prefers-reduced-motion:reduce){body[data-theme="obsidian-glass"].playing .mini-shell::before,body[data-theme="obsidian-glass"].playing .mini-shell::after,body[data-theme="obsidian-glass"].playing .mini-art{animation:none!important}}
+body[data-performance="conserve"][data-theme="obsidian-glass"] .mini-shell{backdrop-filter:none!important}

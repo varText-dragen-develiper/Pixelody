@@ -1,0 +1,138 @@
+{
+  "ok": true,
+  "version": 1,
+  "revision": 3,
+  "revisions": {
+    "overall": 3,
+    "library": 1,
+    "playback": 2,
+    "queue": 1,
+    "favorites": 1,
+    "permissions": 1,
+    "deviceRefresh": 3,
+    "jam": 0
+  },
+  "hostId": "studio-pc",
+  "hostName": "Pixelody on Studio PC",
+  "visibility": "lan",
+  "generatedAt": "2026-07-02T00:00:00.000Z",
+  "checkedAt": "2026-07-02T00:00:01.000Z",
+  "pollAfterMs": 1000,
+  "auth": {
+    "kind": "device",
+    "permissions": ["browse", "stream", "playback:read"]
+  },
+  "snapshot": {
+    "generatedAt": "2026-07-02T00:00:00.000Z",
+    "tracks": 2,
+    "playlists": 1,
+    "favorites": 1,
+    "queue": 1
+  },
+  "playback": {
+    "currentTrackId": "public-track-1",
+    "playing": true,
+    "paused": false,
+    "currentTime": 12,
+    "positionSeconds": 12,
+    "duration": 181,
+    "durationSeconds": 181,
+    "positionUpdatedAt": "2026-07-02T00:00:01.000Z",
+    "estimatedStartedAt": "2026-07-01T23:59:49.000Z",
+    "shuffle": false,
+    "repeat": "off"
+  },
+  "queue": ["public-track-1"],
+  "shuffle": {
+    "version": 1,
+    "enabled": true,
+    "mode": "flow",
+    "session": { "horizon": 6, "energyShape": "steady", "albumPolicy": "track", "preserveAlbumRuns": false },
+    "plan": { "style": "flow", "seed": "fixture-seed", "generation": 1, "cursor": 0, "sourceQueueIds": ["public-track-1"], "order": ["public-track-1"], "future": [], "priorityIds": [] }
+  },
+  "networkSession": {
+    "kind": "personal-library",
+    "sessionId": "studio-pc:personal-library",
+    "host": {
+      "id": "studio-pc",
+      "name": "Pixelody on Studio PC",
+      "platform": "windows",
+      "visibility": "lan",
+      "roles": ["libraryHost", "playbackDevice", "controller"]
+    },
+    "auth": {
+      "kind": "device",
+      "permissions": ["browse", "stream", "playback:read"]
+    },
+    "sync": {
+      "revision": 3,
+      "revisions": {
+        "overall": 3,
+        "library": 1,
+        "playback": 2,
+        "queue": 1,
+        "favorites": 1,
+        "permissions": 1,
+        "deviceRefresh": 3,
+        "jam": 0
+      },
+      "generatedAt": "2026-07-02T00:00:00.000Z",
+      "checkedAt": "2026-07-02T00:00:01.000Z",
+      "pollAfterMs": 1000
+    },
+    "playback": {
+      "state": "playing",
+      "currentTrackId": "public-track-1",
+      "currentTrack": {
+        "id": "public-track-1",
+        "title": "Glass Harbor",
+        "artist": "Pixelody Test Ensemble",
+        "album": "Contract Fixtures",
+        "duration": 181,
+        "format": "FLAC",
+        "codec": "FLAC",
+        "lossless": true,
+        "sampleRate": 96000,
+        "bitDepth": 24,
+        "missing": false
+      },
+      "playing": true,
+      "elapsedSeconds": 12,
+      "durationSeconds": 181,
+      "positionUpdatedAt": "2026-07-02T00:00:01.000Z",
+      "estimatedStartedAt": "2026-07-01T23:59:49.000Z"
+    },
+    "shuffle": {
+      "version": 1,
+      "enabled": true,
+      "mode": "flow",
+      "session": { "horizon": 6, "energyShape": "steady", "albumPolicy": "track", "preserveAlbumRuns": false },
+      "plan": { "style": "flow", "seed": "fixture-seed", "generation": 1, "cursor": 0, "sourceQueueIds": ["public-track-1"], "order": ["public-track-1"], "future": [], "priorityIds": [] }
+    },
+    "queue": {
+      "trackIds": ["public-track-1"],
+      "currentIndex": 0,
+      "upcomingTrackIds": [],
+      "upcomingTracks": []
+    },
+    "diagnostics": {
+      "activeDevices": 1,
+      "lastError": "",
+      "recentCommandCount": 0
+    }
+  },
+  "favorites": ["public-track-1"],
+  "deviceRefresh": {
+    "id": "refresh_1",
+    "action": "soft-refresh",
+    "scope": "jam",
+    "reason": "Host requested a non-destructive J.A.M. device re-sync.",
+    "requestedAt": "2026-07-02T00:00:01.500Z",
+    "requestedBy": {
+      "kind": "owner",
+      "deviceId": "",
+      "deviceName": "",
+      "permissions": ["owner"]
+    }
+  }
+}

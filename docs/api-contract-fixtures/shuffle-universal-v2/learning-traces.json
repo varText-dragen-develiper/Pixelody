@@ -1,0 +1,4403 @@
+{
+  "schemaVersion": 2,
+  "policyVersion": "universal-shuffle-v2.1",
+  "vectors": [
+    {
+      "name": "heard-completion-explicit-preference-unicode",
+      "initial": {
+        "schemaVersion": 2,
+        "policyVersion": "universal-shuffle-v2.1",
+        "enabled": true,
+        "learningEpoch": 0,
+        "revision": 0,
+        "clockFloorMs": 1800000000000,
+        "resetAtMs": null,
+        "tracks": [],
+        "occurrences": [],
+        "producers": [],
+        "seenEventIds": [],
+        "journal": [],
+        "diagnostics": {
+          "clockRollbacks": 0,
+          "futureClamps": 0,
+          "coverageUnderflows": 0,
+          "prunedOccurrences": 0
+        }
+      },
+      "nowMs": 1800000000000,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "eventId": "golden-1",
+          "producerId": "service|one",
+          "sequence": 1,
+          "timestampMs": 1800000000000,
+          "type": "offered",
+          "trackId": "曲|é"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "golden-2",
+          "producerId": "service|one",
+          "sequence": 2,
+          "timestampMs": 1800000000000,
+          "type": "activated",
+          "trackId": "曲|é",
+          "occurrenceId": "entry|one",
+          "durationMs": 100000
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "golden-3",
+          "producerId": "service|one",
+          "sequence": 3,
+          "timestampMs": 1800000000000,
+          "type": "interval",
+          "trackId": "曲|é",
+          "occurrenceId": "entry|one",
+          "monotonicClockId": "boot-α",
+          "monotonicStartMs": 0,
+          "monotonicEndMs": 50000,
+          "mediaStartMs": 0,
+          "mediaEndMs": 50000,
+          "playing": true
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "golden-4",
+          "producerId": "service|one",
+          "sequence": 4,
+          "timestampMs": 1800000000000,
+          "type": "interval",
+          "trackId": "曲|é",
+          "occurrenceId": "entry|one",
+          "monotonicClockId": "boot-α",
+          "monotonicStartMs": 50000,
+          "monotonicEndMs": 100000,
+          "mediaStartMs": 50000,
+          "mediaEndMs": 100000,
+          "playing": true
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "golden-5",
+          "producerId": "service|one",
+          "sequence": 5,
+          "timestampMs": 1800000000000,
+          "type": "outcome",
+          "trackId": "曲|é",
+          "occurrenceId": "entry|one",
+          "outcome": "natural-end"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "golden-6",
+          "producerId": "service|one",
+          "sequence": 6,
+          "timestampMs": 1800000000000,
+          "type": "preference",
+          "trackId": "曲|é",
+          "value": -1
+        }
+      ],
+      "normalizedEvents": [
+        {
+          "schemaVersion": 2,
+          "eventId": "golden-1",
+          "type": "offered",
+          "timestampMs": 1800000000000,
+          "personal": true,
+          "reason": null,
+          "producerId": "service|one",
+          "sequence": 1,
+          "trackId": "曲|é"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "golden-2",
+          "type": "activated",
+          "timestampMs": 1800000000000,
+          "personal": true,
+          "reason": null,
+          "producerId": "service|one",
+          "sequence": 2,
+          "trackId": "曲|é",
+          "occurrenceId": "entry|one",
+          "durationMs": 100000,
+          "replay": false
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "golden-3",
+          "type": "interval",
+          "timestampMs": 1800000000000,
+          "personal": true,
+          "reason": null,
+          "producerId": "service|one",
+          "sequence": 3,
+          "trackId": "曲|é",
+          "occurrenceId": "entry|one",
+          "monotonicClockId": "boot-α",
+          "monotonicStartMs": 0,
+          "monotonicEndMs": 50000,
+          "mediaStartMs": 0,
+          "mediaEndMs": 50000,
+          "speedPermille": 1000,
+          "playing": true,
+          "discontinuity": false
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "golden-4",
+          "type": "interval",
+          "timestampMs": 1800000000000,
+          "personal": true,
+          "reason": null,
+          "producerId": "service|one",
+          "sequence": 4,
+          "trackId": "曲|é",
+          "occurrenceId": "entry|one",
+          "monotonicClockId": "boot-α",
+          "monotonicStartMs": 50000,
+          "monotonicEndMs": 100000,
+          "mediaStartMs": 50000,
+          "mediaEndMs": 100000,
+          "speedPermille": 1000,
+          "playing": true,
+          "discontinuity": false
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "golden-5",
+          "type": "outcome",
+          "timestampMs": 1800000000000,
+          "personal": true,
+          "reason": null,
+          "producerId": "service|one",
+          "sequence": 5,
+          "trackId": "曲|é",
+          "occurrenceId": "entry|one",
+          "outcome": "natural-end",
+          "userInitiated": false
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "golden-6",
+          "type": "preference",
+          "timestampMs": 1800000000000,
+          "personal": true,
+          "reason": null,
+          "producerId": "service|one",
+          "sequence": 6,
+          "trackId": "曲|é",
+          "value": -1
+        }
+      ],
+      "states": [
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 1,
+          "clockFloorMs": 1800000000000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "曲|é",
+              "offered": 1,
+              "activated": 0,
+              "heardOccurrences": 0,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": null,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 1,
+              "heardWallMs": 0
+            }
+          ],
+          "occurrences": [],
+          "producers": [
+            {
+              "producerId": "service|one",
+              "through": 1,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "golden-1"
+          ],
+          "journal": [
+            {
+              "eventId": "golden-1",
+              "type": "offered",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 2,
+          "clockFloorMs": 1800000000000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "曲|é",
+              "offered": 1,
+              "activated": 1,
+              "heardOccurrences": 0,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": null,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 0,
+              "heardWallMs": 0
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "entry|one",
+              "trackId": "曲|é",
+              "activatedAtMs": 1800000000000,
+              "durationMs": 100000,
+              "replay": false,
+              "wallMs": 0,
+              "coverageRanges": [],
+              "clocks": [],
+              "heardCredited": false,
+              "ended": false
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "service|one",
+              "through": 2,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "golden-1",
+            "golden-2"
+          ],
+          "journal": [
+            {
+              "eventId": "golden-1",
+              "type": "offered",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é"
+            },
+            {
+              "eventId": "golden-2",
+              "type": "activated",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é",
+              "occurrenceId": "entry|one"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 3,
+          "clockFloorMs": 1800000000000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "曲|é",
+              "offered": 1,
+              "activated": 1,
+              "heardOccurrences": 1,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": 1800000000000,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 0,
+              "heardWallMs": 50000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "entry|one",
+              "trackId": "曲|é",
+              "activatedAtMs": 1800000000000,
+              "durationMs": 100000,
+              "replay": false,
+              "wallMs": 50000,
+              "coverageRanges": [
+                [
+                  0,
+                  50000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot-α",
+                  "throughMs": 50000
+                }
+              ],
+              "heardCredited": true,
+              "ended": false
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "service|one",
+              "through": 3,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "golden-1",
+            "golden-2",
+            "golden-3"
+          ],
+          "journal": [
+            {
+              "eventId": "golden-1",
+              "type": "offered",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é"
+            },
+            {
+              "eventId": "golden-2",
+              "type": "activated",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é",
+              "occurrenceId": "entry|one"
+            },
+            {
+              "eventId": "golden-3",
+              "type": "interval",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é",
+              "occurrenceId": "entry|one"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 4,
+          "clockFloorMs": 1800000000000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "曲|é",
+              "offered": 1,
+              "activated": 1,
+              "heardOccurrences": 1,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": 1800000000000,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 0,
+              "heardWallMs": 100000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "entry|one",
+              "trackId": "曲|é",
+              "activatedAtMs": 1800000000000,
+              "durationMs": 100000,
+              "replay": false,
+              "wallMs": 100000,
+              "coverageRanges": [
+                [
+                  0,
+                  100000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot-α",
+                  "throughMs": 100000
+                }
+              ],
+              "heardCredited": true,
+              "ended": false
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "service|one",
+              "through": 4,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "golden-1",
+            "golden-2",
+            "golden-3",
+            "golden-4"
+          ],
+          "journal": [
+            {
+              "eventId": "golden-1",
+              "type": "offered",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é"
+            },
+            {
+              "eventId": "golden-2",
+              "type": "activated",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é",
+              "occurrenceId": "entry|one"
+            },
+            {
+              "eventId": "golden-3",
+              "type": "interval",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é",
+              "occurrenceId": "entry|one"
+            },
+            {
+              "eventId": "golden-4",
+              "type": "interval",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é",
+              "occurrenceId": "entry|one"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 5,
+          "clockFloorMs": 1800000000000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "曲|é",
+              "offered": 1,
+              "activated": 1,
+              "heardOccurrences": 1,
+              "naturalEnds": 1,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 3,
+              "negativeUnits": 0,
+              "evidenceAtMs": 1800000000000,
+              "lastHeardAtMs": 1800000000000,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 0,
+              "heardWallMs": 100000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "entry|one",
+              "trackId": "曲|é",
+              "activatedAtMs": 1800000000000,
+              "durationMs": 100000,
+              "replay": false,
+              "wallMs": 100000,
+              "coverageRanges": [
+                [
+                  0,
+                  100000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot-α",
+                  "throughMs": 100000
+                }
+              ],
+              "heardCredited": true,
+              "ended": true
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "service|one",
+              "through": 5,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "golden-1",
+            "golden-2",
+            "golden-3",
+            "golden-4",
+            "golden-5"
+          ],
+          "journal": [
+            {
+              "eventId": "golden-1",
+              "type": "offered",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é"
+            },
+            {
+              "eventId": "golden-2",
+              "type": "activated",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é",
+              "occurrenceId": "entry|one"
+            },
+            {
+              "eventId": "golden-3",
+              "type": "interval",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é",
+              "occurrenceId": "entry|one"
+            },
+            {
+              "eventId": "golden-4",
+              "type": "interval",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é",
+              "occurrenceId": "entry|one"
+            },
+            {
+              "eventId": "golden-5",
+              "type": "outcome",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é",
+              "occurrenceId": "entry|one",
+              "outcome": "natural-end"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 6,
+          "clockFloorMs": 1800000000000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "曲|é",
+              "offered": 1,
+              "activated": 1,
+              "heardOccurrences": 1,
+              "naturalEnds": 1,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 3,
+              "negativeUnits": 0,
+              "evidenceAtMs": 1800000000000,
+              "lastHeardAtMs": 1800000000000,
+              "explicitPreference": -1,
+              "explicitPreferenceAtMs": 1800000000000,
+              "opportunityDebt": 0,
+              "heardWallMs": 100000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "entry|one",
+              "trackId": "曲|é",
+              "activatedAtMs": 1800000000000,
+              "durationMs": 100000,
+              "replay": false,
+              "wallMs": 100000,
+              "coverageRanges": [
+                [
+                  0,
+                  100000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot-α",
+                  "throughMs": 100000
+                }
+              ],
+              "heardCredited": true,
+              "ended": true
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "service|one",
+              "through": 6,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "golden-1",
+            "golden-2",
+            "golden-3",
+            "golden-4",
+            "golden-5",
+            "golden-6"
+          ],
+          "journal": [
+            {
+              "eventId": "golden-1",
+              "type": "offered",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é"
+            },
+            {
+              "eventId": "golden-2",
+              "type": "activated",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é",
+              "occurrenceId": "entry|one"
+            },
+            {
+              "eventId": "golden-3",
+              "type": "interval",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é",
+              "occurrenceId": "entry|one"
+            },
+            {
+              "eventId": "golden-4",
+              "type": "interval",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é",
+              "occurrenceId": "entry|one"
+            },
+            {
+              "eventId": "golden-5",
+              "type": "outcome",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é",
+              "occurrenceId": "entry|one",
+              "outcome": "natural-end"
+            },
+            {
+              "eventId": "golden-6",
+              "type": "preference",
+              "timestampMs": 1800000000000,
+              "applied": true,
+              "trackId": "曲|é"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        }
+      ],
+      "signals": {
+        "tastePoints": -7,
+        "exposure": 1,
+        "noveltyPoints": 10,
+        "lastHeardAtMs": 1800000000000,
+        "confidencePermille": 111
+      }
+    },
+    {
+      "name": "seek-infrastructure-nonpersonal",
+      "initial": {
+        "schemaVersion": 2,
+        "policyVersion": "universal-shuffle-v2.1",
+        "enabled": true,
+        "learningEpoch": 0,
+        "revision": 0,
+        "clockFloorMs": 100000,
+        "resetAtMs": null,
+        "tracks": [],
+        "occurrences": [],
+        "producers": [],
+        "seenEventIds": [],
+        "journal": [],
+        "diagnostics": {
+          "clockRollbacks": 0,
+          "futureClamps": 0,
+          "coverageUnderflows": 0,
+          "prunedOccurrences": 0
+        }
+      },
+      "nowMs": 100000,
+      "contexts": [
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        }
+      ],
+      "events": [
+        {
+          "schemaVersion": 2,
+          "eventId": "seek-infrastructure-nonpersonal-0",
+          "producerId": "seek-infrastructure-nonpersonal",
+          "sequence": 1,
+          "type": "activated",
+          "trackId": "track",
+          "occurrenceId": "heard-1",
+          "durationMs": 180000
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seek-infrastructure-nonpersonal-1",
+          "producerId": "seek-infrastructure-nonpersonal",
+          "sequence": 2,
+          "type": "interval",
+          "trackId": "track",
+          "occurrenceId": "heard-1",
+          "monotonicClockId": "boot",
+          "monotonicStartMs": 0,
+          "monotonicEndMs": 3000,
+          "mediaStartMs": 177000,
+          "mediaEndMs": 180000,
+          "playing": true
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seek-infrastructure-nonpersonal-2",
+          "producerId": "seek-infrastructure-nonpersonal",
+          "sequence": 3,
+          "type": "outcome",
+          "trackId": "track",
+          "occurrenceId": "heard-1",
+          "outcome": "natural-end"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seek-infrastructure-nonpersonal-3",
+          "producerId": "seek-infrastructure-nonpersonal",
+          "sequence": 4,
+          "type": "activated",
+          "trackId": "track",
+          "occurrenceId": "heard-2",
+          "durationMs": 180000
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seek-infrastructure-nonpersonal-4",
+          "producerId": "seek-infrastructure-nonpersonal",
+          "sequence": 5,
+          "type": "interval",
+          "trackId": "track",
+          "occurrenceId": "heard-2",
+          "monotonicClockId": "boot",
+          "monotonicStartMs": 3000,
+          "monotonicEndMs": 13000,
+          "mediaStartMs": 0,
+          "mediaEndMs": 10000,
+          "playing": true
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seek-infrastructure-nonpersonal-5",
+          "producerId": "seek-infrastructure-nonpersonal",
+          "sequence": 6,
+          "type": "outcome",
+          "trackId": "track",
+          "occurrenceId": "heard-2",
+          "outcome": "deliberate-skip",
+          "userInitiated": true,
+          "reason": "route-failure"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seek-infrastructure-nonpersonal-6",
+          "producerId": "seek-infrastructure-nonpersonal",
+          "sequence": 7,
+          "type": "preference",
+          "trackId": "track",
+          "value": -1,
+          "source": "remote"
+        }
+      ],
+      "normalizedEvents": [
+        {
+          "schemaVersion": 2,
+          "eventId": "seek-infrastructure-nonpersonal-0",
+          "type": "activated",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "seek-infrastructure-nonpersonal",
+          "sequence": 1,
+          "trackId": "track",
+          "occurrenceId": "heard-1",
+          "durationMs": 180000,
+          "replay": false
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seek-infrastructure-nonpersonal-1",
+          "type": "interval",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "seek-infrastructure-nonpersonal",
+          "sequence": 2,
+          "trackId": "track",
+          "occurrenceId": "heard-1",
+          "monotonicClockId": "boot",
+          "monotonicStartMs": 0,
+          "monotonicEndMs": 3000,
+          "mediaStartMs": 177000,
+          "mediaEndMs": 180000,
+          "speedPermille": 1000,
+          "playing": true,
+          "discontinuity": false
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seek-infrastructure-nonpersonal-2",
+          "type": "outcome",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "seek-infrastructure-nonpersonal",
+          "sequence": 3,
+          "trackId": "track",
+          "occurrenceId": "heard-1",
+          "outcome": "natural-end",
+          "userInitiated": false
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seek-infrastructure-nonpersonal-3",
+          "type": "activated",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "seek-infrastructure-nonpersonal",
+          "sequence": 4,
+          "trackId": "track",
+          "occurrenceId": "heard-2",
+          "durationMs": 180000,
+          "replay": false
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seek-infrastructure-nonpersonal-4",
+          "type": "interval",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "seek-infrastructure-nonpersonal",
+          "sequence": 5,
+          "trackId": "track",
+          "occurrenceId": "heard-2",
+          "monotonicClockId": "boot",
+          "monotonicStartMs": 3000,
+          "monotonicEndMs": 13000,
+          "mediaStartMs": 0,
+          "mediaEndMs": 10000,
+          "speedPermille": 1000,
+          "playing": true,
+          "discontinuity": false
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seek-infrastructure-nonpersonal-5",
+          "type": "outcome",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": "route-failure",
+          "producerId": "seek-infrastructure-nonpersonal",
+          "sequence": 6,
+          "trackId": "track",
+          "occurrenceId": "heard-2",
+          "outcome": "deliberate-skip",
+          "userInitiated": true
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seek-infrastructure-nonpersonal-6",
+          "type": "preference",
+          "timestampMs": 100000,
+          "personal": false,
+          "reason": null,
+          "producerId": "seek-infrastructure-nonpersonal",
+          "sequence": 7,
+          "trackId": "track",
+          "value": -1
+        }
+      ],
+      "states": [
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 1,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 0,
+              "activated": 1,
+              "heardOccurrences": 0,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": null,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 0,
+              "heardWallMs": 0
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "heard-1",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 180000,
+              "replay": false,
+              "wallMs": 0,
+              "coverageRanges": [],
+              "clocks": [],
+              "heardCredited": false,
+              "ended": false
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "seek-infrastructure-nonpersonal",
+              "through": 1,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "seek-infrastructure-nonpersonal-0"
+          ],
+          "journal": [
+            {
+              "eventId": "seek-infrastructure-nonpersonal-0",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 2,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 0,
+              "activated": 1,
+              "heardOccurrences": 1,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": 100000,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 0,
+              "heardWallMs": 3000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "heard-1",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 180000,
+              "replay": false,
+              "wallMs": 3000,
+              "coverageRanges": [
+                [
+                  177000,
+                  180000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot",
+                  "throughMs": 3000
+                }
+              ],
+              "heardCredited": true,
+              "ended": false
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "seek-infrastructure-nonpersonal",
+              "through": 2,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "seek-infrastructure-nonpersonal-0",
+            "seek-infrastructure-nonpersonal-1"
+          ],
+          "journal": [
+            {
+              "eventId": "seek-infrastructure-nonpersonal-0",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-1",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 3,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 0,
+              "activated": 1,
+              "heardOccurrences": 1,
+              "naturalEnds": 1,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": 100000,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 0,
+              "heardWallMs": 3000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "heard-1",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 180000,
+              "replay": false,
+              "wallMs": 3000,
+              "coverageRanges": [
+                [
+                  177000,
+                  180000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot",
+                  "throughMs": 3000
+                }
+              ],
+              "heardCredited": true,
+              "ended": true
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "seek-infrastructure-nonpersonal",
+              "through": 3,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "seek-infrastructure-nonpersonal-0",
+            "seek-infrastructure-nonpersonal-1",
+            "seek-infrastructure-nonpersonal-2"
+          ],
+          "journal": [
+            {
+              "eventId": "seek-infrastructure-nonpersonal-0",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-1",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-2",
+              "type": "outcome",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1",
+              "outcome": "natural-end"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 4,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 0,
+              "activated": 2,
+              "heardOccurrences": 1,
+              "naturalEnds": 1,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": 100000,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 0,
+              "heardWallMs": 3000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "heard-1",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 180000,
+              "replay": false,
+              "wallMs": 3000,
+              "coverageRanges": [
+                [
+                  177000,
+                  180000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot",
+                  "throughMs": 3000
+                }
+              ],
+              "heardCredited": true,
+              "ended": true
+            },
+            {
+              "occurrenceId": "heard-2",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 180000,
+              "replay": false,
+              "wallMs": 0,
+              "coverageRanges": [],
+              "clocks": [],
+              "heardCredited": false,
+              "ended": false
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "seek-infrastructure-nonpersonal",
+              "through": 4,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "seek-infrastructure-nonpersonal-0",
+            "seek-infrastructure-nonpersonal-1",
+            "seek-infrastructure-nonpersonal-2",
+            "seek-infrastructure-nonpersonal-3"
+          ],
+          "journal": [
+            {
+              "eventId": "seek-infrastructure-nonpersonal-0",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-1",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-2",
+              "type": "outcome",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1",
+              "outcome": "natural-end"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-3",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-2"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 5,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 0,
+              "activated": 2,
+              "heardOccurrences": 2,
+              "naturalEnds": 1,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": 100000,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 0,
+              "heardWallMs": 13000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "heard-1",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 180000,
+              "replay": false,
+              "wallMs": 3000,
+              "coverageRanges": [
+                [
+                  177000,
+                  180000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot",
+                  "throughMs": 3000
+                }
+              ],
+              "heardCredited": true,
+              "ended": true
+            },
+            {
+              "occurrenceId": "heard-2",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 180000,
+              "replay": false,
+              "wallMs": 10000,
+              "coverageRanges": [
+                [
+                  0,
+                  10000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot",
+                  "throughMs": 13000
+                }
+              ],
+              "heardCredited": true,
+              "ended": false
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "seek-infrastructure-nonpersonal",
+              "through": 5,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "seek-infrastructure-nonpersonal-0",
+            "seek-infrastructure-nonpersonal-1",
+            "seek-infrastructure-nonpersonal-2",
+            "seek-infrastructure-nonpersonal-3",
+            "seek-infrastructure-nonpersonal-4"
+          ],
+          "journal": [
+            {
+              "eventId": "seek-infrastructure-nonpersonal-0",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-1",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-2",
+              "type": "outcome",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1",
+              "outcome": "natural-end"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-3",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-2"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-4",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-2"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 6,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 0,
+              "activated": 2,
+              "heardOccurrences": 2,
+              "naturalEnds": 1,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": 100000,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 0,
+              "heardWallMs": 13000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "heard-1",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 180000,
+              "replay": false,
+              "wallMs": 3000,
+              "coverageRanges": [
+                [
+                  177000,
+                  180000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot",
+                  "throughMs": 3000
+                }
+              ],
+              "heardCredited": true,
+              "ended": true
+            },
+            {
+              "occurrenceId": "heard-2",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 180000,
+              "replay": false,
+              "wallMs": 10000,
+              "coverageRanges": [
+                [
+                  0,
+                  10000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot",
+                  "throughMs": 13000
+                }
+              ],
+              "heardCredited": true,
+              "ended": true
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "seek-infrastructure-nonpersonal",
+              "through": 6,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "seek-infrastructure-nonpersonal-0",
+            "seek-infrastructure-nonpersonal-1",
+            "seek-infrastructure-nonpersonal-2",
+            "seek-infrastructure-nonpersonal-3",
+            "seek-infrastructure-nonpersonal-4",
+            "seek-infrastructure-nonpersonal-5"
+          ],
+          "journal": [
+            {
+              "eventId": "seek-infrastructure-nonpersonal-0",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-1",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-2",
+              "type": "outcome",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1",
+              "outcome": "natural-end"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-3",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-2"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-4",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-2"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-5",
+              "type": "outcome",
+              "timestampMs": 100000,
+              "applied": false,
+              "trackId": "track",
+              "occurrenceId": "heard-2",
+              "suppressed": "infrastructure",
+              "outcome": "deliberate-skip"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 7,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 0,
+              "activated": 2,
+              "heardOccurrences": 2,
+              "naturalEnds": 1,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": 100000,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 0,
+              "heardWallMs": 13000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "heard-1",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 180000,
+              "replay": false,
+              "wallMs": 3000,
+              "coverageRanges": [
+                [
+                  177000,
+                  180000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot",
+                  "throughMs": 3000
+                }
+              ],
+              "heardCredited": true,
+              "ended": true
+            },
+            {
+              "occurrenceId": "heard-2",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 180000,
+              "replay": false,
+              "wallMs": 10000,
+              "coverageRanges": [
+                [
+                  0,
+                  10000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot",
+                  "throughMs": 13000
+                }
+              ],
+              "heardCredited": true,
+              "ended": true
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "seek-infrastructure-nonpersonal",
+              "through": 7,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "seek-infrastructure-nonpersonal-0",
+            "seek-infrastructure-nonpersonal-1",
+            "seek-infrastructure-nonpersonal-2",
+            "seek-infrastructure-nonpersonal-3",
+            "seek-infrastructure-nonpersonal-4",
+            "seek-infrastructure-nonpersonal-5",
+            "seek-infrastructure-nonpersonal-6"
+          ],
+          "journal": [
+            {
+              "eventId": "seek-infrastructure-nonpersonal-0",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-1",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-2",
+              "type": "outcome",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-1",
+              "outcome": "natural-end"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-3",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-2"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-4",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "heard-2"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-5",
+              "type": "outcome",
+              "timestampMs": 100000,
+              "applied": false,
+              "trackId": "track",
+              "occurrenceId": "heard-2",
+              "suppressed": "infrastructure",
+              "outcome": "deliberate-skip"
+            },
+            {
+              "eventId": "seek-infrastructure-nonpersonal-6",
+              "type": "preference",
+              "timestampMs": 100000,
+              "applied": false,
+              "trackId": "track",
+              "suppressed": "nonpersonal"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        }
+      ],
+      "signals": {
+        "tastePoints": 0,
+        "exposure": 2,
+        "noveltyPoints": 8,
+        "lastHeardAtMs": 100000,
+        "confidencePermille": 0
+      }
+    },
+    {
+      "name": "decay-rollback-preference-reversal",
+      "initial": {
+        "schemaVersion": 2,
+        "policyVersion": "universal-shuffle-v2.1",
+        "enabled": true,
+        "learningEpoch": 0,
+        "revision": 0,
+        "clockFloorMs": 100000,
+        "resetAtMs": null,
+        "tracks": [],
+        "occurrences": [],
+        "producers": [],
+        "seenEventIds": [],
+        "journal": [],
+        "diagnostics": {
+          "clockRollbacks": 0,
+          "futureClamps": 0,
+          "coverageUnderflows": 0,
+          "prunedOccurrences": 0
+        }
+      },
+      "nowMs": 100000,
+      "contexts": [
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 4838500000
+        },
+        {
+          "nowMs": 4838500000
+        },
+        {
+          "nowMs": 50000
+        },
+        {
+          "nowMs": 4838500000
+        }
+      ],
+      "events": [
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-0",
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 1,
+          "type": "activated",
+          "trackId": "track",
+          "occurrenceId": "complete",
+          "durationMs": 100000
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-1",
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 2,
+          "type": "interval",
+          "trackId": "track",
+          "occurrenceId": "complete",
+          "monotonicClockId": "boot",
+          "monotonicStartMs": 0,
+          "monotonicEndMs": 50000,
+          "mediaStartMs": 0,
+          "mediaEndMs": 50000,
+          "playing": true
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-2",
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 3,
+          "type": "interval",
+          "trackId": "track",
+          "occurrenceId": "complete",
+          "monotonicClockId": "boot",
+          "monotonicStartMs": 50000,
+          "monotonicEndMs": 100000,
+          "mediaStartMs": 50000,
+          "mediaEndMs": 100000,
+          "playing": true
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-3",
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 4,
+          "type": "outcome",
+          "trackId": "track",
+          "occurrenceId": "complete",
+          "outcome": "natural-end"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-4",
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 5,
+          "type": "preference",
+          "trackId": "track",
+          "value": 1
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-5",
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 6,
+          "type": "offered",
+          "trackId": "track"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-6",
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 7,
+          "type": "preference",
+          "trackId": "track",
+          "value": -1
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-7",
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 8,
+          "type": "offered",
+          "trackId": "track"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-8",
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 9,
+          "type": "offered",
+          "trackId": "track",
+          "timestampMs": 4838501000
+        }
+      ],
+      "normalizedEvents": [
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-0",
+          "type": "activated",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 1,
+          "trackId": "track",
+          "occurrenceId": "complete",
+          "durationMs": 100000,
+          "replay": false
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-1",
+          "type": "interval",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 2,
+          "trackId": "track",
+          "occurrenceId": "complete",
+          "monotonicClockId": "boot",
+          "monotonicStartMs": 0,
+          "monotonicEndMs": 50000,
+          "mediaStartMs": 0,
+          "mediaEndMs": 50000,
+          "speedPermille": 1000,
+          "playing": true,
+          "discontinuity": false
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-2",
+          "type": "interval",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 3,
+          "trackId": "track",
+          "occurrenceId": "complete",
+          "monotonicClockId": "boot",
+          "monotonicStartMs": 50000,
+          "monotonicEndMs": 100000,
+          "mediaStartMs": 50000,
+          "mediaEndMs": 100000,
+          "speedPermille": 1000,
+          "playing": true,
+          "discontinuity": false
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-3",
+          "type": "outcome",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 4,
+          "trackId": "track",
+          "occurrenceId": "complete",
+          "outcome": "natural-end",
+          "userInitiated": false
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-4",
+          "type": "preference",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 5,
+          "trackId": "track",
+          "value": 1
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-5",
+          "type": "offered",
+          "timestampMs": 4838500000,
+          "personal": true,
+          "reason": null,
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 6,
+          "trackId": "track"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-6",
+          "type": "preference",
+          "timestampMs": 4838500000,
+          "personal": true,
+          "reason": null,
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 7,
+          "trackId": "track",
+          "value": -1
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-7",
+          "type": "offered",
+          "timestampMs": 4838500000,
+          "personal": true,
+          "reason": null,
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 8,
+          "trackId": "track"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "decay-rollback-preference-reversal-8",
+          "type": "offered",
+          "timestampMs": 4838500000,
+          "personal": true,
+          "reason": null,
+          "futureClamped": true,
+          "producerId": "decay-rollback-preference-reversal",
+          "sequence": 9,
+          "trackId": "track"
+        }
+      ],
+      "states": [
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 1,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 0,
+              "activated": 1,
+              "heardOccurrences": 0,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": null,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 0,
+              "heardWallMs": 0
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "complete",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 100000,
+              "replay": false,
+              "wallMs": 0,
+              "coverageRanges": [],
+              "clocks": [],
+              "heardCredited": false,
+              "ended": false
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "decay-rollback-preference-reversal",
+              "through": 1,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "decay-rollback-preference-reversal-0"
+          ],
+          "journal": [
+            {
+              "eventId": "decay-rollback-preference-reversal-0",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 2,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 0,
+              "activated": 1,
+              "heardOccurrences": 1,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": 100000,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 0,
+              "heardWallMs": 50000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "complete",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 100000,
+              "replay": false,
+              "wallMs": 50000,
+              "coverageRanges": [
+                [
+                  0,
+                  50000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot",
+                  "throughMs": 50000
+                }
+              ],
+              "heardCredited": true,
+              "ended": false
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "decay-rollback-preference-reversal",
+              "through": 2,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "decay-rollback-preference-reversal-0",
+            "decay-rollback-preference-reversal-1"
+          ],
+          "journal": [
+            {
+              "eventId": "decay-rollback-preference-reversal-0",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-1",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 3,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 0,
+              "activated": 1,
+              "heardOccurrences": 1,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": 100000,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 0,
+              "heardWallMs": 100000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "complete",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 100000,
+              "replay": false,
+              "wallMs": 100000,
+              "coverageRanges": [
+                [
+                  0,
+                  100000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot",
+                  "throughMs": 100000
+                }
+              ],
+              "heardCredited": true,
+              "ended": false
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "decay-rollback-preference-reversal",
+              "through": 3,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "decay-rollback-preference-reversal-0",
+            "decay-rollback-preference-reversal-1",
+            "decay-rollback-preference-reversal-2"
+          ],
+          "journal": [
+            {
+              "eventId": "decay-rollback-preference-reversal-0",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-1",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-2",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 4,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 0,
+              "activated": 1,
+              "heardOccurrences": 1,
+              "naturalEnds": 1,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 3,
+              "negativeUnits": 0,
+              "evidenceAtMs": 100000,
+              "lastHeardAtMs": 100000,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 0,
+              "heardWallMs": 100000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "complete",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 100000,
+              "replay": false,
+              "wallMs": 100000,
+              "coverageRanges": [
+                [
+                  0,
+                  100000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot",
+                  "throughMs": 100000
+                }
+              ],
+              "heardCredited": true,
+              "ended": true
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "decay-rollback-preference-reversal",
+              "through": 4,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "decay-rollback-preference-reversal-0",
+            "decay-rollback-preference-reversal-1",
+            "decay-rollback-preference-reversal-2",
+            "decay-rollback-preference-reversal-3"
+          ],
+          "journal": [
+            {
+              "eventId": "decay-rollback-preference-reversal-0",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-1",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-2",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-3",
+              "type": "outcome",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete",
+              "outcome": "natural-end"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 5,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 0,
+              "activated": 1,
+              "heardOccurrences": 1,
+              "naturalEnds": 1,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 3,
+              "negativeUnits": 0,
+              "evidenceAtMs": 100000,
+              "lastHeardAtMs": 100000,
+              "explicitPreference": 1,
+              "explicitPreferenceAtMs": 100000,
+              "opportunityDebt": 0,
+              "heardWallMs": 100000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "complete",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 100000,
+              "replay": false,
+              "wallMs": 100000,
+              "coverageRanges": [
+                [
+                  0,
+                  100000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot",
+                  "throughMs": 100000
+                }
+              ],
+              "heardCredited": true,
+              "ended": true
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "decay-rollback-preference-reversal",
+              "through": 5,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "decay-rollback-preference-reversal-0",
+            "decay-rollback-preference-reversal-1",
+            "decay-rollback-preference-reversal-2",
+            "decay-rollback-preference-reversal-3",
+            "decay-rollback-preference-reversal-4"
+          ],
+          "journal": [
+            {
+              "eventId": "decay-rollback-preference-reversal-0",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-1",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-2",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-3",
+              "type": "outcome",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete",
+              "outcome": "natural-end"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-4",
+              "type": "preference",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 6,
+          "clockFloorMs": 4838500000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 1,
+              "activated": 1,
+              "heardOccurrences": 1,
+              "naturalEnds": 1,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 3,
+              "negativeUnits": 0,
+              "evidenceAtMs": 100000,
+              "lastHeardAtMs": 100000,
+              "explicitPreference": 1,
+              "explicitPreferenceAtMs": 100000,
+              "opportunityDebt": 1,
+              "heardWallMs": 100000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "complete",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 100000,
+              "replay": false,
+              "wallMs": 100000,
+              "coverageRanges": [
+                [
+                  0,
+                  100000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot",
+                  "throughMs": 100000
+                }
+              ],
+              "heardCredited": true,
+              "ended": true
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "decay-rollback-preference-reversal",
+              "through": 6,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "decay-rollback-preference-reversal-0",
+            "decay-rollback-preference-reversal-1",
+            "decay-rollback-preference-reversal-2",
+            "decay-rollback-preference-reversal-3",
+            "decay-rollback-preference-reversal-4",
+            "decay-rollback-preference-reversal-5"
+          ],
+          "journal": [
+            {
+              "eventId": "decay-rollback-preference-reversal-0",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-1",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-2",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-3",
+              "type": "outcome",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete",
+              "outcome": "natural-end"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-4",
+              "type": "preference",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-5",
+              "type": "offered",
+              "timestampMs": 4838500000,
+              "applied": true,
+              "trackId": "track"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 7,
+          "clockFloorMs": 4838500000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 1,
+              "activated": 1,
+              "heardOccurrences": 1,
+              "naturalEnds": 1,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 3,
+              "negativeUnits": 0,
+              "evidenceAtMs": 100000,
+              "lastHeardAtMs": 100000,
+              "explicitPreference": -1,
+              "explicitPreferenceAtMs": 4838500000,
+              "opportunityDebt": 1,
+              "heardWallMs": 100000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "complete",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 100000,
+              "replay": false,
+              "wallMs": 100000,
+              "coverageRanges": [
+                [
+                  0,
+                  100000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot",
+                  "throughMs": 100000
+                }
+              ],
+              "heardCredited": true,
+              "ended": true
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "decay-rollback-preference-reversal",
+              "through": 7,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "decay-rollback-preference-reversal-0",
+            "decay-rollback-preference-reversal-1",
+            "decay-rollback-preference-reversal-2",
+            "decay-rollback-preference-reversal-3",
+            "decay-rollback-preference-reversal-4",
+            "decay-rollback-preference-reversal-5",
+            "decay-rollback-preference-reversal-6"
+          ],
+          "journal": [
+            {
+              "eventId": "decay-rollback-preference-reversal-0",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-1",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-2",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-3",
+              "type": "outcome",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete",
+              "outcome": "natural-end"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-4",
+              "type": "preference",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-5",
+              "type": "offered",
+              "timestampMs": 4838500000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-6",
+              "type": "preference",
+              "timestampMs": 4838500000,
+              "applied": true,
+              "trackId": "track"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 8,
+          "clockFloorMs": 4838500000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 2,
+              "activated": 1,
+              "heardOccurrences": 1,
+              "naturalEnds": 1,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 3,
+              "negativeUnits": 0,
+              "evidenceAtMs": 100000,
+              "lastHeardAtMs": 100000,
+              "explicitPreference": -1,
+              "explicitPreferenceAtMs": 4838500000,
+              "opportunityDebt": 2,
+              "heardWallMs": 100000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "complete",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 100000,
+              "replay": false,
+              "wallMs": 100000,
+              "coverageRanges": [
+                [
+                  0,
+                  100000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot",
+                  "throughMs": 100000
+                }
+              ],
+              "heardCredited": true,
+              "ended": true
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "decay-rollback-preference-reversal",
+              "through": 8,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "decay-rollback-preference-reversal-0",
+            "decay-rollback-preference-reversal-1",
+            "decay-rollback-preference-reversal-2",
+            "decay-rollback-preference-reversal-3",
+            "decay-rollback-preference-reversal-4",
+            "decay-rollback-preference-reversal-5",
+            "decay-rollback-preference-reversal-6",
+            "decay-rollback-preference-reversal-7"
+          ],
+          "journal": [
+            {
+              "eventId": "decay-rollback-preference-reversal-0",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-1",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-2",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-3",
+              "type": "outcome",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete",
+              "outcome": "natural-end"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-4",
+              "type": "preference",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-5",
+              "type": "offered",
+              "timestampMs": 4838500000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-6",
+              "type": "preference",
+              "timestampMs": 4838500000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-7",
+              "type": "offered",
+              "timestampMs": 4838500000,
+              "applied": true,
+              "trackId": "track"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 1,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 9,
+          "clockFloorMs": 4838500000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 3,
+              "activated": 1,
+              "heardOccurrences": 1,
+              "naturalEnds": 1,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 3,
+              "negativeUnits": 0,
+              "evidenceAtMs": 100000,
+              "lastHeardAtMs": 100000,
+              "explicitPreference": -1,
+              "explicitPreferenceAtMs": 4838500000,
+              "opportunityDebt": 3,
+              "heardWallMs": 100000
+            }
+          ],
+          "occurrences": [
+            {
+              "occurrenceId": "complete",
+              "trackId": "track",
+              "activatedAtMs": 100000,
+              "durationMs": 100000,
+              "replay": false,
+              "wallMs": 100000,
+              "coverageRanges": [
+                [
+                  0,
+                  100000
+                ]
+              ],
+              "clocks": [
+                {
+                  "clockId": "boot",
+                  "throughMs": 100000
+                }
+              ],
+              "heardCredited": true,
+              "ended": true
+            }
+          ],
+          "producers": [
+            {
+              "producerId": "decay-rollback-preference-reversal",
+              "through": 9,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "decay-rollback-preference-reversal-0",
+            "decay-rollback-preference-reversal-1",
+            "decay-rollback-preference-reversal-2",
+            "decay-rollback-preference-reversal-3",
+            "decay-rollback-preference-reversal-4",
+            "decay-rollback-preference-reversal-5",
+            "decay-rollback-preference-reversal-6",
+            "decay-rollback-preference-reversal-7",
+            "decay-rollback-preference-reversal-8"
+          ],
+          "journal": [
+            {
+              "eventId": "decay-rollback-preference-reversal-0",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-1",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-2",
+              "type": "interval",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-3",
+              "type": "outcome",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track",
+              "occurrenceId": "complete",
+              "outcome": "natural-end"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-4",
+              "type": "preference",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-5",
+              "type": "offered",
+              "timestampMs": 4838500000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-6",
+              "type": "preference",
+              "timestampMs": 4838500000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-7",
+              "type": "offered",
+              "timestampMs": 4838500000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "decay-rollback-preference-reversal-8",
+              "type": "offered",
+              "timestampMs": 4838500000,
+              "applied": true,
+              "trackId": "track"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 1,
+            "futureClamps": 1,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        }
+      ],
+      "signals": {
+        "tastePoints": -8,
+        "exposure": 1,
+        "noveltyPoints": 12,
+        "lastHeardAtMs": 100000,
+        "confidencePermille": 0
+      }
+    },
+    {
+      "name": "out-of-order-durable-event-replay",
+      "initial": {
+        "schemaVersion": 2,
+        "policyVersion": "universal-shuffle-v2.1",
+        "enabled": true,
+        "learningEpoch": 0,
+        "revision": 0,
+        "clockFloorMs": 100000,
+        "resetAtMs": null,
+        "tracks": [],
+        "occurrences": [],
+        "producers": [],
+        "seenEventIds": [],
+        "journal": [],
+        "diagnostics": {
+          "clockRollbacks": 0,
+          "futureClamps": 0,
+          "coverageUnderflows": 0,
+          "prunedOccurrences": 0
+        }
+      },
+      "nowMs": 100000,
+      "contexts": [
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        }
+      ],
+      "events": [
+        {
+          "schemaVersion": 2,
+          "eventId": "seq-1",
+          "producerId": "out-of-order-durable-event-replay",
+          "sequence": 1,
+          "type": "offered",
+          "trackId": "track"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seq-3",
+          "producerId": "out-of-order-durable-event-replay",
+          "sequence": 3,
+          "type": "preference",
+          "trackId": "track",
+          "value": 1
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seq-2",
+          "producerId": "out-of-order-durable-event-replay",
+          "sequence": 2,
+          "type": "offered",
+          "trackId": "track"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seq-3",
+          "producerId": "out-of-order-durable-event-replay",
+          "sequence": 3,
+          "type": "preference",
+          "trackId": "track",
+          "value": -1
+        }
+      ],
+      "normalizedEvents": [
+        {
+          "schemaVersion": 2,
+          "eventId": "seq-1",
+          "type": "offered",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "out-of-order-durable-event-replay",
+          "sequence": 1,
+          "trackId": "track"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seq-3",
+          "type": "preference",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "out-of-order-durable-event-replay",
+          "sequence": 3,
+          "trackId": "track",
+          "value": 1
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seq-2",
+          "type": "offered",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "out-of-order-durable-event-replay",
+          "sequence": 2,
+          "trackId": "track"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "seq-3",
+          "type": "preference",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "out-of-order-durable-event-replay",
+          "sequence": 3,
+          "trackId": "track",
+          "value": -1
+        }
+      ],
+      "states": [
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 1,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 1,
+              "activated": 0,
+              "heardOccurrences": 0,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": null,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 1,
+              "heardWallMs": 0
+            }
+          ],
+          "occurrences": [],
+          "producers": [
+            {
+              "producerId": "out-of-order-durable-event-replay",
+              "through": 1,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "seq-1"
+          ],
+          "journal": [
+            {
+              "eventId": "seq-1",
+              "type": "offered",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 2,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 1,
+              "activated": 0,
+              "heardOccurrences": 0,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": null,
+              "explicitPreference": 1,
+              "explicitPreferenceAtMs": 100000,
+              "opportunityDebt": 1,
+              "heardWallMs": 0
+            }
+          ],
+          "occurrences": [],
+          "producers": [
+            {
+              "producerId": "out-of-order-durable-event-replay",
+              "through": 1,
+              "pending": [
+                3
+              ]
+            }
+          ],
+          "seenEventIds": [
+            "seq-1",
+            "seq-3"
+          ],
+          "journal": [
+            {
+              "eventId": "seq-1",
+              "type": "offered",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "seq-3",
+              "type": "preference",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 3,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 2,
+              "activated": 0,
+              "heardOccurrences": 0,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": null,
+              "explicitPreference": 1,
+              "explicitPreferenceAtMs": 100000,
+              "opportunityDebt": 2,
+              "heardWallMs": 0
+            }
+          ],
+          "occurrences": [],
+          "producers": [
+            {
+              "producerId": "out-of-order-durable-event-replay",
+              "through": 3,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "seq-1",
+            "seq-3",
+            "seq-2"
+          ],
+          "journal": [
+            {
+              "eventId": "seq-1",
+              "type": "offered",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "seq-3",
+              "type": "preference",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "seq-2",
+              "type": "offered",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 3,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 2,
+              "activated": 0,
+              "heardOccurrences": 0,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": null,
+              "explicitPreference": 1,
+              "explicitPreferenceAtMs": 100000,
+              "opportunityDebt": 2,
+              "heardWallMs": 0
+            }
+          ],
+          "occurrences": [],
+          "producers": [
+            {
+              "producerId": "out-of-order-durable-event-replay",
+              "through": 3,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "seq-1",
+            "seq-3",
+            "seq-2"
+          ],
+          "journal": [
+            {
+              "eventId": "seq-1",
+              "type": "offered",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "seq-3",
+              "type": "preference",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "seq-2",
+              "type": "offered",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        }
+      ],
+      "signals": {
+        "tastePoints": 8,
+        "exposure": 0,
+        "noveltyPoints": 12,
+        "lastHeardAtMs": null,
+        "confidencePermille": 0
+      }
+    },
+    {
+      "name": "disable-reset-history-track-delete",
+      "initial": {
+        "schemaVersion": 2,
+        "policyVersion": "universal-shuffle-v2.1",
+        "enabled": true,
+        "learningEpoch": 0,
+        "revision": 0,
+        "clockFloorMs": 100000,
+        "resetAtMs": null,
+        "tracks": [],
+        "occurrences": [],
+        "producers": [],
+        "seenEventIds": [],
+        "journal": [],
+        "diagnostics": {
+          "clockRollbacks": 0,
+          "futureClamps": 0,
+          "coverageUnderflows": 0,
+          "prunedOccurrences": 0
+        }
+      },
+      "nowMs": 100000,
+      "contexts": [
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        },
+        {
+          "nowMs": 100000
+        }
+      ],
+      "events": [
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-0",
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 1,
+          "type": "offered",
+          "trackId": "track"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-1",
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 2,
+          "type": "preference",
+          "trackId": "track",
+          "value": 1
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-2",
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 3,
+          "type": "learning-enabled",
+          "trackId": "track",
+          "enabled": false
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-3",
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 4,
+          "type": "activated",
+          "trackId": "track",
+          "occurrenceId": "disabled"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-4",
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 5,
+          "type": "learning-enabled",
+          "trackId": "track",
+          "enabled": true
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-5",
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 6,
+          "type": "history-delete",
+          "trackId": "track"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-6",
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 7,
+          "type": "learning-reset",
+          "trackId": "track"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-7",
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 8,
+          "type": "offered",
+          "trackId": "track",
+          "learningEpoch": 0
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-8",
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 9,
+          "type": "offered",
+          "trackId": "track",
+          "learningEpoch": 1
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-9",
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 10,
+          "type": "track-delete",
+          "trackId": "track",
+          "learningEpoch": 1
+        }
+      ],
+      "normalizedEvents": [
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-0",
+          "type": "offered",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 1,
+          "trackId": "track"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-1",
+          "type": "preference",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 2,
+          "trackId": "track",
+          "value": 1
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-2",
+          "type": "learning-enabled",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 3,
+          "trackId": "track",
+          "enabled": false
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-3",
+          "type": "activated",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 4,
+          "trackId": "track",
+          "occurrenceId": "disabled",
+          "durationMs": null,
+          "replay": false
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-4",
+          "type": "learning-enabled",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 5,
+          "trackId": "track",
+          "enabled": true
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-5",
+          "type": "history-delete",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 6,
+          "trackId": "track"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-6",
+          "type": "learning-reset",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 7,
+          "trackId": "track"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-7",
+          "type": "offered",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "learningEpoch": 0,
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 8,
+          "trackId": "track"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-8",
+          "type": "offered",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "learningEpoch": 1,
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 9,
+          "trackId": "track"
+        },
+        {
+          "schemaVersion": 2,
+          "eventId": "disable-reset-history-track-delete-9",
+          "type": "track-delete",
+          "timestampMs": 100000,
+          "personal": true,
+          "reason": null,
+          "learningEpoch": 1,
+          "producerId": "disable-reset-history-track-delete",
+          "sequence": 10,
+          "trackId": "track"
+        }
+      ],
+      "states": [
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 1,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 1,
+              "activated": 0,
+              "heardOccurrences": 0,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": null,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 1,
+              "heardWallMs": 0
+            }
+          ],
+          "occurrences": [],
+          "producers": [
+            {
+              "producerId": "disable-reset-history-track-delete",
+              "through": 1,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "disable-reset-history-track-delete-0"
+          ],
+          "journal": [
+            {
+              "eventId": "disable-reset-history-track-delete-0",
+              "type": "offered",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 2,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 1,
+              "activated": 0,
+              "heardOccurrences": 0,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": null,
+              "explicitPreference": 1,
+              "explicitPreferenceAtMs": 100000,
+              "opportunityDebt": 1,
+              "heardWallMs": 0
+            }
+          ],
+          "occurrences": [],
+          "producers": [
+            {
+              "producerId": "disable-reset-history-track-delete",
+              "through": 2,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "disable-reset-history-track-delete-0",
+            "disable-reset-history-track-delete-1"
+          ],
+          "journal": [
+            {
+              "eventId": "disable-reset-history-track-delete-0",
+              "type": "offered",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "disable-reset-history-track-delete-1",
+              "type": "preference",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": false,
+          "learningEpoch": 0,
+          "revision": 3,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 1,
+              "activated": 0,
+              "heardOccurrences": 0,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": null,
+              "explicitPreference": 1,
+              "explicitPreferenceAtMs": 100000,
+              "opportunityDebt": 1,
+              "heardWallMs": 0
+            }
+          ],
+          "occurrences": [],
+          "producers": [
+            {
+              "producerId": "disable-reset-history-track-delete",
+              "through": 3,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "disable-reset-history-track-delete-0",
+            "disable-reset-history-track-delete-1",
+            "disable-reset-history-track-delete-2"
+          ],
+          "journal": [
+            {
+              "eventId": "disable-reset-history-track-delete-0",
+              "type": "offered",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "disable-reset-history-track-delete-1",
+              "type": "preference",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "disable-reset-history-track-delete-2",
+              "type": "learning-enabled",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": false,
+          "learningEpoch": 0,
+          "revision": 4,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 1,
+              "activated": 0,
+              "heardOccurrences": 0,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": null,
+              "explicitPreference": 1,
+              "explicitPreferenceAtMs": 100000,
+              "opportunityDebt": 1,
+              "heardWallMs": 0
+            }
+          ],
+          "occurrences": [],
+          "producers": [
+            {
+              "producerId": "disable-reset-history-track-delete",
+              "through": 4,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "disable-reset-history-track-delete-0",
+            "disable-reset-history-track-delete-1",
+            "disable-reset-history-track-delete-2",
+            "disable-reset-history-track-delete-3"
+          ],
+          "journal": [
+            {
+              "eventId": "disable-reset-history-track-delete-0",
+              "type": "offered",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "disable-reset-history-track-delete-1",
+              "type": "preference",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "disable-reset-history-track-delete-2",
+              "type": "learning-enabled",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "disable-reset-history-track-delete-3",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": false,
+              "trackId": "track",
+              "occurrenceId": "disabled",
+              "suppressed": "disabled"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 5,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 1,
+              "activated": 0,
+              "heardOccurrences": 0,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": null,
+              "explicitPreference": 1,
+              "explicitPreferenceAtMs": 100000,
+              "opportunityDebt": 1,
+              "heardWallMs": 0
+            }
+          ],
+          "occurrences": [],
+          "producers": [
+            {
+              "producerId": "disable-reset-history-track-delete",
+              "through": 5,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "disable-reset-history-track-delete-0",
+            "disable-reset-history-track-delete-1",
+            "disable-reset-history-track-delete-2",
+            "disable-reset-history-track-delete-3",
+            "disable-reset-history-track-delete-4"
+          ],
+          "journal": [
+            {
+              "eventId": "disable-reset-history-track-delete-0",
+              "type": "offered",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "disable-reset-history-track-delete-1",
+              "type": "preference",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "disable-reset-history-track-delete-2",
+              "type": "learning-enabled",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "disable-reset-history-track-delete-3",
+              "type": "activated",
+              "timestampMs": 100000,
+              "applied": false,
+              "trackId": "track",
+              "occurrenceId": "disabled",
+              "suppressed": "disabled"
+            },
+            {
+              "eventId": "disable-reset-history-track-delete-4",
+              "type": "learning-enabled",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 0,
+          "revision": 6,
+          "clockFloorMs": 100000,
+          "resetAtMs": null,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 1,
+              "activated": 0,
+              "heardOccurrences": 0,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": null,
+              "explicitPreference": 1,
+              "explicitPreferenceAtMs": 100000,
+              "opportunityDebt": 1,
+              "heardWallMs": 0
+            }
+          ],
+          "occurrences": [],
+          "producers": [
+            {
+              "producerId": "disable-reset-history-track-delete",
+              "through": 6,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "disable-reset-history-track-delete-0",
+            "disable-reset-history-track-delete-1",
+            "disable-reset-history-track-delete-2",
+            "disable-reset-history-track-delete-3",
+            "disable-reset-history-track-delete-4",
+            "disable-reset-history-track-delete-5"
+          ],
+          "journal": [
+            {
+              "eventId": "disable-reset-history-track-delete-5",
+              "type": "history-delete",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 1,
+          "revision": 7,
+          "clockFloorMs": 100000,
+          "resetAtMs": 100000,
+          "tracks": [],
+          "occurrences": [],
+          "producers": [
+            {
+              "producerId": "disable-reset-history-track-delete",
+              "through": 7,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "disable-reset-history-track-delete-0",
+            "disable-reset-history-track-delete-1",
+            "disable-reset-history-track-delete-2",
+            "disable-reset-history-track-delete-3",
+            "disable-reset-history-track-delete-4",
+            "disable-reset-history-track-delete-5",
+            "disable-reset-history-track-delete-6"
+          ],
+          "journal": [
+            {
+              "eventId": "disable-reset-history-track-delete-6",
+              "type": "learning-reset",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 1,
+          "revision": 7,
+          "clockFloorMs": 100000,
+          "resetAtMs": 100000,
+          "tracks": [],
+          "occurrences": [],
+          "producers": [
+            {
+              "producerId": "disable-reset-history-track-delete",
+              "through": 7,
+              "pending": []
+            }
+          ],
+          "seenEventIds": [
+            "disable-reset-history-track-delete-0",
+            "disable-reset-history-track-delete-1",
+            "disable-reset-history-track-delete-2",
+            "disable-reset-history-track-delete-3",
+            "disable-reset-history-track-delete-4",
+            "disable-reset-history-track-delete-5",
+            "disable-reset-history-track-delete-6"
+          ],
+          "journal": [
+            {
+              "eventId": "disable-reset-history-track-delete-6",
+              "type": "learning-reset",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 1,
+          "revision": 8,
+          "clockFloorMs": 100000,
+          "resetAtMs": 100000,
+          "tracks": [
+            {
+              "trackId": "track",
+              "offered": 1,
+              "activated": 0,
+              "heardOccurrences": 0,
+              "naturalEnds": 0,
+              "deliberateSkips": 0,
+              "replays": 0,
+              "positiveUnits": 0,
+              "negativeUnits": 0,
+              "evidenceAtMs": null,
+              "lastHeardAtMs": null,
+              "explicitPreference": 0,
+              "explicitPreferenceAtMs": null,
+              "opportunityDebt": 1,
+              "heardWallMs": 0
+            }
+          ],
+          "occurrences": [],
+          "producers": [
+            {
+              "producerId": "disable-reset-history-track-delete",
+              "through": 7,
+              "pending": [
+                9
+              ]
+            }
+          ],
+          "seenEventIds": [
+            "disable-reset-history-track-delete-0",
+            "disable-reset-history-track-delete-1",
+            "disable-reset-history-track-delete-2",
+            "disable-reset-history-track-delete-3",
+            "disable-reset-history-track-delete-4",
+            "disable-reset-history-track-delete-5",
+            "disable-reset-history-track-delete-6",
+            "disable-reset-history-track-delete-8"
+          ],
+          "journal": [
+            {
+              "eventId": "disable-reset-history-track-delete-6",
+              "type": "learning-reset",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            },
+            {
+              "eventId": "disable-reset-history-track-delete-8",
+              "type": "offered",
+              "timestampMs": 100000,
+              "applied": true,
+              "trackId": "track"
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "policyVersion": "universal-shuffle-v2.1",
+          "enabled": true,
+          "learningEpoch": 1,
+          "revision": 9,
+          "clockFloorMs": 100000,
+          "resetAtMs": 100000,
+          "tracks": [],
+          "occurrences": [],
+          "producers": [
+            {
+              "producerId": "disable-reset-history-track-delete",
+              "through": 7,
+              "pending": [
+                9,
+                10
+              ]
+            }
+          ],
+          "seenEventIds": [
+            "disable-reset-history-track-delete-0",
+            "disable-reset-history-track-delete-1",
+            "disable-reset-history-track-delete-2",
+            "disable-reset-history-track-delete-3",
+            "disable-reset-history-track-delete-4",
+            "disable-reset-history-track-delete-5",
+            "disable-reset-history-track-delete-6",
+            "disable-reset-history-track-delete-8",
+            "disable-reset-history-track-delete-9"
+          ],
+          "journal": [
+            {
+              "eventId": "disable-reset-history-track-delete-9",
+              "type": "track-delete",
+              "timestampMs": 100000,
+              "applied": true
+            }
+          ],
+          "diagnostics": {
+            "clockRollbacks": 0,
+            "futureClamps": 0,
+            "coverageUnderflows": 0,
+            "prunedOccurrences": 0
+          }
+        }
+      ],
+      "signals": {
+        "tastePoints": 0,
+        "exposure": 0,
+        "noveltyPoints": 12,
+        "lastHeardAtMs": null,
+        "confidencePermille": 0
+      }
+    }
+  ]
+}

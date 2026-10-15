@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="Original layered hanami room with sakura branch">
+  <defs>
+    <linearGradient id="room" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1f1719"/>
+      <stop offset=".42" stop-color="#26372d"/>
+      <stop offset=".72" stop-color="#314c3e"/>
+      <stop offset="1" stop-color="#9fa895"/>
+    </linearGradient>
+    <linearGradient id="screen-paper" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4efe3" stop-opacity=".72"/>
+      <stop offset="1" stop-color="#bcc6b6" stop-opacity=".38"/>
+    </linearGradient>
+    <linearGradient id="branch-screen" x1="530" y1="860" x2="1350" y2="-80" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#27191d"/>
+      <stop offset=".42" stop-color="#72513b"/>
+      <stop offset=".72" stop-color="#8c6548"/>
+      <stop offset="1" stop-color="#2f473a"/>
+    </linearGradient>
+    <radialGradient id="screen-petal" cx=".42" cy=".34" r=".78">
+      <stop offset="0" stop-color="#fff7f6"/>
+      <stop offset=".48" stop-color="#f5c1cf"/>
+      <stop offset=".8" stop-color="#d9829c"/>
+      <stop offset="1" stop-color="#a54d69"/>
+    </radialGradient>
+    <filter id="paper-grain">
+      <feTurbulence type="fractalNoise" baseFrequency=".018 .06" numOctaves="3" seed="41"/>
+      <feColorMatrix type="saturate" values=".2"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 .14"/>
+      </feComponentTransfer>
+    </filter>
+    <filter id="soft-shadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="8" flood-color="#1f1719" flood-opacity=".28"/>
+    </filter>
+    <symbol id="screen-blossom" viewBox="-42 -44 84 88">
+      <path d="M0-39 C13-37 24-25 21-12 C19 3 7 8 0 3 C-7 8-19 3-21-12 C-24-25-13-37 0-39Z" fill="url(#screen-petal)"/>
+      <path d="M37-11 C42 3 35 18 21 22 C8 26-1 18 2 8 C-7 4-10-10 1-20 C13-30 31-25 37-11Z" fill="url(#screen-petal)"/>
+      <path d="M23 32 C12 42-6 42-14 30 C-22 18-16 8-5 6 C-3-5 11-8 21 2 C32 12 34 25 23 32Z" fill="url(#screen-petal)"/>
+      <path d="M-23 32 C-34 25-32 12-21 2 C-11-8 3-5 5 6 C16 8 22 18 14 30 C6 42-12 42-23 32Z" fill="url(#screen-petal)"/>
+      <path d="M-37-11 C-31-25-13-30-1-20 C10-10 7 4-2 8 C1 18-8 26-21 22 C-35 18-42 3-37-11Z" fill="url(#screen-petal)"/>
+      <circle cx="0" cy="5" r="6.5" fill="#b87b53"/>
+      <g fill="#f4d67a">
+        <circle cx="-4" cy="3" r="1.8"/>
+        <circle cx="4" cy="6" r="1.8"/>
+        <circle cx="0" cy="9" r="1.4"/>
+      </g>
+    </symbol>
+  </defs>
+  <rect width="1600" height="900" fill="url(#room)"/>
+  <g opacity=".18">
+    <rect x="830" y="70" width="248" height="660" rx="4" fill="url(#screen-paper)"/>
+    <rect x="1118" y="38" width="272" height="690" rx="4" fill="url(#screen-paper)"/>
+    <path d="M830 184h248M830 306h248M830 428h248M830 550h248M954 70v660M1118 166h272M1118 300h272M1118 434h272M1118 568h272M1254 38v690" fill="none" stroke="#f4efe3" stroke-width="3" opacity=".62"/>
+    <path d="M782 728h670" fill="none" stroke="#1f1719" stroke-width="24" opacity=".36"/>
+  </g>
+  <g filter="url(#soft-shadow)" opacity=".72" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M1324-64 C1206 96 1184 262 1034 408 C902 536 764 612 582 828" stroke="url(#branch-screen)" stroke-width="38"/>
+    <path d="M1308-30 C1218 114 1204 254 1060 394 C928 522 790 602 620 800" stroke="#f7d4dd" stroke-width="7" opacity=".16"/>
+    <path d="M1056 386 C1152 360 1244 388 1358 468" stroke="#76523b" stroke-width="20"/>
+    <path d="M900 526 C996 558 1058 642 1110 760" stroke="#6c4a37" stroke-width="17"/>
+    <path d="M1136 244 C1216 226 1272 176 1370 88" stroke="#6c4a37" stroke-width="16"/>
+    <path d="M806 620 C720 608 650 642 568 734" stroke="#3f2b32" stroke-width="14"/>
+  </g>
+  <g filter="url(#soft-shadow)">
+    <use href="#screen-blossom" x="1126" y="150" width="104" height="110" transform="rotate(-16 1178 205)"/>
+    <use href="#screen-blossom" x="1246" y="408" width="94" height="100" transform="rotate(18 1293 458)"/>
+    <use href="#screen-blossom" x="766" y="548" width="92" height="98" transform="rotate(-24 812 597)"/>
+    <use href="#screen-blossom" x="1014" y="684" width="76" height="82" transform="rotate(14 1052 725)" opacity=".9"/>
+    <use href="#screen-blossom" x="1326" y="76" width="72" height="78" transform="rotate(28 1362 115)" opacity=".82"/>
+  </g>
+  <g fill="#f0a9bd" opacity=".56">
+    <path d="M978 336 C1000 324 1024 334 1030 352 C1010 368 986 366 970 350 C971 344 974 339 978 336Z"/>
+    <path d="M1078 458 C1096 446 1120 452 1128 470 C1112 486 1086 488 1070 470 C1071 466 1074 461 1078 458Z"/>
+    <path d="M742 704 C758 694 780 700 786 716 C770 730 750 730 736 716 C737 712 739 708 742 704Z"/>
+    <path d="M1338 280 C1354 270 1376 276 1384 292 C1368 306 1346 306 1332 292 C1333 288 1335 284 1338 280Z"/>
+  </g>
+  <g opacity=".28" fill="#f5c1cf">
+    <ellipse cx="1260" cy="78" rx="14" ry="8" transform="rotate(31 1260 78)"/>
+    <ellipse cx="1410" cy="248" rx="13" ry="7" transform="rotate(-22 1410 248)"/>
+    <ellipse cx="1180" cy="596" rx="12" ry="7" transform="rotate(40 1180 596)"/>
+    <ellipse cx="702" cy="692" rx="12" ry="7" transform="rotate(-12 702 692)"/>
+    <ellipse cx="1320" cy="712" rx="11" ry="6" transform="rotate(18 1320 712)"/>
+    <ellipse cx="936" cy="224" rx="10" ry="6" transform="rotate(-30 936 224)"/>
+  </g>
+  <rect width="1600" height="900" filter="url(#paper-grain)" opacity=".74"/>
+</svg>

@@ -1,0 +1,47 @@
+{
+  "hostId": "studio-pc",
+  "hostName": "Pixelody on Studio PC",
+  "platform": "windows",
+  "roles": ["libraryHost", "jamCoordinator", "playbackDevice", "controller"],
+  "visibility": "lan",
+  "canBackgroundHost": true,
+  "canImport": true,
+  "canEditMetadata": true,
+  "canStream": true,
+  "canRemoteControl": true,
+  "canJamCoordinate": true,
+  "auth": {
+    "trustedDevices": true,
+    "revocation": true,
+    "shortLivedPairing": true,
+    "deviceRefresh": true,
+    "permissionEditing": true,
+    "remoteRelay": false
+  },
+  "live": {
+    "polling": true,
+    "webSocket": false,
+    "endpoint": "/api/v1/live",
+    "recommendedPollMs": 1000
+  },
+  "commands": {
+    "playback": "/api/v1/commands/playback",
+    "queue": "/api/v1/commands/queue",
+    "shuffle": "/api/v1/commands/shuffle",
+    "version": 1,
+    "permissions": ["playback:control", "queue:write"]
+  },
+  "jam": {
+    "personalLibrarySession": true,
+    "singleHostV1": true,
+    "endpoint": "/api/v1/jam/session",
+    "federatedSources": false
+  },
+  "limits": {
+    "requiresForegroundService": false,
+    "batterySensitive": false,
+    "lanExposureEnabled": true,
+    "maxLibrarySnapshotTracks": 2,
+    "maxPageSize": 250
+  }
+}

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pixelody Composable Workspace Lab</title>
+  <link rel="stylesheet" href="workspace-composition-lab.css">
+</head>
+<body data-motion="full" data-tier="wide">
+  <a class="cw-skip" href="#composition-stage">Skip to composition</a>
+  <header class="cw-header">
+    <div class="cw-header-index" aria-hidden="true">CW / C6</div>
+    <div>
+      <p class="cw-eyebrow">Pixelody development-only proving ground</p>
+      <h1>A fluid canvas.<br><em>A rigid truth.</em></h1>
+      <p class="cw-intro">One deterministic workspace graph, painted through responsive projections. Seven product-job specimens share controlled read bundles and commands; none of this surface replaces the production player.</p>
+    </div>
+    <dl class="cw-header-ledger">
+      <div><dt>Authority</dt><dd>Versioned semantic graph</dd></div>
+      <div><dt>Paint</dt><dd>Responsive projection</dd></div>
+      <div><dt>Fallback</dt><dd>Product-owned neutral module</dd></div>
+      <div><dt>Adapter</dt><dd>Hybrid ranked intent C</dd></div>
+      <div><dt>Persistence</dt><dd>Session-only in C6</dd></div>
+    </dl>
+  </header>
+
+  <section class="cw-boundary" aria-label="Development evidence boundary">
+    <strong>DEVELOPMENT ONLY</strong>
+    <span>Deterministic fixture data</span>
+    <span>No Electron or playback ownership</span>
+    <span>No theme/package schema changes</span>
+    <span>Production workspace remains untouched</span>
+  </section>
+
+  <main class="cw-main">
+    <section class="cw-console" aria-labelledby="console-title">
+      <div>
+        <p class="cw-eyebrow">Projection console</p>
+        <h2 id="console-title">Change the available room.</h2>
+      </div>
+      <div class="cw-console-controls">
+        <button type="button" id="cw-mode-toggle" aria-pressed="false">Enter Composition Mode</button>
+        <div class="cw-segmented" role="group" aria-label="Preview width">
+          <button type="button" data-width-mode="wide" aria-pressed="true">Wide <small>1180</small></button>
+          <button type="button" data-width-mode="intermediate" aria-pressed="false">Mid <small>820</small></button>
+          <button type="button" data-width-mode="narrow" aria-pressed="false">Narrow <small>430</small></button>
+          <button type="button" data-width-mode="auto" aria-pressed="false">Auto</button>
+        </div>
+        <label>Motion
+          <select id="cw-motion">
+            <option value="full">Full</option>
+            <option value="reduced">Reduced</option>
+            <option value="off">Off</option>
+          </select>
+        </label>
+        <button type="button" id="cw-remount">Destroy + remount</button>
+        <label>Factory failure
+          <select id="cw-failure">
+            <option value="">None</option>
+          </select>
+        </label>
+      </div>
+      <p id="cw-status" class="cw-status" role="status">Preparing composition host.</p>
+    </section>
+
+    <div class="cw-workbench">
+      <section class="cw-preview-frame" aria-labelledby="preview-title">
+        <div class="cw-preview-bar">
+          <div><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></div>
+          <strong id="preview-title">PIXELody / COMPOSITION PREVIEW</strong>
+          <output id="cw-tier-output">WIDE · 12 COLUMNS</output>
+        </div>
+        <div class="cw-preview-viewport" id="cw-preview-viewport">
+          <div id="composition-stage" class="cw-stage" tabindex="-1" aria-label="Composable workspace specimen"></div>
+        </div>
+      </section>
+
+      <aside class="cw-inspector" aria-labelledby="inspector-title">
+        <div class="cw-inspector-head">
+          <div><p class="cw-eyebrow">Host evidence</p><h2 id="inspector-title">Inspector</h2></div>
+          <span id="cw-host-state">MOUNTING</span>
+        </div>
+        <dl class="cw-inspector-facts">
+          <div><dt>Graph</dt><dd id="cw-graph-signature">—</dd></div>
+          <div><dt>Breakpoint</dt><dd id="cw-inspector-tier">—</dd></div>
+          <div><dt>Selected</dt><dd id="cw-selected">None</dd></div>
+          <div><dt>Operation</dt><dd id="cw-operation">Initialize</dd></div>
+          <div><dt>Interaction</dt><dd id="cw-interaction-state">Idle</dd></div>
+          <div><dt>Last error</dt><dd id="cw-error">None</dd></div>
+        </dl>
+        <section class="cw-constraint-panel" aria-labelledby="constraint-title">
+          <h3 id="constraint-title">Selected constraints</h3>
+          <pre id="cw-constraints">Select a module.</pre>
+        </section>
+        <section class="cw-edit-panel" aria-labelledby="edit-title">
+          <div class="cw-edit-head">
+            <h3 id="edit-title">Composition commands</h3>
+            <span id="cw-mode-state">USE MODE</span>
+          </div>
+          <p id="cw-edit-guidance">Enter Composition Mode to edit the graph. Ordinary module controls remain independent.</p>
+          <fieldset id="cw-edit-fieldset" disabled>
+            <legend>Selected-module placement</legend>
+            <label>Relative target<select id="cw-edit-target"></select></label>
+            <div class="cw-command-row">
+              <button type="button" data-edit-command="move-before">Move before</button>
+              <button type="button" data-edit-command="move-after">Move after</button>
+            </div>
+            <label>Split axis<select id="cw-split-axis"><option value="horizontal">Horizontal</option><option value="vertical">Vertical</option></select></label>
+            <div class="cw-command-row">
+              <button type="button" data-edit-command="split-before">Split before</button>
+              <button type="button" data-edit-command="split-after">Split after</button>
+              <button type="button" data-edit-command="stack">Stack together</button>
+            </div>
+            <label>Replace with<select id="cw-replacement"></select></label>
+            <button type="button" data-edit-command="replace">Replace selected</button>
+            <label>Shape<select id="cw-shape"></select></label>
+            <div class="cw-command-row">
+              <button type="button" data-edit-command="shape">Apply shape</button>
+              <button type="button" data-edit-command="reset-module">Reset module</button>
+              <button type="button" class="cw-danger-command" data-edit-command="hide">Hide module</button>
+            </div>
+          </fieldset>
+          <fieldset id="cw-resize-fieldset" disabled>
+            <legend>Split size</legend>
+            <label>Split container<select id="cw-resize-split"></select></label>
+            <label>First pane <output id="cw-resize-output" for="cw-resize-ratio">50%</output>
+              <input id="cw-resize-ratio" type="range" min="20" max="80" step="1" value="50">
+            </label>
+            <div class="cw-command-row">
+              <button type="button" id="cw-resize-apply">Apply ratio</button>
+              <button type="button" id="cw-resize-equal">Equal panes</button>
+            </div>
+          </fieldset>
+          <div class="cw-history-row" role="group" aria-label="Composition transaction">
+            <button type="button" id="cw-undo" disabled>Undo</button>
+            <button type="button" id="cw-redo" disabled>Redo</button>
+            <button type="button" id="cw-cancel" disabled>Cancel</button>
+            <button type="button" id="cw-save" disabled>Save</button>
+            <button type="button" id="cw-restore" disabled>Restore Creator</button>
+          </div>
+          <div class="cw-save-as">
+            <label>Session layout name<input id="cw-layout-name" maxlength="48" placeholder="My listening layout" disabled></label>
+            <button type="button" id="cw-save-as" disabled>Save As</button>
+          </div>
+          <div class="cw-saved-layouts">
+            <label>Named session layouts<select id="cw-saved-layout" disabled><option value="">None saved</option></select></label>
+            <button type="button" id="cw-apply-saved" disabled>Apply</button>
+          </div>
+          <div class="cw-shortcuts" aria-label="Composition keyboard shortcuts"><span><kbd>Alt</kbd>+<kbd>E</kbd> mode</span><span><kbd>Ctrl</kbd>+<kbd>Z</kbd> undo</span><span><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd> redo</span><span><kbd>Ctrl</kbd>+<kbd>S</kbd> save</span></div>
+          <p id="cw-edit-announcement" class="cw-edit-announcement" role="status" aria-live="polite">Use Mode. Layout commands are inactive.</p>
+        </section>
+        <section class="cw-graph-panel" aria-labelledby="graph-title">
+          <h3 id="graph-title">Normalized graph</h3>
+          <pre id="cw-graph"></pre>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="cw-footer">
+    <strong>C6 POINTER + REFLOW VERTICAL SLICE</strong>
+    <p>This lab proves dedicated drag and resize handles, ranked legal intents, preview-only reflow, one-operation commits, click-to-pick/place, non-drag commands, responsive fit, and motion fallbacks. It does not prove production integration, durable restoration, assistive-technology acceptance, or independent-human comfort.</p>
+  </footer>
+
+  <script src="workspace-composition/contract.js"></script>
+  <script src="workspace-composition/operations.js"></script>
+  <script src="workspace-composition/module-contract.js"></script>
+  <script src="workspace-composition/module-registry.js"></script>
+  <script src="workspace-composition/composition-session.js"></script>
+  <script src="workspace-composition/interaction-adapter.js"></script>
+  <script src="workspace-composition/dev-lab-specimens.js"></script>
+  <script src="workspace-composition/dev-lab-host.js"></script>
+</body>
+</html>

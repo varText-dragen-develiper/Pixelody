@@ -1,0 +1,32 @@
+{
+  "$schema": "./theme.schema.json",
+  "schemaVersion": 1,
+  "id": "pixelody.graphite-loadout",
+  "name": "Graphite Loadout",
+  "author": "Pixelody",
+  "description": "A graphite tactical audio lab with nylon, glossy polymer, granite-filament controls, spectrum-edged isometric equipment panels, and original open-source sci-fi interface assets.",
+  "palette": {
+    "primary": "#d9ff00",
+    "secondary": "#77dce8",
+    "base": "#07090c"
+  },
+  "assets": {
+    "backgroundTexture": null,
+    "heroOverlay": "../assets/themes/graphite-loadout/run.svg",
+    "panelFrame": "../assets/themes/graphite-loadout/barcode.svg",
+    "iconSet": "../assets/themes/graphite-loadout/scan.svg"
+  },
+  "hud": {
+    "layout": "cinematic",
+    "controls": "equipment",
+    "corners": "clipped"
+  },
+  "typography": {
+    "profile": "technical-editorial",
+    "font": "../assets/themes/graphite-loadout/Rajdhani-SemiBold.ttf"
+  },
+  "motion": {
+    "profile": "drift",
+    "intensity": "expressive"
+  }
+}
