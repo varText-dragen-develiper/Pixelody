@@ -69,7 +69,7 @@ This runbook intentionally does not issue those commands. The assigned test oper
 
 ## Package Build And Signing Gate
 
-When item 9 has a driver source scaffold, the build/signing role must produce a package directory containing only the intended architecture's:
+When a driver source scaffold is available, the build/signing role must produce a package directory containing only the intended architecture's:
 
 ```text
 PixelodyVirtualAudio.sys
@@ -167,4 +167,4 @@ Never collect or attach PCM buffers, loopback recordings, personal music paths, 
 
 ## Exit Gate For The Next Task
 
-Item 9 may begin only when a developer can point to this runbook, a disposable VM snapshot policy, a chosen compatible WDK/SDK build pair, and the signed-package/recovery gates above. The first SysVAD-derived scaffold still has no installation path.
+Driver implementation requires this runbook, a disposable VM snapshot policy, a chosen compatible WDK/SDK build pair, and the signed-package/recovery gates above. The first SysVAD-derived scaffold still has no installation path.

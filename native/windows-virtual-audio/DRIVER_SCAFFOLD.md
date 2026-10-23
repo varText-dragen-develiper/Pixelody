@@ -71,5 +71,5 @@ notifications, or the clock contract cannot be proven.
 Do not build this scaffold on a normal workstation. WDK build, test signing,
 package staging, endpoint visibility checks, and recovery validation belong only
 to the disposable VM workflow in
-`../../docs/audio/system-audio/WINDOWS_VIRTUAL_AUDIO_VM_WDK_SETUP.md`. Item 8's snapshot and rollback
+`../../docs/audio/system-audio/WINDOWS_VIRTUAL_AUDIO_VM_WDK_SETUP.md`. The VM setup guide's snapshot and rollback
 requirements apply before any future package becomes buildable.

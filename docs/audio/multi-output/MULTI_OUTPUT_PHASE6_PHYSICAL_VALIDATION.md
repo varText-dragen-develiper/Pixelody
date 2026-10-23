@@ -109,7 +109,7 @@ Fill this in after a real hardware run:
 
 ```text
 Date:
-Pixelody build/thread:
+Pixelody build/commit:
 Windows version:
 Engine: browser prototype / native mixer / other
 Primary endpoint:

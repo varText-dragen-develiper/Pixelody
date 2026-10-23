@@ -78,7 +78,7 @@ Fill this in after a real hardware run:
 
 ```text
 Date:
-Pixelody build/thread:
+Pixelody build/commit:
 Windows version:
 Primary wired endpoint:
 Secondary wired endpoint:
@@ -168,7 +168,7 @@ Fill this in after a real hardware run:
 
 ```text
 Date:
-Pixelody build/thread:
+Pixelody build/commit:
 Windows version:
 Primary wired endpoint:
 Bluetooth endpoint:
@@ -260,7 +260,7 @@ Fill this in after a real hardware run:
 
 ```text
 Date:
-Pixelody build/thread:
+Pixelody build/commit:
 Windows version:
 CPU model:
 RAM:

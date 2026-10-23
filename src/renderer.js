@@ -868,7 +868,7 @@ if (appearance.theme === 'foreground' && !canvasStageActive()) {
   if (appearance.palette === 'foreground') appearance.palette = appearance.studioPalette || 'gold';
 }
 // Foundational reset: old built-ins and installed community packages remain
-// preserved on disk, but Studio is the sole runtime presentation until its new
+// preserved on disk, but Studio remains the rebuilt-shell fallback while its new
 // shell is accepted. This also repairs stale durable selections on launch.
 const STUDIO_REBUILD_MODE = true;
 if (STUDIO_REBUILD_MODE) {
@@ -1340,7 +1340,7 @@ function applyCanvasThemePortAttributes(port) {
 // Injected rather than declared in index.html so the composable work claims
 // no product markup and can be removed without touching the shell.
 function installCanvasStudioControl() {
-  // Studio is the only selectable theme during the foundation reset, so its
+  // Studio remains the fallback during the foundation reset, so its
   // development entry must live in the always-visible theme settings group.
   // The former Dev Lab host is correctly hidden outside Dev Lab, which made
   // this control unreachable on every ordinary Studio launch.

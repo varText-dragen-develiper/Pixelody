@@ -153,11 +153,9 @@ entry refreshes once at the start, with a 150ms pause between removing the
 group and adding it back so Explorer can process the removal. Successful
 native animation finishes with
 notifications only for matching shortcuts. Immediate and fallback updates
-retain the full Shell refresh. The user confirmed actual Public Test theme
-switching animates smoothly with one pop-up and no second pop-up at the end.
+retain the full Shell refresh. Public Test theme switching was confirmed to animate smoothly with one pop-up and no second pop-up at the end.
 The normal installed build uses the same path. After the removal pause was
-added, the owner confirmed Studio, Cartridge Quest and Obsession transitions
-animate and end on the correct color after reporting a Windows Search launch
+added, Studio, Cartridge Quest and Obsession transitions were confirmed to animate and end on the correct color after reporting a Windows Search launch
 regression. Native transitions, manual colors and motion-disabled updates were
 also checked in an isolated profile.
 

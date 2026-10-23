@@ -20,7 +20,7 @@ The domain files are UMD-style modules so the same implementation runs as a clas
 - The main-process state store remains authoritative. The renderer state controller receives only narrow bridge methods and never receives filesystem primitives.
 - Legacy localStorage remains a rollback mirror; domain modules cannot read or write it directly.
 - Track paths remain in the private renderer-to-main J.A.M. snapshot only so the main process can stream local media. `src/server/` maps IDs and strips paths before any public response; `scripts/check-server.js` verifies this boundary with a Windows-path fixture.
-- The primary audio graph still contains one media-element source, simple and parametric EQ, master gain, spatial matrix, protective limiter, and one destination. Output truth and direct-primary behavior are unchanged.
+- The primary audio graph still contains one media-element source, simple and parametric EQ, master gain, spatial matrix, protective limiter, and one destination. Output reporting and the primary audio path are unchanged.
 - Theme choreography, accessibility attributes, DOM IDs, and mini-player message ordering remain composition-root responsibilities until a later UI component migration provides an equally explicit contract.
 - Every controller must remain independently require-able in Node. New domain logic belongs in its owner module and needs a module-level test before renderer wiring.
 
@@ -29,4 +29,4 @@ The domain files are UMD-style modules so the same implementation runs as a clas
 - `scripts/check-renderer-domains.js` executes every controller boundary, including state serialization, malformed import shapes, queue/session decisions, navigation history, diagnostics lifecycle, J.A.M. projection, appearance normalization, and a fake Web Audio graph.
 - `scripts/check-ui-bindings.js` guards DOM composition and the bounded startup reveal.
 - `scripts/check-state-store.js`, `scripts/check-audio.js`, `scripts/check-server.js`, and the theme/legal audits protect cross-process and cross-domain invariants.
-- The item 3 live Windows smoke test covers startup, durable library/queue/session restore, settings navigation, diagnostics, play/pause, J.A.M. default-off state, and mini-player synchronization.
+- The live Windows smoke test covers startup, durable library/queue/session restore, settings navigation, diagnostics, play/pause, J.A.M. default-off state, and mini-player synchronization.

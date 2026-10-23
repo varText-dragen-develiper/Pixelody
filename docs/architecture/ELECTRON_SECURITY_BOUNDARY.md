@@ -8,7 +8,7 @@ Pixelody’s privileged desktop windows load documents packaged with the app. Th
 | --- | --- | --- |
 | Main | `src/preload.js` | User-invoked dialogs/imports/exports, durable state, playback-state broadcast, J.A.M. owner controls, bounded diagnostics, output helpers, navigation state, opening Pixelody Mini, choosing the window icon from the fixed logo-colour list (`app:set-brand-icon`, enum-validated against `src/brand-mark.js`), and restarting into a development presentation (`app:relaunch-development-profile`, enum-validated against `src/development-profiles.js`; refused outside development builds and under the integration harness). |
 | Mini | `src/mini-preload.js` | Receive sanitized player state, send previous/toggle/next, restore the main window, and close itself. |
-| Hostile integration probe | `src/security-probe-preload.js` | Item 5 test-only attempts. It has no production creation path and every production capability must reject it. |
+| Hostile integration probe | `src/security-probe-preload.js` | Security integration test attempts. It has no production creation path and every production capability must reject it. |
 
 All renderer processes use `sandbox: true`, `contextIsolation: true`, `nodeIntegration: false`, disabled webviews, safe dialogs, and drag/drop navigation denial. `app.enableSandbox()` enforces the renderer sandbox globally. The main process permits only the expected top-frame `file:` document for each known `webContents`; a matching `webContents` with a changed page or subframe is not authorized.
 

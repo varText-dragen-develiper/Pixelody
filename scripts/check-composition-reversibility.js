@@ -3,7 +3,7 @@
 // Move a pane away, then drop it back on exactly the cell it came from. Does
 // the canvas return to what it was?
 //
-// The owner's words: "If I move one thing, everything shifts around, and now
+// The reported layout failure: "If I move one thing, everything shifts around, and now
 // it's impossible to put that thing back where I found it." That is a
 // reversibility property, and this is it as a number.
 //

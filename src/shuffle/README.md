@@ -1,6 +1,6 @@
 # Universal shuffle v2 reference
 
-Policy `universal-shuffle-v2.1`, config 1. The executable machine contract,
+Policy `universal-shuffle-v2.2`, config 2, schema 3. The executable machine contract,
 JSON schemas and replay traces live in
 `docs/api-contract-fixtures/shuffle-universal-v2/`. That directory's manifest
 hashes every shared input. Schema and policy changes need compatibility review.
@@ -18,7 +18,8 @@ adapters must use occurrence-aware universal calls.
    `authorityId`, seed and source occurrences `{entryId,trackId,...}`. A library
    ordinarily has one source entry per catalog item. Playlist duplicates retain
    separate entry IDs. Select a saved mode, or use the default Balanced mode.
-2. Call `stage(state,{attemptId,advanceId,direction,entryId,naturalEnd},context)`.
+2. Call `stage(state,{attemptId,advanceId,direction,entryId,naturalEnd,lane,
+   heardMs,coveragePermille,personal},context)`.
    Persist the staged state before starting activation. Context supplies an
    injected `nowMs` and an array of integer learning `signals`. Staging reserves
    an offer; it does not change committed RNG, history or entitlement.
@@ -68,6 +69,39 @@ sorting, restarts, mode changes and ordinary queue edits. `scopes.js` retains
 32 scopes and refuses new scopes at capacity until explicit eviction. An
 eviction reports unfinished entitlement and does not claim completion.
 
+## Two queues
+
+Balanced, Flow and Album keep two queues. A natural end (`naturalEnd: true`)
+plays the base queue; a personal Next (`naturalEnd: false`) plays the live
+queue. The first song, Previous, history forward and Play Now always use base.
+Pass `heardMs` and `coveragePermille` with a skip so the core can tell a flick
+(under 3 s, no mark) from an early, mid or late skip. Pass `personal: false`
+for remote, preview and session-restore advances; they leave no mark.
+
+Each personal advance leaves one session mark on the song it leaves. Marks
+steer the live queue up to ±24 points and the base queue up to ±8 by
+metadata closeness, fade over eight songs or two hours, and never enter the
+learning ledger. Balanced and Flow pin the next three base songs in
+`lanes.pinned`; an early skip drops pinned songs very close to the skipped
+one. The live queue never offers the base head while three or more songs are
+eligible. Album shuffle leaves an album after a second early skip on it.
+
+`preview(state,{lane},context)` returns the receipt each queue would play next
+without reserving anything; use it for an "If you skip" row. With
+`personal: false` every kept mode makes the same decisions as v2.1
+(`v21-decision-parity.json`). `restore` upgrades v2.1 sessions in place;
+random shuffle is gone and old random sessions continue as Balanced.
+
+A platform may add one score of its own per track as `adapterPoints` on a
+signal row, capped at ±12 and shown in the receipt as `adapter`. Windows folds
+its older Flow extras (transition memory, trust calibration, skip rates, mode
+leanings, "less like this" artists) into it through
+`renderer-domains/shuffle-desktop.js`; Android sends none.
+
+Entries may carry `sourceKey` (for example `playlist:<id>` or `album:<id>`)
+when a session links several lists. `options.airtime: 'even'` then gives each
+list a fair turn; the default `size` lets bigger lists play more.
+
 ## Learning and privacy
 
 Pass actual service/audio intervals to `learning.reduce`, with an independent
@@ -95,6 +129,20 @@ Run `node scripts/check-shuffle-universal.js`,
 `node scripts/check-shuffle-universal-simulations.js`, and
 `node scripts/check-flow-shuffle.js`. Regeneration with `--write-fixtures` is a
 policy-maintainer action, followed by ordinary drift-check execution.
+
+Windows drives the core through `renderer-domains/shuffle-desktop.js` (one
+scope per list the queue was started from, session and ledger saved as
+`pixelody.shuffleSession` and `pixelody.shuffleLedger`);
+`node scripts/check-shuffle-windows-w0.js` runs the renderer's real traversal
+against it.
+
+Both apps show the two queues the same way: the queue's Up next row is the
+base queue's next pick, If you skip is `preview(state, {lane: 'live'})` worked
+out after the current song commits, and the why line reads the current
+receipt's `lane` and `skip`. Add to session reconciles another list's entries
+into the session with their own `sourceKey`, so linked lists take turns
+(`options.airtime`: `size` or `even`); removing a list reconciles its entries
+out and keeps the song playing now.
 
 Core test/simulation results are local reference evidence. Platform adoption,
 Kotlin parity, filesystem durability, renderer scheduling, connected handoff,

@@ -1,5 +1,5 @@
 // Development presentations reachable from Settings > Themes in development
-// builds. None of them is a registered theme: Studio stays the only built-in
+// builds. None of them is a registered theme: Studio stays the fallback built-in
 // (src/themes/built-in-themes.json). Each entry says how to start Pixelody in
 // it -- the same arguments and environment the Start Pixelody *.cmd launchers
 // pass -- so the theme explorer can restart into one and back to Studio.

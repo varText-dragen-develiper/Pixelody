@@ -53,7 +53,7 @@ privacy marker are enough to reproduce the route safely.
 ```text
 Date:
 Operator:
-Pixelody build/thread:
+Pixelody build/commit:
 Windows version:
 Engine: experimental browser prototype / native mixer
 Primary endpoint label and type:
@@ -97,7 +97,7 @@ Evidence references:
 ```text
 Date:
 Operator:
-Pixelody build/thread:
+Pixelody build/commit:
 Windows version:
 Engine: experimental browser prototype / native mixer
 Primary wired endpoint label and type:
