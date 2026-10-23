@@ -4,7 +4,7 @@
   "id": "pixelody.axis-break",
   "name": "Axis Break",
   "author": "Pixelody",
-  "description": "C3 experiment: an open mineral field organized by one state-owned oblique signal seam, with oxide intent and vermilion/amber reserved for confirmed playback.",
+  "description": "Warm paper divided by a seam, with rust and orange accents.",
   "palette": { "builtIn": "axis-break" },
   "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
   "hud": { "layout": "cinematic", "controls": "technical", "corners": "square" },

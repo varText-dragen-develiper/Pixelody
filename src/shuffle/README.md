@@ -3,7 +3,7 @@
 Policy `universal-shuffle-v2.1`, config 1. The executable machine contract,
 JSON schemas and replay traces live in
 `docs/api-contract-fixtures/shuffle-universal-v2/`. That directory's manifest
-hashes every shared input. Schema/policy changes require coordinator review.
+hashes every shared input. Schema and policy changes need compatibility review.
 
 CommonJS: `require('./src/shuffle')` exports the scheduler. Browser scripts load
 `universal.js`, `learning.js`, then `scopes.js`; their globals are

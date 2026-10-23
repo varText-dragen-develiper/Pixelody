@@ -63,7 +63,7 @@ Start with [Getting started](GETTING_STARTED.md) for the app, or the [website gu
 - [Local Network J.A.M. And Device Hosting Notes](networking/LOCAL_NETWORK_JAMS_AND_DEVICE_HOSTING.md)
 - [Pixelody Networking Backbone Checklist](networking/NETWORKING_BACKBONE_CHECKLIST.md)
 - [Pixelody Networking Capabilities Implementation Map](networking/NETWORKING_CAPABILITIES_IMPLEMENTATION_MAP.md)
-- [Pixelody Networking Development Roadmap](networking/NETWORKING_DEVELOPMENT_ROADMAP.md)
+- [Networking development notes](networking/NETWORKING_DEVELOPMENT_ROADMAP.md)
 
 ## Release engineering
 

@@ -123,9 +123,8 @@ are in [`docs/api-contract-fixtures/`](api-contract-fixtures/).
 
 ## Theme runtime
 
-Pixelody Studio is the only registered, selectable built-in presentation. That is
-a deliberate foundation reset, not a gap: new themes are rebuilt on the runtime
-described in
+Settings offers Studio, Obsession Mode, and Cartridge Quest. Studio is the
+fallback; the two alternate layouts use composition recipes on the runtime in
 [THEME_RUNTIME_ARCHITECTURE.md](themes/THEME_RUNTIME_ARCHITECTURE.md).
 
 - Canvas Studio and the named composition profiles are development-only. They
@@ -174,20 +173,11 @@ not part of this repository.
   [WINDOWS_INTEGRATION_HARNESS.md](release/WINDOWS_INTEGRATION_HARNESS.md) and
   [LEGAL_RELEASE_CHECKLIST.md](release/LEGAL_RELEASE_CHECKLIST.md).
 
-## Definition of done
+## Contributing changes
 
-A change is done when:
-
-1. The requested behavior or design is implemented, not described.
-2. Playback, importing, playlists, metadata, queue, the mini player, audio
-   tuning, panel resizing, settings and navigation still work and stay reachable
-   and readable at common desktop widths.
-3. Main and mini-player appearances are both handled where relevant.
-4. Reduced and off motion still work.
-5. New assets have compatible licenses and are recorded.
-6. `npm run check` passes, along with `npm run check:audio` for audio changes and
-   `npm run check:themes` for theme changes.
-7. [ROADMAP.txt](../ROADMAP.txt) is updated only after the feature exists.
+Try changes through the normal interface, including the mini-player and reduced
+motion when relevant. Keep asset credits current and include the checks you ran
+with a contribution. See [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 Broader audits live in
 [BACKBONE_AUDIT_CHECKLIST.md](architecture/BACKBONE_AUDIT_CHECKLIST.md).

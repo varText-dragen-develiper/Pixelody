@@ -4,7 +4,7 @@
   "id": "pixelody.harmonic-registry",
   "name": "Harmonic Registry",
   "author": "Pixelody",
-  "description": "C3 experiment: a daylight local-sound specimen book with deterministic proof glyphs, a broad selected-collection field, and separated magenta intent and cyan confirmed playback.",
+  "description": "A light specimen book with magenta browsing and cyan playback details.",
   "palette": { "builtIn": "harmonic-registry" },
   "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
   "hud": { "layout": "cinematic", "controls": "technical", "corners": "square" },

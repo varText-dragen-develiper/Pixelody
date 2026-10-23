@@ -28,9 +28,9 @@ contract is written down once and nobody has to relearn it from a vague summary.
 
 ## Current state
 
-- Pixelody Studio is the only registered, selectable built-in presentation. This
-  is the result of a deliberate foundation reset, and
-  [THEME_SYSTEM.md](THEME_SYSTEM.md) describes the reset in detail.
+- Settings offers Studio, Obsession Mode, and Cartridge Quest. Studio is the
+  fallback; the other two use composition recipes.
+  [THEME_SYSTEM.md](THEME_SYSTEM.md) describes how those layouts are loaded.
 - Canvas Studio and named composition profiles are development-only, and the
   [Canvas and Studio gates](../architecture/CANVAS_AND_STUDIO_GATES.md) say how
   they are kept out of the shipped theme list.

@@ -4,7 +4,7 @@
   "id": "pixelody.abyssal-press",
   "name": "Abyssal Press",
   "author": "Pixelody",
-  "description": "A pressure-printed oceanographic record where typographic strata, translucent signal volumes, and utility rails make local playback state physical and literal.",
+  "description": "Layered lettering and translucent panels in magenta and cyan.",
   "palette": { "builtIn": "abyssal-press" },
   "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
   "hud": { "layout": "cinematic", "controls": "technical", "corners": "square" },

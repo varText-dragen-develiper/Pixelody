@@ -634,14 +634,14 @@
         if (experimentProfile) documentObject.body.dataset.cwCompositionProfile = experimentProfile.PROFILE_ID;
         if (profileName) profileName.textContent = experimentProfile?.LABEL || 'Pixelody Canvas Alpha';
         applyGraph(session.snapshot().graph);
-        setStatus('First-party production adapters are live. Use Mode is locked.', 'success');
+        setStatus('Workspace ready. Switch to Composition Mode to edit the layout.', 'success');
         return { ok: true, status: 'active', revision: workspaceRevision };
       })().catch(async (error) => {
         destroyInstances();
         documentObject.body.classList.remove('cw-production-host-active');
         documentObject.body.dataset.compositionMode = 'use';
         await desktop.reportWorkspaceStartup('failed', { errorCode: String(error?.code || 'C8_HOST_ACTIVATION_FAILED').slice(0, 120) }).catch(() => {});
-        setStatus(`Composable host failed closed: ${error.message}`, 'error');
+        setStatus(`The workspace could not open safely: ${error.message}`, 'error');
         options.onFailure?.(error);
         return { ok: false, status: 'failed', error: error.message };
       }).finally(() => { activating = null; });
@@ -782,7 +782,7 @@
       session.save();
       saving = false;
       applyGraph(result.state.graph);
-      setStatus('Workspace saved atomically. Composition Mode exited and Use Mode is locked.', 'success');
+      setStatus('Workspace saved. The layout is locked for listening.', 'success');
     }
 
     async function cancelAndExit() {

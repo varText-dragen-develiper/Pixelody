@@ -35,7 +35,7 @@ class ThemePackageStore {
   async readAndValidate(filePath) {
     const stats = await this.fs.lstat(filePath);
     if (!stats.isFile() || stats.isSymbolicLink()) throw new ThemePackageError('invalid_file', 'Theme packages must be regular local files.');
-    if (!stats.size || stats.size > MAX_PACKAGE_BYTES) throw new ThemePackageError('package_size', `Theme packages must be no larger than ${MAX_PACKAGE_BYTES} bytes in this milestone.`);
+    if (!stats.size || stats.size > MAX_PACKAGE_BYTES) throw new ThemePackageError('package_size', `Theme packages must be no larger than ${MAX_PACKAGE_BYTES} bytes in this package format.`);
     const bytes = await this.fs.readFile(filePath);
     const normalizedPackage = parseThemePackageBytes(bytes, { appVersion: this.appVersion });
     return { bytes, normalizedPackage, hash: digest(bytes) };
@@ -109,7 +109,7 @@ class ThemePackageStore {
           try {
             const { normalizedPackage, hash } = await this.readAndValidate(packageFile);
             if (hash !== hashEntry.name || normalizedPackage.theme.id !== idEntry.name || normalizedPackage.version !== versionEntry.name) {
-              throw new ThemePackageError('identity_mismatch', 'Installed package identity does not match its immutable storage location.');
+              throw new ThemePackageError('identity_mismatch', 'Installed package identity does not match its read-only storage location.');
             }
             const stats = await this.fs.stat(packageFile);
             packages.push(descriptorFor(normalizedPackage, hash, stats.birthtime.toISOString()));
@@ -129,7 +129,7 @@ class ThemePackageStore {
     let existed = true;
     try {
       const stats = await this.fs.lstat(target);
-      if (!stats.isDirectory() || stats.isSymbolicLink()) throw new ThemePackageError('unsafe_target', 'The installed theme target is not an owned package directory.');
+      if (!stats.isDirectory() || stats.isSymbolicLink()) throw new ThemePackageError('unsafe_target', 'The installed theme target is not an package directory.');
     } catch (error) {
       if (error.code !== 'ENOENT') throw error;
       existed = false;

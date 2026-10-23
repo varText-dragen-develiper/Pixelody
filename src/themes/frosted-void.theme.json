@@ -4,7 +4,7 @@
   "id": "pixelody.frosted-void",
   "name": "Frosted Void",
   "author": "Pixelody",
-  "description": "Apple-like liquid glass and responsive spectral bubble film suspended in absolute black, with severe poster type and x-ray audio calibration.",
+  "description": "Black acrylic, frosted controls, and bright edges.",
   "palette": { "primary": "#f4f4ef", "secondary": "#a9c8ff", "base": "#000000" },
   "assets": { "backgroundTexture": null, "heroOverlay": "../assets/themes/frosted-void/spectral-bubbles.svg", "panelFrame": null, "iconSet": null },
   "hud": { "layout": "cinematic", "controls": "minimal", "corners": "square" },

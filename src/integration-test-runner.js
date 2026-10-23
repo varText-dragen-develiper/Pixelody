@@ -1026,61 +1026,67 @@
     $('#queueButton').click();
     await waitFor(() => !$('#queueDrawer').classList.contains('hidden'), 2000, 'open actual queue drawer');
 
-    const standardIds = ['fixture-tone-a', 'fixture-tone-b', 'fixture-tone-c', 'fixture-tone-d'];
-    state.queue = standardIds.slice();
+    // Balanced replaced Standard; traversal now runs through the shared two-queue core.
+    const balancedIds = ['fixture-tone-a', 'fixture-tone-b', 'fixture-tone-c', 'fixture-tone-d'];
+    state.queue = balancedIds.slice();
+    state.queueSourceId = 'integration-balanced';
     state.repeat = 'off';
-    setShuffleStyle('standard');
-    await playTrack(firstId, { source: 'integration-standard-start' });
-    state.flowShuffle = flowShuffleEngine.resetPlan(state.flowShuffle, state.queue, firstId, { style: 'standard', seed: 'windows-w0-four-track' });
+    setShuffleStyle('balanced');
+    await playTrack(firstId, { source: 'integration-balanced-start' });
     renderQueue();
-    const standardOrder = state.flowShuffle.plan.order.slice();
+    const shuffleCore = () => universalShuffleController.summary();
+    assert(shuffleCore()?.scopeId === 'playlist:integration-balanced' && shuffleCore().mode === 'balanced', 'Balanced did not start its own shuffle session.');
     const queueOrder = () => Array.from(document.querySelectorAll('#queueList .queue-item')).map((item) => decodeURIComponent(item.dataset.id));
-    assert(JSON.stringify(queueOrder()) === JSON.stringify(standardOrder), 'Standard queue did not project the authoritative permutation.');
+    const projectedNext = adjacentTrack(1, true);
+    assert(queueOrder()[queueOrder().indexOf(currentFixture()) + 1] === projectedNext?.id, 'Balanced queue did not show the base queue next.');
     const failedCandidate = adjacentTrack(1);
     const failedPath = failedCandidate.path;
-    const beforeFailedTraversal = JSON.stringify(state.flowShuffle);
+    const beforeFailedTraversal = JSON.stringify({ cursor: shuffleCore().cursor, remaining: shuffleCore().remaining, generation: shuffleCore().generation });
     const beforeFailedOutcomes = state.signalJournal.events.filter((event) => event.type === 'track_skipped').length;
     failedCandidate.path = `${failedPath}.missing`;
-    await playTrack(failedCandidate.id, { source: 'integration-standard-failed-start' });
-    assert(currentFixture() === firstId && JSON.stringify(state.flowShuffle) === beforeFailedTraversal, 'Failed Standard activation consumed traversal.');
+    await playTrack(failedCandidate.id, { source: 'integration-balanced-failed-start' });
+    assert(currentFixture() === firstId && JSON.stringify({ cursor: shuffleCore().cursor, remaining: shuffleCore().remaining, generation: shuffleCore().generation }) === beforeFailedTraversal, 'Failed Balanced activation consumed traversal.');
     assert(state.signalJournal.events.filter((event) => event.type === 'track_skipped').length === beforeFailedOutcomes, 'Failed activation taught a personal skip.');
     failedCandidate.path = failedPath;
     failedCandidate.missing = false;
-    const standardHeard = [firstId];
-    for (const expectedId of standardOrder.slice(1)) {
+    const balancedHeard = [firstId];
+    while (balancedHeard.length < 4) {
+      const before = currentFixture();
       $('#nextButton').click();
-      await waitFor(() => currentFixture() === expectedId && !audio.paused, 3500, 'four-track Standard next');
-      assert(state.flowShuffle.plan.style === 'standard', 'Successful Standard activation changed the plan style.');
-      standardHeard.push(currentFixture());
+      await waitFor(() => currentFixture() !== before && !audio.paused, 3500, 'four-track Balanced next');
+      assert(state.shuffleStyle === 'balanced', 'Successful Balanced activation changed the style.');
+      balancedHeard.push(currentFixture());
       const journalPick = state.signalJournal.events.filter((event) => event.type === 'shuffle_pick').at(-1);
-      assert(journalPick?.fromTrackId === standardHeard.at(-2) && journalPick?.decision?.trackId === expectedId && journalPick?.occurrenceId, 'Real Standard journal lost origin, occurrence or decision.');
+      assert(journalPick?.fromTrackId === balancedHeard.at(-2) && journalPick?.decision?.trackId === currentFixture() && journalPick?.occurrenceId && journalPick?.lane === 'live', 'Real Balanced journal lost origin, occurrence, decision or lane.');
     }
-    assert(new Set(standardHeard).size === 4 && adjacentTrack(1) === null && adjacentTrack(1, true) === null, 'Four-track Standard repeat-off did not exhaust once.');
+    assert(new Set(balancedHeard).size === 4 && adjacentTrack(1) === null && adjacentTrack(1, true) === null, 'Four-track Balanced repeat-off did not exhaust once.');
     $('#prevButton').click();
-    await waitFor(() => currentFixture() === standardOrder[2], 3500, 'Standard Previous');
+    await waitFor(() => currentFixture() === balancedHeard[2], 3500, 'Balanced Previous');
     $('#nextButton').click();
-    await waitFor(() => currentFixture() === standardOrder[3], 3500, 'Standard retained forward Next');
-    const generationBeforeNatural = state.flowShuffle.plan.generation;
+    await waitFor(() => currentFixture() === balancedHeard[3], 3500, 'Balanced retained forward Next');
+    const generationBeforeNatural = shuffleCore().generation;
     state.repeat = 'all';
     audio.currentTime = audio.duration - 0.08;
-    await waitFor(() => state.flowShuffle.plan.generation === generationBeforeNatural + 1 && !audio.paused, 3500, 'real Standard repeat-all natural end');
-    assert(state.flowShuffle.plan.style === 'standard', 'Repeat-all natural activation changed Standard style.');
-    const priorityId = standardIds.find((id) => id !== currentFixture());
-    assert(handleRemoteQueueCommand({ action: 'addnext', trackId: priorityId }, { auth: { kind: 'guest', deviceId: 'fixture-standard-remote' } }), 'Standard remote Play Next failed.');
+    await waitFor(() => shuffleCore().generation === generationBeforeNatural + 1 && !audio.paused, 3500, 'real Balanced repeat-all natural end');
+    assert(state.shuffleStyle === 'balanced' && state.flowShuffle.lastPick?.lane === 'base', 'Repeat-all natural end did not play the base queue in Balanced.');
+    const priorityId = balancedIds.find((id) => id !== currentFixture());
+    assert(handleRemoteQueueCommand({ action: 'addnext', trackId: priorityId }, { auth: { kind: 'guest', deviceId: 'fixture-balanced-remote' } }), 'Balanced remote Play Next failed.');
     renderQueue();
     const priorityPick = adjacentTrack(1);
-    assert(priorityPick?.id === priorityId && queueOrder()[queueOrder().indexOf(currentFixture()) + 1] === priorityId, `Standard manual priority and queue projection diverged: ${JSON.stringify({ expected: priorityId, picked: priorityPick?.id, current: currentFixture(), queue: queueOrder(), plan: state.flowShuffle.plan, priorities: state.flowShuffle.priorityIds })}`);
-    await playTrack(priorityId, remoteSignalContext({ auth: { kind: 'guest', deviceId: 'fixture-standard-remote' } }));
+    assert(priorityPick?.id === priorityId && queueOrder()[queueOrder().indexOf(currentFixture()) + 1] === priorityId, `Balanced manual priority and queue projection diverged: ${JSON.stringify({ expected: priorityId, picked: priorityPick?.id, current: currentFixture(), queue: queueOrder(), priorities: state.flowShuffle.priorityIds })}`);
+    await playTrack(priorityId, remoteSignalContext({ auth: { kind: 'guest', deviceId: 'fixture-balanced-remote' } }));
     const beforeMini = currentFixture();
     const miniNext = adjacentTrack(1)?.id;
-    assert(miniNext && miniNext !== beforeMini, 'Standard mini-player fixture had no next item.');
+    assert(miniNext && miniNext !== beforeMini, 'Balanced mini-player fixture had no next item.');
     await window.desktop.openMiniPlayer();
     await waitFor(async () => (await bridge.getStatus()).miniOpen, 3500, 'shuffle mini-player window');
-    await waitFor(() => currentFixture() === miniNext && !audio.paused, 3500, 'actual mini-player Next IPC');
-    assert(state.flowShuffle.plan.style === 'standard', 'Mini-player Next changed Standard style.');
+    await waitFor(() => currentFixture() !== beforeMini && !audio.paused, 3500, 'actual mini-player Next IPC');
+    assert(state.shuffleStyle === 'balanced', 'Mini-player Next changed Balanced style.');
     await bridge.action('close-mini');
     await waitFor(async () => !(await bridge.getStatus()).miniOpen, 2500, 'shuffle mini-player close');
-    await report('standard-four-track-runtime', { sourceIds: standardIds, committedOrder: standardHeard, repeatOffExhausted: true, previousForward: true, failedStartUnconsumed: true, actualNaturalEnd: true, repeatAllGeneration: state.flowShuffle.plan.generation, manualPriority: true });
+    await report('balanced-four-track-runtime', { sourceIds: balancedIds, committedOrder: balancedHeard, repeatOffExhausted: true, previousForward: true, failedStartUnconsumed: true, actualNaturalEnd: true, repeatAllGeneration: shuffleCore().generation, manualPriority: true });
+    // The Flow checks get a session of their own as well.
+    state.queueSourceId = 'integration-flow';
 
     Object.assign(first, { bpm: 96, musicalKey: '8A', energyLevel: 42, genre: 'Ambient' });
     Object.assign(second, { bpm: null, musicalKey: '', energyLevel: null, genre: '' });
@@ -1109,17 +1115,16 @@
 
     const planned = adjacentTrack(1);
     assert(planned && flowShuffleRuntime.pending?.trackId === planned.id, 'Flow pick was not staged before playback.');
-    const stagedCursor = state.flowShuffle.plan?.cursor;
-    const stagedFuture = [...(state.flowShuffle.plan?.future || [])];
-    assert(stagedFuture.includes(planned.id) || planned.id === secondId, 'Staged Flow candidate was consumed early.');
+    const stagedCursor = universalShuffleController.summary().cursor;
+    assert(!universalShuffleController.history().includes(planned.id), 'Staged Flow candidate was consumed early.');
 
     second.path = `${second.path}.missing`;
     second.missing = false;
     await playTrack(planned.id, { source: 'integration-flow-failed-playback' });
     assert(currentFixture() === firstId, 'Failed Flow playback changed the current track.');
     assert(flowShuffleRuntime.pending === null, 'Failed Flow playback left a stale staged candidate.');
-    assert(state.flowShuffle.plan?.cursor === stagedCursor, 'Failed Flow playback consumed the traversal cursor.');
-    assert((state.flowShuffle.plan?.future || []).includes(planned.id) || planned.id === secondId, 'Failed Flow playback consumed the candidate.');
+    assert(universalShuffleController.summary().cursor === stagedCursor, 'Failed Flow playback consumed the traversal cursor.');
+    assert(!universalShuffleController.history().includes(planned.id), 'Failed Flow playback consumed the candidate.');
 
     second.path = `${second.path.slice(0, -8)}`;
     second.missing = false;
@@ -1128,7 +1133,7 @@
     await playTrack(committed.id, { source: 'integration-flow-commit' });
     await waitFor(() => currentFixture() === committed.id && !audio.paused, 5000, 'successful Flow playback commit');
     assert(flowShuffleRuntime.pending === null, 'Successful Flow playback left a staged candidate.');
-    assert(state.flowShuffle.plan?.cursor !== stagedCursor, 'Successful Flow playback did not commit traversal.');
+    assert(universalShuffleController.summary().cursor !== stagedCursor, 'Successful Flow playback did not commit traversal.');
     assert(state.flowShuffle.lastPick?.decision?.version === 1, 'Successful Flow playback did not retain a decision receipt.');
     assert(document.querySelector('#flowShuffleWhyPlan')?.textContent?.trim(), 'Flow decision plan position was not rendered.');
 
@@ -1141,6 +1146,7 @@
 
     resetFlowShuffleCycle(firstId);
     state.flowShuffle.priorityIds = [];
+    universalShuffleController.controller().newCycle();
     renderQueue();
     const generatedAgain = adjacentTrack(1);
     assert(generatedAgain, 'Flow did not create a committed traversal for Previous/Next coverage.');
@@ -1167,13 +1173,13 @@
     if (mutationPick) {
       state.queue = state.queue.filter((id) => id !== mutationPick.id);
       renderQueue();
-      assert(!state.flowShuffle.plan?.future?.includes(mutationPick.id), 'Queue removal left an invalid planned track.');
+      assert(!universalShuffleController.upcoming(16, desktopShuffleContextKey()).includes(mutationPick.id), 'Queue removal left an invalid planned track.');
       assert(!flowShuffleRuntime.pending || state.queue.includes(flowShuffleRuntime.pending.trackId), 'Queue mutation left an invalid staged track.');
     }
     state.queue = [firstId, secondId];
     if (mutationTarget && state.queue.includes(mutationTarget)) state.queue = [mutationTarget, ...state.queue.filter((id) => id !== mutationTarget)];
     renderQueue();
-    assert(state.flowShuffle.plan?.sourceQueueIds?.every((id) => state.queue.includes(id)), 'Queue reorder left stale Flow source IDs.');
+    assert(universalShuffleController.upcoming(16, desktopShuffleContextKey()).every((id) => state.queue.includes(id)), 'Queue reorder left stale shuffle entries.');
 
     const remoteResult = await handleRemotePlaybackCommand({ action: 'next' }, { auth: { kind: 'guest', deviceId: 'fixture-remote' } });
     assert(typeof remoteResult === 'boolean', 'Remote J.A.M. Next did not return a command result.');
@@ -1249,13 +1255,14 @@
     state.queue = [firstId, secondId];
 
     state.repeat = 'off';
+    state.queueSourceId = 'all';
     audio.pause();
     return {
       startupMs: Math.round(startupMs),
-      standardFourTrackRepeatOffAll: true,
-      standardJournalOriginAndDecision: true,
-      standardActualNaturalEnd: true,
-      standardMiniNextIpc: true,
+      balancedFourTrackRepeatOffAll: true,
+      balancedJournalOriginAndDecision: true,
+      balancedActualNaturalEnd: true,
+      balancedMiniNextIpc: true,
       emptyQueue: true,
       oneTrackQueue: true,
       mixedMetadata: true,

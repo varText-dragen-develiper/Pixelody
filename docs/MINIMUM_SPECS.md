@@ -1,6 +1,6 @@
 # Pixelody minimum specs (measured 2026-10-05)
 
-## Paste-ready table (download page)
+## Hardware recommendations
 
 | | Minimum | Recommended |
 | --- | --- | --- |
@@ -14,7 +14,7 @@
 
 ## What was measured
 
-Electron 43.4.1 (the shipped runtime), Studio (the only built-in theme), in a Linux container with software rendering (GPU off, so a worst case for graphics). Generated libraries of 500, 2,000 and 10,000 tracks, with real playback through the Web Audio EQ graph (output muted). CPU limited with taskset; slower CPUs emulated with Chromium's CPU throttle (2.5x and 4x slower renderer). RAM was measured, not capped.
+Electron 43.4.1 (the shipped runtime), Studio (the theme tested in this run), in a Linux container with software rendering (GPU off, so a worst case for graphics). Generated libraries of 500, 2,000 and 10,000 tracks, with real playback through the Web Audio EQ graph (output muted). CPU limited with taskset; slower CPUs emulated with Chromium's CPU throttle (2.5x and 4x slower renderer). RAM was measured, not capped.
 
 | Setup | Startup to ready | Frame rate idle / playing | Fast scroll p95 frame | RAM (PSS, all processes) |
 | --- | --- | --- | --- | --- |

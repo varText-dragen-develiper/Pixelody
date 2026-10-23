@@ -13,7 +13,7 @@ Pixelody for Windows is the primary local-library host and desktop playback engi
 - SHA-256: `PENDING SIGNED ARTIFACT`
 - Publisher: `PENDING AUTHENTICODE VERIFICATION`
 
-Do not publish this draft until the placeholders above have been replaced from the exact signed, lifecycle-tested artifact and its `release-manifest.json`.
+This historical draft does not identify a verified release artifact.
 
 ## What Pixelody does
 
@@ -39,4 +39,4 @@ Flow Shuffle can use BPM, musical key, energy, diversity, history, and queue int
 
 ## Verification status
 
-This file is release copy, not evidence. Publication remains blocked until the exact `0.1.1` source commit passes the automated checks, Electron runtime/package matrix, unsigned and signed disposable installer lifecycles, physical output/codec matrix, exact-subject timestamped Authenticode checks, final legal/provenance review, and manifest/hash audit.
+This file is release copy, not evidence. The installation and signing checks in this draft were incomplete.

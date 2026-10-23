@@ -155,12 +155,22 @@
       // all formulas/decay still execute in the shared learning implementation.
       const byTrack = new Map(ledger.tracks.map((row) => [row.trackId, row]));
       const trackIds = [...new Set(active().state.entries.map((entry) => entry.trackId))];
+      // A platform may fold its own extra signals into one capped score per track.
+      const adapter = typeof input.adapterPoints === 'function' ? input.adapterPoints(trackIds) || {} : {};
       return { nowMs: timestamp, signals: trackIds.map((trackId) => ({ trackId,
-        ...learning.trackSignals({ ...ledger, tracks: byTrack.has(trackId) ? [byTrack.get(trackId)] : [] }, trackId, { nowMs: timestamp }) })) };
+        ...learning.trackSignals({ ...ledger, tracks: byTrack.has(trackId) ? [byTrack.get(trackId)] : [] }, trackId, { nowMs: timestamp }),
+        ...(Number.isFinite(adapter[trackId]) && adapter[trackId] ? { adapterPoints: Math.max(-12, Math.min(12, Math.trunc(adapter[trackId]))) } : {}) })) };
     }
     function project(options = {}) {
       if (readOnly) return { ...blocked(), entryIds: [], decisions: [] };
       return clone(core.project(active().state, { ...options, context: context() }));
+    }
+    // The song each queue would play next, for the "If you skip" row. Nothing is reserved.
+    function preview(request = {}) {
+      if (readOnly || typeof core.preview !== 'function') return null;
+      return clone(core.preview(active().state, { lane: request.lane === 'live' ? 'live' : 'base', naturalEnd: request.lane !== 'live',
+        ...(Number.isSafeInteger(request.heardMs) ? { heardMs: request.heardMs, personal: true } : {}),
+        ...(Number.isSafeInteger(request.coveragePermille) ? { coveragePermille: request.coveragePermille } : {}) }, context()));
     }
     function stage(request = {}) {
       if (readOnly) return blocked();
@@ -174,12 +184,17 @@
       const attemptId = request.attemptId || newId('shuffle-attempt');
       const advanceId = request.advanceId || (entryId === undefined && request.direction !== 'previous' && scope.state.quarantine?.entryIds.length
         ? scope.state.quarantine.advanceId : attemptId);
-      const next = core.stage(scope.state, { direction: request.direction === 'previous' ? 'previous' : 'next', naturalEnd: request.naturalEnd === true,
-        ...(entryId === undefined ? {} : { entryId }), attemptId, advanceId }, context());
+      // A natural end plays the base queue and a personal Next the live queue;
+      // what was heard decides how strongly the skip steers this session.
+      const personal = request.personal !== false && !['remote', 'session', 'preview'].includes(request.source);
+      const next = core.stage(scope.state, { direction: request.direction === 'previous' ? 'previous' : 'next',
+        ...(typeof request.naturalEnd === 'boolean' ? { naturalEnd: request.naturalEnd } : {}), ...(core.LANES?.includes(request.lane) ? { lane: request.lane } : {}),
+        ...(Number.isSafeInteger(request.heardMs) ? { heardMs: request.heardMs } : {}), ...(Number.isSafeInteger(request.coveragePermille) ? { coveragePermille: request.coveragePermille } : {}),
+        personal, ...(entryId === undefined ? {} : { entryId }), attemptId, advanceId }, context());
       const prior = scope.state;
       scope.state = next;
       if (!next.pending) { stagedContext = null; if (next !== prior) changed('shuffle-stage-exhausted'); return { ok: false, status: 'exhausted', diagnostics: clone(next.diagnostics) }; }
-      stagedContext = { decisionId: next.pending.decisionId, personal: request.personal !== false && !['remote', 'session', 'preview'].includes(request.source),
+      stagedContext = { decisionId: next.pending.decisionId, personal,
         source: request.source || null, durationMs: request.durationMs ?? null };
       if (next !== prior) changed('shuffle-stage');
       return { ok: true, status: 'staged', reservation: clone(next.pending), entryId: next.pending.entryId, trackId: next.pending.trackId,
@@ -337,8 +352,20 @@
       return { ok: true, status: result.status, diagnostic: clone(result.diagnostic) };
     }
     function entries() { return readOnly ? [] : clone(active().state.entries); }
-    return Object.freeze({ snapshot, status, current, project, stage, confirm, fail, reconcile, setMode, setRepeat, mutate, newCycle, reshuffle, checkpointPosition,
-      selectScope, evictScope, entries, record, interval, outcome, preference, control, exportActiveSession, activeState: exportActiveSession, importActiveSession, exportLedger, importLedger, setAuthority });
+    // Small reads for a renderer that checks the session often; no whole-state clone.
+    function summary() {
+      if (readOnly) return null;
+      const state = active().state;
+      return { scopeId: state.scopeId, mode: state.mode, repeat: state.repeat, options: clone(state.options), cursor: state.cursor,
+        generation: state.cycle.generation, remaining: state.remaining.length, revision: state.revision, pending: Boolean(state.pending) };
+    }
+    function historyTrackIds() {
+      if (readOnly) return [];
+      const state = active().state;
+      return state.history.slice(0, Math.max(0, state.cursor + 1)).filter((item) => !item.tombstone).map((item) => item.trackId);
+    }
+    return Object.freeze({ snapshot, status, current, project, preview, stage, confirm, fail, reconcile, setMode, setRepeat, mutate, newCycle, reshuffle, checkpointPosition,
+      selectScope, evictScope, entries, summary, historyTrackIds, record, interval, outcome, preference, control, exportActiveSession, activeState: exportActiveSession, importActiveSession, exportLedger, importLedger, setAuthority });
   }
   return Object.freeze({ STORE_ID, SNAPSHOT_VERSION, createController });
 }));

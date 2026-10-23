@@ -1,8 +1,8 @@
 {
-  "contractVersion": 2,
-  "semanticRevision": 2,
-  "policyVersion": "universal-shuffle-v2.1",
-  "configVersion": 1,
+  "contractVersion": 3,
+  "semanticRevision": 3,
+  "policyVersion": "universal-shuffle-v2.2",
+  "configVersion": 2,
   "status": "executable-reference",
   "entrypoints": {
     "node": "src/shuffle/index.js",
@@ -33,7 +33,9 @@
       "validateState(state)",
       "canonicalJson(value)",
       "createProjection(state,{horizon})",
-      "advanceProjection(batch,context={nowMs,signals,cancelled})"
+      "advanceProjection(batch,context={nowMs,signals,cancelled})",
+      "preview(state,{lane,heardMs,coveragePermille,personal},context)",
+      "similarity(entryA,entryB,multiSource)"
     ],
     "learning": [
       "createLedger",
@@ -60,7 +62,6 @@
   },
   "modes": [
     "off",
-    "random",
     "balanced",
     "flow",
     "album"
@@ -74,7 +75,7 @@
     "deep-library"
   ],
   "constants": {
-    "version": 1,
+    "version": 2,
     "horizon": 10,
     "maxHorizon": 32,
     "maxFailures": 64,
@@ -93,7 +94,35 @@
     "maxEnergyPoints": 8,
     "maxKeyPoints": 4,
     "maxContextPoints": 4,
-    "maxPresetPoints": 8
+    "maxPresetPoints": 8,
+    "pinnedBase": 3,
+    "liveSteer": 24,
+    "baseSteer": 8,
+    "maxMarks": 8,
+    "markMaxSongs": 8,
+    "markMaxAgeMs": 7200000,
+    "flickMs": 3000,
+    "earlySkipMaxMs": 30000,
+    "earlySkipCoveragePermille": 250,
+    "lateSkipCoveragePermille": 800,
+    "earlyMark": -1000,
+    "midMark": -400,
+    "lateMark": 200,
+    "finishMark": 600,
+    "pruneSimilarity": 600,
+    "flickExplorationPermille": 250,
+    "flickStormExplorationPermille": 400,
+    "flowLetGoAfter": 3,
+    "liveExclusionMinimum": 3,
+    "maxAirtimePoints": 12,
+    "similarityArtist": 350,
+    "similarityAlbum": 250,
+    "similarityGenre": 150,
+    "similarityTempoClose": 100,
+    "similarityTempoNear": 50,
+    "similarityEnergy": 100,
+    "similarityKey": 50,
+    "similaritySource": 200
   },
   "learningConstants": {
     "maxJournal": 512,
@@ -135,7 +164,7 @@
   "identity": {
     "validation": "Opaque nonempty well-formed UTF-16 string, <=1024 code units. No trimming or case folding of IDs. Array equality is structural, never delimiter joins.",
     "metadata": "NFC + ASCII-only lowercase + ECMAScript whitespace collapse. Non-Latin identities remain meaningful. Unknown=null. Explicit album/recording IDs win. ISRC requires two letters, three alphanumeric, seven digits.",
-    "ordering": "Unsigned UTF-16 code-unit ordinal; source order for Random FY and Off; ordinal entryId for Balanced/Flow; ordinal JSON tuple album keys.",
+    "ordering": "Unsigned UTF-16 code-unit ordinal; source order for Off; ordinal entryId for Balanced/Flow; ordinal JSON tuple album keys.",
     "entryEntitlement": "one source entryId per cycle; duplicate trackIds remain separate intentional entitlements",
     "occurrence": "JSON tuple [sessionId,monotonic occurrenceSequence]; navigation reuses history; genuine replay increments; retry never increments",
     "decision": "JSON tuple [sessionId,revision,membershipRevision,authorityEpoch,entryId,kind]; independent of attemptId",
@@ -174,17 +203,17 @@
     "fnvMultiplier": 16777619,
     "increment": 1831565813,
     "zeroHashFallback": 1831565813,
-    "boundedDraw": "Exact floor(uint32*bound/4294967296), with split16-bit products in JS and signed64-bit product in Kotlin; all intermediates exact. Random/FY bounds<=1,000,000 match v1 float mapping.",
+    "boundedDraw": "Exact floor(uint32*bound/4294967296), with split16-bit products in JS and signed64-bit product in Kotlin; all intermediates exact. permutation() FY bounds<=1,000,000 match v1 float mapping (kept for legacy migration checks).",
     "boundMaximum": 128000000,
     "shuffle": "descending Fisher-Yates n-1..1, preserving source input order",
-    "randomDraws": "n-1 on new remaining permutation; zero on retained permutation/Off/priority/navigation/album continuation",
-    "balancedFlowDraws": "one bound1000 exploration draw then one weighted or least-exposure tie draw, even singleton",
+    "offDraws": "zero on Off/priority/navigation/album continuation",
+    "balancedFlowDraws": "one bound1000 exploration draw then one weighted or least-exposure tie draw, even singleton, per pick; a pinned base pick draws nothing when played, its draws were taken when it was pinned",
     "albumDraws": "one integer album-unit draw when lock absent, including singleton; zero for continuation",
     "limitations": "Finite 32-bit mapping has tiny bound bias; finite seeded PRNG is pseudorandom, not cryptographic or an exact mathematical uniform sampler"
   },
   "selection": {
     "spacing": "Artist last3, album last2, verified recording last1 at actual cursor. Unknown identities unconstrained. Relax album then artist then recording only until feasible.",
-    "weight": "clamp(64 + taste[-12..12] + novelty[0..12] + freshness[-12..0] + flow components,16,128)",
+    "weight": "clamp(64 + taste[-12..12] + novelty[0..12] + freshness[-12..0] + flow components + steer[-gain..gain] + airtime[-12..12] + adapter[-12..12],16,128)",
     "freshness": "-floor(12*max(0,86400000-max(0,nowMs-lastHeardAtMs))/86400000); invalid date unavailable",
     "tempo": "max(-8,8-floor(abs(currentMilliBpm-candidateMilliBpm)/5000))",
     "energy": "max(-8,8-floor(abs(targetPermille-candidatePermille)/50))",
@@ -192,7 +221,7 @@
     "context": "4 for explicit contextTag exact normalized match",
     "shapes": "step=history.length%10; rise+30*step, wind-down-30*step, wave+[0,60,120,180,120,60,0,-60,-120,-60]; clamp0..1000; auto/steady=current known energy",
     "presets": "discovery/deep-library floor(novelty*8/12), comfort -floor(novelty*5/12), energy floor(candidateEnergy*8/1000), genre-weave +/-4 known genre difference/equality",
-    "exploration": "draw<100/1000, choose uniformly among least exposure feasible entries; all ties included, no low-ID cutoff",
+    "exploration": "draw<explorationPermille (100, live after flicks 250/400) per 1000, choose uniformly among least exposure feasible entries; all ties included, no low-ID cutoff",
     "albumOrdering": "All siblings with both disc and track numbers: disc,track,sourceIndex,entryId; otherwise whole album source order. Explicit manual middle locks only later still-owed siblings.",
     "format": "no audio quality/codec bias",
     "receipts": "Only selected weighted score parts and used metadata/learning coverage are reported. Exploration omits unused score parts and reports exposure only; explicit/navigation use their actual strategy kind. Intentional duplicate tracks are labeled."
@@ -203,7 +232,7 @@
     "repeat": "Off stops at exhaustion. All increments generation once on successful next-cycle commit. Natural-end One appends replay occurrence; manual Next bypasses One.",
     "history": "Previous/Forward walk actual occurrence history; absent entries retain tombstones, navigation skips unavailable tombstones without deleting them. Explicit Play Now/Next forks only upon activation success.",
     "manual": "Priority position0; move absolute future position; positions decrement only on successful Next progression, reserve their entries from automatic choice; out-of-range past exhaustion appends. Explicit manual bypasses session exclusion, not availability.",
-    "off": "Mode-change uses supplied authority context to freeze existing bounded authority projection + retained generated permutation + remaining order. Adapters pass same real context used for queue projection; new Off source uses source order.",
+    "off": "Mode-change uses supplied authority context to freeze existing bounded authority projection + remaining order. Adapters pass same real context used for queue projection; new Off source uses source order.",
     "restore": "Validate version and structure; clear unconfirmed pending, undo and quarantine; preserve entitlement/RNG/current/history/position; paused=true. Preserve unknown/corrupt original snapshot for recovery.",
     "scopes": {
       "max": 32,
@@ -225,9 +254,9 @@
     "personal": "Private local learning export uses separate explicit flow. Public snapshots are projections only. Root connected handoff gate remains open."
   },
   "canonicalJson": "Recursively sort object keys by ordinal UTF16; retain array order; JSON UTF8 without whitespace; SHA256 recorded for each trace step",
-  "schemas": "schemas.json#/$defs/{state,entry,decision,event,pending,rng,ledger,learningEvent,learningTrack,learningOccurrence}",
+  "schemas": "schemas.json#/$defs/{state,entry,decision,event,pending,rng,lanes,mark,pinned,ledger,learningEvent,learningTrack,learningOccurrence}",
   "fixtureNames": [
-    "random-full-cycle-repeat-off",
+    "flow-full-cycle-repeat-off",
     "balanced-missing-and-unicode",
     "stage-failure-retry-crash",
     "duplicate-entry-replay-history",
@@ -235,6 +264,9 @@
     "mode-priority-position-exclusion-undo",
     "album-compilation-multidisc-manual-middle",
     "authority-epoch-stale-pending",
+    "two-queues-skips-and-natural-ends",
+    "live-failure-retry-stays-live",
+    "album-second-early-skip-leaves-album",
     "known-flow-feature-evidence"
   ],
   "limitations": [
@@ -242,6 +274,23 @@
     "Filesystem atomic write/last-valid recovery is adapter-owned.",
     "No claim of human preference, audible playback, production signing or physical acceptance."
   ],
+  "lanes": {
+    "queues": "A natural end plays the base queue; a personal Next plays the live queue. lane may be given explicitly; otherwise naturalEnd false selects live, anything else base. The first song, Previous, history forward and Play Now always use base.",
+    "skips": "heardMs and coveragePermille sort a live advance: flick under flickMs; late at lateSkipCoveragePermille or more; early under earlySkipMaxMs with coverage unknown or under earlySkipCoveragePermille; otherwise mid; unknown when neither is given. A base advance with naturalEnd true is finish. personal false or no current song leaves no mark.",
+    "marks": "Each personal advance leaves one session mark on the song it leaves (early/mid/late/finish values; flick and unknown leave none). Marks age one song per appended history entry, keep full weight for two songs, then halve every two songs, and drop at markMaxSongs songs or markMaxAgeMs; at most maxMarks are kept. Marks never enter the learning ledger.",
+    "adapter": "adapter = clamp(trunc(signal.adapterPoints), -12, 12), default 0: one capped platform score per track (Windows folds its older Flow extras into it). Android sends none.",
+    "steer": "steer = clamp(trunc(gain * sum(trunc(mark * similarity / 2^floor(age/2))) / 1e6), -gain, gain); gain liveSteer for live, baseSteer for base. similarity sums artist/album/genre/tempo/energy/key/source points capped at 1000; unknown traits add nothing; source points only when entries span several sourceKeys.",
+    "pinned": "Balanced and Flow keep up to pinnedBase base picks in lanes.pinned, drawn as successive natural ends would draw them (same RNG order, simulated history, anchor = previous pick). A base advance plays pinned[0] with no draw. An early skip drops pinned songs with similarity >= pruneSimilarity to the skipped song. Mode, cycle, membership, reshuffle and manual-order changes clear the window.",
+    "live": "Live excludes pinned[0] when at least liveExclusionMinimum songs are eligible, scores transitions from the last kept (late or finish) song, and in Flow lets go of that anchor after flowLetGoAfter early skips in a row. Exploration rises to flickExplorationPermille after one flick and flickStormExplorationPermille after two.",
+    "album": "Album shuffle and Flow with preserveAlbumRuns: one early skip moves to the next track; a second early skip on the same album leaves it for another album when one remains.",
+    "airtime": "options.airtime even adds +/-maxAirtimePoints toward an equal share of this cycle per sourceKey; size (default) adds nothing.",
+    "upgrade": "restore upgrades universal-shuffle-v2.1 snapshots (schema 2, config 1): random becomes balanced with its generated future dropped, entries and options are renormalized, lanes start empty. With personal false, Off/Album/Balanced/Flow decisions equal v2.1 (v21-decision-parity.json)."
+  },
+  "upgradeFixtures": [
+    "v21-snapshots.json",
+    "v21-decision-parity.json"
+  ],
+  "learningPolicyVersion": "universal-shuffle-v2.1",
   "learningContract": "learning-contract.json",
   "learningTraces": "learning-traces.json",
   "catalogFixtures": "catalog-fixtures.json"

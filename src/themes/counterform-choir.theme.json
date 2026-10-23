@@ -4,7 +4,7 @@
   "id": "pixelody.counterform-choir",
   "name": "Counterform Choir",
   "author": "Pixelody",
-  "description": "C3 experiment: a pearl open score where complete track voices form counter-curves and only host-confirmed playback closes the cross-surface white aperture.",
+  "description": "Curved track groups on a pearl field, with blue and red accents.",
   "palette": { "builtIn": "counterform-choir" },
   "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
   "hud": { "layout": "cinematic", "controls": "technical", "corners": "square" },

@@ -268,7 +268,7 @@
     let note = '';
     if (sigmas > alarmSigmas) {
       verdict = 'disagrees';
-      note = 'the acoustic result is far outside the deterministic prior. Check that the route is the one that was '
+      note = 'the measured delay is far outside the expected range. Check that the route is the one that was '
         + 'confirmed, that the codec did not renegotiate, and that the arrival estimate did not lock onto a reflection.';
     } else if (sigmas > alarmSigmas / 2) {
       verdict = 'marginal';

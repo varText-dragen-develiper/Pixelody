@@ -4,7 +4,7 @@
   "id": "pixelody.vesperfold",
   "name": "Vesperfold",
   "author": "Pixelody",
-  "description": "C3 vertical slice: an irregular collection mass becomes shared track strata; chromatic focus remains distinct from an amber host-confirmed suture across main and mini.",
+  "description": "Dark collection layers, pink selections, and amber playback details.",
   "palette": { "builtIn": "vesperfold" },
   "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
   "hud": { "layout": "cinematic", "controls": "technical", "corners": "square" },

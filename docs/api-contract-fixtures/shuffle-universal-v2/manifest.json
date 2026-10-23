@@ -1,21 +1,21 @@
 {
   "version": 2,
-  "policyVersion": "universal-shuffle-v2.1",
+  "policyVersion": "universal-shuffle-v2.2",
   "files": [
     {
       "name": "machine-contract.json",
-      "sha256": "c617aa04102e0e7571341ec2d962e0d652967aa0efbae4a52f027f76b20591be",
-      "bytes": 12408
+      "sha256": "07fee225f411de5813349b0c9cac3f7ebdda60554779add071560ba2ec643d2d",
+      "bytes": 16590
     },
     {
       "name": "schemas.json",
-      "sha256": "9be77e20fad4329eb02caf6b921a581bb77a345f69cc35db0278345ceae429f8",
-      "bytes": 49580
+      "sha256": "0bd396953dad69936878da14d49d0353cfebbe874cafac41dc3a48a76eae1a49",
+      "bytes": 54703
     },
     {
       "name": "traces.json",
-      "sha256": "0194df522e233d18ff399856f41ea1eb0fb05a49246ffa7fe927ca90e08a2926",
-      "bytes": 1032244
+      "sha256": "6a696229f50c28b6d48c705867c6be27e4cf8f29b822d232c2738d8efde6cc67",
+      "bytes": 1869216
     },
     {
       "name": "learning-contract.json",
@@ -29,8 +29,8 @@
     },
     {
       "name": "catalog-fixtures.json",
-      "sha256": "850b043b64117f3b9385c60b03002c5822ee3515fd07383e6cfa54c37d08d4cc",
-      "bytes": 487357
+      "sha256": "f8bb052c2da2cfee70add4972e5de84b482edf98c8d1c54c5470e3ae9e4e7cb8",
+      "bytes": 492143
     }
   ]
 }

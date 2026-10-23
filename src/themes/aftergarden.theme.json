@@ -4,7 +4,7 @@
   "id": "pixelody.aftergarden",
   "name": "Aftergarden",
   "author": "Pixelody",
-  "description": "C3 field-test candidate: browsed cuttings inhabit a luminous possibility field; host-confirmed playback alone crosses the graftline and opens a signal bloom shared with the mini cutting.",
+  "description": "Light and dark fields around the artwork, with purple and amber details.",
   "palette": { "builtIn": "aftergarden" },
   "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
   "hud": { "layout": "cinematic", "controls": "technical", "corners": "square" },

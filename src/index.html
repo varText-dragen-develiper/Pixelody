@@ -65,7 +65,7 @@
   </aside>
 
   <section class="cw-production-workbench dev-only" id="workspaceProductionWorkbench" aria-label="Pixelody Canvas development controls" hidden>
-    <div class="cw-production-identity"><small>DEV LAB / C8</small><strong id="workspaceProductionProfileName">Pixelody Canvas Alpha</strong><span id="workspaceProductionIdentity">Legacy adapters idle</span></div>
+    <div class="cw-production-identity"><small>DEV LAB / C8</small><strong id="workspaceProductionProfileName">Pixelody Canvas Alpha</strong><span id="workspaceProductionIdentity">Workspace idle</span></div>
     <label class="cw-production-module-picker"><span>Module</span><select id="workspaceProductionModule" aria-label="Selected workspace module"></select></label>
     <div class="cw-production-actions" role="group" aria-label="Composition controls">
       <button type="button" id="workspaceProductionMode" aria-pressed="false">Enter Composition Mode</button>
@@ -75,7 +75,7 @@
       <button type="button" id="workspaceProductionCancel">Cancel and exit</button>
       <button type="button" id="workspaceProductionLegacy">Return to Studio</button>
     </div>
-    <p id="workspaceProductionStatus" role="status" aria-live="polite">Developer Canvas is waiting for its authoritative workspace.</p>
+    <p id="workspaceProductionStatus" role="status" aria-live="polite">Open a workspace to use Developer Canvas.</p>
   </section>
 
   <div class="workspace">
@@ -104,7 +104,7 @@
     <div class="panel-resizer left-resizer" id="leftResizer" role="separator" aria-orientation="vertical" aria-label="Resize the library and middle section" aria-valuemin="190" aria-valuenow="290" tabindex="0" title="Drag to resize the library and middle section"></div>
 
     <main class="main-stage" data-cw-product-root="tracks.browser">
-      <section class="cw-production-signal" id="workspaceSignalModule" data-cw-product-root="audio.visualizer" aria-label="Deterministic signal preview" aria-hidden="true"><small>SIGNAL / DETERMINISTIC</small><div aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></section>
+      <section class="cw-production-signal" id="workspaceSignalModule" data-cw-product-root="audio.visualizer" aria-label="Signal animation preview" aria-hidden="true"><small>SIGNAL PREVIEW</small><div aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></section>
       <div class="tideplot-field-hud" aria-hidden="true"><i class="tideplot-depth-plane tideplot-depth-back"></i><i class="tideplot-depth-plane tideplot-depth-mid"></i><i class="tideplot-depth-plane tideplot-depth-edge"></i><span class="tideplot-field-axis">LOCAL SOURCE <b></b> CURRENT CLEARING <b></b> CONFIRMED OUTPUT</span><span class="tideplot-field-points"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
       <section id="libraryView">
         <div class="playlist-hero" id="playlistHero" data-singularity-product-root="albums.collection">
@@ -202,7 +202,7 @@
             <div class="metadata-grid"><span data-quest-label="TYPE"><small>FORMAT</small><b id="metadataFormat">--</b></span><span data-quest-label="RANK"><small>QUALITY</small><b id="metadataQuality">--</b></span><span data-quest-label="CHIP"><small>CODEC</small><b id="metadataCodec">--</b></span><span data-quest-label="TIME"><small>DURATION</small><b id="metadataDuration">--</b></span><span data-quest-label="CLASS"><small>GENRE</small><b id="metadataGenre">--</b></span><span data-quest-label="ERA"><small>YEAR</small><b id="metadataYear">--</b></span><span data-quest-label="PWR"><small>ENERGY</small><b id="metadataEnergy">--</b></span><span data-quest-label="ROLE"><small>ROLE</small><b id="metadataRole">--</b></span><span data-quest-label="ITEMS"><small>TAGS</small><b id="metadataSignalTags">--</b></span></div>
             <section class="track-intelligence" id="trackIntelligencePanel">
               <div class="track-intelligence-heading"><div><small>TRACK INTELLIGENCE</small><strong id="trackIntelRole">Unlearned</strong></div><span id="trackIntelConfidence">0%</span></div>
-              <p id="trackIntelSummary">Play this track to build a local signal profile.</p>
+              <p id="trackIntelSummary">Play this track to start its listening history.</p>
               <div class="track-intel-tags" id="trackIntelTags"><span>No user signal tags yet.</span></div>
               <div class="track-intel-grid">
                 <span data-quest-label="RUNS"><small>STARTS</small><b id="trackIntelStarts">0</b></span><span data-quest-label="CLEAR"><small>COMPLETE</small><b id="trackIntelCompletion">--</b></span><span data-quest-label="MISS"><small>SKIPS</small><b id="trackIntelSkips">0</b></span><span data-quest-label="HEARD"><small>AVG HEARD</small><b id="trackIntelAvgHeard">--</b></span><span data-quest-label="HOUR"><small>BEST HOUR</small><b id="trackIntelHour">--</b></span><span data-quest-label="SAVE"><small>LAST PLAYED</small><b id="trackIntelLastPlayed">--</b></span>
@@ -240,7 +240,9 @@
           </section>
 
           <div class="collection-actions" role="toolbar" aria-label="Collection and selected track controls">
-            <button class="hero-play" id="heroPlay" aria-label="Play or pause this collection"><span class="pixel-icon icon-play" aria-hidden="true"></span></button>
+            <button class="hero-play" id="heroPlay" aria-label="Play this collection in order, or pause it"><span class="pixel-icon icon-play" aria-hidden="true"></span></button>
+            <button class="subtle-action hero-shuffle" id="heroShuffle" type="button" aria-label="Shuffle this collection"><span class="transport-icon transport-shuffle" aria-hidden="true"></span><span>Shuffle</span></button>
+            <button class="subtle-action hero-link hidden" id="heroLink" type="button" title="Add this list to the shuffle that is playing" aria-label="Add to session"><span aria-hidden="true">+</span><span class="hero-link-label">Add to session</span></button>
             <button class="subtle-action" id="addToPlaylist">+ Add music</button>
             <button class="icon-action" id="playlistMore" title="Playlist options" aria-label="Playlist options">...</button>
             <button class="subtle-action track-actions-trigger" id="trackActionsButton" type="button" title="Actions for the selected track (Shift+F10)" aria-haspopup="menu" aria-controls="trackMenu" aria-expanded="false" disabled><span aria-hidden="true">...</span><span>Track actions</span></button>
@@ -279,13 +281,13 @@
               <div class="panel system-character-panel"><label>System character</label><div class="preset-grid"><button class="preset active" data-preset="reference">Reference</button><button class="preset" data-preset="small">Small speakers</button><button class="preset" data-preset="warm">Warm stereo</button><button class="preset" data-preset="bright">Tame bright</button></div></div>
               <div class="panel wide system-correction-panel"><div class="panel-title"><div><label>System correction</label><small>Applied to every track through this output</small></div><button class="text-button" id="resetSystem">Reset</button></div><div class="eq-mode-toggle" role="group" aria-label="Output EQ mode"><button data-eq-mode-scope="system" data-eq-mode-value="simple">Simple</button><button data-eq-mode-scope="system" data-eq-mode-value="advanced">Advanced</button></div><div class="eq-controls" id="systemEq"></div><details class="advanced-eq-panel" id="systemAdvancedEqPanel"><summary>Advanced output parametric EQ</summary><small class="advanced-eq-hint">Adjust each band for this output, on top of the Simple settings above.</small><div class="parametric-eq" id="systemParametricEq"></div></details></div>
               <div class="panel system-image-panel"><div class="panel-title"><div><label>Stereo image</label><small id="spatialStatus">Centered stereo</small></div><button class="text-button" id="resetSpatial">Reset</button></div><label class="balance-control" for="balanceControl"><span>Balance</span><input id="balanceControl" type="range" min="-1" max="1" step="0.01" value="0"><output id="balanceValue" for="balanceControl">Center</output></label><label class="mono-toggle"><input id="monoToggle" type="checkbox"> Mono sum</label></div>
-              <div class="panel wide system-transition-panel"><div class="panel-title"><div><label>Playback transition</label><small id="transitionStatus">Gapless (0s seam-free)</small></div><button class="text-button" id="resetTransition">Reset</button></div><div class="eq-mode-toggle transition-mode-toggle" id="transitionModeSetting" role="group" aria-label="Playback transition mode"><button class="active" data-transition-mode="gapless">Gapless</button><button data-transition-mode="equal-power">Equal Power</button><button data-transition-mode="linear">Linear</button><button data-transition-mode="off">Off</button></div><div class="transition-duration-row" id="transitionDurationRow"><label for="crossfadeDuration"><span>Crossfade</span><input id="crossfadeDuration" type="range" min="1" max="12" step="0.5" value="5"><output id="crossfadeDurationValue" for="crossfadeDuration">5.0s</output></label></div><div class="transition-presets" id="transitionPresets" role="group" aria-label="Crossfade presets"><button class="preset" data-preset-duration="2">2s Smooth</button><button class="preset active" data-preset-duration="5">5s Equal Power</button><button class="preset" data-preset-duration="8">8s Club Blend</button><button class="preset" data-preset-duration="12">12s Extended</button></div></div>
+              <div class="panel wide system-transition-panel"><div class="panel-title"><div><label>Playback transition</label><small id="transitionStatus">Gapless</small></div><button class="text-button" id="resetTransition">Reset</button></div><div class="eq-mode-toggle transition-mode-toggle" id="transitionModeSetting" role="group" aria-label="Playback transition mode"><button class="active" data-transition-mode="gapless">Gapless</button><button data-transition-mode="equal-power">Equal Power</button><button data-transition-mode="linear">Linear</button><button data-transition-mode="off">Off</button></div><div class="transition-duration-row" id="transitionDurationRow"><label for="crossfadeDuration"><span>Crossfade</span><input id="crossfadeDuration" type="range" min="1" max="12" step="0.5" value="5"><output id="crossfadeDurationValue" for="crossfadeDuration">5.0s</output></label></div><div class="transition-presets" id="transitionPresets" role="group" aria-label="Crossfade presets"><button class="preset" data-preset-duration="2">2s Smooth</button><button class="preset active" data-preset-duration="5">5s Equal Power</button><button class="preset" data-preset-duration="8">8s Club Blend</button><button class="preset" data-preset-duration="12">12s Extended</button></div></div>
             </div>
           </div>
           <div class="systems-tier collapsible-card" data-tier="calibration" data-card="systems-tier-calibration">
             <div class="systems-tier-heading"><div><strong>Calibration &amp; profiles</strong><small>Set these up once, then leave them alone.</small></div><button class="card-collapse" aria-label="Toggle Calibration &amp; profiles section">-</button></div>
             <div class="systems-tier-panels">
-              <div class="panel device-profile-panel"><div class="panel-title"><div><label>Headphone/DAC library</label><small id="deviceProfileHint">Suggested from current output</small></div></div><select id="deviceProfileSelect" aria-label="Headphone or DAC profile"></select><p id="deviceProfileDescription">Choose a conservative output profile for this device.</p><div class="profile-actions"><button class="quiet-button" id="applyDeviceProfile">Apply profile</button><button class="quiet-button" id="suggestDeviceProfile">Use suggestion</button></div></div>
+              <div class="panel device-profile-panel"><div class="panel-title"><div><label>Headphone/DAC library</label><small id="deviceProfileHint">Suggested from current output</small></div></div><select id="deviceProfileSelect" aria-label="Headphone or DAC profile"></select><p id="deviceProfileDescription">Choose a profile for your output device.</p><div class="profile-actions"><button class="quiet-button" id="applyDeviceProfile">Apply profile</button><button class="quiet-button" id="suggestDeviceProfile">Use suggestion</button></div></div>
               <div class="panel tuning-profile-panel"><label>Tuning profiles</label><small>Export or restore track EQ, output EQ, stereo-image, and device-library profiles.</small><div class="profile-actions"><button class="quiet-button" id="exportTuningProfiles">Export profiles</button><button class="quiet-button" id="importTuningProfiles">Import profiles</button></div></div>
               <div class="panel wide calibration-panel"><div class="panel-title"><div><label>Guided calibration</label><small id="calibrationStatus">Ready for System Default.</small></div><button class="text-button" id="cancelCalibration" disabled>Cancel</button></div><div class="calibration-steps" id="calibrationSteps"><span data-calibration-step="source">Source</span><span data-calibration-step="audition">Audition</span><span data-calibration-step="save">Save</span></div><div class="calibration-readout"><span><small>TRACK</small><b id="calibrationTrack">No track selected</b></span><span><small>OUTPUT</small><b id="calibrationOutput">System Default</b></span><span><small>CLIP</small><b id="calibrationClip">--</b></span><span><small>RISK</small><b id="calibrationRisk">Safe</b></span></div><div class="calibration-grid" id="calibrationChoices"><button data-calibration-choice="reference"><strong>Reference</strong><small>Flat control</small></button><button data-calibration-choice="warm"><strong>Warm</strong><small>Fuller lows</small></button><button data-calibration-choice="clear"><strong>Clear</strong><small>Vocal focus</small></button><button data-calibration-choice="soft"><strong>Soft</strong><small>Less fatigue</small></button><button data-calibration-choice="detail"><strong>Detail</strong><small>Air and edge</small></button></div><div class="calibration-actions"><button class="quiet-button" id="startCalibration">Start wizard</button><button class="quiet-button" id="replayCalibrationClip" disabled>Replay clip</button><button class="quiet-button" id="saveCalibration" disabled>Save profile</button></div></div>
               <div class="panel speaker-test-panel"><div class="panel-title"><div><label>Speaker test tones</label><small id="toneStatus">Idle</small></div><button class="text-button" id="stopTone" disabled>Stop</button></div><div class="tone-grid"><button data-tone-test="left"><strong>L</strong><small>Left</small></button><button data-tone-test="right"><strong>R</strong><small>Right</small></button><button data-tone-test="both"><strong>LR</strong><small>Both</small></button><button data-tone-test="bass"><strong>80</strong><small>Bass</small></button><button data-tone-test="sweep"><strong>Hz</strong><small>Sweep</small></button></div></div>
@@ -303,9 +305,9 @@
                 <div class="panel-subsection">
                   <div class="panel-subsection-heading">Live status</div>
                   <div class="speaker-system-readout"><span><small>ENGINE</small><b id="speakerSystemEngineState">Setup saved / dual-output engine not armed</b></span><span><small>ROUTES</small><b id="speakerSystemRouteWarning">Refresh outputs to inspect routes.</b></span><span><small>STABILITY</small><b id="speakerSystemRouteStability">Unsupported</b></span><span><small>MEMBERS</small><b id="speakerSystemMemberCount">0 outputs</b></span></div>
-                  <label class="speaker-system-prototype-toggle"><input id="speakerSystemPrototypeEnable" type="checkbox"> Experimental browser dual-output prototype</label><small class="speaker-system-prototype-status" id="speakerSystemPrototypeStatus">Off by default. Try a second processed output and check for drift or connection failures.</small><div class="speaker-system-drift-history" id="speakerSystemDriftHistory" data-drift-state="idle">Drift history appears while the browser prototype is armed.</div>
+                  <label class="speaker-system-prototype-toggle"><input id="speakerSystemPrototypeEnable" type="checkbox"> Try dual-output routing (experimental)</label><small class="speaker-system-prototype-status" id="speakerSystemPrototypeStatus">Off by default. Try a second processed output and check for drift or connection failures.</small><div class="speaker-system-drift-history" id="speakerSystemDriftHistory" data-drift-state="idle">Drift history appears while the browser prototype is armed.</div>
                 </div>
-                <section class="speaker-rig-validation collapsible-card" id="speakerRigValidation" data-validation-state="idle" data-card="speaker-rig-validation"><div class="speaker-rig-validation-heading"><div><strong>Physical validation</strong><span class="hint" tabindex="0" aria-label="Check both outputs over 30 minutes of listening. Bluetooth uses a looser drift tolerance than wired outputs.">?<span class="hint-bubble" aria-hidden="true">Check both outputs over 30 minutes of listening. Bluetooth uses a looser drift tolerance than wired outputs.</span></span></div><button class="card-collapse" aria-label="Toggle physical validation section">-</button></div><div class="speaker-rig-validation-head"><label><select id="speakerRigValidationType" aria-label="Physical route type"><option value="wired-wired">Wired + wired</option><option value="wired-bluetooth">Wired + Bluetooth</option></select></label><div class="speaker-rig-validation-actions"><button class="quiet-button" id="startSpeakerRigValidation">Start 30 min</button><button class="quiet-button" id="recordSpeakerRigAudible" disabled>Both audible</button><button class="quiet-button" id="recordSpeakerRigIssue" disabled>Report issue</button><button class="text-button" id="finishSpeakerRigValidation" disabled>Finish</button><button class="text-button" id="copySpeakerRigValidation" disabled>Copy evidence</button></div></div><div class="speaker-rig-validation-readout"><span><small>STATE</small><b id="speakerRigValidationState">Idle</b></span><span><small>TIME</small><b id="speakerRigValidationTime">0:00 / 30:00</b></span><span><small>SAMPLES</small><b id="speakerRigValidationSamples">0</b></span><span><small>EVIDENCE</small><b id="speakerRigValidationEvidence">No completed run</b></span></div><small class="speaker-rig-validation-status" id="speakerRigValidationStatus">Uses 5-second sanitized drift and route samples. Listener checkpoints remain required.</small></section>
+                <section class="speaker-rig-validation collapsible-card" id="speakerRigValidation" data-validation-state="idle" data-card="speaker-rig-validation"><div class="speaker-rig-validation-heading"><div><strong>Physical validation</strong><span class="hint" tabindex="0" aria-label="Check both outputs over 30 minutes of listening. Bluetooth uses a looser drift tolerance than wired outputs.">?<span class="hint-bubble" aria-hidden="true">Check both outputs over 30 minutes of listening. Bluetooth uses a looser drift tolerance than wired outputs.</span></span></div><button class="card-collapse" aria-label="Toggle physical validation section">-</button></div><div class="speaker-rig-validation-head"><label><select id="speakerRigValidationType" aria-label="Physical route type"><option value="wired-wired">Wired + wired</option><option value="wired-bluetooth">Wired + Bluetooth</option></select></label><div class="speaker-rig-validation-actions"><button class="quiet-button" id="startSpeakerRigValidation">Start 30 min</button><button class="quiet-button" id="recordSpeakerRigAudible" disabled>Both audible</button><button class="quiet-button" id="recordSpeakerRigIssue" disabled>Report issue</button><button class="text-button" id="finishSpeakerRigValidation" disabled>Finish</button><button class="text-button" id="copySpeakerRigValidation" disabled>Copy evidence</button></div></div><div class="speaker-rig-validation-readout"><span><small>STATE</small><b id="speakerRigValidationState">Idle</b></span><span><small>TIME</small><b id="speakerRigValidationTime">0:00 / 30:00</b></span><span><small>SAMPLES</small><b id="speakerRigValidationSamples">0</b></span><span><small>EVIDENCE</small><b id="speakerRigValidationEvidence">No completed run</b></span></div><small class="speaker-rig-validation-status" id="speakerRigValidationStatus">Uses five-second drift and output samples. Listening checks are still needed.</small></section>
               </div>
               <div class="panel wide system-eq-mode-panel" data-system-eq-status="off"><div class="panel-title"><div><label>Playback side / system side<span class="hint" tabindex="0" aria-label="Prepare an EQ profile for future Windows-wide routing. For now, it only affects playback in Pixelody.">?<span class="hint-bubble" aria-hidden="true">Prepare an EQ profile for future Windows-wide routing. For now, it only affects playback in Pixelody.</span></span></label><small id="systemEqRoute">In-app only</small></div><button class="text-button" id="copySystemEqStatus">Copy</button></div><div class="system-eq-split"><span><small>PLAYBACK EQ</small><b id="playbackEqState">Active inside Pixelody</b><em id="playbackEqDetail">Track and output profiles are applied in the player.</em></span><span><small>SYSTEM EQ</small><b id="systemEqState">In-app only</b><em id="systemEqDetail">External app audio is untouched until a supported Windows route exists.</em></span></div><div class="system-eq-actions"><label class="system-eq-toggle"><input id="systemEqEnable" type="checkbox"> Stage Windows-wide System EQ</label><label class="system-eq-engine"><span>Engine</span><select id="systemEqEngine" aria-label="System EQ engine"><option value="virtual-endpoint">Virtual endpoint</option><option value="wasapi-loopback">Loopback dev</option><option value="apo">APO later</option></select></label><button class="quiet-button" id="probeSystemEqRoute">Probe route</button><button class="quiet-button" id="runLoopbackPrototype">Dev capture</button></div><div class="system-eq-probe"><span><small>CAPABILITY</small><b id="systemEqCapability">Not probed</b></span><span><small>LOOPBACK</small><b id="systemEqLoopback">Not tested</b></span></div><small class="system-eq-caveat" id="systemEqCaveat">Requires a signed optional native route before it can affect other apps.</small></div>
               <div class="panel device-diagnostics-panel"><div class="panel-title"><div><label>DAC/device diagnostics<span class="hint" tabindex="0" aria-label="Check your current output path when troubleshooting. These readouts are read-only.">?<span class="hint-bubble" aria-hidden="true">Check your current output path when troubleshooting. These readouts are read-only.</span></span></label><small>Browser-safe output path facts</small></div><button class="text-button" id="refreshDeviceDiagnostics">Refresh</button></div><div class="device-diagnostics-grid"><span><small>OUTPUT</small><b id="dacDiagOutput">System Default</b></span><span><small>SINK</small><b id="dacDiagSink">--</b></span><span><small>ENGINE</small><b id="dacDiagEngine">Idle</b></span><span><small>IMAGE</small><b id="dacDiagImage">Centered stereo</b></span><span><small>DEVICES</small><b id="dacDiagDevices">--</b></span><span><small>TONE</small><b id="dacDiagTone">Idle</b></span><span><small>NATIVE</small><b id="dacDiagNative">Not installed / not required</b></span><span><small>GAIN RISK</small><b id="dacDiagRisk">Safe</b></span></div></div>
@@ -423,7 +425,17 @@
     <div class="queue-summary"><span id="queueSummary">0 tracks</span><button id="clearQueue">Clear</button></div>
     <section class="flow-shuffle-card" id="flowShuffleCard">
       <div class="shuffle-primary-switch" aria-label="Shuffle choice">
-        <button data-shuffle-style="off">Off</button><button data-shuffle-style="standard">Standard</button><button data-shuffle-style="flow">Flow</button>
+        <button data-shuffle-style="off">Off</button><button data-shuffle-style="balanced">Balanced</button><button data-shuffle-style="flow">Flow</button>
+      </div>
+      <div class="shuffle-lanes hidden" id="shuffleLanes" aria-live="polite">
+        <span><small>UP NEXT</small><b id="shuffleBaseNext">--</b></span>
+        <span><small>IF YOU SKIP</small><b id="shuffleLiveNext">--</b></span>
+      </div>
+      <p class="shuffle-why-line hidden" id="shuffleWhyLine"></p>
+      <div class="shuffle-session hidden" id="shuffleSession">
+        <small>THIS SESSION</small>
+        <ul id="shuffleSessionLists"></ul>
+        <label><input type="checkbox" id="shuffleSessionEven"> Even turns, whatever each list's size</label>
       </div>
       <div><small id="flowShuffleState">Flow Shuffle ready</small><strong id="flowShuffleWhyTitle">No shuffle pick yet</strong></div>
       <span><small>SCORE</small><b id="flowShuffleWhyScore">--</b></span>
@@ -453,11 +465,11 @@
     <div class="queue-empty" id="queueEmpty"><span>&#9835;</span><strong>Your queue is empty</strong><small>Play a playlist or add tracks from their right-click menu.</small></div>
   </aside>
   <aside class="migration-drawer hidden" id="migrationDrawer" role="dialog" aria-modal="true" aria-labelledby="migrationTitle">
-    <div class="migration-heading"><div><p>LIBRARY CONCIERGE</p><h2 id="migrationTitle">Build library</h2></div><button id="closeMigration" title="Close migration"><span class="public-icon icon-close"></span></button></div>
+    <div class="migration-heading"><div><p>IMPORT MUSIC</p><h2 id="migrationTitle">Build library</h2></div><button id="closeMigration" title="Close migration"><span class="public-icon icon-close"></span></button></div>
     <section class="migration-command">
       <div>
         <small>START</small>
-        <strong>Bring your music life over</strong>
+        <strong>Bring in your music</strong>
         <span>Import local files, scan folders, or reconstruct playlists from CSV, JSON, M3U, and text exports.</span>
       </div>
       <div class="migration-actions">
@@ -523,7 +535,7 @@
       </nav>
 
       <section class="setting-group theme-setting" data-settings-panel="themes">
-        <div class="setting-label"><strong>Pixelody Studio rebuild</strong><span>Studio is the current built-in layout. Other layouts are in development or archived.</span></div>
+        <div class="setting-label"><strong>Pixelody Studio rebuild</strong><span>Choose Studio, Obsession Mode, or Cartridge Quest. Other layouts are still in development.</span></div>
         <div class="studio-rebuild-notice" role="status"><small>DESKTOP THEMES</small><strong>Choose your listening space.</strong><span>Studio, Obsession Mode and Cartridge Quest use the same local library and playback.</span></div>
         <div class="theme-browser-tools" hidden>
           <label class="theme-search"><span class="pixel-search small" aria-hidden="true"></span><input id="themeSearch" type="search" placeholder="Find a theme" autocomplete="off"></label>
@@ -544,9 +556,9 @@
       <section class="setting-group dev-lab-mechanics dev-only" data-settings-panel="themes" hidden>
         <div class="setting-label"><strong>Development mechanics lab</strong><span>Dev Lab: try different layouts with the current player.</span></div>
         <div class="dev-lab-bench" aria-live="polite">
-          <span><small>ACTIVE SPECIMEN</small><b id="devLabMechanicName">Neutral presentation</b></span>
+          <span><small>CURRENT LAYOUT</small><b id="devLabMechanicName">Neutral presentation</b></span>
           <span><small>MECHANIC KEY</small><b id="devLabMechanicKey">NEUTRAL</b></span>
-          <span><small>BEHAVIOR CONTRACT</small><b>UNCHANGED</b></span>
+          <span><small>PLAYBACK</small><b>UNCHANGED</b></span>
           <p id="devLabMechanicDetail">Core behavior is unchanged.</p>
         </div>
         <div class="dev-lab-mechanic-groups" id="devLabMechanicSetting" aria-label="Development mechanic prototypes">
@@ -577,7 +589,7 @@
           </div></div>
         </div>
         <div class="dev-lab-checklist" aria-label="Development mechanic test checklist"><span>GLANCE: locate core action</span><span>USE: preserve behavior</span><span>CLOSE: inspect edges</span><span>MOTION: verify static fallback</span></div>
-        <p class="dev-lab-mechanic-status" id="devLabMechanicStatus" role="status">Neutral presentation active. Core behavior is unchanged.</p>
+        <p class="dev-lab-mechanic-status" id="devLabMechanicStatus" role="status">Default layout active.</p>
       </section>
 
       <section class="setting-group profile-setting" data-settings-panel="personal">
@@ -729,7 +741,7 @@
           </div>
         </div>
         <div class="flow-mode-panel">
-          <div><small>FLOW SHUFFLE MODE</small><strong id="flowModeTitle">Flow</strong><p id="flowModeDescription">Balanced pacing, contrast, and learned fit.</p></div>
+          <div><small>FLOW SHUFFLE MODE</small><strong id="flowModeTitle">Flow</strong><p id="flowModeDescription">A mix of familiar music and variety.</p></div>
           <div class="flow-mode-grid" aria-label="Flow Shuffle mode">
             <button data-flow-mode="flow">Flow</button><button data-flow-mode="discovery">Discovery</button><button data-flow-mode="comfort">Comfort</button><button data-flow-mode="energy">Energy</button><button data-flow-mode="genre-weave">Genre Weave</button><button data-flow-mode="deep-library">Deep Library</button>
           </div>
@@ -772,7 +784,7 @@
             <button data-signal-import-mode="replace">Replace Signal Data</button>
           </div>
           <div class="signal-merge-preview">
-            <div class="signal-conflict-head"><small>MERGE PREVIEW</small><strong id="signalMergeTitle">Merged learning result will appear here.</strong></div>
+            <div class="signal-conflict-head"><small>MERGE PREVIEW</small><strong id="signalMergeTitle">Preview the combined listening history here.</strong></div>
             <div class="signal-merge-grid">
               <span><small>ADDED</small><b id="signalMergeAdded">0</b></span>
               <span><small>DEDUPED</small><b id="signalMergeDeduped">0</b></span>
@@ -796,7 +808,7 @@
             <span><small>TRACK INTEL</small><b id="signalImportTrackIntel">0</b></span>
           </div>
           <div class="signal-conflict-review">
-            <div class="signal-conflict-head"><small>CONFLICT REVIEW</small><strong id="signalConflictTitle">Current local learning will be compared here.</strong></div>
+            <div class="signal-conflict-head"><small>CONFLICT REVIEW</small><strong id="signalConflictTitle">Compare this device’s listening history here.</strong></div>
             <div class="signal-conflict-grid">
               <span><small>REPLACED</small><b id="signalConflictReplaced">0</b></span>
               <span><small>PRESERVED</small><b id="signalConflictPreserved">0</b></span>
@@ -813,7 +825,7 @@
         </div>
         <div class="signal-import-audit hidden" id="signalImportAuditPanel" role="region" tabindex="-1" aria-labelledby="signalImportAuditTitle" aria-describedby="signalImportAuditSummary signalImportAuditA11ySummary">
           <div class="signal-conflict-head"><small>LAST IMPORT AUDIT</small><strong id="signalImportAuditTitle">No Signal import has been applied yet.</strong></div>
-          <p class="visually-hidden" id="signalImportAuditA11ySummary" aria-live="polite">No Signal import audit timeline is available yet.</p>
+          <p class="visually-hidden" id="signalImportAuditA11ySummary" aria-live="polite">No listening-history imports yet.</p>
           <div class="signal-import-audit-grid" role="list" aria-label="Signal import audit summary">
             <span role="listitem" aria-label="Selected import mode"><small>SELECTED</small><b id="signalAuditSelected">--</b></span>
             <span role="listitem" aria-label="Recommended import mode"><small>RECOMMENDED</small><b id="signalAuditRecommended">--</b></span>
@@ -908,7 +920,7 @@
 
       <section class="jam-session-panel">
         <div class="jam-section-heading">
-          <div><small>SESSION</small><h3>Single-host J.A.M. V1</h3></div>
+          <div><small>SESSION</small><h3>J.A.M. session</h3></div>
           <span id="jamSessionStatus">Not started</span>
         </div>
         <div class="jam-session-policy" aria-label="J.A.M. guest policy">
@@ -1121,7 +1133,7 @@
       <div class="repair-actions">
         <button type="button" id="startRepairLookup">Look up</button>
         <button type="button" id="cancelRepairLookup" class="hidden">Stop</button>
-        <button type="button" class="save-track-details" id="applyRepair" disabled>Apply ticked changes</button>
+        <button type="button" class="save-track-details" id="applyRepair" disabled>Apply checked changes</button>
       </div>
       <p>Changes are stored inside Pixelody and do not alter the original music files. Data courtesy of MusicBrainz.</p>
     </section>
@@ -1231,6 +1243,11 @@
   <script src="workspace-composition/singularity-live-host.js"></script>
   <script src="accessibility.js"></script>
   <script src="desktop-theme-controls.js"></script>
+  <script src="shuffle/universal.js"></script>
+  <script src="shuffle/learning.js"></script>
+  <script src="shuffle/scopes.js"></script>
+  <script src="renderer-domains/shuffle-controller.js"></script>
+  <script src="renderer-domains/shuffle-desktop.js"></script>
   <script src="renderer.js"></script>
 </body>
 </html>

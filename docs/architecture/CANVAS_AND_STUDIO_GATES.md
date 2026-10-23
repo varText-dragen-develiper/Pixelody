@@ -32,9 +32,8 @@ The Studio foundation reset remains active. The live boundary is:
   Composition Mode draft blocks the switch rather than being
   discarded.
 
-The September 10 next-theme plan and its platform audit both record this same
-Studio-only registry. A historical family list in an older handoff was not
-authorization to restore the archived runtime.
+Studio remains the fallback while Obsession Mode and Cartridge Quest are
+allowlisted as composition presentations.
 
 ## Production presentations and development gates
 
@@ -71,9 +70,7 @@ October 3, 2026: Modules can import the free Cosmic Cinema and Neon Burst
 `theme-edition` test selectors. Apply sends an allowlisted request to this same
 development Canvas host and uses its atomic preset/draft guard. It does not
 register built-ins, enable arbitrary package CSS, restore My Themes, or activate
-Canvas in packaged builds. Imported selectors are inert until Apply. The local
-shop listing and evidence are in the private development notes;
-public delivery and paid entitlements remain unverified.
+Canvas in packaged builds. Imported selectors are inert until Apply. Public delivery and paid entitlements remain unverified.
 
 In development builds, Settings > Themes lists Pixelody Studio under **Ready to
 use** and the development presentations under **In development**, grouped by
@@ -90,7 +87,7 @@ harness do not show them.
   switches such as `--pixelody-dev-user-data`. "Return to Pixelody Studio",
   the Studio card and Canvas's own Return to Studio buttons restart back. A
   restart strips every profile selector first, so profiles never stack.
-- Those sessions are **isolated**: they run on the owner's library, and
+- Those sessions are **isolated**: they run on the open library, and
   library, playlist, queue and audio changes persist as usual, but the
   appearance, panel layout, motion-effect and settings-surface keys
   (`DEVELOPMENT_SESSION_PRESENTATION_KEYS` in `renderer.js`) are never written.
@@ -127,6 +124,3 @@ parsing/storage intact while the package UI remains unavailable. After a relevan
 change run `npm run check`, `npm run check:themes`,
 `npm run check:desktop-presentations`, and the appropriate
 Canvas/Studio Electron scenario.
-
-The checkout contains a month of unrelated uncommitted work. Never use checkout,
-hard reset, clean, or broad replacement to enforce this boundary.

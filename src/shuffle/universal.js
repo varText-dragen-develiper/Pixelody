@@ -5,14 +5,26 @@
 }(typeof globalThis !== 'undefined' ? globalThis : this, function createUniversalShuffle() {
   'use strict';
 
-  const VERSION = 2;
-  const POLICY_VERSION = 'universal-shuffle-v2.1';
-  const CONFIG = Object.freeze({ version: 1, horizon: 10, maxHorizon: 32, maxFailures: 64,
+  const VERSION = 3;
+  const POLICY_VERSION = 'universal-shuffle-v2.2';
+  const PRIOR_POLICY_VERSION = 'universal-shuffle-v2.1';
+  const CONFIG = Object.freeze({ version: 2, horizon: 10, maxHorizon: 32, maxFailures: 64,
     artistWindow: 3, albumWindow: 2, recordingWindow: 1, explorationPermille: 100,
     baseWeight: 64, minWeight: 16, maxWeight: 128, maxTaste: 12, maxNovelty: 12,
     freshnessMs: 86400000, maxFreshnessPenalty: 12, maxTempoPoints: 8,
-    maxEnergyPoints: 8, maxKeyPoints: 4, maxContextPoints: 4, maxPresetPoints: 8 });
-  const MODES = Object.freeze(['off', 'random', 'balanced', 'flow', 'album']);
+    maxEnergyPoints: 8, maxKeyPoints: 4, maxContextPoints: 4, maxPresetPoints: 8,
+    // Two-queue session steering. The base queue is what a natural end plays;
+    // the live queue is what a personal Next plays. Skip timing reuses the
+    // learning contract's early-skip window so both systems agree on meaning.
+    pinnedBase: 3, liveSteer: 24, baseSteer: 8, maxMarks: 8, markMaxSongs: 8, markMaxAgeMs: 7200000,
+    flickMs: 3000, earlySkipMaxMs: 30000, earlySkipCoveragePermille: 250, lateSkipCoveragePermille: 800,
+    earlyMark: -1000, midMark: -400, lateMark: 200, finishMark: 600, pruneSimilarity: 600,
+    flickExplorationPermille: 250, flickStormExplorationPermille: 400, flowLetGoAfter: 3, liveExclusionMinimum: 3,
+    maxAirtimePoints: 12, similarityArtist: 350, similarityAlbum: 250, similarityGenre: 150,
+    similarityTempoClose: 100, similarityTempoNear: 50, similarityEnergy: 100, similarityKey: 50, similaritySource: 200 });
+  const MODES = Object.freeze(['off', 'balanced', 'flow', 'album']);
+  const LANES = Object.freeze(['base', 'live']);
+  const SKIPS = Object.freeze(['flick', 'early', 'mid', 'late', 'finish', 'unknown']);
   const PRESETS = Object.freeze(['flow', 'discovery', 'comfort', 'energy', 'genre-weave', 'deep-library']);
   const PROVENANCE = Object.freeze(['manual', 'tagged', 'measured', 'derived', 'unknown']);
   const clone = (value) => JSON.parse(JSON.stringify(value));
@@ -33,7 +45,8 @@
   // accidental collapse of non-Latin identities. Explicit catalog IDs win.
   const textIdentity = (value) => typeof value === 'string' ? value.normalize('NFC').replace(/[A-Z]/g, (c) => c.toLowerCase()).replace(/\s+/gu, ' ').trim() || null : null;
   function normalizeMode(value) {
-    const aliases = { standard: 'random', Standard: 'random', PureRandom: 'random', SmartFlow: 'flow', Flow: 'flow', AlbumPreserving: 'album' };
+    // Random shuffle was removed in v2.2. Balanced keeps its once-per-cycle promise.
+    const aliases = { random: 'balanced', standard: 'balanced', Standard: 'balanced', PureRandom: 'balanced', SmartFlow: 'flow', Flow: 'flow', AlbumPreserving: 'album' };
     return MODES.includes(value) ? value : Object.hasOwn(aliases, value) ? aliases[value] : 'balanced';
   }
   function hashSeed(value) {
@@ -107,7 +120,7 @@
     const recordingId = optionalId(raw.recordingId) || (/^[A-Z]{2}[A-Z0-9]{3}\d{7}$/.test(isrc) ? `isrc:${isrc}` : null);
     const features = raw.features || {};
     return { entryId: id(raw.entryId, 'entryId'), trackId: id(raw.trackId, 'trackId'), recordingId,
-      artistId, albumArtistId, albumId, sourceIndex: index, discNumber: integer(raw.discNumber, 1, 10000, null), trackNumber: integer(raw.trackNumber, 1, 100000, null), available: raw.available !== false,
+      artistId, albumArtistId, albumId, sourceKey: optionalId(raw.sourceKey), sourceIndex: index, discNumber: integer(raw.discNumber, 1, 10000, null), trackNumber: integer(raw.trackNumber, 1, 100000, null), available: raw.available !== false,
       genreId: optionalId(raw.genreId) || textIdentity(raw.genre), contextTags: unique((Array.isArray(raw.contextTags) ? raw.contextTags : []).map(textIdentity).filter(Boolean)).sort(ordinal),
       features: { tempo: feature(features.tempo ?? features.bpm, 'tempo'), energy: feature(features.energy, 'energy'), key: feature(features.key, 'key') } };
   }
@@ -118,7 +131,10 @@
     return normalized;
   }
   function normalizeOptions(options = {}) {
-    return { preset: PRESETS.includes(options.preset) ? options.preset : 'flow', shape: ['steady', 'rise', 'wave', 'wind-down', 'auto'].includes(options.shape) ? options.shape : 'auto', preserveAlbumRuns: options.preserveAlbumRuns === true, contextTag: textIdentity(options.contextTag) };
+    return { preset: PRESETS.includes(options.preset) ? options.preset : 'flow', shape: ['steady', 'rise', 'wave', 'wind-down', 'auto'].includes(options.shape) ? options.shape : 'auto', preserveAlbumRuns: options.preserveAlbumRuns === true, contextTag: textIdentity(options.contextTag), airtime: options.airtime === 'even' ? 'even' : 'size' };
+  }
+  function emptyLanes() {
+    return { marks: [], flicks: 0, earlyRun: 0, anchorEntryId: null, lastEarlyAlbumId: null, pinned: [] };
   }
   function createSession(input) {
     const entries = normalizeEntries(input.entries || []);
@@ -128,7 +144,7 @@
       cycle: { generation: 0, cycleId: JSON.stringify([input.scopeId, 0]) }, rng: createRng(input.seed), entries,
       remaining: entries.map((e) => e.entryId), history: [], cursor: -1, occurrenceSequence: 0,
       generatedFuture: [], manual: [], exclusions: [], albumLock: null, pending: null, lastConfirmedPositionMs: 0, eventSequences: [],
-      quarantine: { advanceId: null, entryIds: [] }, undo: null, paused: true, diagnostics: [], imported: false };
+      quarantine: { advanceId: null, entryIds: [] }, undo: null, paused: true, diagnostics: [], imported: false, lanes: emptyLanes() };
   }
   function requireState(state) {
     if (!state || state.schemaVersion !== VERSION || state.policyVersion !== POLICY_VERSION || state.configVersion !== CONFIG.version) throw new TypeError('Unsupported session version; preserve snapshot without overwriting it');
@@ -148,7 +164,56 @@
     if (shape === 'wave') return Math.max(0, Math.min(1000, base + [0, 60, 120, 180, 120, 60, 0, -60, -120, -60][step]));
     return base;
   }
-  function selection(state, eligible, context, current, byId) {
+  function keyPoints(a, b) {
+    const difference = (b.pitchClass - a.pitchClass + 12) % 12;
+    return difference === 0 && a.mode === b.mode ? 4 : [5, 7].includes(difference) && a.mode === b.mode || (a.mode === 'major' && b.mode === 'minor' && difference === 9) || (a.mode === 'minor' && b.mode === 'major' && difference === 3) ? 2 : -2;
+  }
+  // Session closeness 0..1000 from metadata already read. Unknown traits add nothing.
+  function similarity(a, b, multiSource) {
+    if (!a || !b) return 0;
+    let points = 0;
+    if (a.artistId && a.artistId === b.artistId) points += CONFIG.similarityArtist;
+    if (a.albumId && a.albumId === b.albumId) points += CONFIG.similarityAlbum;
+    if (a.genreId && a.genreId === b.genreId) points += CONFIG.similarityGenre;
+    if (a.features.tempo.value != null && b.features.tempo.value != null) {
+      const distance = Math.abs(a.features.tempo.value - b.features.tempo.value);
+      points += distance <= 5000 ? CONFIG.similarityTempoClose : distance <= 10000 ? CONFIG.similarityTempoNear : 0;
+    }
+    if (a.features.energy.value != null && b.features.energy.value != null && Math.abs(a.features.energy.value - b.features.energy.value) <= 100) points += CONFIG.similarityEnergy;
+    if (a.features.key.value != null && b.features.key.value != null && keyPoints(a.features.key.value, b.features.key.value) > 0) points += CONFIG.similarityKey;
+    if (multiSource && a.sourceKey && a.sourceKey === b.sourceKey) points += CONFIG.similaritySource;
+    return Math.min(1000, points);
+  }
+  // A mark keeps full strength for two songs, then halves every two songs.
+  function steerPoints(entry, steering, byId) {
+    if (!steering.gain || !steering.marks.length) return 0;
+    let sum = 0;
+    for (const mark of steering.marks) {
+      const marked = byId.get(mark.entryId);
+      const age = mark.songs + steering.ageOffset;
+      if (!marked || age >= CONFIG.markMaxSongs) continue;
+      sum += Math.trunc(mark.mark * similarity(entry, marked, steering.multiSource) / 2 ** Math.floor(age / 2));
+    }
+    return Math.max(-steering.gain, Math.min(steering.gain, Math.trunc(steering.gain * sum / 1000000))) || 0;
+  }
+  // Even turns lifts linked members behind their share of this cycle and lowers those ahead.
+  function airtimePoints(entry, airtime) {
+    if (!airtime || !entry.sourceKey) return 0;
+    const played = airtime.played.get(entry.sourceKey) || 0;
+    return Math.max(-CONFIG.maxAirtimePoints, Math.min(CONFIG.maxAirtimePoints, Math.trunc((airtime.totalPlayed - airtime.sources * played) * CONFIG.maxAirtimePoints / Math.max(airtime.sources, airtime.totalPlayed)))) || 0;
+  }
+  function airtimeContext(state, consumed) {
+    if (state.options.airtime !== 'even') return null;
+    const played = new Map(), sources = new Set();
+    let totalPlayed = 0;
+    for (const entry of state.entries) {
+      if (!entry.sourceKey) continue;
+      sources.add(entry.sourceKey);
+      if (consumed(entry.entryId)) { played.set(entry.sourceKey, (played.get(entry.sourceKey) || 0) + 1); totalPlayed += 1; }
+    }
+    return sources.size < 2 ? null : { sources: sources.size, played, totalPlayed };
+  }
+  function selection(state, eligible, context, current, byId, steering = { gain: 0, marks: [], ageOffset: 0, explorationPermille: CONFIG.explorationPermille, airtime: null, multiSource: false }) {
     let rng = state.rng;
     const recent = state.history.slice(Math.max(0, state.cursor - CONFIG.artistWindow + 1), state.cursor + 1).map((h) => byId.get(h.entryId) || h);
     const windows = { artist: recent.slice(-CONFIG.artistWindow).map((e) => e.artistId).filter(Boolean), album: recent.slice(-CONFIG.albumWindow).map((e) => e.albumId).filter(Boolean), recording: recent.slice(-CONFIG.recordingWindow).map((e) => e.recordingId).filter(Boolean) };
@@ -161,7 +226,7 @@
     const now = integer(context.nowMs, 0, Number.MAX_SAFE_INTEGER, 0);
     const rows = candidates.map((entry) => {
       const signal = signals.get(entry.trackId) || {};
-      const parts = { taste: integer(signal.tastePoints, -12, 12, 0), novelty: integer(signal.noveltyPoints, 0, 12, 12), freshness: 0, tempo: 0, energy: 0, key: 0, context: 0, preset: 0 };
+      const parts = { taste: integer(signal.tastePoints, -12, 12, 0), novelty: integer(signal.noveltyPoints, 0, 12, 12), freshness: 0, tempo: 0, energy: 0, key: 0, context: 0, preset: 0, steer: steerPoints(entry, steering, byId), airtime: airtimePoints(entry, steering.airtime), adapter: integer(signal.adapterPoints, -12, 12, 0) };
       if (Number.isSafeInteger(signal.lastHeardAtMs) && signal.lastHeardAtMs >= 0) { const penalty = Math.floor(CONFIG.maxFreshnessPenalty * Math.max(0, CONFIG.freshnessMs - Math.max(0, now - signal.lastHeardAtMs)) / CONFIG.freshnessMs); parts.freshness = penalty ? -penalty : 0; }
       const coverage = [];
       if (Number.isSafeInteger(signal.tastePoints) && (signal.tastePoints !== 0 || signal.confidencePermille > 0)) coverage.push('taste');
@@ -172,7 +237,7 @@
         const to = entry.features;
         if (from?.tempo.value != null && to.tempo.value != null) { parts.tempo = Math.max(-8, 8 - Math.floor(Math.abs(from.tempo.value - to.tempo.value) / 5000)); coverage.push('tempo'); }
         if (from?.energy.value != null && to.energy.value != null) { const target = shapeTarget(state.options.shape, state.history.length, from.energy.value); parts.energy = Math.max(-8, 8 - Math.floor(Math.abs(target - to.energy.value) / 50)); coverage.push('energy'); }
-        if (from?.key.value != null && to.key.value != null) { const a = from.key.value, b = to.key.value; const difference = (b.pitchClass - a.pitchClass + 12) % 12; parts.key = difference === 0 && a.mode === b.mode ? 4 : [5, 7].includes(difference) && a.mode === b.mode || (a.mode === 'major' && b.mode === 'minor' && difference === 9) || (a.mode === 'minor' && b.mode === 'major' && difference === 3) ? 2 : -2; coverage.push('key'); }
+        if (from?.key.value != null && to.key.value != null) { parts.key = keyPoints(from.key.value, to.key.value); coverage.push('key'); }
         if (state.options.contextTag && entry.contextTags.includes(state.options.contextTag)) { parts.context = 4; coverage.push('context'); }
         const preset = state.options.preset;
         if (preset === 'discovery' || preset === 'deep-library') parts.preset = Math.floor(parts.novelty * 8 / 12);
@@ -180,11 +245,14 @@
         if (preset === 'energy' && to.energy.value != null) { parts.preset = Math.floor(to.energy.value * 8 / 1000); if (!coverage.includes('energy')) coverage.push('energy'); }
         if (preset === 'genre-weave' && current?.genreId && entry.genreId) { parts.preset = current.genreId === entry.genreId ? -4 : 4; coverage.push('genre'); }
       }
-      const weight = Math.max(CONFIG.minWeight, Math.min(CONFIG.maxWeight, CONFIG.baseWeight + parts.taste + parts.novelty + parts.freshness + parts.tempo + parts.energy + parts.key + parts.context + parts.preset));
+      if (parts.steer) coverage.push('steer');
+      if (parts.airtime) coverage.push('airtime');
+      if (parts.adapter) coverage.push('adapter');
+      const weight = Math.max(CONFIG.minWeight, Math.min(CONFIG.maxWeight, CONFIG.baseWeight + parts.taste + parts.novelty + parts.freshness + parts.tempo + parts.energy + parts.key + parts.context + parts.preset + parts.steer + parts.airtime + parts.adapter));
       return { entry, parts, coverage, weight };
     });
     const exploration = bounded(rng, 1000); rng = exploration.rng;
-    const explore = exploration.value < CONFIG.explorationPermille;
+    const explore = exploration.value < steering.explorationPermille;
     // Exploration favors the least exposed feasible opportunity, randomly
     // breaking all ties; no low-ID shortlist and no permanent taste exclusion.
     let pool = rows;
@@ -194,6 +262,31 @@
     let cursor = roll.value;
     const picked = pool.find((row) => { cursor -= explore ? 1 : row.weight; return cursor < 0; });
     return { entry: picked.entry, rng, reason: { strategy: explore ? 'exploration' : 'weighted', exploration: explore, candidateCount: candidates.length, relaxations: relaxed, signalCoverage: explore ? ['exposure'] : picked.coverage, scoreParts: explore ? null : picked.parts, weight: explore ? 1 : picked.weight, albumOrdering: null } };
+  }
+  function skipBucket(request) {
+    const heard = Number.isSafeInteger(request.heardMs) && request.heardMs >= 0 ? request.heardMs : null;
+    const coverage = Number.isSafeInteger(request.coveragePermille) && request.coveragePermille >= 0 ? Math.min(1000, request.coveragePermille) : null;
+    if (heard == null && coverage == null) return 'unknown';
+    if (heard != null && heard < CONFIG.flickMs) return 'flick';
+    if (coverage != null && coverage >= CONFIG.lateSkipCoveragePermille) return 'late';
+    if (heard != null && heard < CONFIG.earlySkipMaxMs && (coverage == null || coverage < CONFIG.earlySkipCoveragePermille)) return 'early';
+    return 'mid';
+  }
+  // Session marks for the song being left. Only personal advances leave marks;
+  // navigation, Play Now and remote or preview actions never do.
+  function nextLanes(state, current, skip, appends, nowMs) {
+    const lanes = state.lanes;
+    let marks = appends ? lanes.marks.map((mark) => ({ ...mark, songs: mark.songs + 1 })) : lanes.marks.slice();
+    marks = marks.filter((mark) => mark.songs < CONFIG.markMaxSongs && (nowMs == null || mark.atMs + CONFIG.markMaxAgeMs >= nowMs));
+    if (!skip || !current) return { ...lanes, marks };
+    const value = { early: CONFIG.earlyMark, mid: CONFIG.midMark, late: CONFIG.lateMark, finish: CONFIG.finishMark }[skip];
+    if (value != null) marks = [...marks, { entryId: current.entryId, mark: value, songs: 0, atMs: nowMs ?? 0 }].slice(-CONFIG.maxMarks);
+    const kept = skip === 'finish' || skip === 'late';
+    return { ...lanes, marks,
+      flicks: skip === 'flick' ? lanes.flicks + 1 : skip === 'unknown' ? lanes.flicks : 0,
+      earlyRun: skip === 'early' ? lanes.earlyRun + 1 : skip === 'flick' || skip === 'unknown' ? lanes.earlyRun : 0,
+      anchorEntryId: kept ? current.entryId : lanes.anchorEntryId,
+      lastEarlyAlbumId: skip === 'early' ? current.albumId : skip === 'flick' || skip === 'unknown' ? lanes.lastEarlyAlbumId : null };
   }
   function stage(state, request = {}, context = {}) {
     requireState(state);
@@ -206,7 +299,17 @@
     const allowed = (entryId, explicit = false) => { const e = byId.get(entryId); return Boolean(e && e.available && (explicit || !state.exclusions.includes(entryId)) && !next.quarantine.entryIds.includes(entryId)); };
     const currentHistory = currentOccurrence(state);
     const current = currentHistory ? byId.get(currentHistory.entryId) : null;
+    const nowMs = Number.isSafeInteger(context.nowMs) && context.nowMs >= 0 ? context.nowMs : null;
+    // Natural end plays the base queue; a personal Next plays the live queue.
+    // A failed candidate's retry keeps the lane of the advance that staged it.
+    let lane = LANES.includes(request.lane) ? request.lane : state.quarantine.advanceId === advanceId && LANES.includes(state.quarantine.lane) ? state.quarantine.lane : request.naturalEnd === false ? 'live' : 'base';
+    if (!current || request.direction === 'previous' || request.entryId != null) lane = 'base';
+    const advancing = request.direction !== 'previous' && request.entryId == null && current != null && state.mode !== 'off';
+    const retrying = state.quarantine.advanceId === advanceId && Object.hasOwn(state.quarantine, 'skip') && request.heardMs == null && request.coveragePermille == null;
+    const skip = !advancing || request.personal === false ? null : retrying ? state.quarantine.skip : lane === 'live' ? skipBucket(request) : request.naturalEnd === true ? 'finish' : null;
+    const multiSource = new Set(state.entries.map((e) => e.sourceKey).filter(Boolean)).size > 1;
     let entry = null, kind = 'automatic', historyIndex = null, newCycle = false, rngAfter = state.rng, futureAfter = state.generatedFuture, albumLockAfter = state.albumLock, manualIndex = null;
+    let lanesAfter = state.lanes, pinnedAfter = state.lanes.pinned;
     let reason = { strategy: state.mode, exploration: false, candidateCount: 0, relaxations: [], signalCoverage: [], scoreParts: null, weight: null, albumOrdering: null };
     if (request.direction === 'previous') {
       for (let i = state.cursor - 1; i >= 0; i -= 1) if (allowed(state.history[i].entryId, true)) { historyIndex = i; break; }
@@ -237,12 +340,16 @@
         if (!entry && eligible.length) {
           const allowedSet = new Set(remaining);
           if (state.mode === 'album' || state.mode === 'flow' && state.options.preserveAlbumRuns) {
-            const locked = state.albumLock?.entryIds.find((entryId) => allowedSet.has(entryId));
+            // One early skip moves to the next track; a second early skip on the
+            // same album leaves it for another album when one remains.
+            const leaveAlbum = lane === 'live' && skip === 'early' && current?.albumId != null && state.lanes.lastEarlyAlbumId === current.albumId;
+            const locked = leaveAlbum ? null : state.albumLock?.entryIds.find((entryId) => allowedSet.has(entryId));
             if (locked && !newCycle) { entry = byId.get(locked); kind = 'album-continuation'; reason.albumOrdering = state.albumLock.ordering; }
             else {
               const groups = new Map();
               for (const e of eligible) { const key = e.albumId == null ? JSON.stringify(['entry', e.entryId]) : JSON.stringify(['album', e.albumId]); if (!groups.has(key)) groups.set(key, []); groups.get(key).push(e); }
-              const keys = [...groups.keys()].sort(ordinal);
+              let keys = [...groups.keys()].sort(ordinal);
+              if (leaveAlbum && keys.length > 1) keys = keys.filter((key) => key !== JSON.stringify(['album', current.albumId]));
               const choice = bounded(state.rng, keys.length); rngAfter = choice.rng;
               const ordered = albumOrder(groups.get(keys[choice.value]));
               entry = ordered.entries[0]; albumLockAfter = { albumId: entry.albumId, entryIds: ordered.entries.map((e) => e.entryId), ordering: ordered.ordering }; reason.albumOrdering = ordered.ordering;
@@ -250,11 +357,39 @@
             albumLockAfter = albumLockAfter ? { ...albumLockAfter, entryIds: albumLockAfter.entryIds.filter((entryId) => entryId !== entry.entryId) } : null;
             if (albumLockAfter && !albumLockAfter.entryIds.length) albumLockAfter = null;
           } else if (state.mode === 'off') { const retained = state.generatedFuture.filter((entryId) => allowedSet.has(entryId)); entry = retained.length ? byId.get(retained[0]) : eligible.slice().sort((a, b) => a.sourceIndex - b.sourceIndex)[0]; futureAfter = retained.slice(1); }
-          else if (state.mode === 'random') {
-            const retained = newCycle ? [] : state.generatedFuture.filter((entryId) => allowedSet.has(entryId));
-            if (retained.length === eligible.length) { entry = byId.get(retained[0]); futureAfter = retained.slice(1); }
-            else { const ordered = permutation(remaining, state.rng); rngAfter = ordered.rng; entry = byId.get(ordered.order[0]); futureAfter = ordered.order.slice(1); }
-          } else { const pick = selection(state, eligible, context, current, byId); entry = pick.entry; rngAfter = pick.rng; reason = pick.reason; futureAfter = []; }
+          else {
+            lanesAfter = nextLanes(state, current, skip, true, nowMs);
+            const pinned = newCycle ? [] : state.lanes.pinned.filter((item) => allowedSet.has(item.entryId));
+            if (lane === 'base' && pinned.length) { entry = byId.get(pinned[0].entryId); reason = { ...pinned[0].reason }; }
+            else {
+              // The live queue never offers the base queue's next song while a
+              // real alternative remains, and bridges from the last kept song.
+              const pool = lane === 'live' && pinned.length && eligible.length >= CONFIG.liveExclusionMinimum ? eligible.filter((e) => e.entryId !== pinned[0].entryId) : eligible;
+              const anchor = lane === 'base' ? current : state.mode === 'flow' && lanesAfter.earlyRun >= CONFIG.flowLetGoAfter ? null : byId.get(lanesAfter.anchorEntryId) || null;
+              const exploration = lane === 'live' && lanesAfter.flicks >= 2 ? CONFIG.flickStormExplorationPermille : lane === 'live' && lanesAfter.flicks === 1 ? CONFIG.flickExplorationPermille : CONFIG.explorationPermille;
+              const consumed = newCycle ? () => false : (entryId) => !state.remaining.includes(entryId);
+              const pick = selection(state, pool, context, anchor, byId, { gain: lane === 'live' ? CONFIG.liveSteer : CONFIG.baseSteer, marks: lanesAfter.marks, ageOffset: 0, explorationPermille: exploration, airtime: airtimeContext(state, consumed), multiSource });
+              entry = pick.entry; rngAfter = pick.rng; reason = pick.reason;
+            }
+            let rest = pinned.filter((item) => item.entryId !== entry.entryId);
+            if (skip === 'early') rest = rest.filter((item) => similarity(byId.get(item.entryId), current, multiSource) < CONFIG.pruneSimilarity);
+            // Refill the pinned base window as successive natural ends would pick it.
+            const chain = [entry, ...rest.map((item) => byId.get(item.entryId))];
+            const taken = new Set(chain.map((e) => e.entryId));
+            const consumedAfter = (entryId) => taken.has(entryId) || (newCycle ? false : !state.remaining.includes(entryId));
+            let available = eligible.filter((e) => !taken.has(e.entryId));
+            let rng = rngAfter;
+            while (rest.length < CONFIG.pinnedBase && available.length) {
+              const history = [...state.history.slice(0, state.cursor + 1), ...chain.map((e) => ({ entryId: e.entryId, artistId: e.artistId, albumId: e.albumId, recordingId: e.recordingId }))];
+              const preview = { ...state, rng, history, cursor: history.length - 1 };
+              const pick = selection(preview, available, context, chain[chain.length - 1], byId, { gain: CONFIG.baseSteer, marks: lanesAfter.marks, ageOffset: chain.length, explorationPermille: CONFIG.explorationPermille, airtime: airtimeContext(state, consumedAfter), multiSource });
+              rng = pick.rng;
+              rest = [...rest, { entryId: pick.entry.entryId, reason: { ...pick.reason, lane: 'base', skip: null } }];
+              chain.push(pick.entry); taken.add(pick.entry.entryId);
+              available = available.filter((e) => e.entryId !== pick.entry.entryId);
+            }
+            rngAfter = rng; pinnedAfter = rest; futureAfter = [];
+          }
         }
       }
     }
@@ -270,13 +405,21 @@
         reason.albumOrdering = siblings.ordering;
       }
     }
+    if (lanesAfter === state.lanes && kind !== 'previous' && kind !== 'forward') lanesAfter = nextLanes(state, current, ['manual', 'repeat-one', 'album-continuation', 'automatic'].includes(kind) ? skip : null, true, nowMs);
+    if (pinnedAfter === state.lanes.pinned) pinnedAfter = state.lanes.pinned.filter((item) => item.entryId !== entry.entryId);
+    lanesAfter = { ...lanesAfter, pinned: pinnedAfter };
     const decisionId = JSON.stringify([state.sessionId, state.revision, state.membershipRevision, state.authorityEpoch, entry.entryId, kind]);
     const receipt = { version: VERSION, policyVersion: POLICY_VERSION, configVersion: CONFIG.version, decisionId, scopeId: state.scopeId, cycleId: newCycle ? JSON.stringify([state.scopeId, state.cycle.generation + 1]) : state.cycle.cycleId,
       mode: state.mode, preset: state.options.preset, kind, entryId: entry.entryId, trackId: entry.trackId,
       originEntryId: currentHistory?.entryId || null, originOccurrenceId: currentHistory?.occurrenceId || null,
-      explicitException: ['play-now', 'manual', 'repeat-one', 'previous', 'forward'].includes(kind), intentionalDuplicate: state.entries.some((e) => e.trackId === entry.trackId && e.entryId !== entry.entryId), ...reason };
+      explicitException: ['play-now', 'manual', 'repeat-one', 'previous', 'forward'].includes(kind), intentionalDuplicate: state.entries.some((e) => e.trackId === entry.trackId && e.entryId !== entry.entryId), ...reason, lane, skip };
     return { ...next, pending: { version: VERSION, attemptId, advanceId, decisionId, revision: state.revision, membershipRevision: state.membershipRevision, authorityId: state.authorityId, authorityEpoch: state.authorityEpoch,
-      entryId: entry.entryId, trackId: entry.trackId, kind, historyIndex, newCycle, rngAfter, futureAfter, albumLockAfter, manualIndex, receipt } };
+      entryId: entry.entryId, trackId: entry.trackId, kind, lane, historyIndex, newCycle, rngAfter, futureAfter, albumLockAfter, lanesAfter, manualIndex, receipt } };
+  }
+  // What each queue would play now, without reserving or consuming anything.
+  function preview(state, request = {}, context = {}) {
+    const staged = stage({ ...state, pending: null }, { attemptId: JSON.stringify(['lane-preview', state.revision, request.lane || 'base']), personal: false, ...request }, context);
+    return staged.pending ? staged.pending.receipt : null;
   }
   function matches(state, activation) {
     const p = state.pending;
@@ -299,7 +442,7 @@
     return { ...state, revision: state.revision + 1, cycle: p.newCycle ? { generation: state.cycle.generation + 1, cycleId: JSON.stringify([state.scopeId, state.cycle.generation + 1]) } : state.cycle,
       rng: p.rngAfter, remaining: consume ? remaining.filter((entryId) => entryId !== entry.entryId) : remaining,
       history, cursor: navigation ? p.historyIndex : history.length - 1, occurrenceSequence: sequence,
-      generatedFuture: p.futureAfter, albumLock: p.albumLockAfter,
+      generatedFuture: p.futureAfter, albumLock: p.albumLockAfter, lanes: p.lanesAfter,
       manual: state.manual.filter((_, index) => !(p.kind === 'manual' && index === p.manualIndex)).map((item) => ({ ...item, position: p.kind === 'previous' || p.kind === 'repeat-one' ? item.position : Math.max(0, item.position - 1) })),
       pending: null, quarantine: { advanceId: null, entryIds: [] }, undo: null, paused: false, lastConfirmedPositionMs: integer(activation.positionMs, 0, Number.MAX_SAFE_INTEGER, 0) };
   }
@@ -307,13 +450,13 @@
     requireState(state);
     if (!matches(state, activation)) return state;
     const p = state.pending;
-    return { ...state, revision: state.revision + 1, pending: null, paused: true, quarantine: { advanceId: p.advanceId, entryIds: unique([...state.quarantine.entryIds, p.entryId]) }, diagnostics: unique([...state.diagnostics, 'activation-failed']) };
+    return { ...state, revision: state.revision + 1, pending: null, paused: true, quarantine: { advanceId: p.advanceId, entryIds: unique([...state.quarantine.entryIds, p.entryId]), lane: p.lane, skip: p.receipt.skip }, diagnostics: unique([...state.diagnostics, 'activation-failed']) };
   }
   function invalidate(state, changes) { return { ...state, ...changes, revision: state.revision + 1, pending: null }; }
   function mutate(state, action) {
     requireState(state);
     const snapshot = () => ({ entries: state.entries, remaining: state.remaining, manual: state.manual, exclusions: state.exclusions, generatedFuture: state.generatedFuture, albumLock: state.albumLock, membershipRevision: state.membershipRevision });
-    if (action.type === 'undo') return state.undo ? invalidate(state, { ...state.undo, membershipRevision: state.membershipRevision + 1, undo: null, history: state.history.map((h) => ({ ...h, tombstone: !state.undo.entries.some((e) => e.entryId === h.entryId) })) }) : state;
+    if (action.type === 'undo') return state.undo ? invalidate(state, { ...state.undo, lanes: { ...state.lanes, pinned: [], marks: state.lanes.marks.filter((mark) => state.undo.entries.some((e) => e.entryId === mark.entryId)) }, membershipRevision: state.membershipRevision + 1, undo: null, history: state.history.map((h) => ({ ...h, tombstone: !state.undo.entries.some((e) => e.entryId === h.entryId) })) }) : state;
     if (action.type === 'priority' || action.type === 'move') {
       id(action.entryId, 'entryId');
       if (!state.entries.some((e) => e.entryId === action.entryId)) return state;
@@ -322,13 +465,13 @@
       const item = { entryId: action.entryId, kind: action.type, intentId: id(action.intentId, 'intentId'), position: index };
       for (const prior of rest) if (prior.position >= index) prior.position += 1;
       rest.push(item); rest.sort((a, b) => a.position - b.position);
-      return invalidate(state, { manual: rest, generatedFuture: [], albumLock: null, undo: snapshot() });
+      return invalidate(state, { manual: rest, generatedFuture: [], albumLock: null, lanes: { ...state.lanes, pinned: [] }, undo: snapshot() });
     }
     if (action.type === 'exclude' || action.type === 'include') {
       id(action.entryId, 'entryId');
       if (!state.entries.some((entry) => entry.entryId === action.entryId)) return state;
       const exclusions = action.type === 'exclude' ? unique([...state.exclusions, id(action.entryId)]) : state.exclusions.filter((entryId) => entryId !== action.entryId);
-      return invalidate(state, { exclusions, undo: snapshot() });
+      return invalidate(state, { exclusions, lanes: { ...state.lanes, pinned: state.lanes.pinned.filter((item) => !exclusions.includes(item.entryId)) }, undo: snapshot() });
     }
     if (action.type === 'clear') return reconcile(state, [], { membershipRevision: state.membershipRevision + 1 });
     if (action.type === 'remove') return reconcile(state, state.entries.filter((e) => e.entryId !== action.entryId), { membershipRevision: state.membershipRevision + 1 });
@@ -348,23 +491,37 @@
     return invalidate(state, { entries, remaining: [...state.remaining.filter((entryId) => ids.has(entryId)), ...entries.filter((e) => !previous.has(e.entryId)).map((e) => e.entryId)],
       membershipRevision: integer(options.membershipRevision, state.membershipRevision + 1, Number.MAX_SAFE_INTEGER, state.membershipRevision + 1),
       history: state.history.map((h) => ({ ...h, tombstone: !ids.has(h.entryId) })), manual: state.manual.filter((item) => ids.has(item.entryId)), exclusions: state.exclusions.filter((entryId) => ids.has(entryId)), generatedFuture: [],
-      albumLock: state.albumLock ? { ...state.albumLock, entryIds: state.albumLock.entryIds.filter((entryId) => ids.has(entryId)) } : null, quarantine: { advanceId: null, entryIds: [] }, undo: before });
+      albumLock: state.albumLock ? { ...state.albumLock, entryIds: state.albumLock.entryIds.filter((entryId) => ids.has(entryId)) } : null, quarantine: { advanceId: null, entryIds: [] }, undo: before,
+      lanes: { ...state.lanes, pinned: [], marks: state.lanes.marks.filter((mark) => ids.has(mark.entryId)), anchorEntryId: ids.has(state.lanes.anchorEntryId) ? state.lanes.anchorEntryId : null } });
   }
   function setMode(state, mode, options, context = {}) {
     requireState(state);
     const normalized = normalizeMode(mode);
     const future = normalized === 'off' ? project(state, { horizon: Math.min(CONFIG.maxHorizon, state.remaining.length), context }).entryIds : [];
-    // Off must freeze the whole already committed random traversal; bounded
-    // weighted previews become explicit manual positions, remaining source tail
-    // stays eligible. No entitlement or current/history reset.
+    // Off freezes the previewed future in its shown order; the remaining source
+    // tail stays eligible. No entitlement or current/history reset. Session
+    // marks survive a mode change; the pinned base window is drawn again.
     const frozen = normalized === 'off' ? unique([...future, ...state.generatedFuture, ...state.remaining]) : [];
-    return invalidate(state, { mode: normalized, options: options ? normalizeOptions(options) : state.options, generatedFuture: frozen, albumLock: null });
+    return invalidate(state, { mode: normalized, options: options ? normalizeOptions(options) : state.options, generatedFuture: frozen, albumLock: null, lanes: { ...state.lanes, pinned: [] } });
   }
   function newCycle(state) {
     requireState(state);
-    return invalidate(state, { cycle: { generation: state.cycle.generation + 1, cycleId: JSON.stringify([state.scopeId, state.cycle.generation + 1]) }, remaining: state.entries.map((e) => e.entryId), generatedFuture: [], exclusions: [], albumLock: null, quarantine: { advanceId: null, entryIds: [] } });
+    return invalidate(state, { cycle: { generation: state.cycle.generation + 1, cycleId: JSON.stringify([state.scopeId, state.cycle.generation + 1]) }, remaining: state.entries.map((e) => e.entryId), generatedFuture: [], exclusions: [], albumLock: null, quarantine: { advanceId: null, entryIds: [] }, lanes: { ...state.lanes, pinned: [] } });
+  }
+  // v2.1 sessions keep their history, entitlement and cycle. Random becomes
+  // Balanced, and the two queues start empty.
+  function upgradeV21(snapshot) {
+    if (!snapshot || snapshot.schemaVersion !== 2 || snapshot.policyVersion !== PRIOR_POLICY_VERSION || snapshot.configVersion !== 1) return null;
+    const random = snapshot.mode === 'random';
+    return { ...clone(snapshot), schemaVersion: VERSION, policyVersion: POLICY_VERSION, configVersion: CONFIG.version, mode: normalizeMode(snapshot.mode),
+      entries: normalizeEntries(snapshot.entries || []), options: normalizeOptions(snapshot.options || {}), generatedFuture: random ? [] : snapshot.generatedFuture, lanes: emptyLanes(), pending: null };
   }
   function restore(snapshot) {
+    let upgraded = null;
+    try { upgraded = upgradeV21(snapshot); if (upgraded) validateState(upgraded); } catch (error) { return { status: 'corrupt', state: null, preserved: clone(snapshot), diagnostics: [error.message] }; }
+    if (upgraded) {
+      return { status: 'restored', state: { ...upgraded, paused: true, undo: null, quarantine: { advanceId: null, entryIds: [] } }, preserved: null, diagnostics: ['upgraded-from-v2.1', ...(snapshot.pending ? ['unconfirmed-activation-aborted'] : [])] };
+    }
     if (!snapshot || snapshot.schemaVersion !== VERSION || snapshot.policyVersion !== POLICY_VERSION || snapshot.configVersion !== CONFIG.version) return { status: 'unsupported', state: null, preserved: clone(snapshot ?? null), diagnostics: ['unsupported-schema-policy-or-config'] };
     try {
       validateState(snapshot);
@@ -397,6 +554,12 @@
     if (state.eventSequences.length > 64 || new Set(state.eventSequences.map((row) => row.producerId)).size !== state.eventSequences.length) throw new TypeError('Corrupt producer table');
     if (state.pending && (!matches(state, state.pending) || !ids.has(state.pending.entryId) || !state.pending.receipt || state.pending.receipt.entryId !== state.pending.entryId)) throw new TypeError('Corrupt pending reservation');
     if (!MODES.includes(state.mode) || !['off', 'all', 'one'].includes(state.repeat) || !Number.isSafeInteger(state.cycle?.generation) || state.cycle.generation < 0) throw new TypeError('Invalid mode/repeat/cycle');
+    const lanes = state.lanes, count = (value) => Number.isSafeInteger(value) && value >= 0;
+    if (!lanes || !Array.isArray(lanes.marks) || !Array.isArray(lanes.pinned) || !count(lanes.flicks) || !count(lanes.earlyRun) || lanes.marks.length > CONFIG.maxMarks || lanes.pinned.length > CONFIG.pinnedBase) throw new TypeError('Corrupt lanes');
+    const markValues = [CONFIG.earlyMark, CONFIG.midMark, CONFIG.lateMark, CONFIG.finishMark];
+    for (const mark of lanes.marks) if (!ids.has(mark.entryId) || !markValues.includes(mark.mark) || !count(mark.songs) || mark.songs >= CONFIG.markMaxSongs || !count(mark.atMs)) throw new TypeError('Corrupt session mark');
+    if (lanes.pinned.some((item) => !ids.has(item.entryId) || !item.reason || typeof item.reason !== 'object') || new Set(lanes.pinned.map((item) => item.entryId)).size !== lanes.pinned.length) throw new TypeError('Corrupt pinned base queue');
+    if (lanes.anchorEntryId != null && !ids.has(lanes.anchorEntryId) || lanes.lastEarlyAlbumId != null && typeof lanes.lastEarlyAlbumId !== 'string') throw new TypeError('Corrupt lane anchors');
     return true;
   }
   function createProjection(state, options = {}) {
@@ -432,7 +595,7 @@
       future: project(state, { context }).decisions.map((d) => ({ decisionId: mapped('decisionId', d.decisionId), entryId: mapped('entryId', d.entryId), trackId: mapped('trackId', d.trackId), kind: d.kind })).filter((d) => d.trackId != null && d.entryId != null) };
   }
   function migrateLegacy(legacy, input) {
-    const state = createSession({ ...input, mode: input.mode ?? (legacy.plan?.style === 'standard' ? 'random' : legacy.mode === 'AlbumPreserving' ? 'album' : 'flow'), seed: input.seed ?? legacy.plan?.seed });
+    const state = createSession({ ...input, mode: input.mode ?? (legacy.plan?.style === 'standard' ? 'balanced' : legacy.mode === 'AlbumPreserving' ? 'album' : 'flow'), seed: input.seed ?? legacy.plan?.seed });
     const byTrack = new Map(); for (const entry of state.entries) if (!byTrack.has(entry.trackId)) byTrack.set(entry.trackId, entry);
     const order = Array.isArray(legacy.plan?.order) ? legacy.plan.order : Array.isArray(legacy.history) ? legacy.history : [];
     const history = order.map((trackId, index) => { const entry = byTrack.get(trackId); return { occurrenceId: JSON.stringify([state.sessionId, index + 1]), entryId: entry?.entryId || JSON.stringify(['legacy-tombstone', index]), trackId: id(String(trackId)), artistId: entry?.artistId || null, albumId: entry?.albumId || null, recordingId: entry?.recordingId || null, decisionId: null, kind: 'legacy-import', tombstone: !entry, receipt: null }; });
@@ -450,9 +613,9 @@
       case 'mode-change': return setMode(state, event.mode, event.options, context);
       case 'repeat-change': return invalidate(state, { repeat: ['off', 'all', 'one'].includes(event.repeat) ? event.repeat : 'off' });
       case 'explicit-new-cycle': return newCycle(state);
-      case 'reshuffle-remaining': return invalidate(state, { generatedFuture: [], albumLock: null });
+      case 'reshuffle-remaining': return invalidate(state, { generatedFuture: [], albumLock: null, lanes: { ...state.lanes, pinned: [] } });
       case 'membership-change': return reconcile(state, event.entries, event);
-      case 'session-change': return invalidate(state, { sessionId: id(event.sessionId), exclusions: [], pending: null, paused: true, quarantine: { advanceId: null, entryIds: [] } });
+      case 'session-change': return invalidate(state, { sessionId: id(event.sessionId), exclusions: [], pending: null, paused: true, quarantine: { advanceId: null, entryIds: [] }, lanes: emptyLanes() });
       case 'position-checkpoint': return currentOccurrence(state)?.occurrenceId === event.occurrenceId ? { ...state, lastConfirmedPositionMs: integer(event.positionMs, 0, Number.MAX_SAFE_INTEGER, state.lastConfirmedPositionMs) } : state;
       case 'restore': return restore(state).state;
       case 'authority-change': {
@@ -474,6 +637,6 @@
     const changed = applyEvent(state, event, context);
     return { ...changed, eventSequences: [...state.eventSequences.filter((row) => row.producerId !== event.producerId), { producerId: event.producerId, sequence: event.sequence, eventId: event.eventId }].sort((a, b) => ordinal(a.producerId, b.producerId)) };
   }
-  return Object.freeze({ VERSION, POLICY_VERSION, CONFIG, MODES, PRESETS, PROVENANCE, ordinal, canonicalJson, textIdentity, normalizeMode, normalizeEntry, normalizeEntries, parseKey, hashSeed, createRng, draw, bounded, permutation,
+  return Object.freeze({ VERSION, POLICY_VERSION, PRIOR_POLICY_VERSION, CONFIG, MODES, LANES, SKIPS, similarity, preview, PRESETS, PROVENANCE, ordinal, canonicalJson, textIdentity, normalizeMode, normalizeEntry, normalizeEntries, parseKey, hashSeed, createRng, draw, bounded, permutation,
     createSession, stage, commit, abort, mutate, reconcile, setMode, newCycle, currentOccurrence, validateState, restore, createProjection, advanceProjection, project, publicSnapshot, migrateLegacy, reduce });
 }));

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "pixelody:shuffle-universal-v2.1",
+  "$id": "pixelody:shuffle-universal-v2.2",
   "$defs": {
     "key": {
       "type": "object",
@@ -117,6 +117,18 @@
             },
             {
               "type": "string"
+            }
+          ]
+        },
+        "sourceKey": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
             }
           ]
         },
@@ -310,6 +322,7 @@
         "trackNumber",
         "available",
         "genreId",
+        "sourceKey",
         "contextTags",
         "features"
       ],
@@ -379,13 +392,20 @@
               "type": "string"
             }
           ]
+        },
+        "airtime": {
+          "enum": [
+            "size",
+            "even"
+          ]
         }
       },
       "required": [
         "preset",
         "shape",
         "preserveAlbumRuns",
-        "contextTag"
+        "contextTag",
+        "airtime"
       ],
       "additionalProperties": false
     },
@@ -499,6 +519,21 @@
           "type": "integer",
           "minimum": -12,
           "maximum": 12
+        },
+        "steer": {
+          "type": "integer",
+          "minimum": -24,
+          "maximum": 24
+        },
+        "airtime": {
+          "type": "integer",
+          "minimum": -12,
+          "maximum": 12
+        },
+        "adapter": {
+          "type": "integer",
+          "minimum": -12,
+          "maximum": 12
         }
       },
       "required": [
@@ -509,7 +544,10 @@
         "energy",
         "key",
         "context",
-        "preset"
+        "preset",
+        "steer",
+        "airtime",
+        "adapter"
       ],
       "additionalProperties": false
     },
@@ -517,13 +555,13 @@
       "type": "object",
       "properties": {
         "version": {
-          "const": 2
+          "const": 3
         },
         "policyVersion": {
-          "const": "universal-shuffle-v2.1"
+          "const": "universal-shuffle-v2.2"
         },
         "configVersion": {
-          "const": 1
+          "const": 2
         },
         "decisionId": {
           "type": "string"
@@ -539,7 +577,6 @@
         "mode": {
           "enum": [
             "off",
-            "random",
             "balanced",
             "flow",
             "album"
@@ -607,7 +644,6 @@
         "strategy": {
           "enum": [
             "off",
-            "random",
             "balanced",
             "flow",
             "album",
@@ -651,7 +687,10 @@
               "taste",
               "novelty",
               "freshness",
-              "exposure"
+              "exposure",
+              "steer",
+              "airtime",
+              "adapter"
             ]
           }
         },
@@ -686,6 +725,29 @@
               "type": "string"
             }
           ]
+        },
+        "lane": {
+          "enum": [
+            "base",
+            "live"
+          ]
+        },
+        "skip": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "enum": [
+                "flick",
+                "early",
+                "mid",
+                "late",
+                "finish",
+                "unknown"
+              ]
+            }
+          ]
         }
       },
       "required": [
@@ -711,7 +773,9 @@
         "signalCoverage",
         "scoreParts",
         "weight",
-        "albumOrdering"
+        "albumOrdering",
+        "lane",
+        "skip"
       ],
       "additionalProperties": false
     },
@@ -786,6 +850,9 @@
             },
             {
               "$ref": "#/$defs/decision"
+            },
+            {
+              "$ref": "#/$defs/priorDecision"
             }
           ]
         }
@@ -804,11 +871,26 @@
       ],
       "additionalProperties": false
     },
+    "priorDecision": {
+      "type": "object",
+      "required": [
+        "version",
+        "policyVersion"
+      ],
+      "properties": {
+        "version": {
+          "const": 2
+        },
+        "policyVersion": {
+          "const": "universal-shuffle-v2.1"
+        }
+      }
+    },
     "pending": {
       "type": "object",
       "properties": {
         "version": {
-          "const": 2
+          "const": 3
         },
         "attemptId": {
           "type": "string",
@@ -856,6 +938,12 @@
         "kind": {
           "type": "string"
         },
+        "lane": {
+          "enum": [
+            "base",
+            "live"
+          ]
+        },
         "historyIndex": {
           "anyOf": [
             {
@@ -892,6 +980,9 @@
             }
           ]
         },
+        "lanesAfter": {
+          "$ref": "#/$defs/lanes"
+        },
         "manualIndex": {
           "anyOf": [
             {
@@ -919,11 +1010,13 @@
         "entryId",
         "trackId",
         "kind",
+        "lane",
         "historyIndex",
         "newCycle",
         "rngAfter",
         "futureAfter",
         "albumLockAfter",
+        "lanesAfter",
         "manualIndex",
         "receipt"
       ],
@@ -999,13 +1092,13 @@
       "type": "object",
       "properties": {
         "schemaVersion": {
-          "const": 2
+          "const": 3
         },
         "policyVersion": {
-          "const": "universal-shuffle-v2.1"
+          "const": "universal-shuffle-v2.2"
         },
         "configVersion": {
-          "const": 1
+          "const": 2
         },
         "sessionId": {
           "type": "string",
@@ -1040,7 +1133,6 @@
         "mode": {
           "enum": [
             "off",
-            "random",
             "balanced",
             "flow",
             "album"
@@ -1203,6 +1295,29 @@
                 "minLength": 1,
                 "maxLength": 1024
               }
+            },
+            "lane": {
+              "enum": [
+                "base",
+                "live"
+              ]
+            },
+            "skip": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "enum": [
+                    "flick",
+                    "early",
+                    "mid",
+                    "late",
+                    "finish",
+                    "unknown"
+                  ]
+                }
+              ]
             }
           },
           "required": [
@@ -1210,6 +1325,9 @@
             "entryIds"
           ],
           "additionalProperties": false
+        },
+        "lanes": {
+          "$ref": "#/$defs/lanes"
         },
         "undo": {
           "anyOf": [
@@ -1262,6 +1380,7 @@
         "lastConfirmedPositionMs",
         "eventSequences",
         "quarantine",
+        "lanes",
         "undo",
         "paused",
         "diagnostics",
@@ -1415,6 +1534,25 @@
             }
           },
           "additionalProperties": false
+        },
+        "lane": {
+          "enum": [
+            "base",
+            "live"
+          ]
+        },
+        "heardMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "coveragePermille": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "personal": {
+          "type": "boolean"
         },
         "occurrenceId": {
           "type": "string",
@@ -1573,6 +1711,119 @@
           }
         }
       ]
+    },
+    "mark": {
+      "type": "object",
+      "properties": {
+        "entryId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "mark": {
+          "enum": [
+            -1000,
+            -400,
+            200,
+            600
+          ]
+        },
+        "songs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 7
+        },
+        "atMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "entryId",
+        "mark",
+        "songs",
+        "atMs"
+      ],
+      "additionalProperties": false
+    },
+    "pinned": {
+      "type": "object",
+      "properties": {
+        "entryId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "reason": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "entryId",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "lanes": {
+      "type": "object",
+      "properties": {
+        "marks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/mark"
+          },
+          "maxItems": 8
+        },
+        "flicks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "earlyRun": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "anchorEntryId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          ]
+        },
+        "lastEarlyAlbumId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "pinned": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/pinned"
+          },
+          "maxItems": 3
+        }
+      },
+      "required": [
+        "marks",
+        "flicks",
+        "earlyRun",
+        "anchorEntryId",
+        "lastEarlyAlbumId",
+        "pinned"
+      ],
+      "additionalProperties": false
     },
     "learningTrack": {
       "type": "object",

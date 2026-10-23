@@ -650,6 +650,23 @@ function normalizeSignalJournal(values = {}) {
     lastShuffle: source.lastShuffle && typeof source.lastShuffle === 'object' ? { ...source.lastShuffle, decision: source.lastShuffle.decision ? flowShuffleDecision.normalizeDecision(source.lastShuffle.decision) : null } : null,
   };
 }
+// A shuffle session made of several lists: up to eight, the first is the list
+// the queue was started from. Each song remembers which lists brought it in.
+function normalizeLinkedSession(value) {
+  if (!value || typeof value !== 'object' || !Array.isArray(value.sources)) return null;
+  const sources = [];
+  for (const source of value.sources) {
+    if (source && typeof source.id === 'string' && source.id && !sources.some((item) => item.id === source.id) && sources.length < 8) sources.push({ id: source.id, name: String(source.name || source.id).slice(0, 120) });
+  }
+  if (sources.length < 2) return null;
+  const ids = new Set(sources.map((source) => source.id));
+  const trackSources = {};
+  for (const [trackId, owners] of Object.entries(value.trackSources && typeof value.trackSources === 'object' ? value.trackSources : {})) {
+    const kept = (Array.isArray(owners) ? owners : [owners]).filter((owner) => ids.has(owner));
+    if (kept.length) trackSources[trackId] = [...new Set(kept)];
+  }
+  return { sources, trackSources, airtime: value.airtime === 'even' ? 'even' : 'size' };
+}
 function normalizeFlowShuffle(values = {}) {
   const normalized = flowShuffleEngine.normalizeState(values);
   return normalized.lastPick ? { ...normalized, lastPick: { ...normalized.lastPick, decision: normalized.lastPick.decision ? flowShuffleDecision.normalizeDecision(normalized.lastPick.decision) : null } } : normalized;
@@ -792,7 +809,14 @@ const state = {
   cafeAnchors: readPersistedJson('pixelody.cafeAnchors', []),
   queue: readPersistedJson('pixelody.queue', []),
   shuffle: readPersistedBoolean('pixelody.shuffle', false),
-  shuffleStyle: ['off', 'standard', 'flow'].includes(readPersistedString('pixelody.shuffleStyle', '')) ? readPersistedString('pixelody.shuffleStyle', 'off') : (readPersistedBoolean('pixelody.shuffle', false) ? 'flow' : 'off'),
+  // Standard (random) shuffle was removed; a saved Standard continues as Balanced.
+  shuffleStyle: ['off', 'standard', 'balanced', 'flow'].includes(readPersistedString('pixelody.shuffleStyle', '')) ? readPersistedString('pixelody.shuffleStyle', 'off').replace(/^standard$/, 'balanced') : (readPersistedBoolean('pixelody.shuffle', false) ? 'flow' : 'off'),
+  // The list the queue was started from; each list keeps its own shuffle session.
+  queueSourceId: readPersistedString('pixelody.queueSource', '') || 'all',
+  // The style a list's Shuffle button and the transport toggle turn back on.
+  // Lists added to the playing list's shuffle with Add to session.
+  linkedSession: normalizeLinkedSession(readPersistedJson('pixelody.linkedSession', null)),
+  lastShuffleStyle: ['balanced', 'flow'].includes(readPersistedString('pixelody.lastShuffleStyle', '')) ? readPersistedString('pixelody.lastShuffleStyle', 'flow') : 'flow',
   flowShuffle: normalizeFlowShuffle(readPersistedJson('pixelody.flowShuffle', null)),
   dailyMixes: dailyCurated.normalizeState(readPersistedJson('pixelody.dailyMixes', null)),
   repeat: readPersistedString('pixelody.repeat', 'off'),
@@ -1791,6 +1815,8 @@ const DURABLE_LARGE_LIBRARY_SCOPED_KEYS = [
   'pixelody.cafeAnchors',
   'pixelody.queue',
   'pixelody.flowShuffle',
+  'pixelody.shuffleSession',
+  'pixelody.shuffleLedger',
   'pixelody.dailyMixes',
   'pixelody.signalImportUndo',
   'pixelody.signalImportAudit',
@@ -1820,6 +1846,9 @@ function buildDurableStateValues(reason = '') {
     'pixelody.wantedTracks': state.wantedTracks.slice(0, 1000),
     'pixelody.cafeAnchors': state.cafeAnchors.slice(0, 12),
     'pixelody.queue': state.queue,
+    'pixelody.queueSource': state.queueSourceId || 'all',
+    'pixelody.lastShuffleStyle': state.lastShuffleStyle || 'flow',
+    'pixelody.linkedSession': state.linkedSession || {},
     'pixelody.shuffle': Boolean(state.shuffle),
     'pixelody.shuffleStyle': state.shuffleStyle,
     'pixelody.flowShuffle': state.flowShuffle,
@@ -1864,6 +1893,8 @@ function buildDurableStateValues(reason = '') {
     'pixelody.speakerRigValidationRuns': speakerRigValidationState.history.slice(-SPEAKER_RIG_VALIDATION_MAX_RUNS),
     'pixelody.signalOrbitRepair': readPersistedString('pixelody.signalOrbitRepair', 'visible-ring-v1'),
   };
+  // The shuffle session and ledger are copied out only for full writes.
+  if (!DURABLE_LIBRARY_OMITTED_REASONS.has(reason)) Object.assign(values, desktopShuffleDurableValues());
   if (developmentSessionIsolated) for (const key of DEVELOPMENT_SESSION_PRESENTATION_KEYS) delete values[key];
   if (!DURABLE_LIBRARY_OMITTED_REASONS.has(reason)) return values;
   const trimmed = { ...values };
@@ -2093,6 +2124,8 @@ const signalRuntime = {
   pendingShufflePick: null,
 };
 const flowShuffleRuntime = { pending: null, controlUndo: null };
+// The desktop bridge to the shared two-queue shuffle core
+// (renderer-domains/shuffle-desktop.js). Created on first use.
 let universalShuffleController = null;
 const signalListeningTracker = listeningIntervalsDomain.createTracker({
   now: () => performance.now(),
@@ -2110,12 +2143,12 @@ function sampleSignalListening(overrides = {}) {
 let pendingSignalReportImport = null;
 let activeSignalImportMode = 'merge';
 const flowShuffleModes = {
-  flow: { label: 'Flow', detail: 'Balanced pacing, contrast, and learned fit.' },
-  discovery: { label: 'Discovery', detail: 'Surfaces underplayed and low-sample tracks.' },
+  flow: { label: 'Flow', detail: 'A mix of familiar music and variety.' },
+  discovery: { label: 'Discovery', detail: 'Brings in tracks you haven’t played much.' },
   comfort: { label: 'Comfort', detail: 'Favors familiar, completed, low-skip tracks.' },
-  energy: { label: 'Energy Curve', detail: 'Prefers clean momentum and intentional lifts.' },
+  energy: { label: 'Energy Curve', detail: 'Builds energy as the session goes on.' },
   'genre-weave': { label: 'Genre Weave', detail: 'Separates repeated genres and connects moods.' },
-  'deep-library': { label: 'Deep Library', detail: 'Resurfaces neglected tracks without pure chaos.' },
+  'deep-library': { label: 'Deep Library', detail: 'Revisits tracks you haven’t heard in a while.' },
 };
 function flowShuffleModeLabel(mode = state.flowShuffle.mode) {
   return flowShuffleModes[mode]?.label || flowShuffleModes.flow.label;
@@ -2161,7 +2194,7 @@ function updateFlowTempoUi() {
   const coverage = queue.length ? Math.round((known / queue.length) * 100) : 0;
   setText('#flowTempoCurrent', current ? `${current} BPM` : '-- BPM');
   setText('#flowTempoNext', next ? `${next} BPM` : '-- BPM');
-  setText('#flowTempoDetail', !queue.length ? 'Add tracks to see tempo coverage.' : known === 0 ? 'No BPM tags yet. Flow will keep choosing normally.' : `${coverage}% of this queue has BPM${next ? ' · tempo is a soft transition signal' : ' · the next tempo will appear after planning'}.`);
+  setText('#flowTempoDetail', !queue.length ? 'Add tracks to see tempo coverage.' : known === 0 ? 'No BPM tags yet. Flow will keep choosing normally.' : `${coverage}% of this queue has BPM${next ? ' · tempo helps guide transitions' : ' · the next tempo will appear after planning'}.`);
 }
 let activeSignalRange = readPersistedString('pixelody.signalRange', '7d');
 function signalRangeStart(range = activeSignalRange) {
@@ -2242,11 +2275,11 @@ function shuffleLearningProgress(data = signalDashboardData(activeSignalRange)) 
     stage,
     summary: state.tracks.length
       ? `${stage}: ${trackedCount} of ${state.tracks.length} tracks have signal, with ${behaviorSamples} completion/skip samples helping shuffle decisions.`
-      : 'Import music to start building shuffle intelligence.',
+      : 'Play some music to give Flow Shuffle a starting point.',
     factors: [
       { label: 'Library coverage', value: coverage, detail: `${trackedCount}/${state.tracks.length || 0} tracks` },
-      { label: 'Metadata richness', value: metadataAverage, detail: `${Math.round(metadataAverage * 100)}% described` },
-      { label: 'Behavior samples', value: behavior, detail: `${behaviorSamples} outcomes` },
+      { label: 'Track information', value: metadataAverage, detail: `${Math.round(metadataAverage * 100)}% described` },
+      { label: 'Listening activity', value: behavior, detail: `${behaviorSamples} outcomes` },
       { label: 'Recent signal', value: recency, detail: lastEventAt ? timeAgo(lastEventAt) : 'no events yet' },
       { label: 'Shuffle memory', value: shuffleMemory, detail: `${shufflePicks} picks` },
     ],
@@ -2428,8 +2461,8 @@ function flowModeAnalytics(events = []) {
     best,
     mostUsed,
     summary: totalPicks
-      ? `${totalPicks} shuffle pick${totalPicks === 1 ? '' : 's'} compared across modes. ${best ? `${best.label} currently has the strongest trust profile.` : ''}`.trim()
-      : 'Per-mode analytics will appear after Flow Shuffle makes local picks.',
+      ? `${totalPicks} shuffle pick${totalPicks === 1 ? '' : 's'} compared across modes. ${best ? `${best.label} has worked best so far.` : ''}`.trim()
+      : 'Try Flow Shuffle to compare its modes here.',
   };
 }
 function signalDashboardData(range = activeSignalRange) {
@@ -3279,7 +3312,7 @@ function signalImportRecommendedMode(preview) {
   }
   if (!undoAvailable && (conflictRisk || validationRisk)) {
     mergeScore += 1;
-    reasons.push('No existing undo snapshot is available, so the preview leans conservative.');
+    reasons.push('There is no earlier snapshot to restore.');
   } else if (undoAvailable) {
     replaceScore += 1;
     reasons.push('An undo snapshot is already available, which slightly lowers restore risk.');
@@ -3472,7 +3505,7 @@ function updateSignalImportModeUi() {
   setText('#signalRecommendationTitle', `${recommendation.label} (${recommendation.confidence}% confidence)`);
   setText('#signalRecommendationSummary', `${recommendation.summary} ${recommendation.reasons.slice(0, 3).join(' ')}`);
   const mergeMode = activeSignalImportMode === 'merge';
-  setText('#signalMergeTitle', mergeMode ? 'Merge will preserve current local learning and add safe imported signal.' : 'Replace mode ignores the merge result.');
+  setText('#signalMergeTitle', mergeMode ? 'Merge keeps the current listening history and adds the imported history.' : 'Replace mode ignores the merge result.');
   setText('#signalMergeAdded', `${merge.summary.addedEvents}`);
   setText('#signalMergeDeduped', `${merge.summary.dedupedEvents}`);
   setText('#signalMergeCombined', `${merge.summary.combinedTrackStats}`);
@@ -3481,7 +3514,7 @@ function updateSignalImportModeUi() {
     ? `${merge.counts.events} total events after merge, ${merge.counts.trackStats} track intelligence profiles, ${merge.counts.shufflePicks} shuffle picks, and ${merge.counts.linkedOutcomes} linked outcomes. ${merge.summary.currentOnlyTrackStats} current-only track profile${merge.summary.currentOnlyTrackStats === 1 ? '' : 's'} preserved.`
     : 'Replace uses the imported report. Local listening data missing from it will be removed.');
   setText('#signalDrilldownTitle', mergeMode
-    ? `${pendingSignalReportImport.detailRows.length} merge detail example${pendingSignalReportImport.detailRows.length === 1 ? '' : 's'} from sanitized preview data.`
+    ? `${pendingSignalReportImport.detailRows.length} merge detail example${pendingSignalReportImport.detailRows.length === 1 ? '' : 's'} from checked preview data.`
     : 'Replace mode still shows merge examples for comparison before applying.');
   setText('#signalConflictTitle', mergeMode
     ? 'Merge mode preserves newer and current-only local Signal learning.'
@@ -3688,7 +3721,7 @@ function updateSignalImportAuditUi() {
     const detailList = $('#signalImportAuditDetail');
     if (detailList) {
       detailList.innerHTML = [
-        '<div class="signal-import-audit-row empty" role="listitem"><b>EMPTY</b><span>No import has been applied yet, so there is no selected mode, recommendation, conflict review, or undo receipt to inspect.</span></div>',
+        '<div class="signal-import-audit-row empty" role="listitem"><b>EMPTY</b><span>No listening history has been imported yet.</span></div>',
         '<div class="signal-import-audit-row empty" role="listitem"><b>UNDO</b><span>No undo history exists yet. Once an import is applied and rolled back, restored counts will appear here.</span></div>',
       ].join('');
     }
@@ -3830,7 +3863,7 @@ function applySignalImportPreview() {
   const mergeMode = activeSignalImportMode === 'merge';
   const skipped = mergeMode ? 0 : (pendingSignalReportImport.conflicts?.skipped || 0);
   const validationNotice = pendingSignalReportImport.validation?.issues?.length
-    ? ` Validation found ${pendingSignalReportImport.validation.issues.length} issue${pendingSignalReportImport.validation.issues.length === 1 ? '' : 's'}; sanitized preview data will be used.`
+    ? ` Validation found ${pendingSignalReportImport.validation.issues.length} issue${pendingSignalReportImport.validation.issues.length === 1 ? '' : 's'}; checked preview data will be used.`
     : '';
   const warning = mergeMode
     ? ' Current local Signal learning will be preserved and combined where safe.'
@@ -3939,7 +3972,7 @@ function renderTransitionMemory(memory) {
   const total = memory?.rows?.length || 0;
   setText('#transitionMemorySummary', total
     ? `${total} transition profile${total === 1 ? '' : 's'} learned from exact shuffle outcomes.`
-    : 'Transition memory will appear after linked shuffle outcomes collect.');
+    : 'Play through some Flow Shuffle transitions to see them here.');
   const render = (selector, rows, empty) => {
     const container = $(selector);
     if (!container) return;
@@ -3986,7 +4019,7 @@ function updateSignalJournalUi() {
   setText('#signalCompletionRate', summary.completionRate ? `${Math.round(summary.completionRate * 100)}%` : '--');
   const last = state.signalJournal.lastSignal;
   setText('#signalLiveState', state.signalSettings.enabled ? (last?.message || 'Listening signal ready') : 'Listening Intelligence off');
-  setText('#signalLiveDetail', state.signalSettings.enabled ? (last?.detail || 'Local events will appear as you play, pause, complete, skip, favorite, or queue tracks.') : 'No new listening events are recorded while this is off.');
+  setText('#signalLiveDetail', state.signalSettings.enabled ? (last?.detail || 'Your listening activity will appear here.') : 'No new listening events are recorded while this is off.');
   updateSignalDashboardUi();
   updateSignalUndoUi();
   updateSignalImportAuditUi();
@@ -4072,9 +4105,9 @@ function signalEventMessage(type, track) {
 function signalEventDetail(type, event, track) {
   if (type === 'track_started') return [track?.genre, signalTagsText(track?.moodTags), event.source].filter(Boolean).join(' / ') || 'Session context recorded locally.';
   if (type === 'track_completed') return `+ completion evidence, ${Math.round((event.percentCompleted || 0) * 100)}% heard.`;
-  if (type === 'track_skipped') return `${Math.round((event.percentCompleted || 0) * 100)}% heard; ${event.outcomeClass || 'skip'} recorded with bounded influence.`;
-  if (type === 'track_favorited') return event.favorite ? '+ affinity signal for this track.' : 'Favorite affinity softened for this track.';
-  if (type === 'track_queued') return 'Manual queue choice recorded as user intent.';
+  if (type === 'track_skipped') return `${Math.round((event.percentCompleted || 0) * 100)}% heard; ${event.outcomeClass || 'skip'} saved for future picks.`;
+  if (type === 'track_favorited') return event.favorite ? '+ affinity signal for this track.' : 'This favorite will have less influence on future picks.';
+  if (type === 'track_queued') return 'Your queue choice was saved.';
   if (type === 'shuffle_pick') return event.reasons?.[0] || 'Weighted local signal chose this track.';
   return 'Local-only event added to Signal Journal.';
 }
@@ -4456,12 +4489,17 @@ function flowShuffleSummary(track, current, score, mode) {
   return `${modeLabel} chose a ${confidence} by balancing metadata, listening behavior, and recent queue context${from}.`;
 }
 function flowExplanationFromPick(pick = {}, mode = state.flowShuffle.mode || 'flow') {
-  if (pick.style === 'standard') return {
-    summary: pick.reasons?.[0] || 'Next in the seeded Standard permutation.',
-    confidence: 'Seeded order', transition: 'Standard does not weight musical features or taste.',
-    sources: pick.decision?.source || 'confirmed Standard traversal',
-    signals: [], learnedSignals: [], alternates: [], decision: pick.decision || null,
-  };
+  // Balanced picks, and Standard picks saved before Standard was removed.
+  if (pick.style === 'balanced' || pick.style === 'standard') {
+    const balanced = pick.style === 'balanced';
+    return {
+      summary: pick.reasons?.[0] || (balanced ? 'Balanced: every song once per cycle.' : 'Next in the saved shuffle order.'),
+      confidence: balanced ? (pick.lane === 'live' ? 'After a skip' : 'Up next') : 'Seeded order',
+      transition: balanced ? 'Balanced spaces out artists and albums and leans on what you finish or skip.' : 'Standard does not weight musical features or taste.',
+      sources: pick.decision?.source || (balanced ? 'Balanced shuffle' : 'saved shuffle order'),
+      signals: [], learnedSignals: [], alternates: [], decision: pick.decision || null,
+    };
+  }
   const track = trackById(pick.trackId) || { title: pick.trackTitle || 'Selected track' };
   const current = pick.fromTrackId ? trackById(pick.fromTrackId) : null;
   const stats = trackStatRates(track.id);
@@ -4509,14 +4547,49 @@ function flowExplanationFromPick(pick = {}, mode = state.flowShuffle.mode || 'fl
     alternates: pick.explanation?.alternates || (pick.pool || []).filter((item) => item.trackId !== pick.trackId).slice(0, 3),
   };
 }
+// One plain line on why the current song was picked.
+function shuffleWhyLine(pick) {
+  if (!pick?.trackId || !state.shuffle || pick.trackId !== currentTrack()?.id) return '';
+  const from = pick.fromTrackTitle || 'the last song';
+  if (pick.kind === 'previous') return '';
+  if (pick.priority) return 'You queued this one next.';
+  if (pick.lane === 'live') {
+    if (pick.skip === 'flick') return `You skipped ${from} straight away, so this is a wider pick.`;
+    if (pick.skip === 'late') return `You skipped near the end of ${from}, so this stays close to it.`;
+    if (pick.skip === 'early' || pick.skip === 'mid') return `You skipped ${from}, so this leans away from it.`;
+    return `Picked for after a skip.`;
+  }
+  if (pick.skip === 'finish') return `${from} played through, so this keeps going the same way.`;
+  return '';
+}
+// The two queues side by side: what plays when the song ends, and what plays
+// if you skip it. Only drawn while the queue is open.
+function syncShuffleLanes(pick) {
+  const lanes = $('#shuffleLanes');
+  const why = $('#shuffleWhyLine');
+  const line = shuffleWhyLine(pick);
+  if (why) { why.textContent = line; why.classList.toggle('hidden', !line); }
+  if (!lanes) return;
+  const bridge = state.shuffle && !$('#queueDrawer')?.classList.contains('hidden') ? syncDesktopShuffle() : null;
+  const current = currentTrack();
+  const aligned = bridge && current && bridge.current()?.trackId === current.id;
+  lanes.classList.toggle('hidden', !aligned);
+  if (!aligned) return;
+  const contextKey = desktopShuffleContextKey();
+  const priority = (state.flowShuffle.priorityIds || []).find((id) => id !== current.id && state.queue.includes(id));
+  const baseId = priority || bridge.upcoming(16, contextKey)[0] || '';
+  const liveId = priority || bridge.preview('live', {}, contextKey)?.trackId || '';
+  setText('#shuffleBaseNext', trackById(baseId)?.title || 'Nothing left this round');
+  setText('#shuffleLiveNext', trackById(liveId)?.title || 'Nothing left this round');
+}
 function updateFlowShuffleUi() {
   const mode = state.flowShuffle.mode || 'flow';
   updateFlowTempoUi();
   const storedPick = state.flowShuffle.lastPick || state.signalJournal.lastShuffle;
   const pick = storedPick && (!storedPick.mode || storedPick.mode === mode) ? storedPick : null;
   const explanation = pick?.trackTitle ? flowExplanationFromPick(pick, mode) : null;
-  const shuffleStyle = state.shuffleStyle || (state.shuffle ? 'flow' : 'off');
-  const styleLabel = shuffleStyle === 'standard' ? 'Standard' : shuffleStyle === 'flow' ? flowShuffleModeLabel(mode) : 'Shuffle off';
+  const shuffleStyle = state.shuffle ? desktopShuffleStyle() : 'off';
+  const styleLabel = shuffleStyle === 'balanced' ? 'Balanced' : shuffleStyle === 'flow' ? flowShuffleModeLabel(mode) : 'Shuffle off';
   setText('#flowShuffleState', shuffleStyle === 'off' ? 'Shuffle off' : `${styleLabel} active`);
   setText('#flowShuffleDetail', explanation?.summary || flowShuffleModeDetail(mode));
   setText('#flowShuffleWhyTitle', pick?.trackTitle || 'No shuffle pick yet');
@@ -4534,6 +4607,7 @@ function updateFlowShuffleUi() {
   if ($('#flowPreserveAlbumRuns')) $('#flowPreserveAlbumRuns').checked = Boolean(session.preserveAlbumRuns);
   document.querySelectorAll('[data-flow-mode]').forEach((button) => button.classList.toggle('active', button.dataset.flowMode === mode));
   document.querySelectorAll('[data-shuffle-style]').forEach((button) => button.classList.toggle('active', button.dataset.shuffleStyle === shuffleStyle));
+  syncShuffleLanes(pick);
   const hasPick = Boolean(pick?.trackId);
   ['#flowPlaySooner', '#flowNotThisSession', '#flowLessLike'].forEach((selector) => { if ($(selector)) $(selector).disabled = !hasPick; });
   if ($('#flowUndoAction')) $('#flowUndoAction').disabled = !flowShuffleRuntime.controlUndo;
@@ -4556,12 +4630,135 @@ function updateFlowShuffleUi() {
     const learnedSignals = explanation?.learnedSignals || [];
     learned.innerHTML = learnedSignals.length
       ? learnedSignals.map((signal) => `<span class="${signal.points < 0 ? 'soften' : 'boost'}"><small>${escapeHtml(signal.source === 'calibration' ? 'TRUST CALIBRATION' : 'TRANSITION MEMORY')}</small><b>${escapeHtml(formatFlowPoints(signal.points))} ${escapeHtml(signal.direction)}</b><em>${escapeHtml(signal.label)}${signal.strength ? ` / ${signal.strength}% learned` : ''}</em></span>`).join('')
-      : '<span><small>LEARNED SIGNALS</small><b>None applied</b><em>Pixelody did not use trust calibration or transition memory for this pick.</em></span>';
+      : '<span><small>LEARNED SIGNALS</small><b>None applied</b><em>This pick used the basic shuffle settings.</em></span>';
   }
 }
+function desktopShuffle() {
+  if (universalShuffleController) return universalShuffleController;
+  const api = globalThis.PixelodyDesktopShuffle;
+  if (!api || !globalThis.PixelodyShuffleController || !globalThis.PixelodyUniversalShuffle) return null;
+  universalShuffleController = api.createDesktopShuffle({
+    controllerApi: globalThis.PixelodyShuffleController, core: globalThis.PixelodyUniversalShuffle,
+    learning: globalThis.PixelodyShuffleLearningV2, scopes: globalThis.PixelodyShuffleScopesV2,
+    sessionSnapshot: readPersistedJson('pixelody.shuffleSession', null), ledgerSnapshot: readPersistedJson('pixelody.shuffleLedger', null),
+    legacy: state.flowShuffle, adapterPoints: desktopShuffleAdapterPoints,
+    onChange: () => schedulePersist(600),
+    onRecovery: (original) => setLocalStorageItem('pixelody.shuffleRecovery', JSON.stringify(original)),
+  });
+  return universalShuffleController;
+}
+function desktopShuffleDurableValues() {
+  const snapshot = universalShuffleController?.snapshot();
+  const values = {};
+  if (snapshot?.session) values['pixelody.shuffleSession'] = snapshot.session;
+  if (snapshot?.ledger) values['pixelody.shuffleLedger'] = snapshot.ledger;
+  return values;
+}
+function desktopShuffleStyle() {
+  return state.shuffleStyle === 'standard' ? 'balanced' : ['off', 'balanced', 'flow'].includes(state.shuffleStyle) ? state.shuffleStyle : (state.shuffle ? 'flow' : 'off');
+}
+// Flow's older desktop signals (transition memory, trust calibration, skip
+// rates, mode leanings) reach the shared core as one score per track, capped
+// at +/-12. "Less like this" artists sit at the floor in every style.
+let desktopShuffleAdapterCache = { key: null, points: {} };
+// Everything the adapter score reads; also keys the cached queue projection.
+function desktopShuffleContextKey() {
+  return [state.shuffle ? desktopShuffleStyle() : 'off', state.flowShuffle.mode || 'flow', currentTrack()?.id || '', state.signalJournal.events.length,
+    (state.flowShuffle.lessLikeArtistIds || []).join('\u0001'), state.queueSourceId || 'all'].join('\u0000');
+}
+function desktopShuffleAdapterPoints(trackIds = []) {
+  const lessLike = state.flowShuffle.lessLikeArtistIds || [];
+  const flow = state.shuffle && desktopShuffleStyle() === 'flow';
+  if (!flow && !lessLike.length) return {};
+  const current = currentTrack();
+  const key = `${desktopShuffleContextKey()}\u0000${trackIds.length}`;
+  if (desktopShuffleAdapterCache.key === key) return desktopShuffleAdapterCache.points;
+  const tracks = trackIds.map((id) => trackById(id)).filter(Boolean);
+  const points = {};
+  if (flow && current && tracks.length > 1) {
+    const context = flowScoreContext(tracks, current, state.flowShuffle.mode || 'flow');
+    const scores = tracks.map((track) => scoreFlowCandidate(track, context).score);
+    const mean = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+    const spread = Math.sqrt(scores.reduce((sum, score) => sum + (score - mean) ** 2, 0) / scores.length) || 1;
+    tracks.forEach((track, index) => { const value = Math.max(-12, Math.min(12, Math.round((scores[index] - mean) / spread * 4))); if (value) points[track.id] = value; });
+  }
+  if (lessLike.length) tracks.forEach((track) => { if (lessLike.includes(flowShuffleLearning.artistIdentity(track))) points[track.id] = -12; });
+  desktopShuffleAdapterCache = { key, points };
+  return points;
+}
+function syncDesktopShuffle(queue = activeQueue()) {
+  const bridge = desktopShuffle();
+  if (!bridge) return null;
+  const linked = state.linkedSession;
+  bridge.sync({ sourceId: state.queueSourceId || 'all', tracks: queue, shuffle: state.shuffle, style: desktopShuffleStyle(),
+    preset: state.flowShuffle.mode || 'flow', repeat: state.repeat, excludedIds: state.flowShuffle.sessionExcludedIds || [],
+    sourceKeys: linked ? Object.fromEntries(Object.entries(linked.trackSources).map(([trackId, owners]) => [trackId, owners[0]])) : null,
+    airtime: linked?.airtime || 'size' });
+  return bridge;
+}
+// How much of the song being left was heard, so a skip can tell a flick from
+// a song that ran its course.
+function desktopShuffleHeard(traversal = {}) {
+  if (traversal.naturalEnd) return {};
+  const measured = sampleSignalListening();
+  if (!measured || measured.trackId !== currentTrack()?.id) return {};
+  return { heardMs: Math.max(0, Math.round((measured.listenedWallSeconds || 0) * 1000)),
+    ...(Number.isFinite(measured.coverageRatio) ? { coveragePermille: Math.max(0, Math.min(1000, Math.round(measured.coverageRatio * 1000))) } : {}) };
+}
+function desktopShufflePersonal(traversal = {}) {
+  return traversal.personalLearning !== false && traversal.source !== 'remote';
+}
+function desktopShufflePending(track, current, staged, queue, extra = {}) {
+  const style = desktopShuffleStyle();
+  const mode = state.flowShuffle.mode || 'flow';
+  const priority = extra.priority === true;
+  const previous = extra.previous === true;
+  const scored = style === 'flow' && !priority && !previous ? scoreFlowCandidate(track, flowScoreContext(queue, current, mode)) : null;
+  const kind = previous ? 'previous' : priority ? 'priority' : 'candidate';
+  const reasons = previous ? ['Previous follows confirmed playback history'] : priority ? ['Manual queue priority'] : scored ? scored.reasons
+    : [staged.receipt?.lane === 'live' ? 'Balanced: picked for after a skip' : 'Balanced: every song once per cycle'];
+  return {
+    kind, style, mode, trackId: track.id, trackTitle: track.title, fromTrackId: current.id, fromTrackTitle: current.title,
+    fromOccurrenceId: signalRuntime.currentPlay?.occurrenceId || '', pickedAt: new Date().toISOString(), priority,
+    score: scored ? scored.score : 100,
+    decision: scored ? flowDecisionReceipt(track, current, scored, { kind: 'candidate', position: 1, horizon: state.flowShuffle.session?.horizon })
+      : flowShuffleDecision.normalizeDecision({ kind, source: priority ? 'manual queue priority' : previous ? 'playback history' : 'Balanced shuffle', trackId: track.id, fromTrackId: current.id, availableSignals: [] }),
+    reasons,
+    reasonDetails: scored ? scored.reasonDetails : [{ text: reasons[0].toLowerCase(), points: 0, category: 'metadata' }],
+    pool: [], lane: staged.receipt?.lane || 'base', skip: staged.receipt?.skip || null,
+    reservation: staged.reservation, receipt: staged.receipt,
+  };
+}
+function stageDesktopShuffleNext(queue, fromEnded, traversal = {}) {
+  const current = currentTrack();
+  const bridge = syncDesktopShuffle(queue);
+  if (!current || !bridge) return null;
+  bridge.align(current.id, { source: 'session', personal: false });
+  const excluded = state.flowShuffle.sessionExcludedIds || [];
+  const priorityId = (state.flowShuffle.priorityIds || []).find((id) => id !== current.id && queue.some((track) => track.id === id) && !excluded.includes(id));
+  const staged = bridge.next({ naturalEnd: fromEnded, ...desktopShuffleHeard({ ...traversal, naturalEnd: fromEnded }), personal: desktopShufflePersonal(traversal),
+    source: traversal.source || null, ...(priorityId ? { entryId: priorityId } : {}) });
+  const track = staged ? trackById(staged.trackId) : null;
+  if (!track) return null;
+  flowShuffleRuntime.pending = desktopShufflePending(track, current, staged, queue, { priority: Boolean(priorityId) });
+  return track;
+}
+function stageDesktopShufflePrevious(queue, traversal = {}) {
+  const current = currentTrack();
+  const bridge = syncDesktopShuffle(queue);
+  if (!current || !bridge) return null;
+  bridge.align(current.id, { source: 'session', personal: false });
+  const staged = bridge.previous({ personal: desktopShufflePersonal(traversal), source: traversal.source || null });
+  const track = staged ? trackById(staged.trackId) : null;
+  if (!track) return null;
+  flowShuffleRuntime.pending = desktopShufflePending(track, current, staged, queue, { previous: true });
+  return track;
+}
 function setShuffleStyle(style) {
-  if (!['off', 'standard', 'flow'].includes(style)) return;
+  if (style === 'standard') style = 'balanced';
+  if (!['off', 'balanced', 'flow'].includes(style)) return;
   state.shuffleStyle = style;
+  if (style !== 'off') state.lastShuffleStyle = style;
   state.shuffle = style !== 'off';
   resetFlowShuffleCycle(currentTrack()?.id || '');
   flowShuffleRuntime.pending = null;
@@ -4569,7 +4766,7 @@ function setShuffleStyle(style) {
   renderTracks();
   renderQueue();
   syncQuestPlaybackModeReadouts();
-  showToast(style === 'off' ? 'Shuffle off.' : `${style === 'standard' ? 'Standard Shuffle' : 'Flow Shuffle'} on.`);
+  showToast(style === 'off' ? 'Shuffle off.' : `${style === 'balanced' ? 'Balanced shuffle' : 'Flow shuffle'} on.`);
 }
 function applyFlowControl(action, track = trackById(state.flowShuffle.lastPick?.trackId || '')) {
   if (!track) return;
@@ -4615,89 +4812,26 @@ function setFlowSessionOption(key, value) {
 }
 function resetFlowShuffleCycle(seedId = currentTrack()?.id || '') {
   const current = seedId || currentTrack()?.id || '';
-  state.flowShuffle = flowShuffleEngine.resetPlan(state.flowShuffle, state.queue, current, { style: state.shuffleStyle === 'standard' ? 'standard' : 'flow' });
+  state.flowShuffle = flowShuffleEngine.resetPlan(state.flowShuffle, state.queue, current, { style: 'flow' });
   flowShuffleRuntime.pending = null;
 }
 function syncFlowShuffleQueue(queue) {
   state.flowShuffle = flowShuffleEngine.syncToQueue(state.flowShuffle, queue.map((track) => track.id));
 }
-function chooseFlowShuffleNext(queue, fromEnded = false) {
-  const current = currentTrack();
-  if (!current || queue.length <= 1) return null;
-  const prepared = flowShuffleEngine.stageNext(state.flowShuffle, queue.map((track) => track.id), current.id, { fromEnded, repeat: state.repeat, style: 'flow' });
-  state.flowShuffle = prepared.state;
-  if (prepared.stopped) return null;
-  if (prepared.trackId) {
-    const track = trackById(prepared.trackId);
-    if (!track) return null;
-    const mode = state.flowShuffle.mode || 'flow';
-    const scored = scoreFlowCandidate(track, flowScoreContext(queue, current, mode));
-    const planPosition = prepared.kind === 'planned' ? Math.max(1, (state.flowShuffle.plan?.future || []).indexOf(track.id) + 1) : 0;
-    flowShuffleRuntime.pending = {
-      kind: prepared.kind,
-      style: 'flow',
-      trackId: track.id,
-      fromTrackId: current.id,
-      fromTrackTitle: current.title,
-      fromOccurrenceId: signalRuntime.currentPlay?.occurrenceId || '',
-      pickedAt: new Date().toISOString(),
-      priority: prepared.kind === 'priority',
-      score: scored.score,
-      decision: flowDecisionReceipt(track, current, scored, { kind: prepared.kind, position: planPosition, horizon: state.flowShuffle.session?.horizon }),
-      reasons: prepared.kind === 'priority' ? ['Manual queue priority'] : scored.reasons,
-      reasonDetails: prepared.kind === 'priority' ? [{ text: 'manual queue priority', points: 0, category: 'metadata' }] : scored.reasonDetails,
-      pool: [],
-    };
-    return track;
-  }
-  const candidateIds = new Set(prepared.candidateIds);
-  const unfilteredCandidates = queue.filter((track) => candidateIds.has(track.id));
-  const candidates = unfilteredCandidates.filter((track) => !state.flowShuffle.lessLikeArtistIds.includes(flowShuffleLearning.artistIdentity(track)));
-  if (!candidates.length) candidates.push(...unfilteredCandidates);
-  const mode = state.flowShuffle.mode || 'flow';
-  const context = flowScoreContext(queue, current, mode);
-  const scored = candidates.map((track) => scoreFlowCandidate(track, context));
-  const session = state.flowShuffle.session || {};
-  const rolling = flowShufflePlanner.planSession({
-    current: flowPlannerTrack(current, 0),
-    candidates: scored.map((item) => flowPlannerTrack(item.track, item.score)),
-    baseScores: Object.fromEntries(scored.map((item) => [item.track.id, item.score])),
-    horizon: session.horizon,
-    shape: flowSessionShape(mode, session),
-    albumPolicy: session.albumPolicy,
-    preserveAlbumRuns: session.preserveAlbumRuns,
-  });
-  state.flowShuffle = flowShuffleEngine.setFuturePlan(state.flowShuffle, queue.map((track) => track.id), rolling.ids);
-  const pick = scored.find((item) => item.track.id === rolling.ids[0]) || weightedPickTop(scored, Math.min(12, Math.max(4, Math.ceil(queue.length / 4)))).pick;
-  const pool = rolling.ids.slice(0, 5).map((id) => {
-    const item = scored.find((candidate) => candidate.track.id === id);
-    const step = rolling.steps?.find((candidate) => candidate.trackId === id);
-    return item ? { ...item, step } : null;
-  }).filter(Boolean);
-  if (!pick?.track) return null;
-  flowShuffleRuntime.pending = {
-    kind: 'candidate',
-    style: 'flow',
-    trackId: pick.track.id,
-    trackTitle: pick.track.title,
-    fromTrackId: current.id,
-    fromTrackTitle: current.title,
-    fromOccurrenceId: signalRuntime.currentPlay?.occurrenceId || '',
-    mode: state.flowShuffle.mode || 'flow',
-    score: pick.score,
-    decision: flowDecisionReceipt(pick.track, current, pick, { kind: 'candidate', position: Math.max(1, rolling.ids.indexOf(pick.track.id) + 1), horizon: rolling.horizon, shape: rolling.shape, step: rolling.steps?.find((step) => step.trackId === pick.track.id) }),
-    reasons: pick.reasons,
-    reasonDetails: pick.reasonDetails,
-    pool: pool.slice(0, 5).map((item) => ({ trackId: item.track.id, title: item.track.title, score: item.score, planPosition: item.step?.position || 0, transitionPoints: item.step?.transitionPoints || 0, diversityPoints: item.step?.diversityPoints || 0 })),
-    pickedAt: new Date().toISOString(),
-  };
-  return pick.track;
+// A staged pick that never reached the speakers keeps its entitlement; the
+// core remembers the failed song so the next try picks another.
+function failDesktopShufflePick(pending, reason = 'playback-error') {
+  if (flowShuffleRuntime.pending === pending) flowShuffleRuntime.pending = null;
+  if (pending?.reservation) universalShuffleController?.fail(pending.reservation, reason);
 }
 function commitStagedFlowShufflePlayback(track, pending) {
   if (!track || !pending || pending.trackId !== track.id || pending !== flowShuffleRuntime.pending) return;
-  const style = pending.style || state.shuffleStyle || state.flowShuffle.plan?.style || 'flow';
-  state.flowShuffle = flowShuffleEngine.commitPlayback(pending.preparedState || state.flowShuffle, state.queue, pending.fromTrackId, track.id, { style });
+  const style = pending.style || desktopShuffleStyle();
   flowShuffleRuntime.pending = null;
+  // The shared core commits only the reservation it staged for this exact
+  // playback; a stale or superseded one changes nothing.
+  if (!universalShuffleController?.confirm(pending.reservation, { durationMs: Number.isFinite(track.duration) ? Math.round(track.duration * 1000) : null })?.ok) return;
+  state.flowShuffle = { ...state.flowShuffle, priorityIds: (state.flowShuffle.priorityIds || []).filter((id) => id !== track.id) };
   const pickId = `pick-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const payload = {
     pickId,
@@ -4714,13 +4848,15 @@ function commitStagedFlowShufflePlayback(track, pending) {
     reasons: pending.reasons || ['Manual queue priority'],
     reasonDetails: pending.reasonDetails || [{ text: 'manual queue priority', points: 0, category: 'metadata' }],
     pool: pending.pool || [],
+    lane: pending.lane || 'base',
+    skip: pending.skip || null,
     pickedAt: pending.pickedAt || new Date().toISOString(),
   };
   payload.explanation = flowExplanationFromPick(payload, payload.mode);
   state.flowShuffle.lastPick = payload;
   state.signalJournal.lastShuffle = payload;
   if (state.signalSettings.enabled) {
-    const pickEvent = recordSignalEvent('shuffle_pick', { ...payload, message: `${style === 'standard' ? 'Standard' : 'Flow'} picked: ${track.title}`, detail: payload.reasons[0] || 'Retained queue traversal.' });
+    const pickEvent = recordSignalEvent('shuffle_pick', { ...payload, message: `${style === 'balanced' ? 'Balanced' : 'Flow'} picked: ${track.title}`, detail: payload.reasons[0] || 'Retained queue traversal.' });
     payload.pickEventId = pickEvent?.id || '';
     state.flowShuffle.lastPick = payload;
     state.signalJournal.lastShuffle = payload;
@@ -4732,18 +4868,6 @@ function commitStagedFlowShufflePlayback(track, pending) {
     persist();
   }
   updateFlowShuffleUi();
-}
-function previousFlowShuffleTrack() {
-  const queue = activeQueue();
-  const current = currentTrack();
-  if (!current) return null;
-  const prepared = flowShuffleEngine.stagePrevious(state.flowShuffle, queue.map((track) => track.id), current.id);
-  state.flowShuffle = prepared.state;
-  if (prepared.stopped) return null;
-  const track = trackById(prepared.trackId);
-  if (!track) return null;
-  flowShuffleRuntime.pending = { kind: 'previous', style: state.shuffleStyle, trackId: track.id, fromTrackId: current.id, fromTrackTitle: current.title, fromOccurrenceId: signalRuntime.currentPlay?.occurrenceId || '', pickedAt: new Date().toISOString(), reasons: ['Previous follows confirmed playback history'] };
-  return track;
 }
 function activeParametricBands(values = {}) {
   return normalizeParametricBands(values.parametric).filter((band) => band.enabled && Math.abs(band.gain) > 0.01);
@@ -5815,32 +5939,32 @@ function applyThemeLanguage() {
     ['.track-editor > p', 'textContent', quest ? 'Workbench saves stay inside Pixelody and never solder changes into the original music file.' : 'Changes are stored inside Pixelody and do not alter the original music file.'],
     ['#saveTrackDetails', 'textContent', quest ? 'Save repair' : 'Save local details'],
     ['.settings-heading p', 'textContent', quest ? 'OPTIONS CART' : 'PIXELODY'],
-    ['.settings-intro > span', 'textContent', quest ? 'Tune the console skin without changing the sound engine.' : 'Shape the atmosphere without changing how your music sounds.'],
+    ['.settings-intro > span', 'textContent', quest ? 'Tune the console skin without changing the sound engine.' : 'Change the look without touching the audio.'],
     ['.playlist-creator-heading p', 'textContent', quest ? 'SAVE SLOT' : 'NEW COLLECTION'],
     ['#playlistCreatorTitle', 'textContent', quest ? 'Name file' : 'Create playlist'],
     ['.playlist-creator > label', 'textContent', quest ? 'Save file name' : 'Playlist name'],
     ['#newPlaylistName', 'placeholder', quest ? 'New quest file' : 'My playlist'],
     ['#cancelPlaylistCreator', 'textContent', quest ? 'Back' : 'Cancel'],
     ['#confirmPlaylistCreator', 'textContent', quest ? 'Save slot' : 'Create playlist'],
-    ['.migration-heading p', 'textContent', quest ? 'TRANSFER BAY' : 'LIBRARY CONCIERGE'],
+    ['.migration-heading p', 'textContent', quest ? 'TRANSFER BAY' : 'IMPORT MUSIC'],
     ['#migrationTitle', 'textContent', quest ? 'Cart transfer' : 'Build library'],
     ['.migration-command small', 'textContent', quest ? 'BAY 01' : 'START'],
-    ['.migration-command strong', 'textContent', quest ? 'Load carts into the library' : 'Bring your music life over'],
+    ['.migration-command strong', 'textContent', quest ? 'Load carts into the library' : 'Bring in your music'],
     ['.migration-command span', 'textContent', quest ? 'Transfer local files, folders, Downloads, or playlist records into your cartridge rack.' : 'Import local files, scan folders, or reconstruct playlists from CSV, JSON, M3U, and text exports.'],
     ['#migrationImportPlaylist', 'textContent', quest ? 'Read save file' : 'Import playlist file'],
     ['#migrationImportFiles', 'textContent', quest ? 'Load carts' : 'Choose music files'],
     ['#migrationImportFolder', 'textContent', quest ? 'Scan shelf' : 'Scan folder'],
     ['#migrationScanDownloads', 'textContent', quest ? 'Check downloads' : 'Scan Downloads'],
     ['#migrationEmpty strong', 'textContent', quest ? 'No transfer report' : 'No migration report yet'],
-    ['#migrationEmpty small', 'textContent', quest ? 'Read a playlist record or load local audio to start a transfer report. Missing songs become Wanted Music, not playable ghosts.' : 'Import a playlist metadata file to match it against your local tracks. Missing songs become Wanted Music, not playable placeholders.'],
+    ['#migrationEmpty small', 'textContent', quest ? 'Read a playlist record or load local audio to start a transfer report. Missing songs become Wanted Music, not playable ghosts.' : 'Import a playlist file to match it against your local tracks. Anything you don’t have yet goes into Wanted Music.'],
     ['.wanted-heading small', 'textContent', quest ? 'WANTED CARTS' : 'WANTED MUSIC'],
     ['.wanted-heading span', 'textContent', quest ? 'Missing transfer records' : 'Missing imported tracks'],
-    ['.migration-policy', 'textContent', quest ? 'Pixelody transfers local files and playlist metadata only. No provider audio is scraped, downloaded, ripped, or streamed.' : 'Pixelody imports playlist metadata only. It does not scrape, download, rip, or stream provider audio.'],
+    ['.migration-policy', 'textContent', quest ? 'Import local music or a playlist file. Playlist files contain track lists, not the audio.' : 'Playlist import reads the track list only — it doesn’t download or stream audio from other services.'],
     ['.quality-card .inspector-card-title small', 'textContent', dead ? 'Signal integrity' : meme ? 'Vibe check' : quest ? 'Player stats' : 'Now playing quality'],
     ['.tuning-card .panel-title small', 'textContent', dead ? 'Track diagnosis' : meme ? 'Bass crimes' : quest ? 'Power-ups' : 'Track tuning'],
     ['.systems-view .eyebrow', 'textContent', dead ? 'Signal routing' : meme ? 'Server audio' : quest ? 'Console setup' : 'Audio systems'],
     ['.systems-view > h1', 'textContent', quest ? 'Console output dock.' : 'Shape the room, not the music.'],
-    ['.systems-view .lede', 'textContent', quest ? 'Slot each output into a dock bay. Track power-ups stay separate from the room rig.' : 'Build correction profiles for every output. Track tuning remains independent and follows the song.'],
+    ['.systems-view .lede', 'textContent', quest ? 'Slot each output into a dock bay. Track power-ups stay separate from the room rig.' : 'Set up a profile for each output. Per-track tuning stays separate and follows the song.'],
     ['.system-output-panel > label', 'textContent', quest ? 'Output port' : 'Audio output'],
     ['#refreshOutputs', 'textContent', quest ? 'Scan ports' : 'Refresh outputs'],
     ['.system-character-panel > label', 'textContent', quest ? 'Dock character' : 'System character'],
@@ -5852,7 +5976,7 @@ function applyThemeLanguage() {
     ['#renameSpeakerSystem', 'textContent', quest ? 'Rename' : 'Rename'],
     ['#deleteSpeakerSystem', 'textContent', quest ? 'Delete' : 'Delete'],
     ['#addCurrentOutputToRig', 'textContent', quest ? 'Add port' : 'Add current output'],
-    ['.speaker-system-prototype-toggle', 'lastChildText', quest ? ' Prototype multi-port engine' : ' Experimental browser dual-output prototype'],
+    ['.speaker-system-prototype-toggle', 'lastChildText', quest ? ' Prototype multi-port engine' : ' Try dual-output routing (experimental)'],
     ['.system-eq-mode-panel .panel-title label', 'textContent', quest ? 'Player side / dock side' : 'Playback side / system side'],
     ['#copySystemEqStatus', 'textContent', quest ? 'Copy' : 'Copy'],
     ['.system-correction-panel .panel-title label', 'textContent', quest ? 'Dock correction' : 'System correction'],
@@ -8007,7 +8131,7 @@ function syncTransitionSettingsUi() {
   const statusEl = $('#transitionStatus');
   if (statusEl) {
     if (mode === 'gapless') {
-      statusEl.textContent = 'Gapless (0s seam-free)';
+      statusEl.textContent = 'Gapless';
     } else if (mode === 'equal-power') {
       statusEl.textContent = `Equal Power (${duration.toFixed(1)}s fade out and in)`;
     } else if (mode === 'linear') {
@@ -9647,7 +9771,7 @@ function renderSpeakerRigValidation() {
   setText('#speakerRigValidationEvidence', analysis ? `${analysis.coverage}% coverage / ${analysis.checkpoints.recorded}/${analysis.checkpoints.required} checks` : 'No completed run');
   setText('#speakerRigValidationStatus', run
     ? `${run.routeType === 'wired-bluetooth' ? 'Wired + Bluetooth' : 'Wired + wired'}: ${analysis?.drift?.p95Ms || 0} ms p95 so far; ${analysis?.routeFaultSamples || 0} route-fault sample${analysis?.routeFaultSamples === 1 ? '' : 's'}.`
-    : analysis ? `Latest run: p95 ${analysis.drift.p95Ms} ms, median ${analysis.drift.medianMs} ms, MAD ${analysis.drift.madMs} ms, slope ${analysis.drift.slopeMsPerMinute} ms/min. Evidence remains human-reviewed.` : 'Uses 5-second sanitized drift and route samples. Listener checkpoints remain required.');
+    : analysis ? `Latest run: p95 ${analysis.drift.p95Ms} ms, median ${analysis.drift.medianMs} ms, MAD ${analysis.drift.madMs} ms, slope ${analysis.drift.slopeMsPerMinute} ms/min. Review these results before using them.` : 'Uses five-second drift and output samples. Listening checks are still needed.');
   const prototype = browserMultiSinkPrototypeStatus(activeSpeakerSystem());
   const canStart = !run && prototype.armed && audio.paused === false && Boolean(currentTrack()) && secondarySpeakerOutputDiagnostics().routedCount > 0;
   const start = $('#startSpeakerRigValidation'); if (start) start.disabled = !canStart;
@@ -12923,7 +13047,7 @@ function renderRigCalibrationEntry(system = activeSpeakerSystem()) {
           </div>
         </div>
         <div class="speaker-rig-music-verification" data-music-verification-state="${musicVerificationActive ? rigMusicVerificationState.observationComplete ? 'candidate' : 'active' : calibration.verification.result}">
-          <span><small>MUSIC VERIFICATION</small><b>${escapeHtml(verificationStatus)}</b><em>${escapeHtml(musicVerificationActive ? rigMusicVerificationState.observationComplete ? 'Your active music observation is complete. Record what you heard to save an honest result.' : 'Play familiar music with voice, transients, and bass if applicable. The timer only advances while music plays.' : savedVerification.status === 'accepted' || savedVerification.status === 'attention' ? `Last observation: ${calibration.verification.stabilitySeconds}s, ${calibration.verification.correctionCount} correction${calibration.verification.correctionCount === 1 ? '' : 's'}. A quick re-check observes 15 seconds after a reconnect or hardware change.` : 'After the listening stages, observe familiar music for 60 seconds and record what you hear.')}</em></span>
+          <span><small>MUSIC VERIFICATION</small><b>${escapeHtml(verificationStatus)}</b><em>${escapeHtml(musicVerificationActive ? rigMusicVerificationState.observationComplete ? 'The listening check is complete. Record what you heard to save an honest result.' : 'Play familiar music with voice, transients, and bass if applicable. The timer only advances while music plays.' : savedVerification.status === 'accepted' || savedVerification.status === 'attention' ? `Last observation: ${calibration.verification.stabilitySeconds}s, ${calibration.verification.correctionCount} correction${calibration.verification.correctionCount === 1 ? '' : 's'}. A quick re-check observes 15 seconds after a reconnect or hardware change.` : 'After the listening stages, observe familiar music for 60 seconds and record what you hear.')}</em></span>
           <div class="speaker-rig-verification-actions">
             <button class="quiet-button" type="button" data-rig-calibration-action="start-music-verification" ${musicVerificationActive || !verificationPreflight.ok ? 'disabled' : ''}>Start 60 s check</button>
             <button class="quiet-button" type="button" data-rig-calibration-action="start-quick-check" ${musicVerificationActive || !verificationPreflight.ok || !['accepted', 'attention'].includes(savedVerification.status) ? 'disabled' : ''}>Quick re-check</button>
@@ -13852,7 +13976,7 @@ function systemTuningStatus() {
       route: 'System EQ gated',
       tone: 'staged',
       detail: `Native loopback captured audio and processed ${sampleProcessing.samplesAnalyzed} samples with Pixelody EQ. Audible render is still gated.`,
-      caveat: 'This proves handoff and native processing, not Windows-wide audible EQ. A feedback-safe route is still required.',
+      caveat: 'The native processing check passed. Audio from other Windows apps has not been verified. A feedback-safe route is still required.',
     };
   }
   if (loopback?.supported && renderPreflight?.supported) {
@@ -15323,11 +15447,11 @@ function updateSharingUi() {
   setText('#jamRefreshAction', deviceRefresh.action ? `${deviceRefresh.action} / ${deviceRefresh.scope || 'jam'}` : 'Waiting');
   setText('#jamsButtonStatus', jamSession.active ? 'Session' : status.enabled ? (visibility === 'lan' ? (quest ? 'LINK' : 'Private') : (quest ? 'LOCAL' : 'Local')) : 'Off');
   setText('#jamHostSignal', jamSession.active ? 'Session live' : status.enabled ? (quest ? 'Linked' : 'Host ready') : (quest ? 'No link' : 'Offline'));
-  setText('#jamHostBadge', jamSession.active ? 'Single-host J.A.M. active' : status.enabled ? 'Private host ready' : (quest ? 'No link cable active' : 'No active J.A.M.'));
-  setText('#jamHostSummary', jamSession.active ? `${jamSession.participants?.length || 0} participants / ${jamSession.queue?.length || 0} shared queue items / Windows owns every source` : status.enabled ? `${snapshot.tracks || 0} host tracks ready. Start a J.A.M. session when you want guests to join.` : (quest ? 'Power a private link when this PC is the source console.' : 'Start hosting to share music from this PC on your private network.'));
+  setText('#jamHostBadge', jamSession.active ? 'J.A.M. active' : status.enabled ? 'Private host ready' : (quest ? 'No link cable active' : 'No active J.A.M.'));
+  setText('#jamHostSummary', jamSession.active ? `${jamSession.participants?.length || 0} participants / ${jamSession.queue?.length || 0} shared queue items / Music comes from the Windows library` : status.enabled ? `${snapshot.tracks || 0} host tracks ready. Start a J.A.M. session when you want guests to join.` : (quest ? 'Power a private link when this PC is the source console.' : 'Start hosting to share music from this PC on your private network.'));
   setText('#jamHostMode', status.enabled ? (quest ? questModeLabel : modeLabel) : (quest ? 'Local gate closed' : 'Localhost gated'));
   setText('#jamTrustedSummary', devices.length ? (quest ? `${activeDevices} lit / ${devices.length} slots` : `${activeDevices} active / ${devices.length} trusted`) : (quest ? 'No slots paired' : 'None paired'));
-  setText('#jamStreamSummary', status.enabled ? (quest ? 'Keyed stream route' : 'Authenticated seekable streams') : (quest ? 'Boot after link power' : 'Ready after host start'));
+  setText('#jamStreamSummary', status.enabled ? (quest ? 'Keyed stream route' : 'Protected audio streaming with seeking') : (quest ? 'Boot after link power' : 'Ready after host start'));
   setText('#jamConnectState', status.enabled ? (quest ? `${jamBaseUrlCandidates(status).length || 1} jack candidates` : `${jamBaseUrlCandidates(status).length || 1} address candidates`) : (quest ? 'Awaiting link' : 'Waiting for host'));
   setValue('#jamCopyUrl', status.enabled ? preferredBaseUrl : '');
   setValue('#jamCopyToken', inviteMatchesHost ? sharingState.invite.token : '');
@@ -15390,7 +15514,7 @@ function renderJamSession(session = {}) {
   const queue = $('#jamSessionQueue');
   if (status) status.textContent = session.active ? `Active / ${session.mode || 'single-host'}` : 'Not started';
   if (!session.active) {
-    if (summary) summary.textContent = 'Start the Windows host, then create an explicit single-host session.';
+    if (summary) summary.textContent = 'Start the Windows host, then create a session.';
     if (participants) participants.innerHTML = '<span>No participants.</span>';
     if (queue) queue.innerHTML = '<span>No shared queue.</span>';
     return;
@@ -15554,7 +15678,7 @@ async function startExplicitJamSession() {
     sharingState.status = { ...(sharingState.status || {}), jamSession: session };
     sharingState.lastError = session?.ok === false ? session.message || 'J.A.M. session could not start.' : '';
     updateSharingUi();
-    showToast(session?.active ? 'Single-host J.A.M. session started.' : 'J.A.M. session could not start.');
+    showToast(session?.active ? 'J.A.M. session started.' : 'J.A.M. session could not start.');
   } catch (error) {
     sharingState.lastError = error.message || String(error);
     updateSharingUi();
@@ -16355,16 +16479,27 @@ function visibleTracks() {
   const comparator = sortKey === 'playlist-order' ? collectionOrderComparator() : comparators[sortKey];
   return tracks.sort(comparator || comparators['added-desc']);
 }
+// Shows the shuffled order: what already played, manual picks, then the
+// shared core's base queue. Only the queue itself is reordered; any other
+// list is returned as it is.
 function tracksInActiveShuffleOrder(tracks) {
-  if (!state.shuffle || !state.flowShuffle.plan || !tracks.length) return tracks;
-  const sourceIds = new Set(state.flowShuffle.plan.sourceQueueIds || []);
-  if (!tracks.every((track) => sourceIds.has(track.id))) return tracks;
+  if (!state.shuffle || !tracks.length) return tracks;
+  const queued = new Set(state.queue);
+  if (tracks.length !== queued.size || !tracks.every((track) => queued.has(track.id))) return tracks;
+  const bridge = syncDesktopShuffle(tracks);
+  if (!bridge) return tracks;
   const tracksById = new Map(tracks.map((track) => [track.id, track]));
-  const order = flowShuffleEngine.displayOrder(state.flowShuffle, tracks.map((track) => track.id));
-  const priority = state.flowShuffle.priorityIds.filter((id) => id !== currentTrack()?.id);
-  const committed = [...new Set(state.flowShuffle.plan.order.slice(0, Math.max(0, state.flowShuffle.plan.cursor + 1)).filter((id) => !priority.includes(id)).reverse())].reverse();
-  const projected = committed.concat(priority, order.filter((id) => !committed.includes(id) && !priority.includes(id)));
-  return projected.map((id) => tracksById.get(id)).filter(Boolean);
+  const currentId = currentTrack()?.id || '';
+  const excluded = state.flowShuffle.sessionExcludedIds || [];
+  const priority = (state.flowShuffle.priorityIds || []).filter((id) => id !== currentId && tracksById.has(id) && !excluded.includes(id));
+  const played = bridge.history().filter((id) => id !== currentId && !priority.includes(id));
+  const committed = [...new Set(played.reverse())].reverse();
+  if (tracksById.has(currentId)) committed.push(currentId);
+  const placed = new Set([...committed, ...priority]);
+  const future = bridge.upcoming(16, desktopShuffleContextKey()).filter((id) => tracksById.has(id) && !placed.has(id));
+  future.forEach((id) => placed.add(id));
+  const rest = tracks.map((track) => track.id).filter((id) => !placed.has(id));
+  return committed.concat(priority, future, rest).map((id) => tracksById.get(id)).filter(Boolean);
 }
 function preserveCurrentTrackRowOrder(tracks) {
   // The order last handed to the track browser rather than the rows in the
@@ -16545,6 +16680,7 @@ function renderHero() {
   syncGhostIndexUi();
   syncVioletHardware();
   syncHarmonicRegistryUi();
+  syncLinkedSessionUi();
 }
 
 function renderDailyCuratedPanel() {
@@ -16579,7 +16715,7 @@ function renderDailyCuratedPanel() {
     ? "Preparing today's listen. You can keep using Pixelody; it will appear here in a moment."
     : stateLabel === 'empty'
     ? 'Bring in music once and Daily Curated will prepare a simple listening path from your own library.'
-    : 'A ready-to-play path through music you own. No setup, no choices to configure, and no reshuffle until tomorrow.');
+    : 'A daily mix from your library. It stays the same until tomorrow.');
   setText('#dailyCuratedLeadTitle', leadTrack?.title || (mix.pending ? "Preparing today's listen" : mix.trackIds.length ? "Today's tracks are unavailable" : 'Waiting for local music'));
   setText('#dailyCuratedLeadMeta', leadTrack ? `${leadTrack.artist || 'Unknown artist'}${leadTrack.album ? ` · ${leadTrack.album}` : ''}` : mix.trackIds.length ? 'The missing tracks stay recorded instead of being silently replaced.' : "Import music and tomorrow's path takes care of itself.");
   setText('#dailyCuratedTrackCount', unavailable ? `${availableTracks.length} of ${mix.trackIds.length}` : String(availableTracks.length));
@@ -16595,7 +16731,7 @@ function renderDailyCuratedPanel() {
         ? `${returning} tracks that have been waiting for another listen.`
         : receipt.summary || 'Built from music on this device.';
   setText('#dailyCuratedSummary', `${shape}${unavailable ? ` ${unavailable} unavailable track${unavailable === 1 ? ' remains' : 's remain'} visible in today's record.` : ''}`);
-  setText('#dailyCuratedSource', 'Made privately from this device: local listening history, favorites, and musical flow. No account, cloud catalog, or J.A.M. session data.');
+  setText('#dailyCuratedSource', 'Put together from your library, favorites, and listening history on this device.');
   setText('#dailyCuratedSequenceLabel', mix.trackIds.length ? `${mix.trackIds.length} track${mix.trackIds.length === 1 ? '' : 's'} · play follows this order.` : 'Your listening order will appear here.');
   $('#trackTable')?.setAttribute('aria-label', isDailyMix ? "Today's listening order" : 'Tracks');
   const reasons = $('#dailyCuratedReasons');
@@ -17627,7 +17763,7 @@ async function playTrack(id, options = {}) {
   if (previousTrack && previousTrack.id !== id && !options.naturalAdvance) resetQuestStreak();
   if (track.missing || !(await window.desktop.exists(track.path))) {
     if (requestSerial !== trackPlayRequestSerial) return;
-    if (stagedFlowPick) flowShuffleRuntime.pending = null;
+    if (stagedFlowPick) failDesktopShufflePick(stagedFlowPick, 'source-missing');
     confirmedOutputTransitionRuntime.fail(requestSerial, { reason: 'source-missing' });
     singularityLiveHost?.refreshPlayback();
     restoreRetainedConfirmedMedia('source-missing-retained');
@@ -17635,7 +17771,7 @@ async function playTrack(id, options = {}) {
     track.missing = true; persist(); renderTracks({ preserveOrder: true, activationPendingId: null, activationFailedId: id }); showToast('This music file is missing or unavailable.'); return;
   }
   if (requestSerial !== trackPlayRequestSerial) return;
-  if (!state.queue.includes(id)) state.queue = visibleTracks().map((track) => track.id);
+  if (!state.queue.includes(id)) { state.queue = visibleTracks().map((track) => track.id); state.linkedSession = null; state.queueSourceId = state.activePlaylistId || 'all'; }
   if (track.artworkPath && !track.customArtwork && !track.artworkOptimized) {
     // Resizing a large cover runs on the main process; playback must not wait for it.
     track.artworkOptimized = true;
@@ -17655,7 +17791,7 @@ async function playTrack(id, options = {}) {
   }
   if (!(await resumeAudioContext('Playback'))) {
     if (requestSerial !== trackPlayRequestSerial) return;
-    if (stagedFlowPick) flowShuffleRuntime.pending = null;
+    if (stagedFlowPick) failDesktopShufflePick(stagedFlowPick, 'audio-context-unavailable');
     confirmedOutputTransitionRuntime.fail(requestSerial, { reason: 'audio-context-unavailable' });
     singularityLiveHost?.refreshPlayback();
     restoreRetainedConfirmedMedia('audio-context-unavailable-retained');
@@ -17687,7 +17823,7 @@ async function playTrack(id, options = {}) {
     confirmedOutputTransitionRuntime.note('play-promise-resolved', requestSerial, confirmedOutputUiSnapshot({ requestedId: id }));
   } catch (error) {
     if (requestSerial !== trackPlayRequestSerial) return;
-    if (stagedFlowPick) flowShuffleRuntime.pending = null;
+    if (stagedFlowPick) failDesktopShufflePick(stagedFlowPick, 'playback-error');
     confirmedOutputTransitionRuntime.note('play-promise-rejected', requestSerial, confirmedOutputUiSnapshot({ requestedId: id, error: error.message }));
     confirmedOutputTransitionRuntime.fail(requestSerial, { reason: 'play-promise-rejected', error: error.message });
     singularityLiveHost?.refreshPlayback();
@@ -17715,6 +17851,8 @@ async function playTrack(id, options = {}) {
   syncInterfaceSoundEngine();
   syncThemePreloader();
   commitStagedFlowShufflePlayback(track, stagedFlowPick);
+  if (!stagedFlowPick) syncDesktopShuffle()?.align(track.id, { source: options.source === 'remote' ? 'remote' : null, personal: options.personalLearning !== false && options.source !== 'remote',
+    durationMs: Number.isFinite(track.duration) ? Math.round(track.duration * 1000) : null });
   trackBrowserActivationPendingId = null;
   trackBrowserActivationFailedId = null;
   const signalSource = options.source || (options.naturalAdvance ? 'natural' : state.shuffle ? 'shuffle' : 'manual');
@@ -17864,7 +18002,7 @@ function syncQuestPlaybackModeReadouts(paused = audio.paused) {
   const repeat = $('#repeatButton');
   if (shuffle) {
     shuffle.dataset.questModeState = state.shuffle ? 'on' : 'off';
-    setText('#questShuffleReadout', state.shuffle ? state.shuffleStyle === 'standard' ? 'STD' : 'FLOW' : 'OFF');
+    setText('#questShuffleReadout', state.shuffle ? desktopShuffleStyle() === 'balanced' ? 'BAL' : 'FLOW' : 'OFF');
   }
   if (play) {
     play.dataset.questModeState = paused ? 'standby' : 'run';
@@ -17948,6 +18086,121 @@ async function toggleCurrentPlayback() {
     return false;
   }
 }
+// Add to session: the open list joins the shuffle that is playing. Its songs
+// join the queue, every list keeps its share of turns, and removing a list
+// takes out only the songs no other list in the session brought in.
+function linkedSessionHas(sourceId) {
+  return Boolean(state.linkedSession?.sources.some((source) => source.id === sourceId));
+}
+function canAddCollectionToSession() {
+  const sourceId = state.activePlaylistId || 'all';
+  return Boolean(currentTrack() && state.queue.length && !linkedSessionHas(sourceId) && sourceId !== (state.queueSourceId || 'all') && !activePlaylist().dailyMix);
+}
+function addCollectionToSession() {
+  if (!canAddCollectionToSession()) return false;
+  const sourceId = state.activePlaylistId || 'all';
+  const tracks = visibleTracks().filter((track) => !track.missing);
+  if (!tracks.length) return false;
+  const primary = state.queueSourceId || 'all';
+  const session = state.linkedSession || { sources: [{ id: primary, name: sessionListName(primary) }], trackSources: Object.fromEntries(state.queue.map((id) => [id, [primary]])), airtime: 'size' };
+  if (session.sources.length >= 8) { showToast('A session holds up to eight lists.'); return false; }
+  const name = activePlaylist().name || 'This list';
+  session.sources.push({ id: sourceId, name });
+  for (const track of tracks) session.trackSources[track.id] = [...new Set([...(session.trackSources[track.id] || []), sourceId])];
+  state.linkedSession = session;
+  state.queue.push(...tracks.map((track) => track.id).filter((id) => !state.queue.includes(id)));
+  if (!state.shuffle) { state.shuffle = true; state.shuffleStyle = state.lastShuffleStyle || 'flow'; }
+  syncShuffleControls();
+  showToast(`Added ${name} to this session.`);
+  return true;
+}
+function removeSessionList(sourceId) {
+  const session = state.linkedSession;
+  if (!session || !linkedSessionHas(sourceId)) return false;
+  const currentId = currentTrack()?.id || '';
+  const dropped = [];
+  for (const [trackId, owners] of Object.entries(session.trackSources)) {
+    const kept = owners.filter((owner) => owner !== sourceId);
+    if (kept.length) session.trackSources[trackId] = kept;
+    else { delete session.trackSources[trackId]; if (trackId !== currentId) dropped.push(trackId); }
+  }
+  const removed = new Set(dropped);
+  state.queue = state.queue.filter((id) => !removed.has(id));
+  session.sources = session.sources.filter((source) => source.id !== sourceId);
+  if (session.sources.length < 2) state.linkedSession = null;
+  syncShuffleControls();
+  return true;
+}
+function setSessionAirtime(airtime) {
+  if (!state.linkedSession) return;
+  state.linkedSession.airtime = airtime === 'even' ? 'even' : 'size';
+  syncShuffleControls();
+}
+function sessionListName(sourceId) {
+  if (sourceId === (state.activePlaylistId || 'all')) return activePlaylist().name;
+  if (sourceId === state.queueSourceId && state.queueSourceName) return state.queueSourceName;
+  if (sourceId === 'all') return 'Library';
+  return (state.playlists || []).find((playlist) => playlist.id === sourceId)?.name || 'Playing list';
+}
+function syncLinkedSessionUi() {
+  const link = $('#heroLink');
+  if (link) {
+    const inSession = linkedSessionHas(state.activePlaylistId || 'all');
+    link.classList.toggle('hidden', !inSession && !canAddCollectionToSession());
+    link.disabled = inSession;
+    const label = inSession ? 'In this session' : 'Add to session';
+    const text = link.querySelector?.('.hero-link-label');
+    if (text) text.textContent = label; else link.textContent = label;
+    link.setAttribute?.('aria-label', label);
+  }
+  const panel = $('#shuffleSession');
+  if (!panel) return;
+  const session = state.linkedSession;
+  panel.classList.toggle('hidden', !session);
+  if (!session) return;
+  $('#shuffleSessionLists').innerHTML = session.sources.map((source) => `<li><span>${escapeHtml(source.name)}</span><button type="button" data-session-remove="${encodeURIComponent(source.id)}" aria-label="Remove ${escapeHtml(source.name)} from this session">x</button></li>`).join('');
+  $('#shuffleSessionEven').checked = session.airtime === 'even';
+}
+// Play starts the open list in order and Shuffle starts it shuffled. Both
+// stay inside that list, and each list picks up its own shuffle where it
+// left off.
+function collectionQueueIsActive() {
+  const current = currentTrack();
+  return Boolean(current && (state.queueSourceId || 'all') === (state.activePlaylistId || 'all') && state.queue.includes(current.id));
+}
+function syncShuffleControls() {
+  $('#shuffleButton')?.classList.toggle('active', state.shuffle);
+  persist(); renderTracks(); renderQueue(); updateFlowShuffleUi(); syncQuestPlaybackModeReadouts(); syncLinkedSessionUi();
+}
+function stageDesktopShuffleStart(queue) {
+  const bridge = syncDesktopShuffle(queue);
+  if (!bridge) return queue[0] || null;
+  const staged = bridge.start();
+  const track = staged ? trackById(staged.trackId) : null;
+  if (!track) return null;
+  flowShuffleRuntime.pending = desktopShufflePending(track, currentTrack() || track, staged, queue);
+  return track;
+}
+async function startCollectionPlayback({ shuffle = false } = {}) {
+  const tracks = visibleTracks().filter((track) => !track.missing);
+  if (!tracks.length) return false;
+  const sourceId = state.activePlaylistId || 'all';
+  if (!shuffle) {
+    state.shuffle = false;
+    state.shuffleStyle = 'off';
+    buildQueue(tracks, tracks[0].id, { sourceId });
+    syncShuffleControls();
+    return (await playTrack(tracks[0].id, { source: 'collection-play' })) === true;
+  }
+  state.shuffleStyle = state.shuffle && desktopShuffleStyle() !== 'off' ? desktopShuffleStyle() : state.lastShuffleStyle || 'flow';
+  state.lastShuffleStyle = state.shuffleStyle;
+  state.shuffle = true;
+  buildQueue(tracks, null, { sourceId });
+  const first = stageDesktopShuffleStart(activeQueue());
+  syncShuffleControls();
+  if (!first) return false;
+  return (await playTrack(first.id, { source: 'collection-shuffle' })) === true;
+}
 async function playFirstVisibleTrack(options = {}) {
   const tracks = visibleTracks();
   const first = tracks[0];
@@ -17961,48 +18214,32 @@ function activeQueue() {
   state.queue = active.map((track) => track.id);
   return active;
 }
-function adjacentTrack(offset, fromEnded = false) {
+function adjacentTrack(offset, fromEnded = false, traversal = {}) {
   const queue = activeQueue(); if (!queue.length) return null;
-  if (fromEnded && state.repeat === 'one') return currentTrack();
-  if (state.shuffle && offset > 0 && queue.length > 1) {
-    if (state.shuffleStyle === 'standard') {
-      const current = currentTrack();
-      if (state.repeat === 'off' && state.flowShuffle.plan?.cursor >= state.flowShuffle.plan?.order.length - 1 && !state.flowShuffle.priorityIds.length) return null;
-      const priorityId = state.flowShuffle.priorityIds.find((id) => id !== current?.id && queue.some((track) => track.id === id) && !state.flowShuffle.sessionExcludedIds.includes(id));
-      let prepared = flowShuffleEngine.stageNext(state.flowShuffle, queue.map((track) => track.id), current?.id || '', { fromEnded, repeat: state.repeat, style: 'standard' });
-      if (priorityId) {
-        const plan = prepared.state.plan;
-        const cursor = plan.cursor;
-        const committed = plan.order.slice(0, cursor + 1);
-        const remaining = plan.order.slice(cursor + 1).filter((id) => id !== priorityId);
-        prepared = { ...prepared, kind: 'priority', trackId: priorityId, stopped: false, state: { ...prepared.state, plan: { ...plan, cursor, order: committed.concat(priorityId, remaining) } } };
-      }
-      const track = trackById(prepared.trackId);
-      if (track && current) flowShuffleRuntime.pending = {
-        kind: prepared.kind, style: 'standard', preparedState: prepared.state,
-        trackId: track.id, fromTrackId: current.id, fromTrackTitle: current.title,
-        fromOccurrenceId: signalRuntime.currentPlay?.occurrenceId || '', pickedAt: new Date().toISOString(),
-        decision: flowShuffleDecision.normalizeDecision({ kind: prepared.kind, source: 'seeded Standard permutation', trackId: track.id, fromTrackId: current.id, availableSignals: [] }),
-        priority: prepared.kind === 'priority',
-        reasons: [prepared.kind === 'priority' ? 'Manual queue priority' : 'Next in the seeded Standard permutation'],
-        reasonDetails: [{ text: 'seeded permutation; no taste or musical feature weighting', points: 0, category: 'metadata' }],
-      };
-      return track || null;
-    }
-    return chooseFlowShuffleNext(queue, fromEnded);
+  // Shuffle traversal belongs to the shared two-queue core: a natural end
+  // plays the base queue, a personal Next the live one, Previous walks history.
+  if (state.shuffle && desktopShuffle()) {
+    if (offset > 0 && queue.length > 1) return stageDesktopShuffleNext(queue, fromEnded, traversal);
+    if (offset < 0) return stageDesktopShufflePrevious(queue, traversal);
   }
-  if (state.shuffle && offset < 0) return previousFlowShuffleTrack();
+  if (fromEnded && state.repeat === 'one') return currentTrack();
   return playbackDomain.linearAdjacent(queue, currentTrack()?.id || '', offset, { fromEnded, repeat: state.repeat });
 }
-function buildQueue(tracks, startId = null) {
+function buildQueue(tracks, startId = null, options = {}) {
+  const sourceId = options.sourceId || state.activePlaylistId || 'all';
+  // Starting a song from a list that is part of the session keeps the session.
+  if (state.linkedSession && startId && state.queue.includes(startId) && state.linkedSession.sources.some((source) => source.id === sourceId)) return;
+  state.linkedSession = null;
   state.queue = playbackDomain.buildQueue(tracks, startId);
+  state.queueSourceId = sourceId;
+  state.queueSourceName = options.sourceName || (sourceId === (state.activePlaylistId || 'all') ? activePlaylist().name : '');
   queueRenderLimit = QUEUE_RENDER_STEP;
   resetFlowShuffleCycle(startId || '');
   persist(); renderQueue();
 }
 async function requestPlaybackTraversal(direction, options = {}) {
   const naturalEnd = options.naturalEnd === true;
-  const track = adjacentTrack(direction === 'previous' ? -1 : 1, naturalEnd);
+  const track = adjacentTrack(direction === 'previous' ? -1 : 1, naturalEnd, options);
   if (!track) return false;
   return (await playTrack(track.id, { ...options, naturalAdvance: naturalEnd })) === true;
 }
@@ -18085,10 +18322,9 @@ function renderQueue() {
   const playingIndex = playingId ? queue.findIndex((track) => track.id === playingId) : -1;
   const windowStart = Math.max(0, playingIndex - QUEUE_RENDER_LEAD);
   const windowEnd = Math.min(queue.length, windowStart + queueRenderLimit);
-  const plan = state.flowShuffle.plan || {};
   const priorityIds = new Set(state.flowShuffle.priorityIds);
-  const standardOrder = plan.style === 'standard' && Array.isArray(plan.order) ? new Set(plan.order) : null;
-  const futureIds = Array.isArray(plan.future) ? new Set(plan.future) : null;
+  const shuffledIds = state.shuffle && universalShuffleController ? new Set(universalShuffleController.upcoming(16, desktopShuffleContextKey())) : null;
+  const shuffledLabel = desktopShuffleStyle() === 'balanced' ? 'BALANCED' : 'FLOW';
   const hiddenBefore = windowStart ? `<div class="queue-window-note">${windowStart.toLocaleString()} earlier in the queue are not shown.</div>` : '';
   const hiddenAfter = windowEnd < queue.length
     ? `<button type="button" class="queue-more" data-queue-more>Show ${Math.min(QUEUE_RENDER_STEP, queue.length - windowEnd).toLocaleString()} more (${(queue.length - windowEnd).toLocaleString()} not shown)</button>`
@@ -18096,7 +18332,7 @@ function renderQueue() {
   $('#queueList').innerHTML = hiddenBefore + queue.slice(windowStart, windowEnd).map((track, offset) => {
     const index = windowStart + offset;
     const art = track.artworkPath ? `style="background-image:url('${escapeHtml(window.desktop.fileUrl(track.artworkPath))}')"` : '';
-    const intent = priorityIds.has(track.id) ? 'MANUAL' : standardOrder?.has(track.id) && track.id !== playingId ? 'STANDARD' : futureIds?.has(track.id) ? 'FLOW' : '';
+    const intent = priorityIds.has(track.id) ? 'MANUAL' : shuffledIds?.has(track.id) && track.id !== playingId ? shuffledLabel : '';
     const title = track.title || 'Untitled track';
     const safeTitle = escapeHtml(title);
     return `<div class="queue-item ${track.id === currentTrack()?.id ? 'playing' : ''}" role="listitem" data-id="${encodeURIComponent(track.id)}"><span class="quest-party-slot" aria-hidden="true">P${String(index + 1).padStart(2, '0')}</span><span class="queue-item-art" ${art} aria-hidden="true"></span><span class="queue-item-copy"><strong>${safeTitle}</strong><span>${escapeHtml(track.artist)}${intent ? ` <em class="queue-intent">${intent}</em>` : ''}</span></span><span class="queue-item-actions"><button data-queue-action="up" title="Move up" aria-label="Move ${safeTitle} up"${index === 0 ? ' disabled' : ''}>&#8593;</button><button data-queue-action="down" title="Move down" aria-label="Move ${safeTitle} down"${index === queue.length - 1 ? ' disabled' : ''}>&#8595;</button><button data-queue-action="remove" title="Remove" aria-label="Remove ${safeTitle} from queue">x</button></span></div>`;
@@ -18329,7 +18565,7 @@ async function playDailyCuratedMix() {
     showToast(playlist.mix?.pending || playlist.pending ? "Today's listen is still being prepared." : 'Import local music before playing this Daily Curated mix.');
     return false;
   }
-  buildQueue(tracks, tracks[0].id);
+  buildQueue(tracks, tracks[0].id, { sourceId: DAILY_CURATED_COLLECTION_ID });
   await playTrack(tracks[0].id, { source: 'daily-curated' });
   return true;
 }
@@ -19630,7 +19866,11 @@ document.querySelectorAll('[data-discovery-link]').forEach((button) => button.on
 document.querySelectorAll('[data-support-own]').forEach((button) => {
   button.onclick = () => openSupportOwn(trackEditorDraft(), { trackId: state.editingTrackId, opener: button });
 });
-$('#heroPlay').onclick = async () => { if (!(await toggleCurrentPlayback())) await playFirstVisibleTrack(); };
+$('#heroPlay').onclick = async () => { if (collectionQueueIsActive() && await toggleCurrentPlayback()) return; await startCollectionPlayback(); };
+$('#heroShuffle').onclick = () => { void startCollectionPlayback({ shuffle: true }); };
+$('#heroLink').onclick = () => { addCollectionToSession(); };
+$('#shuffleSessionLists').onclick = (event) => { const id = event.target.closest('[data-session-remove]')?.dataset.sessionRemove; if (id) removeSessionList(decodeURIComponent(id)); };
+$('#shuffleSessionEven').onchange = (event) => setSessionAirtime(event.target.checked ? 'even' : 'size');
 $('#playButton').onclick = async () => { if (!(await toggleCurrentPlayback())) await playFirstVisibleTrack(); };
 $('#dailyCuratedPlay').onclick = () => { void playDailyCuratedMix(); };
 $('#dailyCuratedSave').onclick = saveDailyCuratedMix;
@@ -19639,7 +19879,7 @@ $('#nextButton').onclick = () => requestPlaybackTraversal('next');
 $('#shuffleButton').classList.toggle('active', state.shuffle);
 syncQuestPlaybackModeReadouts();
 syncQuestBossBar();
-$('#shuffleButton').onclick = () => setShuffleStyle(state.shuffle ? 'off' : 'flow');
+$('#shuffleButton').onclick = () => setShuffleStyle(state.shuffle ? 'off' : state.lastShuffleStyle || 'flow');
 function syncRepeatButton() { $('#repeatButton').classList.toggle('active', state.repeat !== 'off'); $('#repeatButton').title = `Repeat: ${state.repeat}`; $('#repeatButton').dataset.repeat = state.repeat; syncQuestPlaybackModeReadouts(); }
 syncRepeatButton();
 $('#repeatButton').onclick = () => { state.repeat = state.repeat === 'off' ? 'all' : state.repeat === 'all' ? 'one' : 'off'; syncRepeatButton(); persist(); showToast(`Repeat ${state.repeat}.`); };
@@ -19661,7 +19901,7 @@ function openQueue(opener = document.activeElement) {
 }
 $('#queueButton').onclick = () => openQueue($('#queueButton'));
 $('#closeQueue').onclick = navigateBack;
-$('#clearQueue').onclick = () => { state.queue = currentTrack() ? [currentTrack().id] : []; resetFlowShuffleCycle(currentTrack()?.id || ''); persist(); renderTracks(); renderQueue(); };
+$('#clearQueue').onclick = () => { state.queue = currentTrack() ? [currentTrack().id] : []; state.linkedSession = null; syncLinkedSessionUi(); resetFlowShuffleCycle(currentTrack()?.id || ''); persist(); renderTracks(); renderQueue(); };
 $('#queueList').onclick = (event) => {
   if (event.target.closest('[data-queue-more]')) { queueRenderLimit += QUEUE_RENDER_STEP; renderQueue(); return; }
   const item = event.target.closest('.queue-item'); if (!item) return; const id = decodeURIComponent(item.dataset.id); const action = event.target.dataset.queueAction;
@@ -20492,14 +20732,14 @@ $('#systemEqEnable').onchange = (event) => {
   persistSystemTuningMode();
   updateSystemTuningUi();
   updateDiagnostics();
-  showToast(systemTuningMode.enabled ? 'System EQ staged for future Windows routing.' : 'System EQ returned to in-app only.');
+  showToast(systemTuningMode.enabled ? 'System EQ is not ready to process other apps yet.' : 'System EQ returned to in-app only.');
 };
 $('#systemEqEngine').onchange = (event) => {
   systemTuningMode.preferredEngine = ['virtual-endpoint', 'wasapi-loopback', 'apo'].includes(event.target.value) ? event.target.value : 'virtual-endpoint';
   persistSystemTuningMode();
   updateSystemTuningUi();
   updateDiagnostics();
-  showToast(systemTuningMode.preferredEngine === 'virtual-endpoint' ? 'System EQ engine set to Virtual Endpoint.' : systemTuningMode.preferredEngine === 'apo' ? 'APO engine parked for later release work.' : 'System EQ engine set to Loopback Dev.');
+  showToast(systemTuningMode.preferredEngine === 'virtual-endpoint' ? 'System EQ engine set to Virtual Endpoint.' : systemTuningMode.preferredEngine === 'apo' ? 'The APO engine is not available yet.' : 'System EQ engine set to Loopback Dev.');
 };
 $('#copySystemEqStatus').onclick = copySystemTuningStatus;
 $('#probeSystemEqRoute').onclick = probeSystemTuningRoute;
@@ -20606,7 +20846,7 @@ $('#speakerSystemMembers').addEventListener('click', (event) => {
 $('#speakerSystemPrototypeEnable').onchange = (event) => {
   const enabled = Boolean(event.target.checked);
   if (enabled) {
-    const accepted = confirm('Enable the experimental browser dual-output prototype flag? Pixelody will keep normal single-output playback active until later Phase 2 routing work is implemented.');
+    const accepted = confirm('Enable the experimental browser dual-output prototype flag? Pixelody will keep normal single-output playback active until Windows audio routing is implemented.');
     if (!accepted) {
       event.target.checked = false;
       return;
@@ -21277,7 +21517,7 @@ $('#importTuningProfiles').onclick = async () => {
 $('#exportBackup').onclick = async () => {
   const workspace = await window.desktop.loadWorkspaceComposition().catch(() => null);
   const backup = { version: 1, createdAt: new Date().toISOString(), tracks: state.tracks, playlists: state.playlists, collectionBackgrounds: state.collectionBackgrounds, tunings: state.tunings, systems: state.systems, spatialProfiles: state.spatialProfiles, playbackTransitions: state.playbackTransitions, speakerSystems: state.speakerSystems, activeSpeakerSystemId: state.activeSpeakerSystemId || '', speakerSystemPrototype, eqModes: normalizeEqModes(eqModes), systemTuningMode, favorites: state.favorites, history: state.history, playCounts: state.playCounts, signalJournal: state.signalJournal, signalSettings: state.signalSettings, flowShuffle: state.flowShuffle, dailyMixes: state.dailyMixes, migrationReports: state.migrationReports, watchedFolders: state.watchedFolders || [], wantedTracks: state.wantedTracks, queue: state.queue, appearance, motionEffects, interfaceSounds, layout, profileImage, cartridgeQuestStats: questStatsSnapshot(), workspaceComposition: workspace?.ok ? workspace.state : null };
-  if (await window.desktop.exportBackup(backup)) showToast('Pixelody backup exported.');
+  if (await window.desktop.exportBackup(backup)) showToast('Backup exported.');
 };
 $('#copySignalJournal').onclick = async () => {
   const report = signalJournalExportPayload();
@@ -21536,7 +21776,7 @@ $('#importBackup').onclick = async () => {
   if (!durableImport?.ok) {
     durableStateController.resume();
     if (hadScheduledPersist) schedulePersist();
-    showToast(durableImport?.error || 'Pixelody could not safely commit that backup.');
+    showToast(durableImport?.error || 'The backup could not be saved.');
     return;
   }
   if (backup.profileImage) setLocalStorageItem('pixelody.profileImage', backup.profileImage); else localStorage.removeItem('pixelody.profileImage');

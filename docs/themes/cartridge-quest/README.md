@@ -15,7 +15,6 @@ Cartridge Quest is Pixelody's original 8/16-bit console adventure skin. The them
 ## Fast Links
 
 - Implementation map: `docs/themes/cartridge-quest/implementation-map.md`
-- Refinement log: `docs/themes/cartridge-quest/refinement-log.md`
 - Hotbar design system: `docs/themes/cartridge-quest/hotbar-design-system.md`
 
 ## Editing Checklist

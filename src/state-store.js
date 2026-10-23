@@ -37,6 +37,7 @@ const OBJECT_VALUE_KEYS = new Set([
   'pixelody.flowShuffle',
   'pixelody.shuffleSession',
   'pixelody.shuffleLedger',
+  'pixelody.linkedSession',
   'pixelody.appearance',
   'pixelody.motionEffects',
   'pixelody.eqModes',
@@ -73,6 +74,8 @@ const STRING_VALUE_KEYS = new Set([
   'pixelody.signalRange',
   'pixelody.signalAuditFilter',
   'pixelody.signalOrbitRepair',
+  'pixelody.queueSource',
+  'pixelody.lastShuffleStyle',
 ]);
 
 const BOOLEAN_VALUE_KEYS = new Set(['pixelody.shuffle']);

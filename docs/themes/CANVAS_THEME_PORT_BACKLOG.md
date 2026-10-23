@@ -16,7 +16,7 @@ and matching mini-player companion. Those reactions use only product state
 Pixelody already owns; no BPM, format, network, device, or analysis facts are
 fabricated.
 
-Pixelody Studio remains the only registered built-in presentation. Axis Break,
+Settings offers Studio, Obsession Mode, and Cartridge Quest. Axis Break,
 Tideplot, Counterform Choir, Aftergarden, and Vesperfold are later experimental
 candidates and are deliberately outside this cohort. Every item under “Later
 additions” is an idea bank, not implemented work or an approval decision.

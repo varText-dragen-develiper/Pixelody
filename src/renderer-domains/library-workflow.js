@@ -15,7 +15,7 @@
 
   const MAX_REPAIR_TRACKS = 100;
   const LOOKUP_ERRORS = Object.freeze({
-    'rate-limited': 'MusicBrainz asked Pixelody to slow down. Try again in a minute.',
+    'rate-limited': 'MusicBrainz is limiting requests. Try again in a minute.',
     timeout: 'MusicBrainz did not answer in time.',
     network: 'Could not reach MusicBrainz. Check your connection.',
     'http-error': 'MusicBrainz returned an error.',
@@ -272,12 +272,12 @@
         ? `Looking up ${finished + 1 > total ? total : finished + 1} of ${total}...`
         : finished === 0
           ? `${batch.describeCount(total, 'track')} ready to look up.${repair.truncated ? ` Only the first ${MAX_REPAIR_TRACKS} were taken.` : ''}`
-          : `Looked up ${finished} of ${total}. ${fields ? `${batch.describeCount(fields, 'change')} ticked on ${batch.describeCount(tracks, 'track')}.` : 'Nothing ticked yet.'}`;
+          : `Looked up ${finished} of ${total}. ${fields ? `${batch.describeCount(fields, 'change')} ticked on ${batch.describeCount(tracks, 'track')}.` : 'Nothing checked yet.'}`;
       $('#startRepairLookup').classList.toggle('hidden', repair.running || finished === total);
       $('#startRepairLookup').textContent = finished ? 'Look up the rest' : `Look up ${batch.describeCount(total, 'track')}`;
       $('#cancelRepairLookup').classList.toggle('hidden', !repair.running);
       $('#applyRepair').disabled = repair.running || fields === 0;
-      $('#applyRepair').textContent = fields ? `Apply ${batch.describeCount(fields, 'change')}` : 'Apply ticked changes';
+      $('#applyRepair').textContent = fields ? `Apply ${batch.describeCount(fields, 'change')}` : 'Apply checked changes';
     }
 
     function rebuildProposal(row) {
@@ -342,7 +342,7 @@
       closeSurface('#metadataRepairOverlay');
       repair = null;
       if (changed.length) host.metadataChanged(changed);
-      host.showToast(changed.length ? `Applied ${batch.describeCount(fieldCount, 'change')} to ${batch.describeCount(changed.length, 'track')}. Original files are untouched.` : 'No changes were ticked.');
+      host.showToast(changed.length ? `Applied ${batch.describeCount(fieldCount, 'change')} to ${batch.describeCount(changed.length, 'track')}. Original files are untouched.` : 'No changes were checked.');
     }
 
     function closeRepair() {
@@ -472,9 +472,9 @@
       const { fields, tracks } = selectedFieldCount();
       const total = repair.rows.length;
       const finished = repair.rows.filter((row) => !['ready', 'searching'].includes(row.status)).length;
-      $('#repairSummary').textContent = `Looked up ${finished} of ${total}. ${fields ? `${batch.describeCount(fields, 'change')} ticked on ${batch.describeCount(tracks, 'track')}.` : 'Nothing ticked yet.'}`;
+      $('#repairSummary').textContent = `Looked up ${finished} of ${total}. ${fields ? `${batch.describeCount(fields, 'change')} ticked on ${batch.describeCount(tracks, 'track')}.` : 'Nothing checked yet.'}`;
       $('#applyRepair').disabled = fields === 0;
-      $('#applyRepair').textContent = fields ? `Apply ${batch.describeCount(fields, 'change')}` : 'Apply ticked changes';
+      $('#applyRepair').textContent = fields ? `Apply ${batch.describeCount(fields, 'change')}` : 'Apply checked changes';
     }
 
     return Object.freeze({

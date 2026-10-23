@@ -107,7 +107,7 @@ if (!themeInformationProfiles) fail('themeInformationProfiles map not found in r
 
 // themeStylesheets in renderer.js is the Phase 4 runtime source of truth
 // for which per-theme <link> elements theme-runtime/css-loader.js enables
-// (see docs/themes/THEME_RUNTIME_ARCHITECTURE.md's Phase 4 section) -- same
+// (see src/theme-runtime/css-loader.js) -- same
 // "no runtime path to built-in-themes.json" gap as Phase 2, so it's a
 // static map mirroring built-in-themes.json's mainStyles, checked here for
 // real agreement rather than by hand.

@@ -147,7 +147,7 @@ function normalizeTheme(value) {
   hasOnlyKeys(value.assets, new Set(ASSET_KEYS), 'theme.assets');
   for (const key of ASSET_KEYS) {
     if (value.assets[key] !== null && value.assets[key] !== undefined) {
-      reject('assets_not_supported', 'Local theme assets are reserved for the bounded asset-package milestone and cannot be installed yet.');
+      reject('assets_not_supported', 'Local theme assets are not supported by this package format and cannot be installed yet.');
     }
   }
 
@@ -160,7 +160,7 @@ function normalizeTheme(value) {
 
   hasOnlyKeys(value.typography, new Set(['profile', 'font']), 'theme.typography');
   if (value.typography.font !== null && value.typography.font !== undefined) {
-    reject('fonts_not_supported', 'Bundled fonts are reserved for the bounded asset-package milestone and cannot be installed yet.');
+    reject('fonts_not_supported', 'Bundled fonts are not supported by this package format and cannot be installed yet.');
   }
   const typography = {
     profile: enumValue(value.typography.profile, ['pixel', 'technical', 'editorial', 'display'], 'theme.typography.profile'),
@@ -245,7 +245,7 @@ function parseThemePackageBytes(bytes, options = {}) {
   }
   hasOnlyKeys(value, new Set(['packageFormatVersion', 'type', 'version', 'compatibility', 'theme', 'provenance']), 'package');
   if (value.packageFormatVersion !== PACKAGE_FORMAT_VERSION) reject('unsupported_package_format', 'This theme package format is not supported by this Pixelody version.');
-  if (value.type !== 'theme') reject('unsupported_package_type', 'Only declarative theme packages can be installed in this milestone.');
+  if (value.type !== 'theme') reject('unsupported_package_type', 'Only declarative theme packages can be installed in this package format.');
   return {
     packageFormatVersion: PACKAGE_FORMAT_VERSION,
     type: 'theme',

@@ -4,7 +4,7 @@
   "id": "pixelody.lo-fi-cafe",
   "name": "Lo-Fi Café",
   "author": "Pixelody",
-  "description": "A rainy walnut listening nook for calm second-monitor sessions, with dark wood structure, paper-soft content surfaces, amber playback light, moss status accents, muted rain-glass depth, licensed cafe photography, and slow low-noise motion.",
+  "description": "Walnut, paper, and amber details for a café-like setting.",
   "palette": { "primary": "#c48a4a", "secondary": "#5d704f", "base": "#100b08" },
   "assets": {
     "backgroundTexture": "../assets/themes/lo-fi-cafe/study-desk-stocksnap-XGXORJWZIX-cc0.jpg",

@@ -1,6 +1,6 @@
 {
   "$schema": "./theme.schema.json", "schemaVersion": 1, "id": "pixelody.cosmic-cinema", "name": "Cosmic Cinema", "author": "Pixelody",
-  "description": "A cosmic-minimal black-hole audio observatory with circular album art, silver-white glow, orbital controls, subtle grain, and waveform gravity rings.",
+  "description": "Dark panels, silver rings, and blue orbital controls.",
   "palette": { "primary": "#e3e5df", "secondary": "#9fb7f5", "base": "#010103" },
   "assets": { "backgroundTexture": null, "heroOverlay": "../assets/themes/cosmic-cinema/signal-relic.svg", "panelFrame": "../assets/themes/cosmic-cinema/calibration-halo.svg", "iconSet": "../assets/themes/cosmic-cinema/library.svg" },
   "hud": { "layout": "cinematic", "controls": "technical", "corners": "framed" },

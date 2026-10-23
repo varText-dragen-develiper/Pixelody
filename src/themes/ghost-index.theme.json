@@ -4,7 +4,7 @@
   "id": "pixelody.ghost-index",
   "name": "Ghost Index",
   "author": "Pixelody",
-  "description": "A spectral systems archive of bone micrographics, process-ledger tracks, and rare green/coral wireframe depth.",
+  "description": "Pale archive marks, green activity, and coral selections.",
   "palette": { "builtIn": "ghost-index" },
   "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
   "hud": { "layout": "compact", "controls": "technical", "corners": "square" },

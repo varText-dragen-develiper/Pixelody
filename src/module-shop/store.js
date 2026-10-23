@@ -6,10 +6,10 @@ class ModuleStore {
   constructor(directory) { this.directory = directory; this.file = path.join(directory, 'listening-notes.json'); }
   read() {
     if (!fs.existsSync(this.file)) return { installed: null, text: '' };
-    if (fs.statSync(this.file).size > 150000) throw new Error('Notebook storage is too large. Existing data was preserved.');
+    if (fs.statSync(this.file).size > 150000) throw new Error('Notebook storage is too large.');
     const data = JSON.parse(fs.readFileSync(this.file, 'utf8'));
-    if (typeof data.text !== 'string' || data.text.length > 20000) throw new Error('Notebook storage is invalid. Existing data was preserved.');
-    if (data.installed !== null && parsePackage(Buffer.from(JSON.stringify(data.installed)), 'desktop').kind !== 'listening-notes') throw new Error('Invalid notebook module. Existing data was preserved.');
+    if (typeof data.text !== 'string' || data.text.length > 20000) throw new Error('Notebook storage is invalid.');
+    if (data.installed !== null && parsePackage(Buffer.from(JSON.stringify(data.installed)), 'desktop').kind !== 'listening-notes') throw new Error('Invalid notebook module.');
     return data;
   }
   write(value) {
@@ -28,7 +28,7 @@ class WebModuleStore {
   constructor(directory) { this.file = path.join(directory, 'web-shop.json'); this.directory = directory; }
   read() {
     if (!fs.existsSync(this.file)) return null;
-    if (fs.statSync(this.file).size > 8192) throw new Error('Web module storage is too large. Existing data was preserved.');
+    if (fs.statSync(this.file).size > 8192) throw new Error('Web module storage is too large.');
     const bytes = fs.readFileSync(this.file);
     const pkg = parsePackage(bytes, 'desktop');
     if (pkg.kind !== 'web-shop') throw new Error('Invalid web module storage.');
@@ -50,7 +50,7 @@ class EditionStore {
   constructor(directory) { this.directory = directory; this.file = path.join(directory, 'theme-editions.json'); }
   read() {
     if (!fs.existsSync(this.file)) return [];
-    if (fs.statSync(this.file).size > 16384) throw new Error('Theme edition storage is too large. Existing data was preserved.');
+    if (fs.statSync(this.file).size > 16384) throw new Error('Theme edition storage is too large.');
     const value = JSON.parse(fs.readFileSync(this.file, 'utf8'));
     if (!Array.isArray(value) || value.length > 2) throw new Error('Invalid theme edition storage.');
     const parsed = value.map(pkg => parsePackage(Buffer.from(JSON.stringify(pkg)), 'desktop'));

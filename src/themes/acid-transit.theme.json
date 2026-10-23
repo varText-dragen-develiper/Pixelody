@@ -4,7 +4,7 @@
   "id": "pixelody.acid-transit",
   "name": "Acid Transit",
   "author": "Pixelody",
-  "description": "An original holographic night-route music system built from fluorescent access tape, depth-shifted framing, pearlescent interference, acid-lime playback, and hot-magenta selection.",
+  "description": "Tape labels, lime playback details, and magenta selections.",
   "palette": { "primary": "#ff2fa5", "secondary": "#a68cff", "base": "#08060d" },
   "assets": { "backgroundTexture": null, "heroOverlay": null, "panelFrame": null, "iconSet": null },
   "hud": { "layout": "modular", "controls": "graphic", "corners": "clipped" },

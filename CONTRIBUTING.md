@@ -31,4 +31,4 @@ The names and logos "Pixelody" are covered by TRADEMARKS.md, not by your
 contribution grant. Report security problems privately as described in
 SECURITY.md, not in a public issue.
 
-Maintainers decide what is accepted and what ships.
+I review contributions and decide what ships.

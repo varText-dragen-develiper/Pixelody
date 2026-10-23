@@ -1101,7 +1101,7 @@ function createPersonalServer(options = {}) {
     const permission = ['suggest'].includes(action) ? 'suggest' : ['add', 'addtrack'].includes(action) ? 'add' : 'editQueue';
     if (!requireJamPermission(auth, permission)) throw Object.assign(new Error(`J.A.M. permission is required: ${permission}`), { statusCode: 403, code: 'jam_permission_required' });
     if (['suggest', 'add', 'addtrack'].includes(action)) {
-      if (safeString(body.sourceDeviceId) && safeString(body.sourceDeviceId) !== hostId) throw Object.assign(new Error('Single-host J.A.M. accepts only coordinator-owned tracks.'), { statusCode: 409, code: 'federated_source_not_supported' });
+      if (safeString(body.sourceDeviceId) && safeString(body.sourceDeviceId) !== hostId) throw Object.assign(new Error('This J.A.M. session can only play tracks from its Windows host.'), { statusCode: 409, code: 'federated_source_not_supported' });
       const track = getTrack(safeString(body.trackId || body.publicTrackId));
       if (!track) throw Object.assign(new Error('Host-owned track was not found.'), { statusCode: 404, code: 'track_not_found' });
       const item = jamQueueItem(track, auth.kind === 'owner' ? hostId : auth.device.id, action === 'suggest' ? 'suggested' : 'queued');

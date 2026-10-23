@@ -184,7 +184,7 @@ const barClick = (harness, action) => harness.$('#selectionBar').fire('click', {
     h.$('#startRepairLookup').fire('click');
     await settle();
     assert.equal(h.log.searches.length, 1, 'the run stops after a rate-limit response');
-    assert.match(h.$('#repairList').innerHTML, /slow down/);
+    assert.match(h.$('#repairList').innerHTML, /MusicBrainz is limiting requests/);
     assert.equal(h.$('#applyRepair').disabled, true, 'nothing to apply');
     assert.equal(h.$('#startRepairLookup').classList.contains('hidden'), false, 'the person can try the rest later');
   }

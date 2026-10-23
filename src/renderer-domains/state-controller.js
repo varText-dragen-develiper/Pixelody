@@ -83,7 +83,7 @@
     function applyResult(result, startedAt) {
       runtime.lastWriteMs = Math.max(0, clock() - startedAt);
       if (!result?.ok) {
-        runtime.lastError = result?.error || result?.status || 'Durable state write failed.';
+        runtime.lastError = result?.error || result?.status || 'Your changes could not be saved.';
         return result;
       }
       runtime.status = result.status || 'committed';
@@ -150,7 +150,7 @@
       if (runtime.readOnly) return Promise.resolve({ ok: false, status: runtime.status });
       if (!initialLoad.needsLegacyMigration) return writeChain;
       if (typeof desktop?.migrateLegacyState !== 'function') {
-        runtime.lastError = 'Legacy migration bridge is unavailable.';
+        runtime.lastError = 'The older settings could not be imported.';
         return Promise.resolve({ ok: false, status: 'migration-unavailable', error: runtime.lastError });
       }
       return startWrite((values) => desktop.migrateLegacyState(values, malformedLegacyKeys), 'migration-error', undefined, followUpWrite || activeWrite);

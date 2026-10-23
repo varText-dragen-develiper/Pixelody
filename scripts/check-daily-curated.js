@@ -93,7 +93,7 @@ test('renderer integration keeps the feature isolated, persistable, and theme-ad
   assert.doesNotMatch(renderer, /state\.flowShuffle\s*=\s*.*daily/i);
   assert.match(renderer, /if \(playlist\.dailyMix\) return playlist\.trackIds\.map\(trackById\)/, 'Daily Curated must display the same authored order that Play uses.');
   assert.match(renderer, /name: "Today's Listen"/, 'The collection identity must describe the daily listening job rather than another playlist.');
-  assert.match(renderer, /No setup, no choices to configure, and no reshuffle until tomorrow/, 'The renderer must state the zero-configuration daily promise.');
+  assert.match(renderer, /A daily mix from your library\. It stays the same until tomorrow\./, 'The renderer must explain that the daily mix stays fixed.');
   assert.match(html, /id="dailyCuratedPanel"/);
   assert.match(html, /ONE LISTEN, MADE FOR TODAY/);
   assert.match(html, /id="dailyCuratedLeadTitle"/);

@@ -4,7 +4,7 @@
   "id": "pixelody.dead-signal",
   "name": "Dead Signal",
   "author": "Pixelody",
-  "description": "Retained broadcast-archive palette and layout baseline; previous artwork is retired pending an original redesign.",
+  "description": "Broadcast panels with pale labels, cyan fields, and red accents.",
   "palette": {
     "primary": "#1bd7d0",
     "secondary": "#d09a3a",

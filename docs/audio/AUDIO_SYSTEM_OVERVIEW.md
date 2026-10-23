@@ -112,7 +112,6 @@ The driver, bridge, installer, restore/watchdog flow, signing, and audible proce
 - Normal playback never requires a driver, service, registry edit, admin prompt, or unsigned native executable.
 - Diagnostics and shared snapshots must not expose private file paths to remote clients.
 
-Run `npm run check`, `npm run check:audio`, and `npm run check:themes` after relevant changes. Use the bundled Node executable listed in `CHAT_MIGRATION_NOTES_2026-07-15.md` when `npm` is unavailable.
 
 ## Open Gaps In Priority Order
 

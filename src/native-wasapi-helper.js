@@ -251,7 +251,7 @@ async function getNativeMixerStatus(app) {
     state: bridge.audioEngineImplemented === true ? 'ready' : 'not-required',
     reason: bridge.audioEngineImplemented === true
       ? 'The native mixer bridge responded, but no grouped native route has been configured.'
-      : 'The installed bridge currently exposes bounded development labs only; it cannot render grouped Pixelody playback.',
+      : 'The installed bridge currently exposes experimental tests only; it cannot render grouped Pixelody playback.',
     component: {
       supported: true,
       installed: true,
@@ -300,7 +300,7 @@ async function runNativeMixerClockDisciplineLab(app, request = {}) {
       reason: result.data?.status?.reason || 'Endpoint-clock monitoring completed.',
       component: initial.component,
       runtimeClock: clockLabSnapshot(result.data),
-      warnings: ['This is a bounded silent development observation, not native grouped program playback.'],
+      warnings: ['This is a silent diagnostic check, not native grouped program playback.'],
       lastError: result.data?.status?.accepted === false ? result.data?.status?.reason || 'Clock monitoring was blocked.' : null,
     }),
   };

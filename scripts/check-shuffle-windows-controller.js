@@ -28,7 +28,7 @@ function fixture(overrides = {}) {
   let sequence = 0;
   let now = 1791748800000;
   const changes = [];
-  const input = { core, learning, scopes, entries: entries(), scopeId: 'library', sessionId: 'session-one', authorityId: 'desktop-one', seed: 'controller-fixture', mode: 'random', repeat: 'off',
+  const input = { core, learning, scopes, entries: entries(), scopeId: 'library', sessionId: 'session-one', authorityId: 'desktop-one', seed: 'controller-fixture', mode: 'balanced', repeat: 'off',
     nowMs: () => now, newId: (kind) => JSON.stringify([kind, ++sequence]), onChange: (change) => changes.push(change), ...overrides };
   return { controller: adapter.createController(input), input, changes, advance: (milliseconds) => { now += milliseconds; } };
 }

@@ -2,8 +2,6 @@
 
 This map records the earlier theme implementation. For the current selectable composition, start with `docs/themes/THEME_SYSTEM.md` and `src/theme-runtime/canvas-theme-ports.js`. Keep the older paths below as reference; they are not installation instructions.
 
-This map records the earlier theme implementation. For the current selectable composition, start with `docs/themes/THEME_SYSTEM.md` and `src/theme-runtime/canvas-theme-ports.js`. Keep the older paths below as reference; they are not installation instructions.
-
 ## Registration
 
 - `src/themes/built-in-themes.json`

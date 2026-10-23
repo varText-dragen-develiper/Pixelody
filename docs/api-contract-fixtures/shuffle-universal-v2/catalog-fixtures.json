@@ -41,11 +41,11 @@
       "context": {
         "nowMs": 100000
       },
-      "normalizedEntriesSha256": "64184bbb2c1a45f5c3509edfb2fdc784396c5b768a1df8c64f1cd8c9507b8f52",
+      "normalizedEntriesSha256": "489d672996acb405a8698bc1cac2c5180d8d6f5aac7d3fb6399d8239af973e0b",
       "firstDecision": {
-        "version": 2,
-        "policyVersion": "universal-shuffle-v2.1",
-        "configVersion": 1,
+        "version": 3,
+        "policyVersion": "universal-shuffle-v2.2",
+        "configVersion": 2,
         "decisionId": "[\"session-1\",0,0,0,\"singleton\",\"automatic\"]",
         "scopeId": "library-1",
         "cycleId": "[\"library-1\",0]",
@@ -71,10 +71,15 @@
           "energy": 0,
           "key": 0,
           "context": 0,
-          "preset": 0
+          "preset": 0,
+          "steer": 0,
+          "airtime": 0,
+          "adapter": 0
         },
         "weight": 76,
-        "albumOrdering": null
+        "albumOrdering": null,
+        "lane": "base",
+        "skip": null
       },
       "firstProjection": {
         "revision": 0,
@@ -83,9 +88,9 @@
         ],
         "decisions": [
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",0,0,0,\"singleton\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -111,10 +116,15 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           }
         ]
       },
@@ -14259,11 +14269,11 @@
       "context": {
         "nowMs": 100000
       },
-      "normalizedEntriesSha256": "748992006946d99e7b78d432f8838315f328bd6d6ff0c108d835ebb761db0af0",
+      "normalizedEntriesSha256": "7b4688398bd8c544851c4d3f0509ffa2a4c29c5a60f2d35ef3320c3960fc3bc4",
       "firstDecision": {
-        "version": 2,
-        "policyVersion": "universal-shuffle-v2.1",
-        "configVersion": 1,
+        "version": 3,
+        "policyVersion": "universal-shuffle-v2.2",
+        "configVersion": 2,
         "decisionId": "[\"session-1\",0,0,0,\"曲|700\",\"automatic\"]",
         "scopeId": "library-1",
         "cycleId": "[\"library-1\",0]",
@@ -14289,10 +14299,15 @@
           "energy": 0,
           "key": 0,
           "context": 0,
-          "preset": 0
+          "preset": 0,
+          "steer": 0,
+          "airtime": 0,
+          "adapter": 0
         },
         "weight": 76,
-        "albumOrdering": null
+        "albumOrdering": null,
+        "lane": "base",
+        "skip": null
       },
       "firstProjection": {
         "revision": 0,
@@ -14310,9 +14325,9 @@
         ],
         "decisions": [
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",0,0,0,\"曲|700\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -14338,15 +14353,20 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",1,0,0,\"曲|961\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -14372,15 +14392,20 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",2,0,0,\"曲|906\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -14406,15 +14431,20 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",3,0,0,\"曲|976\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -14440,15 +14470,20 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",4,0,0,\"曲|577\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -14474,15 +14509,20 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",5,0,0,\"曲|944\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -14508,15 +14548,20 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",6,0,0,\"曲|911\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -14542,15 +14587,20 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",7,0,0,\"曲|972\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -14576,15 +14626,20 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",8,0,0,\"曲|697\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -14610,15 +14665,20 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",9,0,0,\"曲|952\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -14644,10 +14704,15 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           }
         ]
       },
@@ -14694,11 +14759,11 @@
       "context": {
         "nowMs": 100000
       },
-      "normalizedEntriesSha256": "91f4277fdc3b23c55708acf22a5f6611dac0dedc6b62fc1db844b14a739f6ba1",
+      "normalizedEntriesSha256": "fa0794b1b3a01b7fadbf70bce70a76f8a56c4dc74ae15c9941ea5d3d2b62750a",
       "firstDecision": {
-        "version": 2,
-        "policyVersion": "universal-shuffle-v2.1",
-        "configVersion": 1,
+        "version": 3,
+        "policyVersion": "universal-shuffle-v2.2",
+        "configVersion": 2,
         "decisionId": "[\"session-1\",0,0,0,\"studio-2\",\"automatic\"]",
         "scopeId": "library-1",
         "cycleId": "[\"library-1\",0]",
@@ -14724,10 +14789,15 @@
           "energy": 0,
           "key": 0,
           "context": 0,
-          "preset": 0
+          "preset": 0,
+          "steer": 0,
+          "airtime": 0,
+          "adapter": 0
         },
         "weight": 76,
-        "albumOrdering": null
+        "albumOrdering": null,
+        "lane": "base",
+        "skip": null
       },
       "firstProjection": {
         "revision": 0,
@@ -14739,9 +14809,9 @@
         ],
         "decisions": [
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",0,0,0,\"studio-2\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -14767,15 +14837,20 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",1,0,0,\"unknown-version\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -14804,15 +14879,20 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",2,0,0,\"live\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -14841,15 +14921,20 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",3,0,0,\"studio-1\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -14878,10 +14963,15 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           }
         ]
       },
@@ -15531,11 +15621,11 @@
       "context": {
         "nowMs": 100000
       },
-      "normalizedEntriesSha256": "99b89654cf5b4db51ca9fb9906d23f55f60ab99453d409c73fceecee823c7401",
+      "normalizedEntriesSha256": "9a95422b9ed57d2332b61b92365f7754c58e47f27db8c6c5c534282e51729926",
       "firstDecision": {
-        "version": 2,
-        "policyVersion": "universal-shuffle-v2.1",
-        "configVersion": 1,
+        "version": 3,
+        "policyVersion": "universal-shuffle-v2.2",
+        "configVersion": 2,
         "decisionId": "[\"session-1\",0,0,0,\"multi-0\",\"automatic\"]",
         "scopeId": "library-1",
         "cycleId": "[\"library-1\",0]",
@@ -15555,7 +15645,9 @@
         "signalCoverage": [],
         "scoreParts": null,
         "weight": null,
-        "albumOrdering": "disc-track"
+        "albumOrdering": "disc-track",
+        "lane": "base",
+        "skip": null
       },
       "firstProjection": {
         "revision": 0,
@@ -15573,9 +15665,9 @@
         ],
         "decisions": [
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",0,0,0,\"multi-0\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -15595,12 +15687,14 @@
             "signalCoverage": [],
             "scoreParts": null,
             "weight": null,
-            "albumOrdering": "disc-track"
+            "albumOrdering": "disc-track",
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",1,0,0,\"multi-1\",\"album-continuation\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -15620,12 +15714,14 @@
             "signalCoverage": [],
             "scoreParts": null,
             "weight": null,
-            "albumOrdering": "disc-track"
+            "albumOrdering": "disc-track",
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",2,0,0,\"multi-2\",\"album-continuation\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -15645,12 +15741,14 @@
             "signalCoverage": [],
             "scoreParts": null,
             "weight": null,
-            "albumOrdering": "disc-track"
+            "albumOrdering": "disc-track",
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",3,0,0,\"multi-3\",\"album-continuation\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -15670,12 +15768,14 @@
             "signalCoverage": [],
             "scoreParts": null,
             "weight": null,
-            "albumOrdering": "disc-track"
+            "albumOrdering": "disc-track",
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",4,0,0,\"multi-4\",\"album-continuation\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -15695,12 +15795,14 @@
             "signalCoverage": [],
             "scoreParts": null,
             "weight": null,
-            "albumOrdering": "disc-track"
+            "albumOrdering": "disc-track",
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",5,0,0,\"multi-5\",\"album-continuation\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -15720,12 +15822,14 @@
             "signalCoverage": [],
             "scoreParts": null,
             "weight": null,
-            "albumOrdering": "disc-track"
+            "albumOrdering": "disc-track",
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",6,0,0,\"multi-6\",\"album-continuation\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -15745,12 +15849,14 @@
             "signalCoverage": [],
             "scoreParts": null,
             "weight": null,
-            "albumOrdering": "disc-track"
+            "albumOrdering": "disc-track",
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",7,0,0,\"multi-7\",\"album-continuation\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -15770,12 +15876,14 @@
             "signalCoverage": [],
             "scoreParts": null,
             "weight": null,
-            "albumOrdering": "disc-track"
+            "albumOrdering": "disc-track",
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",8,0,0,\"multi-8\",\"album-continuation\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -15795,12 +15903,14 @@
             "signalCoverage": [],
             "scoreParts": null,
             "weight": null,
-            "albumOrdering": "disc-track"
+            "albumOrdering": "disc-track",
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",9,0,0,\"multi-9\",\"album-continuation\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -15820,7 +15930,9 @@
             "signalCoverage": [],
             "scoreParts": null,
             "weight": null,
-            "albumOrdering": "disc-track"
+            "albumOrdering": "disc-track",
+            "lane": "base",
+            "skip": null
           }
         ]
       },
@@ -15861,11 +15973,11 @@
       "context": {
         "nowMs": 100000
       },
-      "normalizedEntriesSha256": "a70cf741af772a79a1730a8a033513acadd51147ae86c238b59ae6a6ba8a5f35",
+      "normalizedEntriesSha256": "bb50fecc49535c4c7c25223f150a98a15e724abfea9eeae3afed66e734281f5f",
       "firstDecision": {
-        "version": 2,
-        "policyVersion": "universal-shuffle-v2.1",
-        "configVersion": 1,
+        "version": 3,
+        "policyVersion": "universal-shuffle-v2.2",
+        "configVersion": 2,
         "decisionId": "[\"session-1\",0,0,0,\"z\",\"automatic\"]",
         "scopeId": "library-1",
         "cycleId": "[\"library-1\",0]",
@@ -15885,7 +15997,9 @@
         "signalCoverage": [],
         "scoreParts": null,
         "weight": null,
-        "albumOrdering": "source-order-missing-numbers"
+        "albumOrdering": "source-order-missing-numbers",
+        "lane": "base",
+        "skip": null
       },
       "firstProjection": {
         "revision": 0,
@@ -15896,9 +16010,9 @@
         ],
         "decisions": [
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",0,0,0,\"z\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -15918,12 +16032,14 @@
             "signalCoverage": [],
             "scoreParts": null,
             "weight": null,
-            "albumOrdering": "source-order-missing-numbers"
+            "albumOrdering": "source-order-missing-numbers",
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",1,0,0,\"a\",\"album-continuation\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -15943,12 +16059,14 @@
             "signalCoverage": [],
             "scoreParts": null,
             "weight": null,
-            "albumOrdering": "source-order-missing-numbers"
+            "albumOrdering": "source-order-missing-numbers",
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",2,0,0,\"m\",\"album-continuation\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -15968,7 +16086,9 @@
             "signalCoverage": [],
             "scoreParts": null,
             "weight": null,
-            "albumOrdering": "source-order-missing-numbers"
+            "albumOrdering": "source-order-missing-numbers",
+            "lane": "base",
+            "skip": null
           }
         ]
       },
@@ -15997,11 +16117,11 @@
       "context": {
         "nowMs": 100000
       },
-      "normalizedEntriesSha256": "90e5f3f1991aa28d325b62d01a3a609a0de20f3b029d16c3ed557e6ec46823a3",
+      "normalizedEntriesSha256": "ec15c74be3f072a788d92870bf638def6a6589353f2a727364a3e40476a17797",
       "firstDecision": {
-        "version": 2,
-        "policyVersion": "universal-shuffle-v2.1",
-        "configVersion": 1,
+        "version": 3,
+        "policyVersion": "universal-shuffle-v2.2",
+        "configVersion": 2,
         "decisionId": "[\"session-1\",0,0,0,\"available\",\"automatic\"]",
         "scopeId": "library-1",
         "cycleId": "[\"library-1\",0]",
@@ -16027,10 +16147,15 @@
           "energy": 0,
           "key": 0,
           "context": 0,
-          "preset": 0
+          "preset": 0,
+          "steer": 0,
+          "airtime": 0,
+          "adapter": 0
         },
         "weight": 76,
-        "albumOrdering": null
+        "albumOrdering": null,
+        "lane": "base",
+        "skip": null
       },
       "firstProjection": {
         "revision": 0,
@@ -16039,9 +16164,9 @@
         ],
         "decisions": [
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",0,0,0,\"available\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -16067,10 +16192,15 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           }
         ]
       },
@@ -16133,11 +16263,11 @@
       "context": {
         "nowMs": 100000
       },
-      "normalizedEntriesSha256": "d8091a26f8165334b294d0dcd21b57162c9572458d3612efbdf94ce73322244f",
+      "normalizedEntriesSha256": "58d30199b874a507f0e605dbe18c1dd589165c0fc4c1a6670997cecd52734f12",
       "firstDecision": {
-        "version": 2,
-        "policyVersion": "universal-shuffle-v2.1",
-        "configVersion": 1,
+        "version": 3,
+        "policyVersion": "universal-shuffle-v2.2",
+        "configVersion": 2,
         "decisionId": "[\"session-1\",0,0,0,\"unsupported\",\"automatic\"]",
         "scopeId": "library-1",
         "cycleId": "[\"library-1\",0]",
@@ -16163,10 +16293,15 @@
           "energy": 0,
           "key": 0,
           "context": 0,
-          "preset": 0
+          "preset": 0,
+          "steer": 0,
+          "airtime": 0,
+          "adapter": 0
         },
         "weight": 76,
-        "albumOrdering": null
+        "albumOrdering": null,
+        "lane": "base",
+        "skip": null
       },
       "firstProjection": {
         "revision": 0,
@@ -16178,9 +16313,9 @@
         ],
         "decisions": [
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",0,0,0,\"unsupported\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -16206,15 +16341,20 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",1,0,0,\"unknown\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -16240,15 +16380,20 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",2,0,0,\"null\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -16274,15 +16419,20 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           },
           {
-            "version": 2,
-            "policyVersion": "universal-shuffle-v2.1",
-            "configVersion": 1,
+            "version": 3,
+            "policyVersion": "universal-shuffle-v2.2",
+            "configVersion": 2,
             "decisionId": "[\"session-1\",3,0,0,\"zero\",\"automatic\"]",
             "scopeId": "library-1",
             "cycleId": "[\"library-1\",0]",
@@ -16308,10 +16458,15 @@
               "energy": 0,
               "key": 0,
               "context": 0,
-              "preset": 0
+              "preset": 0,
+              "steer": 0,
+              "airtime": 0,
+              "adapter": 0
             },
             "weight": 76,
-            "albumOrdering": null
+            "albumOrdering": null,
+            "lane": "base",
+            "skip": null
           }
         ]
       },
@@ -16331,8 +16486,8 @@
       "name": "future-schema-preserved",
       "input": {
         "schemaVersion": 99,
-        "policyVersion": "universal-shuffle-v2.1",
-        "configVersion": 1,
+        "policyVersion": "universal-shuffle-v2.2",
+        "configVersion": 2,
         "sessionId": "session-1",
         "scopeId": "library-1",
         "authorityId": "device-1",
@@ -16345,7 +16500,8 @@
           "preset": "flow",
           "shape": "auto",
           "preserveAlbumRuns": false,
-          "contextTag": null
+          "contextTag": null,
+          "airtime": "size"
         },
         "cycle": {
           "generation": 0,
@@ -16365,6 +16521,7 @@
             "artistId": "artist a",
             "albumArtistId": null,
             "albumId": "[\"artist a\",\"album a\"]",
+            "sourceKey": null,
             "sourceIndex": 0,
             "discNumber": null,
             "trackNumber": null,
@@ -16402,6 +16559,7 @@
             "artistId": "artist b",
             "albumArtistId": null,
             "albumId": "[\"artist b\",\"album b\"]",
+            "sourceKey": null,
             "sourceIndex": 1,
             "discNumber": null,
             "trackNumber": null,
@@ -16439,6 +16597,7 @@
             "artistId": "artist c",
             "albumArtistId": null,
             "albumId": "[\"artist c\",\"album c\"]",
+            "sourceKey": null,
             "sourceIndex": 2,
             "discNumber": null,
             "trackNumber": null,
@@ -16476,6 +16635,7 @@
             "artistId": "artist d",
             "albumArtistId": null,
             "albumId": "[\"artist d\",\"album d\"]",
+            "sourceKey": null,
             "sourceIndex": 3,
             "discNumber": null,
             "trackNumber": null,
@@ -16531,6 +16691,14 @@
         "paused": true,
         "diagnostics": [],
         "imported": false,
+        "lanes": {
+          "marks": [],
+          "flicks": 0,
+          "earlyRun": 0,
+          "anchorEntryId": null,
+          "lastEarlyAlbumId": null,
+          "pinned": []
+        },
         "futureProperty": "keep"
       },
       "status": "unsupported"
@@ -16538,9 +16706,9 @@
     {
       "name": "corrupt-entitlement-preserved",
       "input": {
-        "schemaVersion": 2,
-        "policyVersion": "universal-shuffle-v2.1",
-        "configVersion": 1,
+        "schemaVersion": 3,
+        "policyVersion": "universal-shuffle-v2.2",
+        "configVersion": 2,
         "sessionId": "session-1",
         "scopeId": "library-1",
         "authorityId": "device-1",
@@ -16553,7 +16721,8 @@
           "preset": "flow",
           "shape": "auto",
           "preserveAlbumRuns": false,
-          "contextTag": null
+          "contextTag": null,
+          "airtime": "size"
         },
         "cycle": {
           "generation": 0,
@@ -16573,6 +16742,7 @@
             "artistId": "artist a",
             "albumArtistId": null,
             "albumId": "[\"artist a\",\"album a\"]",
+            "sourceKey": null,
             "sourceIndex": 0,
             "discNumber": null,
             "trackNumber": null,
@@ -16610,6 +16780,7 @@
             "artistId": "artist b",
             "albumArtistId": null,
             "albumId": "[\"artist b\",\"album b\"]",
+            "sourceKey": null,
             "sourceIndex": 1,
             "discNumber": null,
             "trackNumber": null,
@@ -16647,6 +16818,7 @@
             "artistId": "artist c",
             "albumArtistId": null,
             "albumId": "[\"artist c\",\"album c\"]",
+            "sourceKey": null,
             "sourceIndex": 2,
             "discNumber": null,
             "trackNumber": null,
@@ -16684,6 +16856,7 @@
             "artistId": "artist d",
             "albumArtistId": null,
             "albumId": "[\"artist d\",\"album d\"]",
+            "sourceKey": null,
             "sourceIndex": 3,
             "discNumber": null,
             "trackNumber": null,
@@ -16735,7 +16908,15 @@
         "undo": null,
         "paused": true,
         "diagnostics": [],
-        "imported": false
+        "imported": false,
+        "lanes": {
+          "marks": [],
+          "flicks": 0,
+          "earlyRun": 0,
+          "anchorEntryId": null,
+          "lastEarlyAlbumId": null,
+          "pinned": []
+        }
       },
       "status": "corrupt"
     }

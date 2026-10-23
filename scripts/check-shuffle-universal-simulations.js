@@ -90,7 +90,7 @@ function coldRestore(state, context = {}) {
   const restored = U.restore(JSON.parse(saved));
   equal(restored.status, 'restored', 'valid checkpoint restores', 'restoreMismatch');
   check(restored.state.paused === true, 'cold restoration is paused', 'restoreMismatch');
-  for (const field of ['entries', 'remaining', 'rng', 'cycle', 'history', 'cursor', 'occurrenceSequence', 'generatedFuture', 'manual', 'exclusions', 'albumLock', 'scopeId', 'membershipRevision'])
+  for (const field of ['entries', 'remaining', 'rng', 'cycle', 'history', 'cursor', 'occurrenceSequence', 'generatedFuture', 'manual', 'exclusions', 'albumLock', 'scopeId', 'membershipRevision', 'lanes'])
     equal(restored.state[field], state[field], `restore preserves ${field}`, 'restoreMismatch');
   const before = U.project(state, { horizon: 3, context });
   const after = U.project(restored.state, { horizon: 3, context });
@@ -189,7 +189,7 @@ test('v1 UTF-16 FNV / Mulberry32 / Fisher-Yates compatibility', () => {
     limitation: 'A finite 32-bit PRNG and floor mapping have finite-state/bounded-draw bias; this is compatibility, not cryptographic randomness or proof of uniform permutations.' };
 });
 
-test('Random finite-PRNG distribution sanity across 4096 independent seeds', () => {
+test('Fisher-Yates permutation distribution sanity across 4096 independent seeds', () => {
   const count = 10, seedCount = 4096;
   const counts = Array.from({ length: count }, () => Array(count).fill(0));
   for (let seed = 0; seed < seedCount; seed += 1) {
@@ -239,7 +239,7 @@ for (const mode of U.MODES) test(`${mode}: 1000 items / 100 ten-item sessions wi
     finalTraversalSha256: digest(sequence.map((decision) => decision.entryId)) };
 });
 
-for (const kind of ['skew', 'sparse']) for (const mode of ['random', 'balanced', 'flow', 'album']) test(`${mode}: full-cycle ${kind} metadata library`, () => {
+for (const kind of ['skew', 'sparse']) for (const mode of ['balanced', 'flow', 'album']) test(`${mode}: full-cycle ${kind} metadata library`, () => {
   const entries = fixture(200, { [kind]: true });
   let state = session(entries, mode, { seed: `${mode}:${kind}` });
   const sequence = [];
@@ -259,9 +259,44 @@ for (const kind of ['skew', 'sparse']) for (const mode of ['random', 'balanced',
   return metrics;
 });
 
+// Mixed natural ends, flicks, early, mid and late skips, with injected playback
+// failures. Every song still plays once, the live queue never repeats the base
+// head while real alternatives remain, and the same inputs give the same order.
+for (const mode of ['balanced', 'flow', 'album']) test(`${mode}: two queues under mixed skips and failures`, () => {
+  const kinds = [{ naturalEnd: true }, { naturalEnd: false, heardMs: 1200 }, { naturalEnd: false, heardMs: 9000, coveragePermille: 40 }, { naturalEnd: false, heardMs: 70000, coveragePermille: 400 }, { naturalEnd: false, heardMs: 210000, coveragePermille: 900 }];
+  const play = (seed) => {
+    let state = session(fixture(150), mode, { seed: `lanes:${mode}:${seed}` }), pattern = U.createRng(`pattern:${seed}`), order = [], liveChecks = 0, retries = 0;
+    for (let i = 0; i < 400 && state.remaining.length; i += 1) {
+      const roll = U.bounded(pattern, kinds.length + 1); pattern = roll.rng;
+      const request = kinds[roll.value % kinds.length];
+      const advanceId = JSON.stringify(['lanes-advance', seed, i]);
+      let staged = U.stage(state, { attemptId: `${advanceId}:0`, advanceId, ...request });
+      if (!staged.pending) break;
+      if (roll.value === kinds.length && request.naturalEnd === false) {
+        const lane = staged.pending.lane;
+        state = U.abort(staged, staged.pending);
+        staged = U.stage(state, { attemptId: `${advanceId}:1`, advanceId });
+        equal(staged.pending.lane, lane, 'a failed candidate retries in its lane'); retries += 1;
+      }
+      const pinnedHead = state.lanes.pinned[0]?.entryId;
+      if (mode !== 'album' && staged.pending.lane === 'live' && pinnedHead && staged.pending.receipt.candidateCount >= U.CONFIG.liveExclusionMinimum) { check(staged.pending.entryId !== pinnedHead, 'live never offers the base head'); liveChecks += 1; }
+      equal(staged.lanes, state.lanes, 'staging leaves the queues unchanged');
+      state = U.commit(staged, staged.pending); order.push(staged.pending.entryId);
+      check(state.lanes.marks.length <= U.CONFIG.maxMarks && state.lanes.pinned.length <= U.CONFIG.pinnedBase && state.lanes.marks.every((mark) => mark.songs < U.CONFIG.markMaxSongs), 'session marks and the base window stay bounded');
+    }
+    return { order, liveChecks, retries, state };
+  };
+  const first = play(1), second = play(1);
+  equal(first.order.length, 150, 'every song plays', 'automaticEntitlement');
+  equal(new Set(first.order).size, 150, 'no song plays twice in a cycle', 'automaticEntitlement');
+  equal(second.order, first.order, 'same inputs give the same order');
+  U.validateState(first.state); coldRestore(first.state);
+  return { liveChecks: first.liveChecks, retries: first.retries };
+});
+
 test('membership edits, imports, removals, unavailable sources, undo and mode changes', () => {
   let entries = fixture(80);
-  let state = session(entries, 'random');
+  let state = session(entries, 'balanced');
   for (let i = 0; i < 15; i += 1) state = advance(state).state;
   const history = clone(state.history);
   const consumed = new Set(history.map((h) => h.entryId));
@@ -272,7 +307,7 @@ test('membership edits, imports, removals, unavailable sources, undo and mode ch
   state = U.reconcile(state, entries, { membershipRevision: 1 });
   equal(state.history, history, 'future removal preserves confirmed history');
   equal(state.remaining.length, 65, 'ten imports replace ten removed unfinished entries');
-  for (const mode of ['flow', 'balanced', 'album', 'off', 'random']) {
+  for (const mode of ['flow', 'balanced', 'album', 'off']) {
     const before = clone(state.remaining);
     state = U.reduce(state, { type: 'mode-change', mode });
     equal(state.remaining, before, 'mode changes preserve entitlement', 'automaticEntitlement');
@@ -311,7 +346,7 @@ test('membership edits, imports, removals, unavailable sources, undo and mode ch
 });
 
 test('bounded many-failure attempts, pending crash, stale authority and duplicate callbacks', () => {
-  let state = session(fixture(80), 'random');
+  let state = session(fixture(80), 'balanced');
   const initialRemaining = clone(state.remaining), initialRng = clone(state.rng);
   const failed = [];
   for (let i = 0; i < U.CONFIG.maxFailures; i += 1) {
@@ -334,7 +369,7 @@ test('bounded many-failure attempts, pending crash, stale authority and duplicat
   equal(restored.state.pending, null, 'unconfirmed pending activation is aborted at cold restore');
   equal(restored.state.remaining, initialRemaining, 'crash does not retrospectively consume', 'automaticEntitlement');
   equal(restored.state.rng, initialRng, 'crash does not retrospectively advance RNG');
-  equal(U.stage(restored.state, { attemptId: 'post-crash', advanceId: 'new' }).pending.entryId, staged.pending.entryId, 'restart repeats unconsumed random candidate');
+  equal(U.stage(restored.state, { attemptId: 'post-crash', advanceId: 'new' }).pending.entryId, staged.pending.entryId, 'restart repeats unconsumed candidate');
   const transferred = U.reduce(staged, { type: 'authority-change', authorityId: 'new-authority', authorityEpoch: 1 });
   equal(U.commit(transferred, staged.pending), transferred, 'old authority callback rejected', 'staleOrDuplicateCommit');
   return { failedActivations: failed.length, uniqueQuarantined: new Set(failed).size, consumedAfterFailures: 0,
@@ -371,7 +406,7 @@ test('bounded stable scope bank, explicit unfinished eviction and scheduler prod
   for (let i = 0; i < S.MAX_EVICTION_DIAGNOSTICS + 10; i += 1) {
     const scopeId = bank.scopes[0].scopeId;
     bank = S.evict(bank, scopeId, { nowMs: FIXED_NOW + DAY + i }).bank;
-    bank = S.save(bank, session(fixture(1), 'random', { scopeId: `rotation:${i}` }), { nowMs: FIXED_NOW + DAY + i }).bank;
+    bank = S.save(bank, session(fixture(1), 'balanced', { scopeId: `rotation:${i}` }), { nowMs: FIXED_NOW + DAY + i }).bank;
   }
   equal(bank.scopes.length, S.MAX_SCOPES, 'scope retention remains bounded');
   equal(bank.evictions.length, S.MAX_EVICTION_DIAGNOSTICS, 'eviction diagnostics remain bounded');
@@ -453,7 +488,7 @@ test('long multidisc compilation album across bounded horizons, restarts and exp
   }
   equal(midway.remaining.length, 35, 'earlier unplayed album siblings remain owed', 'automaticEntitlement');
   check(!midway.remaining.includes(removed), 'lock does not recreate removed sibling');
-  midway = U.setMode(midway, 'random');
+  midway = U.setMode(midway, 'balanced');
   equal(midway.albumLock, null, 'leaving album releases continuation lock');
   const missing = entries.slice(0, 20).map((e, i) => ({ ...e, discNumber: i === 7 ? null : e.discNumber }));
   let fallback = session(missing.slice().reverse(), 'album');
@@ -640,7 +675,7 @@ test('ten-thousand-item production selection latency and memory', () => {
     noveltyPoints: i % 13, lastHeardAtMs: FIXED_NOW - i * 1000 }));
   const byMode = [];
   const memoryBefore = process.memoryUsage();
-  for (const mode of ['random', 'balanced', 'flow', 'album']) {
+  for (const mode of ['balanced', 'flow', 'album']) {
     let state = session(entries, mode, { seed: `performance:${mode}` });
     for (let warm = 0; warm < 5; warm += 1) {
       const staged = U.stage(state, { attemptId: `warm:${mode}:${warm}` }, { nowMs: FIXED_NOW, signals });
