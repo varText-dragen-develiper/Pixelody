@@ -33,8 +33,8 @@ Start with [Getting started](GETTING_STARTED.md) for the app, or the [website gu
 - [Pixelody Audio Release Gate](audio/AUDIO_RELEASE_GATE.md)
 - [Pixelody Audio System Overview](audio/AUDIO_SYSTEM_OVERVIEW.md)
 - [Audio Visualizer Foundation](audio/AUDIO_VISUALIZER_FOUNDATION.md)
-- [Flow Shuffle Development Plan](audio/FLOW_SHUFFLE_DEVELOPMENT_PLAN.md)
-- [Global System Audio EQ Plan](audio/GLOBAL_SYSTEM_AUDIO_EQ_PLAN.md)
+- [Flow Shuffle development notes](audio/FLOW_SHUFFLE_DEVELOPMENT_PLAN.md)
+- [Windows-wide EQ](audio/GLOBAL_SYSTEM_AUDIO_EQ_PLAN.md)
 - [Browser Fan-Out Decision Record](audio/multi-output/MULTI_OUTPUT_BROWSER_FANOUT_DECISION.md)
 - [Multi-output speaker calibration design](audio/multi-output/MULTI_OUTPUT_CALIBRATION_DESIGN.md)
 - [Multi-output Calibration Roadmap](audio/multi-output/MULTI_OUTPUT_CALIBRATION_ROADMAP.md)
@@ -49,8 +49,8 @@ Start with [Getting started](GETTING_STARTED.md) for the app, or the [website gu
 - [Multi-Output Phase C Hardware Run Log](audio/multi-output/MULTI_OUTPUT_PHASEC_HARDWARE_RUN_LOG.md)
 - [Multi-Output Physical Validation Recorder](audio/multi-output/MULTI_OUTPUT_PHYSICAL_VALIDATION_RECORDER.md)
 - [Multi-Output Speaker Systems Notes](audio/multi-output/MULTI_OUTPUT_SPEAKER_SYSTEMS_NOTES.md)
-- [Multi-Output Speaker Systems Plan](audio/multi-output/MULTI_OUTPUT_SPEAKER_SYSTEMS_PLAN.md)
-- [Multi-Output Speaker Systems Roadmap](audio/multi-output/MULTI_OUTPUT_SPEAKER_SYSTEMS_ROADMAP.md)
+- [Playing through a speaker rig](audio/multi-output/MULTI_OUTPUT_SPEAKER_SYSTEMS_PLAN.md)
+- [Speaker-system development notes](audio/multi-output/MULTI_OUTPUT_SPEAKER_SYSTEMS_ROADMAP.md)
 - [Windows System Audio Bridge Protocol](audio/system-audio/WINDOWS_SYSTEM_AUDIO_BRIDGE_PROTOCOL.md)
 - [Windows Virtual Audio Driver Research](audio/system-audio/WINDOWS_VIRTUAL_AUDIO_DRIVER_RESEARCH.md)
 - [Windows Virtual Audio Opportunity Audit](audio/system-audio/WINDOWS_VIRTUAL_AUDIO_OPPORTUNITY_AUDIT.md)
@@ -73,7 +73,7 @@ Start with [Getting started](GETTING_STARTED.md) for the app, or the [website gu
 
 ## Planning
 
-- [Library Migration And Discovery Plan](planning/LIBRARY_MIGRATION_AND_DISCOVERY_PLAN.md)
+- [Bringing a music collection into Pixelody](planning/LIBRARY_MIGRATION_AND_DISCOVERY_PLAN.md)
 
 ## Brand
 
