@@ -1,6 +1,6 @@
 # Pixelody Audio Release Gate
 
-Pixelody does not ship until the audio path is stable, honest, and conservative on normal Windows systems. Advanced features must fail gracefully and must not require system-wide drivers, registry edits, background services, or exclusive-mode assumptions.
+Before releasing a build, check ordinary listening on supported Windows systems. If an advanced feature fails, the player should explain what happened and let the listener recover. Normal playback must not depend on system-wide drivers, registry edits, background services or exclusive-mode output.
 
 Automated structural guard: `npm run check:audio`. It does not replace the physical output and codec matrices below.
 

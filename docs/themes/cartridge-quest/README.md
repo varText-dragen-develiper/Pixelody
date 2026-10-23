@@ -1,6 +1,6 @@
 # Cartridge Quest Notes
 
-This folder is the working map for owning, editing, and refining the Cartridge Quest theme.
+Start here when working on Cartridge Quest. The linked notes cover its controls, layout and mini-player.
 
 Cartridge Quest is Pixelody's original 8/16-bit console adventure skin. The theme should feel like a playable music cartridge: chunky controls, cabinet hardware, screen glow, pixel feedback, and score moments that reward listening without getting in the way of playback.
 

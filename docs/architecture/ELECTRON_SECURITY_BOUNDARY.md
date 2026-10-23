@@ -1,6 +1,6 @@
 # Electron Security Boundary
 
-Pixelody loads only repository-packaged local documents in its privileged desktop windows. The main renderer is treated as a UI client of explicit main-process capabilities, and Pixelody Mini is a separate, narrower client rather than a second copy of the full bridge.
+Pixelody’s privileged desktop windows load documents packaged with the app. The main window requests specific operations from the main process. Pixelody Mini has a smaller bridge with only the operations it needs.
 
 ## Window capabilities
 

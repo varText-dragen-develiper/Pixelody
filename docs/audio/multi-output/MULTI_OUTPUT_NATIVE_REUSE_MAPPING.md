@@ -1,6 +1,6 @@
 # Native Mixer Profile, Calibration, And Diagnostics Reuse Mapping
 
-This document defines how the future native grouped-playback mixer reuses Pixelody's existing output profiles, spatial profiles, calibration snapshots, and diagnostics.
+The planned native mixer should reuse Pixelody’s output profiles, spatial profiles, calibration snapshots and diagnostics. This guide shows where those connections belong.
 
 It is a contract for future implementation. It does not implement native grouped playback.
 

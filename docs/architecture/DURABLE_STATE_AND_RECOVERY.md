@@ -1,8 +1,8 @@
 # Durable state and recovery
 
-Authoritative description of where Pixelody keeps a user's library, playlists,
-tuning and session state, what happens to it when a write is interrupted, and
-how to add a key without quietly creating a data-loss path.
+This guide explains where Pixelody keeps your library, playlists, tuning and
+listening state, how it recovers an interrupted write, and what to check before
+adding another saved setting.
 
 Written 2026-09-20. Read this before changing `src/state-store.js`,
 `buildDurableStateValues()` in `src/renderer.js`, or anything that calls

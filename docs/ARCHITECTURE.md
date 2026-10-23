@@ -1,9 +1,8 @@
 # Pixelody architecture
 
-This is the map of the Windows desktop application: what each part owns, where
-the boundaries are, and which document is authoritative for each subsystem. Read
-it before your first change. It is deliberately short; the linked documents hold
-the detail.
+Start here to find the part of the Windows app you need to change. This page
+shows what each part owns and links to the details, so you can follow a change
+without having to work out the whole application first.
 
 The Android companion is a separate repository,
 [pixelody-android](https://github.com/varText-dragen-develiper/pixelody-android).

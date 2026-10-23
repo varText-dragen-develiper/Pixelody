@@ -1,6 +1,6 @@
 # Windows Virtual Audio Opportunity Audit
 
-This note looks for the gaps older virtual audio drivers exposed, worked around, or pushed onto users. The goal is not to criticize them; it is to identify what Pixelody can revisit now with modern Windows audio APIs, a narrower product mission, and a music-player control surface.
+I want to understand which problems older virtual audio drivers left for listeners to solve, and which ones Pixelody could handle better with current Windows audio APIs and controls inside the player.
 
 ## Research Sources
 

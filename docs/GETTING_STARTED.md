@@ -4,7 +4,7 @@ Start by listening on Windows. If you want your library on your phone too, conne
 
 ## Choose source or a published build
 
-Check [Windows Releases](https://github.com/varText-dragen-develiper/Pixelody/releases) for an artifact and its instructions. As of October 10, 2026, the Windows 0.1.1 x64 preview is published under `unsigned-main` and is unsigned. Read that release’s installation notes if you’re trying the preview. The steps below are for building from source.
+The [Windows 0.1.2 preview](https://github.com/varText-dragen-develiper/Pixelody/releases/tag/v0.1.2) is available for testing. The app is unsigned; read the release’s signing notice and compare the download with its checksum file before deciding whether to install it. The optional self-signed installer only signs the setup wrapper, not the installed app. The [website](https://pixelody-web.pixelody101.workers.dev/testing) has installation help and a first listening checklist. If you want to build it yourself, use the steps below.
 
 ## Run from source
 
@@ -23,7 +23,7 @@ For source checks run **pnpm run check** and **pnpm run check:themes**. A passin
 
 Import a small folder of music you have permission to use. Play a track, change the queue, and try the mini-player. Reopen the app and check your library and settings. If you get stuck, tell me where it first went wrong and what you tried.
 
-Studio is the built-in layout. Canvas layouts are development work, and older designs are archived. Check your build's release notes for availability.
+Windows 0.1.2 offers Studio, Obsession Mode and Cartridge Quest through Settings. Other Canvas layouts are development work. The older design notes are still useful references, but they are not a list of themes available in your build.
 
 ## Connect Android later
 

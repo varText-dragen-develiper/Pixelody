@@ -1,6 +1,6 @@
 # Pixelody Backbone Audit Checklist
 
-This checklist is for finding the places where Pixelody's main function can be weakened by the platform underneath it: Electron, Chromium media playback, Windows audio routing, DAC handoff, local storage, IPC, graphics, CSS, themes, and asset loading.
+Use this checklist to trace problems through Electron, Chromium playback, Windows audio routing, DAC handoff, local storage, IPC, graphics, CSS, themes and asset loading.
 
 Use it when playback feels unreliable, theme animation looks stale or slow, output devices behave strangely, large libraries feel heavy, or main-window and mini-player state disagree.
 

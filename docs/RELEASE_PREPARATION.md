@@ -1,8 +1,8 @@
 # Release preparation
 
-Public source is available under GPL-3.0-only. No GitHub release was published in this repository when checked on October 2, 2026. Source versions and test APKs are not a stable release announcement.
+The public source is available under GPL-3.0-only, and the Windows 0.1.2 testing preview is published under `v0.1.2`. Use its release notes for the exact files, signing status and installation steps. A testing preview is not a stable-release announcement.
 
-Before publishing a binary, record:
+Before publishing the next build, leave enough detail for someone else to check it:
 
 - source commit/tag, app version, exact filename and architecture;
 - build/check results, artifact SHA-256 and signing/update identity;

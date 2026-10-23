@@ -9,7 +9,7 @@ Player Mode can use the current Electron/Web Audio path. System Tuning Mode cann
 
 ## Product Goal
 
-The user should be able to tune a speaker setup once, then choose whether that setup affects:
+I want someone to tune their speaker setup once, then choose where to use it:
 
 - Pixelody playback only.
 - Windows shared-mode playback from other apps.

@@ -1,6 +1,6 @@
 # Pixelody Documentation
 
-Design, architecture, and engineering references for Pixelody. Planning documents describe intended direction and say so explicitly; everything else describes the code as it exists.
+Start with [Getting started](GETTING_STARTED.md) for the app, or the [website guides](https://pixelody-web.pixelody101.workers.dev/docs) for shorter explanations. The references below go into the design, code and testing. Plans describe intended work; dated notes and results describe the build or session they were written for. Read each document’s status before treating it as a feature available in your download.
 
 ## Design
 

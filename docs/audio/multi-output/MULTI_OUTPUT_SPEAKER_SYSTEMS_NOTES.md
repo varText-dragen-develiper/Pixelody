@@ -1,6 +1,6 @@
 # Multi-Output Speaker Systems Notes
 
-These notes capture implementation reality and working decisions for Pixelody's grouped speaker rig feature.
+These notes explain how grouped speaker rigs currently work and why particular decisions were made. Check the dated results before applying a conclusion to another build or setup.
 
 ## User Goal
 

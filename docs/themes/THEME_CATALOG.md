@@ -1,9 +1,9 @@
 # Pixelody Built-In Theme Catalog
 
-This catalog preserves creative intent for every built-in theme.
+These are the ideas behind Pixelody’s themes. Some are available to try; others are archived designs or development work.
 
 Pixelody is currently in a Studio foundation reset. Only Pixelody Studio is
-registered in `../src/themes/built-in-themes.json`; the entries below preserve
+registered in `src/themes/built-in-themes.json`; the entries below preserve
 creative intent and reconstruction guidance, not current runtime availability.
 Obsession Mode and Cartridge Quest are production composition presentations
 listed separately in `compositionPresentations`. Their ordinary Settings route

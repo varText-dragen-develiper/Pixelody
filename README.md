@@ -7,7 +7,7 @@ This repository is the open-source edition of the Windows app. It is licensed un
 ## Start here
 
 - [Getting started](docs/GETTING_STARTED.md): requirements, source build and first listening session.
-- [Windows releases](https://github.com/varText-dragen-develiper/Pixelody/releases): build files and their release notes. The unsigned Windows 0.1.1 x64 preview is under `unsigned-main` as of October 10, 2026; read its signing and installation notes before trying it.
+- [Windows releases](https://github.com/varText-dragen-develiper/Pixelody/releases): build files and their release notes. The Windows 0.1.2 testing preview is available under `v0.1.2`. Read its signing and installation notes before trying it.
 - [Support](SUPPORT.md) and [shared discussions](https://github.com/varText-dragen-develiper/Pixelody/discussions): report problems or share listening ideas.
 - [Release preparation](docs/RELEASE_PREPARATION.md): what still needs verification before distributing a binary.
 
@@ -17,7 +17,7 @@ This repository is the open-source edition of the Windows app. It is licensed un
 - Processes audio in 32-bit floating point, with three EQ bands per track and per output, ReplayGain, and output switching on the selected device.
 - Reads metadata and embedded artwork, and supports favorites, history, playlists with reordering and M3U8 export, queues, shuffle, repeat, media keys, session restore and JSON backups.
 - Keeps a mini player on top while the main window is minimized.
-- Uses Studio as the current built-in presentation. Development theme profiles and local package controls have separate readiness boundaries.
+- Offers Studio, Obsession Mode and Cartridge Quest through Settings. Other development layouts and local theme packages have their own availability limits.
 - Installs optional modules, downloaded from the Pixelody website, from Settings (see [docs/OPTIONAL_MODULES.md](docs/OPTIONAL_MODULES.md)).
 - Hosts the library for the Android companion over your local network.
 

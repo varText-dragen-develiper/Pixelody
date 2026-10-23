@@ -1,6 +1,6 @@
 # Native Mixer Rig Input Mapping
 
-This document maps Pixelody's existing grouped speaker rig model to the future native mixer `configureRig` input. It is a contract for future implementation; it does not implement native grouped playback.
+Use this mapping when connecting the saved grouped-speaker rig to the planned native mixer’s `configureRig` input. It describes the interface to build; native grouped playback is not implemented by this document.
 
 Read with:
 

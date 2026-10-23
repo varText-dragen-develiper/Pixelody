@@ -1,6 +1,6 @@
 # Pixelody Networking Capabilities Implementation Map
 
-This document explains what must be built to finish Pixelody's current networking mechanics and what later networking capabilities would entail technically.
+Use this map to see what the current networking work still needs and what later features would require.
 
 Execution status, sequence prompts, and completion checkboxes live in `docs/networking/NETWORKING_DEVELOPMENT_ROADMAP.md`. This implementation map does not duplicate those checkboxes. It describes the functional architecture behind them.
 

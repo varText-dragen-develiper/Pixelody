@@ -2,7 +2,7 @@
 
 Status: active implementation roadmap
 
-This roadmap turns the consumer calibration design into a safe, position-specific workflow for grouped speaker rigs. It preserves the existing per-member controls (`gainDb`, positive `delayMs`, polarity, EQ, and spatial profiles) as the operational source of truth. Rig calibration receipts explain and verify those choices; they are not a second tuning store.
+This roadmap covers calibration for the place where you actually listen. Keep saved tuning in the existing per-output controls (`gainDb`, positive `delayMs`, polarity, EQ, and spatial profiles). Calibration records explain how those choices were made; they do not store a second set of tuning values.
 
 ## Phase A: Guided perceptual calibration
 

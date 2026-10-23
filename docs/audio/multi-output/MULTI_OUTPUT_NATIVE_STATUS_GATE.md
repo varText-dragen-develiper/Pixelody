@@ -1,6 +1,6 @@
 # Native Mixer Status-State Gate
 
-This document defines the native status states that must exist before Pixelody can make any release claim about native grouped speaker playback.
+These are the native status states to implement and verify before describing grouped-speaker playback as ready for release.
 
 It is a contract for future implementation. It does not implement native grouped playback.
 

@@ -1,6 +1,6 @@
 # Windows Virtual Audio Roadmap
 
-This roadmap turns the System EQ research into an implementation path for Pixelody's own optional Windows virtual audio endpoint.
+This roadmap lays out the work needed for Pixelody’s optional Windows virtual audio endpoint.
 
 The goal is not to build a generic virtual cable. The goal is a trusted Pixelody route:
 

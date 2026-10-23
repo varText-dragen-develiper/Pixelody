@@ -2,7 +2,7 @@
 
 ## One Sentence
 
-Pixelody should feel like a meticulous, local-first lossless music workstation designed by an album-art obsessive, a premium consumer-audio team, and a graphic interface artist.
+I want Pixelody to give music and album art room to matter, with a library that feels organised and sound controls close when you want them.
 
 ## Fixed Product Principles
 

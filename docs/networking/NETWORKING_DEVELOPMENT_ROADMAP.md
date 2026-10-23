@@ -1,6 +1,6 @@
 # Pixelody Networking Development Roadmap
 
-This is the execution roadmap for the networking side of Pixelody. It turns the broader planning notes into six bounded development sequences that can be completed one at a time with short review cycles.
+Work through these six networking sequences in order. Each one has its own checks so a later feature does not get ahead of the connection, permission and recovery work it depends on.
 
 Read this with:
 

@@ -1,6 +1,6 @@
 # Security policy
 
-Pixelody has not reached a stable release, so only the latest commit on `main` and the latest tagged release receive security fixes. No response time is promised.
+Pixelody is still in testing. Security fixes go to the latest commit on `main` and the latest tagged release. I’ll take a look when I can, but I can’t promise a response time.
 
 ## Report a vulnerability privately
 
