@@ -1,6 +1,8 @@
 # Pixelody
 
-I'm building Pixelody, a music player for Windows. Organise albums and playlists, adjust the sound for your tracks and outputs, and keep playback close with the mini-player. Pair [Pixelody for Android](https://github.com/varText-dragen-develiper/Pixelody-android) to browse and control your Windows library.
+Pixelody is a music player for Windows. Organize albums and playlists, adjust the sound for individual tracks and outputs, and keep playback close with the mini-player. Pair [Pixelody for Android](https://github.com/varText-dragen-develiper/Pixelody-android) to browse and control your Windows library.
+
+The idea is to bring library tools, playback, and sound adjustments together. A change for one recording belongs with that track; a correction for your speakers belongs with the output. Metadata, artwork, playlists, and saved settings help keep the collection useful as it grows.
 
 This repository is the open-source edition of the Windows app. It is licensed under the GNU General Public License v3.0 only (see [LICENSE](LICENSE) and [NOTICE](NOTICE)). If you fork or redistribute it, read the name and logo guidance in [TRADEMARKS.md](TRADEMARKS.md).
 
