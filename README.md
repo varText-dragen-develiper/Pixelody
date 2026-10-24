@@ -9,7 +9,7 @@ This repository is the open-source edition of the Windows app. It is licensed un
 ## Start here
 
 - [Getting started](docs/GETTING_STARTED.md): requirements, source build and first listening session.
-- [Windows releases](https://github.com/varText-dragen-develiper/Pixelody/releases): build files and their release notes. The Windows 0.1.2 testing preview is available under `v0.1.2`. Read its signing and installation notes before trying it.
+- [Windows releases](https://github.com/varText-dragen-develiper/Pixelody/releases): build files and their release notes. The Windows 0.1.3 testing preview is available under `v0.1.3`. Read its signing and installation notes before trying it.
 - [Support](SUPPORT.md) and [shared discussions](https://github.com/varText-dragen-develiper/Pixelody/discussions): report problems or share listening ideas.
 - [Release preparation](docs/RELEASE_PREPARATION.md): what still needs verification before distributing a binary.
 
