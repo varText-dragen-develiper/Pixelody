@@ -1,0 +1,1924 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "entry": {
+        "entryId": "t0",
+        "trackId": "t0",
+        "artist": "Artist 0",
+        "album": "Album 0",
+        "genre": "Rock",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 80,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 0
+    },
+    {
+      "entry": {
+        "entryId": "t1",
+        "trackId": "t1",
+        "artist": "Artist 1",
+        "album": "Album 1",
+        "genre": "Indie Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 165000
+    },
+    {
+      "entry": {
+        "entryId": "t2",
+        "trackId": "t2",
+        "artist": "Artist 2",
+        "album": "Album 2",
+        "genre": "Jazz",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 180000
+    },
+    {
+      "entry": {
+        "entryId": "t3",
+        "trackId": "t3",
+        "artist": "Artist 3",
+        "album": "Album 3",
+        "genre": "Hip-Hop/Rap",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 83,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 195000
+    },
+    {
+      "entry": {
+        "entryId": "t4",
+        "trackId": "t4",
+        "artist": "Artist 4",
+        "album": "Album 4",
+        "genre": "Electronic",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 210000
+    },
+    {
+      "entry": {
+        "entryId": "t5",
+        "trackId": "t5",
+        "artist": "Artist 5",
+        "album": "Album 5",
+        "genre": null,
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 225000
+    },
+    {
+      "entry": {
+        "entryId": "t6",
+        "trackId": "t6",
+        "artist": "Artist 6",
+        "album": "Album 6",
+        "genre": "Rock; Blues",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 86,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 240000
+    },
+    {
+      "entry": {
+        "entryId": "t7",
+        "trackId": "t7",
+        "artist": "Artist 7",
+        "album": "Album 7",
+        "genre": "Ambient",
+        "available": false,
+        "features": {}
+      },
+      "durationMs": 255000
+    },
+    {
+      "entry": {
+        "entryId": "t8",
+        "trackId": "t8",
+        "artist": "Artist 8",
+        "album": "Album 8",
+        "genre": "Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 270000
+    },
+    {
+      "entry": {
+        "entryId": "t9",
+        "trackId": "t9",
+        "artist": "Artist 9",
+        "album": "Album 9",
+        "genre": "Indie Rock",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 89,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 150000
+    },
+    {
+      "entry": {
+        "entryId": "t10",
+        "trackId": "t10",
+        "artist": "Artist 10",
+        "album": "Album 10",
+        "genre": "Jazz",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 165000
+    },
+    {
+      "entry": {
+        "entryId": "t11",
+        "trackId": "t11",
+        "artist": "Artist 11",
+        "album": "Album 11",
+        "genre": "Hip-Hop/Rap",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 0
+    },
+    {
+      "entry": {
+        "entryId": "t12",
+        "trackId": "t12",
+        "artist": "Artist 12",
+        "album": "Album 12",
+        "genre": "Electronic",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 92,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 195000
+    },
+    {
+      "entry": {
+        "entryId": "t13",
+        "trackId": "t13",
+        "artist": "Artist 0",
+        "album": "Album 13",
+        "genre": null,
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 210000
+    },
+    {
+      "entry": {
+        "entryId": "t14",
+        "trackId": "t14",
+        "artist": "Artist 1",
+        "album": "Album 14",
+        "genre": "Rock; Blues",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 225000
+    },
+    {
+      "entry": {
+        "entryId": "t15",
+        "trackId": "t15",
+        "artist": "Artist 2",
+        "album": "Album 15",
+        "genre": "Ambient",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 95,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 240000
+    },
+    {
+      "entry": {
+        "entryId": "t16",
+        "trackId": "t16",
+        "artist": "Artist 3",
+        "album": "Album 16",
+        "genre": "Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 255000
+    },
+    {
+      "entry": {
+        "entryId": "t17",
+        "trackId": "t17",
+        "artist": "Artist 4",
+        "album": "Album 17",
+        "genre": "Indie Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 270000
+    },
+    {
+      "entry": {
+        "entryId": "t18",
+        "trackId": "t18",
+        "artist": "Artist 5",
+        "album": "Album 18",
+        "genre": "Jazz",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 98,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 150000
+    },
+    {
+      "entry": {
+        "entryId": "t19",
+        "trackId": "t19",
+        "artist": "Artist 6",
+        "album": "Album 19",
+        "genre": "Hip-Hop/Rap",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 165000
+    },
+    {
+      "entry": {
+        "entryId": "t20",
+        "trackId": "t20",
+        "artist": "Artist 7",
+        "album": "Album 20",
+        "genre": "Electronic",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 180000
+    },
+    {
+      "entry": {
+        "entryId": "t21",
+        "trackId": "t21",
+        "artist": "Artist 8",
+        "album": "Album 21",
+        "genre": null,
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 101,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 195000
+    },
+    {
+      "entry": {
+        "entryId": "t22",
+        "trackId": "t22",
+        "artist": "Artist 9",
+        "album": "Album 22",
+        "genre": "Rock; Blues",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 0
+    },
+    {
+      "entry": {
+        "entryId": "t23",
+        "trackId": "t23",
+        "artist": "Artist 10",
+        "album": "Album 23",
+        "genre": "Ambient",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 225000
+    },
+    {
+      "entry": {
+        "entryId": "t24",
+        "trackId": "t24",
+        "artist": "Artist 11",
+        "album": "Album 24",
+        "genre": "Rock",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 104,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 240000
+    },
+    {
+      "entry": {
+        "entryId": "t25",
+        "trackId": "t25",
+        "artist": "Artist 12",
+        "album": "Album 25",
+        "genre": "Indie Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 255000
+    },
+    {
+      "entry": {
+        "entryId": "t26",
+        "trackId": "t26",
+        "artist": "Artist 0",
+        "album": "Album 26",
+        "genre": "Jazz",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 270000
+    },
+    {
+      "entry": {
+        "entryId": "t27",
+        "trackId": "t27",
+        "artist": "Artist 1",
+        "album": "Album 27",
+        "genre": "Hip-Hop/Rap",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 107,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 150000
+    },
+    {
+      "entry": {
+        "entryId": "t28",
+        "trackId": "t28",
+        "artist": "Artist 2",
+        "album": "Album 28",
+        "genre": "Electronic",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 165000
+    },
+    {
+      "entry": {
+        "entryId": "t29",
+        "trackId": "t29",
+        "artist": "Artist 3",
+        "album": "Album 0",
+        "genre": null,
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 180000
+    },
+    {
+      "entry": {
+        "entryId": "t30",
+        "trackId": "t30",
+        "artist": "Artist 4",
+        "album": "Album 1",
+        "genre": "Rock; Blues",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 110,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 195000
+    },
+    {
+      "entry": {
+        "entryId": "t31",
+        "trackId": "t31",
+        "artist": "Artist 5",
+        "album": "Album 2",
+        "genre": "Ambient",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 210000
+    },
+    {
+      "entry": {
+        "entryId": "t32",
+        "trackId": "t32",
+        "artist": "Artist 6",
+        "album": "Album 3",
+        "genre": "Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 225000
+    },
+    {
+      "entry": {
+        "entryId": "t33",
+        "trackId": "t33",
+        "artist": "Artist 7",
+        "album": "Album 4",
+        "genre": "Indie Rock",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 113,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 0
+    },
+    {
+      "entry": {
+        "entryId": "t34",
+        "trackId": "t34",
+        "artist": "Artist 8",
+        "album": "Album 5",
+        "genre": "Jazz",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 255000
+    },
+    {
+      "entry": {
+        "entryId": "t35",
+        "trackId": "t35",
+        "artist": "Artist 9",
+        "album": "Album 6",
+        "genre": "Hip-Hop/Rap",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 270000
+    },
+    {
+      "entry": {
+        "entryId": "t36",
+        "trackId": "t36",
+        "artist": "Artist 10",
+        "album": "Album 7",
+        "genre": "Electronic",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 116,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 150000
+    },
+    {
+      "entry": {
+        "entryId": "t37",
+        "trackId": "t37",
+        "artist": "Artist 11",
+        "album": "Album 8",
+        "genre": null,
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 165000
+    },
+    {
+      "entry": {
+        "entryId": "t38",
+        "trackId": "t38",
+        "artist": "Artist 12",
+        "album": "Album 9",
+        "genre": "Rock; Blues",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 180000
+    },
+    {
+      "entry": {
+        "entryId": "t39",
+        "trackId": "t39",
+        "artist": "Artist 0",
+        "album": "Album 10",
+        "genre": "Ambient",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 119,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 195000
+    },
+    {
+      "entry": {
+        "entryId": "t40",
+        "trackId": "t40",
+        "artist": "Artist 1",
+        "album": "Album 11",
+        "genre": "Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 210000
+    },
+    {
+      "entry": {
+        "entryId": "t41",
+        "trackId": "t41",
+        "artist": "Artist 2",
+        "album": "Album 12",
+        "genre": "Indie Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 225000
+    },
+    {
+      "entry": {
+        "entryId": "t42",
+        "trackId": "t42",
+        "artist": "Artist 3",
+        "album": "Album 13",
+        "genre": "Jazz",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 122,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 240000
+    },
+    {
+      "entry": {
+        "entryId": "t43",
+        "trackId": "t43",
+        "artist": "Artist 4",
+        "album": "Album 14",
+        "genre": "Hip-Hop/Rap",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 255000
+    },
+    {
+      "entry": {
+        "entryId": "t44",
+        "trackId": "t44",
+        "artist": "Artist 5",
+        "album": "Album 15",
+        "genre": "Electronic",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 0
+    },
+    {
+      "entry": {
+        "entryId": "t45",
+        "trackId": "t45",
+        "artist": "Artist 6",
+        "album": "Album 16",
+        "genre": null,
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 125,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 150000
+    },
+    {
+      "entry": {
+        "entryId": "t46",
+        "trackId": "t46",
+        "artist": "Artist 7",
+        "album": "Album 17",
+        "genre": "Rock; Blues",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 165000
+    },
+    {
+      "entry": {
+        "entryId": "t47",
+        "trackId": "t47",
+        "artist": "Artist 8",
+        "album": "Album 18",
+        "genre": "Ambient",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 180000
+    },
+    {
+      "entry": {
+        "entryId": "t48",
+        "trackId": "t48",
+        "artist": "Artist 9",
+        "album": "Album 19",
+        "genre": "Rock",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 128,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 195000
+    },
+    {
+      "entry": {
+        "entryId": "t49",
+        "trackId": "t49",
+        "artist": "Artist 10",
+        "album": "Album 20",
+        "genre": "Indie Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 210000
+    },
+    {
+      "entry": {
+        "entryId": "t50",
+        "trackId": "t50",
+        "artist": "Artist 11",
+        "album": "Album 21",
+        "genre": "Jazz",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 225000
+    },
+    {
+      "entry": {
+        "entryId": "t51",
+        "trackId": "t51",
+        "artist": "Artist 12",
+        "album": "Album 22",
+        "genre": "Hip-Hop/Rap",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 131,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 240000
+    },
+    {
+      "entry": {
+        "entryId": "t52",
+        "trackId": "t52",
+        "artist": "Artist 0",
+        "album": "Album 23",
+        "genre": "Electronic",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 255000
+    },
+    {
+      "entry": {
+        "entryId": "t53",
+        "trackId": "t53",
+        "artist": "Artist 1",
+        "album": "Album 24",
+        "genre": null,
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 270000
+    },
+    {
+      "entry": {
+        "entryId": "t54",
+        "trackId": "t54",
+        "artist": "Artist 2",
+        "album": "Album 25",
+        "genre": "Rock; Blues",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 134,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 150000
+    },
+    {
+      "entry": {
+        "entryId": "t55",
+        "trackId": "t55",
+        "artist": "Artist 3",
+        "album": "Album 26",
+        "genre": "Ambient",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 0
+    },
+    {
+      "entry": {
+        "entryId": "t56",
+        "trackId": "t56",
+        "artist": "Artist 4",
+        "album": "Album 27",
+        "genre": "Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 180000
+    },
+    {
+      "entry": {
+        "entryId": "t57",
+        "trackId": "t57",
+        "artist": "Artist 5",
+        "album": "Album 28",
+        "genre": "Indie Rock",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 137,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 195000
+    },
+    {
+      "entry": {
+        "entryId": "t58",
+        "trackId": "t58",
+        "artist": "Artist 6",
+        "album": "Album 0",
+        "genre": "Jazz",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 210000
+    },
+    {
+      "entry": {
+        "entryId": "t59",
+        "trackId": "t59",
+        "artist": "Artist 7",
+        "album": "Album 1",
+        "genre": "Hip-Hop/Rap",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 225000
+    },
+    {
+      "entry": {
+        "entryId": "t60",
+        "trackId": "t60",
+        "artist": "Artist 8",
+        "album": "Album 2",
+        "genre": "Electronic",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 80,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 240000
+    },
+    {
+      "entry": {
+        "entryId": "t61",
+        "trackId": "t61",
+        "artist": "Artist 9",
+        "album": "Album 3",
+        "genre": null,
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 255000
+    },
+    {
+      "entry": {
+        "entryId": "t62",
+        "trackId": "t62",
+        "artist": "Artist 10",
+        "album": "Album 4",
+        "genre": "Rock; Blues",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 270000
+    },
+    {
+      "entry": {
+        "entryId": "t63",
+        "trackId": "t63",
+        "artist": "Artist 11",
+        "album": "Album 5",
+        "genre": "Ambient",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 83,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 150000
+    },
+    {
+      "entry": {
+        "entryId": "t64",
+        "trackId": "t64",
+        "artist": "Artist 12",
+        "album": "Album 6",
+        "genre": "Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 165000
+    },
+    {
+      "entry": {
+        "entryId": "t65",
+        "trackId": "t65",
+        "artist": "Artist 0",
+        "album": "Album 7",
+        "genre": "Indie Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 180000
+    },
+    {
+      "entry": {
+        "entryId": "t66",
+        "trackId": "t66",
+        "artist": "Artist 1",
+        "album": "Album 8",
+        "genre": "Jazz",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 86,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 0
+    },
+    {
+      "entry": {
+        "entryId": "t67",
+        "trackId": "t67",
+        "artist": "Artist 2",
+        "album": "Album 9",
+        "genre": "Hip-Hop/Rap",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 210000
+    },
+    {
+      "entry": {
+        "entryId": "t68",
+        "trackId": "t68",
+        "artist": "Artist 3",
+        "album": "Album 10",
+        "genre": "Electronic",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 225000
+    },
+    {
+      "entry": {
+        "entryId": "t69",
+        "trackId": "t69",
+        "artist": "Artist 4",
+        "album": "Album 11",
+        "genre": null,
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 89,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 240000
+    },
+    {
+      "entry": {
+        "entryId": "t70",
+        "trackId": "t70",
+        "artist": "Artist 5",
+        "album": "Album 12",
+        "genre": "Rock; Blues",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 255000
+    },
+    {
+      "entry": {
+        "entryId": "t71",
+        "trackId": "t71",
+        "artist": "Artist 6",
+        "album": "Album 13",
+        "genre": "Ambient",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 270000
+    },
+    {
+      "entry": {
+        "entryId": "t72",
+        "trackId": "t72",
+        "artist": "Artist 7",
+        "album": "Album 14",
+        "genre": "Rock",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 92,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 150000
+    },
+    {
+      "entry": {
+        "entryId": "t73",
+        "trackId": "t73",
+        "artist": "Artist 8",
+        "album": "Album 15",
+        "genre": "Indie Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 165000
+    },
+    {
+      "entry": {
+        "entryId": "t74",
+        "trackId": "t74",
+        "artist": "Artist 9",
+        "album": "Album 16",
+        "genre": "Jazz",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 180000
+    },
+    {
+      "entry": {
+        "entryId": "t75",
+        "trackId": "t75",
+        "artist": "Artist 10",
+        "album": "Album 17",
+        "genre": "Hip-Hop/Rap",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 95,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 195000
+    },
+    {
+      "entry": {
+        "entryId": "t76",
+        "trackId": "t76",
+        "artist": "Artist 11",
+        "album": "Album 18",
+        "genre": "Electronic",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 210000
+    },
+    {
+      "entry": {
+        "entryId": "t77",
+        "trackId": "t77",
+        "artist": "Artist 12",
+        "album": "Album 19",
+        "genre": null,
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 0
+    },
+    {
+      "entry": {
+        "entryId": "t78",
+        "trackId": "t78",
+        "artist": "Artist 0",
+        "album": "Album 20",
+        "genre": "Rock; Blues",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 98,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 240000
+    },
+    {
+      "entry": {
+        "entryId": "t79",
+        "trackId": "t79",
+        "artist": "Artist 1",
+        "album": "Album 21",
+        "genre": "Ambient",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 255000
+    },
+    {
+      "entry": {
+        "entryId": "t80",
+        "trackId": "t80",
+        "artist": "Artist 2",
+        "album": "Album 22",
+        "genre": "Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 270000
+    },
+    {
+      "entry": {
+        "entryId": "t81",
+        "trackId": "t81",
+        "artist": "Artist 3",
+        "album": "Album 23",
+        "genre": "Indie Rock",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 101,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 150000
+    },
+    {
+      "entry": {
+        "entryId": "t82",
+        "trackId": "t82",
+        "artist": "Artist 4",
+        "album": "Album 24",
+        "genre": "Jazz",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 165000
+    },
+    {
+      "entry": {
+        "entryId": "t83",
+        "trackId": "t83",
+        "artist": "Artist 5",
+        "album": "Album 25",
+        "genre": "Hip-Hop/Rap",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 180000
+    },
+    {
+      "entry": {
+        "entryId": "t84",
+        "trackId": "t84",
+        "artist": "Artist 6",
+        "album": "Album 26",
+        "genre": "Electronic",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 104,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 195000
+    },
+    {
+      "entry": {
+        "entryId": "t85",
+        "trackId": "t85",
+        "artist": "Artist 7",
+        "album": "Album 27",
+        "genre": null,
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 210000
+    },
+    {
+      "entry": {
+        "entryId": "t86",
+        "trackId": "t86",
+        "artist": "Artist 8",
+        "album": "Album 28",
+        "genre": "Rock; Blues",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 225000
+    },
+    {
+      "entry": {
+        "entryId": "t87",
+        "trackId": "t87",
+        "artist": "Artist 9",
+        "album": "Album 0",
+        "genre": "Ambient",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 107,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 240000
+    },
+    {
+      "entry": {
+        "entryId": "t88",
+        "trackId": "t88",
+        "artist": "Artist 10",
+        "album": "Album 1",
+        "genre": "Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 0
+    },
+    {
+      "entry": {
+        "entryId": "t89",
+        "trackId": "t89",
+        "artist": "Artist 11",
+        "album": "Album 2",
+        "genre": "Indie Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 270000
+    },
+    {
+      "entry": {
+        "entryId": "t90",
+        "trackId": "t90",
+        "artist": "Artist 12",
+        "album": "Album 3",
+        "genre": "Jazz",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 110,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 150000
+    },
+    {
+      "entry": {
+        "entryId": "t91",
+        "trackId": "t91",
+        "artist": "Artist 0",
+        "album": "Album 4",
+        "genre": "Hip-Hop/Rap",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 165000
+    },
+    {
+      "entry": {
+        "entryId": "t92",
+        "trackId": "t92",
+        "artist": "Artist 1",
+        "album": "Album 5",
+        "genre": "Electronic",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 180000
+    },
+    {
+      "entry": {
+        "entryId": "t93",
+        "trackId": "t93",
+        "artist": "Artist 2",
+        "album": "Album 6",
+        "genre": null,
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 113,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 195000
+    },
+    {
+      "entry": {
+        "entryId": "t94",
+        "trackId": "t94",
+        "artist": "Artist 3",
+        "album": "Album 7",
+        "genre": "Rock; Blues",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 210000
+    },
+    {
+      "entry": {
+        "entryId": "t95",
+        "trackId": "t95",
+        "artist": "Artist 4",
+        "album": "Album 8",
+        "genre": "Ambient",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 225000
+    },
+    {
+      "entry": {
+        "entryId": "t96",
+        "trackId": "t96",
+        "artist": "Artist 5",
+        "album": "Album 9",
+        "genre": "Rock",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 116,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 240000
+    },
+    {
+      "entry": {
+        "entryId": "t97",
+        "trackId": "t97",
+        "artist": "Artist 6",
+        "album": "Album 10",
+        "genre": "Indie Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 255000
+    },
+    {
+      "entry": {
+        "entryId": "t98",
+        "trackId": "t98",
+        "artist": "Artist 7",
+        "album": "Album 11",
+        "genre": "Jazz",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 270000
+    },
+    {
+      "entry": {
+        "entryId": "t99",
+        "trackId": "t99",
+        "artist": "Artist 8",
+        "album": "Album 12",
+        "genre": "Hip-Hop/Rap",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 119,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 0
+    },
+    {
+      "entry": {
+        "entryId": "t100",
+        "trackId": "t100",
+        "artist": "Artist 9",
+        "album": "Album 13",
+        "genre": "Electronic",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 165000
+    },
+    {
+      "entry": {
+        "entryId": "t101",
+        "trackId": "t101",
+        "artist": "Artist 10",
+        "album": "Album 14",
+        "genre": null,
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 180000
+    },
+    {
+      "entry": {
+        "entryId": "t102",
+        "trackId": "t102",
+        "artist": "Artist 11",
+        "album": "Album 15",
+        "genre": "Rock; Blues",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 122,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 195000
+    },
+    {
+      "entry": {
+        "entryId": "t103",
+        "trackId": "t103",
+        "artist": "Artist 12",
+        "album": "Album 16",
+        "genre": "Ambient",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 210000
+    },
+    {
+      "entry": {
+        "entryId": "t104",
+        "trackId": "t104",
+        "artist": "Artist 0",
+        "album": "Album 17",
+        "genre": "Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 225000
+    },
+    {
+      "entry": {
+        "entryId": "t105",
+        "trackId": "t105",
+        "artist": "Artist 1",
+        "album": "Album 18",
+        "genre": "Indie Rock",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 125,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 240000
+    },
+    {
+      "entry": {
+        "entryId": "t106",
+        "trackId": "t106",
+        "artist": "Artist 2",
+        "album": "Album 19",
+        "genre": "Jazz",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 255000
+    },
+    {
+      "entry": {
+        "entryId": "t107",
+        "trackId": "t107",
+        "artist": "Artist 3",
+        "album": "Album 20",
+        "genre": "Hip-Hop/Rap",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 270000
+    },
+    {
+      "entry": {
+        "entryId": "t108",
+        "trackId": "t108",
+        "artist": "Artist 4",
+        "album": "Album 21",
+        "genre": "Electronic",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 128,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 150000
+    },
+    {
+      "entry": {
+        "entryId": "t109",
+        "trackId": "t109",
+        "artist": "Artist 5",
+        "album": "Album 22",
+        "genre": null,
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 165000
+    },
+    {
+      "entry": {
+        "entryId": "t110",
+        "trackId": "t110",
+        "artist": "Artist 6",
+        "album": "Album 23",
+        "genre": "Rock; Blues",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 0
+    },
+    {
+      "entry": {
+        "entryId": "t111",
+        "trackId": "t111",
+        "artist": "Artist 7",
+        "album": "Album 24",
+        "genre": "Ambient",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 131,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 195000
+    },
+    {
+      "entry": {
+        "entryId": "t112",
+        "trackId": "t112",
+        "artist": "Artist 8",
+        "album": "Album 25",
+        "genre": "Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 210000
+    },
+    {
+      "entry": {
+        "entryId": "t113",
+        "trackId": "t113",
+        "artist": "Artist 9",
+        "album": "Album 26",
+        "genre": "Indie Rock",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 225000
+    },
+    {
+      "entry": {
+        "entryId": "t114",
+        "trackId": "t114",
+        "artist": "Artist 10",
+        "album": "Album 27",
+        "genre": "Jazz",
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 134,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 240000
+    },
+    {
+      "entry": {
+        "entryId": "t115",
+        "trackId": "t115",
+        "artist": "Artist 11",
+        "album": "Album 28",
+        "genre": "Hip-Hop/Rap",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 255000
+    },
+    {
+      "entry": {
+        "entryId": "t116",
+        "trackId": "t116",
+        "artist": "Artist 12",
+        "album": "Album 0",
+        "genre": "Electronic",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 270000
+    },
+    {
+      "entry": {
+        "entryId": "t117",
+        "trackId": "t117",
+        "artist": "Artist 0",
+        "album": "Album 1",
+        "genre": null,
+        "available": true,
+        "features": {
+          "tempo": {
+            "value": 137,
+            "provenance": "tagged"
+          }
+        }
+      },
+      "durationMs": 150000
+    },
+    {
+      "entry": {
+        "entryId": "t118",
+        "trackId": "t118",
+        "artist": "Artist 1",
+        "album": "Album 2",
+        "genre": "Rock; Blues",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 165000
+    },
+    {
+      "entry": {
+        "entryId": "t119",
+        "trackId": "t119",
+        "artist": "Artist 2",
+        "album": "Album 3",
+        "genre": "Ambient",
+        "available": true,
+        "features": {}
+      },
+      "durationMs": 180000
+    }
+  ],
+  "cases": [
+    {
+      "name": "flow-60",
+      "recipe": {
+        "style": "flow",
+        "targetMinutes": 60,
+        "seed": "alpha"
+      },
+      "expected": {
+        "status": "ready",
+        "trackIds": [
+          "t61",
+          "t111",
+          "t23",
+          "t90",
+          "t19",
+          "t27",
+          "t13",
+          "t70",
+          "t58",
+          "t98",
+          "t47",
+          "t65",
+          "t77",
+          "t18",
+          "t107",
+          "t104",
+          "t119",
+          "t101"
+        ],
+        "neighbourIds": [],
+        "durationMs": 3660000,
+        "recipe": {
+          "version": 1,
+          "style": "flow",
+          "genre": null,
+          "genreId": null,
+          "targetMinutes": 60,
+          "seed": "alpha",
+          "includedUntaggedIds": []
+        }
+      }
+    },
+    {
+      "name": "flow-30-other-seed",
+      "recipe": {
+        "style": "flow",
+        "targetMinutes": 30,
+        "seed": "beta"
+      },
+      "expected": {
+        "status": "ready",
+        "trackIds": [
+          "t95",
+          "t66",
+          "t87",
+          "t34",
+          "t45",
+          "t91",
+          "t90",
+          "t102",
+          "t113"
+        ],
+        "neighbourIds": [],
+        "durationMs": 1815000,
+        "recipe": {
+          "version": 1,
+          "style": "flow",
+          "genre": null,
+          "genreId": null,
+          "targetMinutes": 30,
+          "seed": "beta",
+          "includedUntaggedIds": []
+        }
+      }
+    },
+    {
+      "name": "rigid-rock-60",
+      "recipe": {
+        "style": "rigid",
+        "genre": "Rock",
+        "targetMinutes": 60,
+        "seed": "alpha"
+      },
+      "expected": {
+        "status": "ready",
+        "trackIds": [
+          "t96",
+          "t16",
+          "t118",
+          "t88",
+          "t0",
+          "t113",
+          "t80",
+          "t64",
+          "t86",
+          "t110",
+          "t78",
+          "t94",
+          "t70",
+          "t102",
+          "t30",
+          "t48",
+          "t38"
+        ],
+        "neighbourIds": [
+          "t113"
+        ],
+        "durationMs": 3645000,
+        "recipe": {
+          "version": 1,
+          "style": "rigid",
+          "genre": "Rock",
+          "genreId": "rock",
+          "targetMinutes": 60,
+          "seed": "alpha",
+          "includedUntaggedIds": []
+        }
+      }
+    },
+    {
+      "name": "rigid-jazz-120-short",
+      "recipe": {
+        "style": "rigid",
+        "genre": "jazz",
+        "targetMinutes": 120,
+        "seed": "gamma"
+      },
+      "expected": {
+        "status": "ready",
+        "trackIds": [
+          "t26",
+          "t2",
+          "t98",
+          "t50",
+          "t74",
+          "t58",
+          "t90",
+          "t39",
+          "t106",
+          "t42",
+          "t82",
+          "t10",
+          "t34",
+          "t18",
+          "t66",
+          "t114"
+        ],
+        "neighbourIds": [
+          "t39"
+        ],
+        "durationMs": 3360000,
+        "recipe": {
+          "version": 1,
+          "style": "rigid",
+          "genre": "jazz",
+          "genreId": "jazz",
+          "targetMinutes": 120,
+          "seed": "gamma",
+          "includedUntaggedIds": []
+        }
+      }
+    },
+    {
+      "name": "rigid-ambient-with-untagged",
+      "recipe": {
+        "style": "rigid",
+        "genre": "Ambient",
+        "targetMinutes": 30,
+        "seed": "delta",
+        "includedUntaggedIds": [
+          "t5",
+          "t13",
+          "t21"
+        ]
+      },
+      "expected": {
+        "status": "ready",
+        "trackIds": [
+          "t71",
+          "t111",
+          "t21",
+          "t87",
+          "t119",
+          "t103",
+          "t31",
+          "t95",
+          "t47"
+        ],
+        "neighbourIds": [],
+        "durationMs": 1905000,
+        "recipe": {
+          "version": 1,
+          "style": "rigid",
+          "genre": "Ambient",
+          "genreId": "ambient",
+          "targetMinutes": 30,
+          "seed": "delta",
+          "includedUntaggedIds": [
+            "t13",
+            "t21",
+            "t5"
+          ]
+        }
+      }
+    },
+    {
+      "name": "rigid-unknown-genre",
+      "recipe": {
+        "style": "rigid",
+        "genre": "Polka",
+        "targetMinutes": 30,
+        "seed": "alpha"
+      },
+      "expected": {
+        "status": "no-genre-songs",
+        "trackIds": [],
+        "neighbourIds": [],
+        "durationMs": 0,
+        "recipe": {
+          "version": 1,
+          "style": "rigid",
+          "genre": "Polka",
+          "genreId": "polka",
+          "targetMinutes": 30,
+          "seed": "alpha",
+          "includedUntaggedIds": []
+        }
+      }
+    },
+    {
+      "name": "rigid-no-genre",
+      "recipe": {
+        "style": "rigid",
+        "targetMinutes": 30,
+        "seed": "alpha"
+      },
+      "expected": {
+        "status": "needs-genre",
+        "trackIds": [],
+        "neighbourIds": [],
+        "durationMs": 0,
+        "recipe": {
+          "version": 1,
+          "style": "rigid",
+          "genre": null,
+          "genreId": null,
+          "targetMinutes": 30,
+          "seed": "alpha",
+          "includedUntaggedIds": []
+        }
+      }
+    }
+  ],
+  "swaps": [
+    {
+      "from": "rigid-rock-60",
+      "trackId": "t96",
+      "expected": [
+        "t56",
+        "t16",
+        "t118",
+        "t88",
+        "t0",
+        "t113",
+        "t80",
+        "t64",
+        "t86",
+        "t110",
+        "t78",
+        "t94",
+        "t70",
+        "t102",
+        "t30",
+        "t48",
+        "t38"
+      ]
+    }
+  ]
+}

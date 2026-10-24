@@ -122,7 +122,7 @@ function createHarness(options = {}) {
     flowShuffleRuntime: { pending: null, controlUndo: null },
     signalRuntime: { sessionId: 'windows-w0-session', currentPlay: null, pendingShufflePick: null },
     signalJournalPersistTimer: 0,
-    signalListeningTracker: listening.createTracker({ now: () => media.monotonicMs }), universalShuffleController: null,
+    signalListeningTracker: listening.createTracker({ now: () => media.monotonicMs }), universalShuffleController: null, unskippableController: null,
     PixelodyDesktopShuffle: desktopShuffle, PixelodyShuffleController: shuffleController, PixelodyUniversalShuffle: universal,
     PixelodyShuffleLearningV2: universalLearning, PixelodyShuffleScopesV2: universalScopes, globalThis: null,
     desktopShuffleAdapterCache: { key: null, points: {} },

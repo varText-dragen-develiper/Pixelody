@@ -509,7 +509,8 @@ function isPixelodyFileWindow(webContents) {
 }
 
 function configureLocalMediaPermissions() {
-  const allowedPermissions = new Set(['media', 'speaker-selection']);
+  // 'fullscreen' lets the unskippable cover fill the screen.
+  const allowedPermissions = new Set(['media', 'speaker-selection', 'fullscreen']);
   session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
     callback(allowedPermissions.has(permission) && isPixelodyFileWindow(webContents));
   });

@@ -4755,6 +4755,7 @@ function stageDesktopShufflePrevious(queue, traversal = {}) {
   return track;
 }
 function setShuffleStyle(style) {
+  if (unskippableBlocks('shuffle')) return;
   if (style === 'standard') style = 'balanced';
   if (!['off', 'balanced', 'flow'].includes(style)) return;
   state.shuffleStyle = style;
@@ -16626,6 +16627,11 @@ function renderPlaylists() {
       const status = playlist.mix.pending ? "Preparing today's listen" : availableCount ? `${availableCount} local track${availableCount === 1 ? '' : 's'} · ready` : 'Add local music to begin';
       return `<button class="playlist-item daily-curated-entry ${active ? 'active' : ''}" data-playlist="${playlist.id}" aria-current="${active ? 'page' : 'false'}" aria-label="Today's listen: Rediscovery, ${escapeHtml(status)}" title="Today's listen · no setup · ready until tomorrow" data-daily-curated="true"><span class="playlist-thumb" ${glyphAttributes}>${dailyThumb}</span><span class="playlist-copy"><span class="daily-curated-entry-eyebrow">DAILY CURATED <time datetime="${escapeHtml(playlist.mix.dateKey)}">${escapeHtml(compactDate)}</time></span><strong>Today's Listen</strong><span class="daily-curated-entry-promise">One ready path. No setup.</span><span class="daily-curated-entry-status"><i aria-hidden="true"></i>${escapeHtml(status)}</span></span><span class="playlist-dots" aria-hidden="true">›</span></button>`;
     }
+    if (playlist.unskippable) {
+      const minutes = playlist.trackIds.reduce((sum, id) => sum + (Number(trackById(id)?.duration) || 0), 0) * 1000;
+      const line = `${globalThis.PixelodyUnskippableDesktop?.recipeLine(playlist.unskippable.recipe) || 'Unskippable'} · ${globalThis.PixelodyUnskippableDesktop?.formatDuration(minutes) || `${count} tracks`}`;
+      return `<button class="playlist-item unskippable-entry" data-playlist="${playlist.id}" data-unskippable="true" aria-current="false" aria-label="${escapeHtml(playlist.name)}, unskippable mix, ${escapeHtml(line)}" title="${escapeHtml(playlist.name)}"><span class="playlist-thumb" ${glyphAttributes} ${image}><span class="unskippable-rail-mark" aria-hidden="true">U</span></span><span class="playlist-copy"><span class="unskippable-entry-eyebrow">UNSKIPPABLE</span><strong>${escapeHtml(playlist.name)}</strong><span>${escapeHtml(line)}</span></span><span class="playlist-dots">...</span></button>`;
+    }
     return `<button class="playlist-item ${active ? 'active' : ''}" data-playlist="${playlist.id}" data-quest-slot="${escapeHtml(save.slot)}"${loFiCafeCardAttributes(playlist, save)} aria-current="${active ? 'page' : 'false'}" title="${escapeHtml(playlist.name)}" ${playlist.dailyMix ? 'data-daily-curated="true"' : ''}><span class="playlist-thumb" ${glyphAttributes} ${image}>${playlist.dailyMix ? dailyThumb : playlist.background ? '' : escapeHtml(playlist.glyph || playlist.name.charAt(0).toUpperCase())}</span><span class="playlist-copy"><span class="quest-save-slot">SLOT ${escapeHtml(save.slot)} <b>${escapeHtml(save.type.toUpperCase())}</b></span><strong>${escapeHtml(playlist.name)}</strong><span>${playlist.dailyMix ? 'Today · Rediscovery' : `${save.type} &middot; ${count} track${count === 1 ? '' : 's'}`}</span><span class="quest-save-meta">${collectionWearText(playlist, save)}</span>${award}</span><span class="playlist-dots">${playlist.virtual ? '' : '...'}</span></button>`;
   }).join('');
   if ($('#playlistList').innerHTML !== nextPlaylistHtml) $('#playlistList').innerHTML = nextPlaylistHtml;
@@ -17742,6 +17748,7 @@ function publishMediaSessionMetadata(track, artworkUrl) {
 }
 
 async function playTrack(id, options = {}) {
+  if (unskippableController?.playing() && options.unskippable !== true) { unskippableBlocks('play'); return false; }
   const index = state.tracks.findIndex((track) => track.id === id); if (index < 0) return;
   const requestSerial = ++trackPlayRequestSerial;
   lastTrackPlayRequestAt = Date.now();
@@ -18097,7 +18104,7 @@ function canAddCollectionToSession() {
   return Boolean(currentTrack() && state.queue.length && !linkedSessionHas(sourceId) && sourceId !== (state.queueSourceId || 'all') && !activePlaylist().dailyMix);
 }
 function addCollectionToSession() {
-  if (!canAddCollectionToSession()) return false;
+  if (unskippableBlocks('queue') || !canAddCollectionToSession()) return false;
   const sourceId = state.activePlaylistId || 'all';
   const tracks = visibleTracks().filter((track) => !track.missing);
   if (!tracks.length) return false;
@@ -18239,11 +18246,19 @@ function buildQueue(tracks, startId = null, options = {}) {
 }
 async function requestPlaybackTraversal(direction, options = {}) {
   const naturalEnd = options.naturalEnd === true;
+  if (unskippableController?.playing()) {
+    // Only a song ending on its own moves an unskippable mix along.
+    if (!naturalEnd || direction === 'previous') { unskippableBlocks('skip'); return false; }
+    const next = adjacentTrack(1, true, options);
+    if (!next) { unskippableController.finished(); return false; }
+    return (await playTrack(next.id, { ...options, naturalAdvance: true, unskippable: true })) === true;
+  }
   const track = adjacentTrack(direction === 'previous' ? -1 : 1, naturalEnd, options);
   if (!track) return false;
   return (await playTrack(track.id, { ...options, naturalAdvance: naturalEnd })) === true;
 }
 function moveQueueEntry(id, toIndex) {
+  if (unskippableBlocks('queue')) return false;
   const source = activeQueue();
   const projected = state.shuffle ? tracksInActiveShuffleOrder(source).map((track) => track.id) : source.map((track) => track.id);
   const fromIndex = projected.indexOf(id);
@@ -18372,6 +18387,7 @@ async function handleRemotePlaybackCommand(payload = {}, command = {}) {
     return requestPlaybackTraversal('next', signalContext);
   }
   if (action === 'not-session' || action === 'less-like') {
+    if (unskippableBlocks('steer')) return false;
     const track = trackById(payload.trackId || currentTrack()?.id || '');
     if (!track) return false;
     applyFlowControl(action, track);
@@ -18381,6 +18397,7 @@ async function handleRemotePlaybackCommand(payload = {}, command = {}) {
     return requestPlaybackTraversal('previous', signalContext);
   }
   if (action === 'seek') {
+    if (unskippableBlocks('seek')) return false;
     if (Number.isFinite(Number(payload.seconds)) && audio.duration) {
       const seconds = Math.max(0, Math.min(audio.duration, Number(payload.seconds)));
       await issueSharedPlaybackCommand('seek', { trackId: currentTrack()?.id || '', seconds }, () => {
@@ -18397,6 +18414,7 @@ async function handleRemotePlaybackCommand(payload = {}, command = {}) {
   return false;
 }
 function handleRemoteShuffleCommand(payload = {}) {
+  if (unskippableBlocks('shuffle')) return false;
   if (Number(payload.version || 1) !== flowShuffleContract.VERSION) return false;
   const action = String(payload.action || '').toLowerCase();
   if (action === 'setenabled') { state.shuffle = payload.enabled === true; state.shuffleStyle = state.shuffle ? 'flow' : 'off'; resetFlowShuffleCycle(currentTrack()?.id || ''); }
@@ -18415,6 +18433,7 @@ function handleRemoteShuffleCommand(payload = {}) {
 }
 
 function handleRemoteQueueCommand(payload = {}, command = {}) {
+  if (unskippableBlocks('queue')) return false;
   const signalContext = remoteSignalContext(command);
   const action = String(payload.action || '').toLowerCase();
   const trackId = payload.trackId;
@@ -18548,6 +18567,7 @@ function clearBackground(playlistId = state.activePlaylistId) {
   return hadCustomImage;
 }
 function selectPlaylist(id) {
+  if (isUnskippablePlaylist(id) && unskippable()?.openCover(id)) return;
   setBackgroundCabinetOpen(false);
   const changed = state.activePlaylistId !== id;
   state.activePlaylistId = id;
@@ -18557,6 +18577,98 @@ function selectPlaylist(id) {
   if (changed) triggerQuestCartridgeInsert();
   if (changed) setQuestBootMessage('CHECKING SAVE', 'load', 1800);
   if (changed || appearance.theme !== 'ghost-index') triggerThemeAction('collection', activePlaylist().name);
+}
+// Unskippable mixes: made in a preview builder, saved as playlists that carry
+// their recipe, and played from a full cover that blocks skip, seek and queue
+// edits until the mix ends or the listener leaves.
+let unskippableController = null;
+function unskippable() {
+  if (unskippableController) return unskippableController;
+  const api = globalThis.PixelodyUnskippableDesktop;
+  if (!api || !globalThis.PixelodyUnskippableMix || !globalThis.PixelodyDesktopShuffle) return null;
+  unskippableController = api.createUnskippableDesktop({
+    mix: globalThis.PixelodyUnskippableMix, doc: document, escapeHtml,
+    tracks: () => state.tracks, trackById,
+    entryFor: (track) => globalThis.PixelodyDesktopShuffle.entryFor(track),
+    durationMs: (track) => Number.isFinite(Number(track.duration)) && Number(track.duration) > 0 ? Math.round(Number(track.duration) * 1000) : 0,
+    formatTime: durationText,
+    fileUrl: (path) => window.desktop.fileUrl(path),
+    nowMs: () => Date.now(),
+    uniqueName: ensureUniquePlaylistName,
+    findPlaylist: (id) => state.playlists.find((playlist) => playlist.id === id) || null,
+    savePlaylist: (fields) => {
+      const playlist = { id: `playlist-${Date.now()}`, ...fields };
+      state.playlists.push(playlist);
+      persist(); renderTracks();
+      return playlist;
+    },
+    setGenre: (ids, genre) => {
+      ids.forEach((id) => { const track = trackById(id); if (track) track.genre = genre; });
+      afterBulkMetadataChange(ids);
+    },
+    toast: showToast,
+    persist,
+    // The mix plays in order on its own queue; shuffle and repeat come back
+    // the way they were when the listener leaves or the mix ends.
+    takeOverQueue: (playlist, point) => {
+      const prior = { shuffle: state.shuffle, shuffleStyle: state.shuffleStyle, repeat: state.repeat };
+      state.shuffle = false; state.shuffleStyle = 'off'; state.repeat = 'off';
+      const tracks = playlist.trackIds.map(trackById).filter((track) => track && !track.missing);
+      buildQueue(tracks, point.trackId, { sourceId: playlist.id, sourceName: playlist.name });
+      syncRepeatButton(); syncShuffleControls();
+      return prior;
+    },
+    restoreModes: (prior) => {
+      if (!prior) return;
+      state.shuffle = prior.shuffle; state.shuffleStyle = prior.shuffleStyle; state.repeat = prior.repeat;
+      syncRepeatButton(); syncShuffleControls();
+    },
+    play: async (trackId, positionMs) => {
+      state.restoreTime = positionMs > 0 ? positionMs / 1000 : null;
+      const started = (await playTrack(trackId, { source: 'unskippable', unskippable: true })) === true;
+      if (!started) state.restoreTime = null;
+      return started;
+    },
+    pause: () => { if (!audio.paused) audio.pause(); },
+    togglePlayback: () => toggleCurrentPlayback(),
+    isPaused: () => audio.paused,
+    currentTrackId: () => currentTrack()?.id || '',
+    positionMs: () => (Number(audio.currentTime) || 0) * 1000,
+    durationSeconds: () => Number.isFinite(audio.duration) ? audio.duration : 0,
+    reducedMotion: motionDisabled,
+    coverLayout: () => appearance.unskippableCoverLayout || 'theme',
+    setCoverLayout: (layout) => { appearance.unskippableCoverLayout = layout; setLocalStorageItem('pixelody.appearance', JSON.stringify(appearance)); persist(); },
+    // Cartridge Quest, Obsession and Lo-Fi Café bring their own cover look;
+    // other themes stack the details under the art.
+    themeCoverLayout: () => 'theme',
+    themeCoverLook: () => {
+      if (cartridgeQuestExperienceActive()) return 'cartridge-quest';
+      if (obsessionExperienceActive() || activePresentationKey() === 'obsession') return 'obsession';
+      if (loFiCafeExperienceActive() || activePresentationKey() === 'lo-fi-cafe') return 'lo-fi-cafe';
+      return '';
+    },
+    // A side tap on the master gain for the cover's equalizer; it never
+    // changes what reaches the output.
+    analyser: () => {
+      if (!state.context || !state.masterGain) return null;
+      try {
+        const analyser = state.context.createAnalyser();
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.78;
+        state.masterGain.connect(analyser);
+        return analyser;
+      } catch { return null; }
+    },
+    releaseAnalyser: (analyser) => { try { state.masterGain?.disconnect(analyser); } catch {} },
+    onLeave: () => { renderTracks(); },
+  });
+  return unskippableController;
+}
+function unskippableBlocks(kind) {
+  return Boolean(unskippableController?.blocks(kind));
+}
+function isUnskippablePlaylist(id) {
+  return Boolean(globalThis.PixelodyUnskippableDesktop?.isUnskippable(state.playlists.find((playlist) => playlist.id === id)));
 }
 async function playDailyCuratedMix() {
   const playlist = dailyCuratedCollection();
@@ -18633,7 +18745,7 @@ function renderPlaylistPicker() {
 
   const list = $('#playlistPickerList');
   if (!list) return;
-  const customPlaylists = state.playlists.filter((p) => p.id !== 'all' && !p.virtual);
+  const customPlaylists = state.playlists.filter((p) => p.id !== 'all' && !p.virtual && !p.unskippable);
   if (!customPlaylists.length) {
     list.innerHTML = `<div class="playlist-picker-empty">${quest ? 'No save slots found. Forge one below:' : 'No custom playlists yet. Create one below:'}</div>`;
   } else {
@@ -19178,6 +19290,7 @@ function showPlaylistMenu(event, id = state.activePlaylistId) {
   }
   menu.querySelector('[data-action="rename"]').classList.toggle('hidden', !editable);
   menu.querySelector('[data-action="export"]')?.classList.toggle('hidden', !editable);
+  menu.querySelector('[data-action="remake-unskippable"]')?.classList.toggle('hidden', !isUnskippablePlaylist(id));
   menu.querySelector('[data-action="delete"]').classList.toggle('hidden', !editable || id === 'all');
 }
 function setLibraryVisible(visible, recordHistory = true) {
@@ -19584,6 +19697,7 @@ $('#playlistMenu').onclick = (event) => {
   const action = event.target.dataset.action; const id = state.menuPlaylistId; $('#playlistMenu').classList.add('hidden');
   if (action === 'background') chooseBackground(id); if (action === 'clear-background') clearBackground(id); if (action === 'anchor') toggleCafeAnchor(id); if (action === 'rename') renamePlaylist(id); if (action === 'delete') deletePlaylist(id);
   if (action === 'export') exportPlaylist(id);
+  if (action === 'remake-unskippable') unskippable()?.remake(id);
 };
 document.addEventListener('click', (event) => {
   if (!event.target.closest('#playlistMenu') && !event.target.closest('#playlistMore')) $('#playlistMenu').classList.add('hidden');
@@ -19770,6 +19884,7 @@ $('#closePlaylistCreator').onclick = navigateBack;
 $('#cancelPlaylistCreator').onclick = navigateBack;
 document.querySelector('[data-close-playlist-creator]').onclick = navigateBack;
 $('#confirmPlaylistCreator').onclick = confirmPlaylistCreation;
+$('#openUnskippableBuilder').onclick = () => { navigateBack(); unskippable()?.openBuilder(); };
 $('#newPlaylistName').oninput = () => $('#playlistCreatorError').classList.add('hidden');
 $('#newPlaylistName').onkeydown = (event) => { if (event.key === 'Enter') { event.preventDefault(); confirmPlaylistCreation(); } };
 $('#closePlaylistPicker').onclick = navigateBack;
@@ -19809,6 +19924,7 @@ function afterBulkMetadataChange(ids) {
   persist(); renderTracks({ preserveOrder: true }); renderQueue(); renderMigrationReport(); broadcastPlayerState();
 }
 function enqueueQueueTracks(ids, { next = false } = {}) {
+  if (unskippableBlocks('queue')) return [];
   const playingId = currentTrack()?.id || '';
   const selected = [...new Set(ids)].filter((id) => trackById(id) && (next ? id !== playingId : !state.queue.includes(id)));
   if (!selected.length) return [];
@@ -19882,7 +19998,7 @@ syncQuestBossBar();
 $('#shuffleButton').onclick = () => setShuffleStyle(state.shuffle ? 'off' : state.lastShuffleStyle || 'flow');
 function syncRepeatButton() { $('#repeatButton').classList.toggle('active', state.repeat !== 'off'); $('#repeatButton').title = `Repeat: ${state.repeat}`; $('#repeatButton').dataset.repeat = state.repeat; syncQuestPlaybackModeReadouts(); }
 syncRepeatButton();
-$('#repeatButton').onclick = () => { state.repeat = state.repeat === 'off' ? 'all' : state.repeat === 'all' ? 'one' : 'off'; syncRepeatButton(); persist(); showToast(`Repeat ${state.repeat}.`); };
+$('#repeatButton').onclick = () => { if (unskippableBlocks('repeat')) return; state.repeat = state.repeat === 'off' ? 'all' : state.repeat === 'all' ? 'one' : 'off'; syncRepeatButton(); persist(); showToast(`Repeat ${state.repeat}.`); };
 function openQueue(opener = document.activeElement) {
   if (document.body.hasAttribute('data-desktop-presentation')) {
     document.body.dataset.desktopPanel = 'queue';
@@ -20259,6 +20375,7 @@ audio.onloadedmetadata = () => {
 };
 $('#seek').oninput = (event) => {
   if (!audio.duration) return;
+  if (unskippableBlocks('seek')) { updatePlaybackProgress(); return; }
   resetPlaybackTransition();
   const seconds = Number(event.target.value) / 1000 * audio.duration;
   const bar = $('#questBossBar');
@@ -20284,6 +20401,8 @@ audio.onseeked = () => {
   scheduleSharingSnapshot('playback-seek');
 };
 audio.addEventListener('seeking', () => sampleSignalListening({ seeking: true }));
+['play', 'pause', 'loadedmetadata'].forEach((type) => audio.addEventListener(type, () => unskippableController?.paint()));
+audio.addEventListener('timeupdate', () => unskippableController?.progress());
 audio.addEventListener('waiting', () => signalListeningTracker.suspend(signalMediaObservation(), 'buffering'));
 audio.addEventListener('playing', () => {
   if (signalRuntime.currentPlay && !confirmedOutputTransitionRuntime.snapshot().pending) signalListeningTracker.resume(signalMediaObservation());
@@ -21890,13 +22009,14 @@ if ('mediaSession' in navigator) {
     previoustrack: () => $('#prevButton').click(),
     nexttrack: () => $('#nextButton').click(),
     seekto: (details) => {
-      if (!Number.isFinite(details.seekTime)) return;
+      if (!Number.isFinite(details.seekTime) || unskippableBlocks('seek')) return;
       issueSharedPlaybackCommand('seek', { trackId: currentTrack()?.id || '', seconds: details.seekTime }, () => {
         audio.currentTime = details.seekTime;
         syncMediaSessionPlaybackState();
       });
     },
     seekbackward: (details) => {
+      if (unskippableBlocks('seek')) return;
       const seconds = Math.max(0, audio.currentTime - (details.seekOffset || 10));
       issueSharedPlaybackCommand('seek', { trackId: currentTrack()?.id || '', seconds }, () => {
         audio.currentTime = seconds;
@@ -21904,6 +22024,7 @@ if ('mediaSession' in navigator) {
       });
     },
     seekforward: (details) => {
+      if (unskippableBlocks('seek')) return;
       const seconds = Math.min(audio.duration || Infinity, audio.currentTime + (details.seekOffset || 10));
       issueSharedPlaybackCommand('seek', { trackId: currentTrack()?.id || '', seconds }, () => {
         audio.currentTime = seconds;

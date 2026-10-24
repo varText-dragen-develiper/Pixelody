@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="library-workflow.css">
   <link rel="stylesheet" href="purchase-bridge.css">
   <link rel="stylesheet" href="daily-curated.css">
+  <link rel="stylesheet" href="unskippable.css">
   <link rel="stylesheet" href="signal-orbit.css">
   <link rel="stylesheet" href="metadata-player.css">
   <link rel="stylesheet" href="layout-controls.css">
@@ -402,6 +403,7 @@
     <button data-action="anchor">Keep on the shelf</button>
     <button data-action="rename">Rename playlist</button>
     <button data-action="export">Export playlist...</button>
+    <button data-action="remake-unskippable" class="hidden">Make a new version...</button>
     <button data-action="delete" class="danger">Delete playlist</button>
   </div>
   <div class="context-menu hidden" id="trackMenu" role="menu" aria-label="Track actions">
@@ -1146,6 +1148,7 @@
       <input id="newPlaylistName" type="text" maxlength="80" autocomplete="off" placeholder="My playlist">
       <p class="playlist-creator-error hidden" id="playlistCreatorError">Enter a playlist name.</p>
       <div class="playlist-creator-actions"><button id="cancelPlaylistCreator">Cancel</button><button id="confirmPlaylistCreator">Create playlist</button></div>
+      <div class="playlist-creator-alt"><span>Or make a mix that plays straight through.</span><button type="button" id="openUnskippableBuilder">Make an unskippable mix</button></div>
     </section>
   </div>
   <div class="playlist-creator-overlay playlist-picker-overlay hidden" id="playlistPickerOverlay">
@@ -1248,6 +1251,8 @@
   <script src="shuffle/scopes.js"></script>
   <script src="renderer-domains/shuffle-controller.js"></script>
   <script src="renderer-domains/shuffle-desktop.js"></script>
+  <script src="unskippable/mix.js"></script>
+  <script src="renderer-domains/unskippable-desktop.js"></script>
   <script src="renderer.js"></script>
 </body>
 </html>
