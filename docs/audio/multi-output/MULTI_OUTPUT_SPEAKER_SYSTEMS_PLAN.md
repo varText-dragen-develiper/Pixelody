@@ -1,7 +1,7 @@
 # Playing through a speaker rig
 
-The idea is to let someone put their Windows outputs into a named rig and tune
-each one for how they actually listen. That might be desk speakers and towers,
+I want someone to save their Windows outputs as a rig and tune each member
+for the setup they use. That might be desk speakers and towers,
 or speakers and headphones, with separate gain, EQ and delay for each output.
 If the hardware is all behind one analog connection, though, Pixelody can only
 tune that combined output. Windows has to expose separate endpoints before the
@@ -20,8 +20,7 @@ the same playback controls, and watched for drift. That made it possible to work
 on the controls and calibration without first building a native mixer, but it
 also meant extra decoding, separate clocks and runtime-dependent routing.
 
-That distinction still matters when reading the older completed checklists.
-They record prototype work, not proof that two physical outputs stayed aligned.
+The completed prototype tasks didn't establish physical synchronization.
 The release checks were still open: at least 30 minutes of two-output playback,
 audibly independent EQ and gain, saved delay surviving a restart, and recovery
 when an output disappears. Bluetooth needs its own warnings and tests. A rig
@@ -41,5 +40,4 @@ For the experimental browser limits, see
 [the fan-out decision](MULTI_OUTPUT_BROWSER_FANOUT_DECISION.md). The
 [roadmap summary](MULTI_OUTPUT_SPEAKER_SYSTEMS_ROADMAP.md) and
 [physical validation notes](MULTI_OUTPUT_PHASE6_PHYSICAL_VALIDATION.md) explain
-what still needed hardware checks. This October 22 prose revision doesn't add
-new device results.
+what still needed hardware checks. This October 24 copy update adds no device results.

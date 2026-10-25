@@ -1,75 +1,75 @@
-# Pixelody Documentation
+# Pixelody documentation
 
-Start with [Getting started](GETTING_STARTED.md) for the app, or the [website guides](https://pixelody-web.pixelody101.workers.dev/docs) for shorter explanations. The references below go into the design, code and testing. Plans describe intended work; dated notes and results describe the build or session they were written for. Read each document’s status before treating it as a feature available in your download.
+For setup, use [Getting started](GETTING_STARTED.md) or the [website guides](https://pixelody-web.pixelody101.workers.dev/docs). The references below cover code, design and testing. Dated results belong to their recorded builds; plans may describe work that is still unfinished.
 
 ## Design
 
-- [Pixelody Design North Star](design/DESIGN_NORTH_STAR.md)
+- [Designing Pixelody](design/DESIGN_NORTH_STAR.md)
 
 ## Architecture
 
-- [Pixelody Backbone Audit Checklist](architecture/BACKBONE_AUDIT_CHECKLIST.md)
+- [Finding problems in the Windows app](architecture/BACKBONE_AUDIT_CHECKLIST.md)
 - [Canvas and Studio runtime gates](architecture/CANVAS_AND_STUDIO_GATES.md)
-- [Durable state and recovery](architecture/DURABLE_STATE_AND_RECOVERY.md)
-- [Electron Security Boundary](architecture/ELECTRON_SECURITY_BOUNDARY.md)
-- [Renderer Domain Boundaries](architecture/RENDERER_DOMAIN_BOUNDARIES.md)
+- [Saving and recovering state](architecture/DURABLE_STATE_AND_RECOVERY.md)
+- [What each Electron window can do](architecture/ELECTRON_SECURITY_BOUNDARY.md)
+- [Renderer modules](architecture/RENDERER_DOMAIN_BOUNDARIES.md)
 
 ## Themes
 
-- [Canvas theme port backlog](themes/CANVAS_THEME_PORT_BACKLOG.md)
-- [Canvas theme port baseline evidence](themes/CANVAS_THEME_PORT_BASELINE_EVIDENCE.md)
-- [Theme Asset and Instrument Infrastructure Catalog](themes/THEME_ASSET_INFRASTRUCTURE_CATALOG.md)
-- [Pixelody Built-In Theme Catalog](themes/THEME_CATALOG.md)
-- [Theme Instrument Foundry](themes/THEME_INSTRUMENT_FOUNDRY.md)
-- [Theme runtime architecture](themes/THEME_RUNTIME_ARCHITECTURE.md)
-- [Pixelody Theme System](themes/THEME_SYSTEM.md)
-- [Cartridge Quest Notes](themes/cartridge-quest/README.md)
-- [Cartridge Quest Hotbar Design System](themes/cartridge-quest/hotbar-design-system.md)
-- [Cartridge Quest Implementation Map](themes/cartridge-quest/implementation-map.md)
-- [Cartridge Quest Mini-Player Design System](themes/cartridge-quest/mini-player-design-system.md)
+- [Canvas ports and further ideas](themes/CANVAS_THEME_PORT_BACKLOG.md)
+- [Measurements used for Canvas ports](themes/CANVAS_THEME_PORT_BASELINE_EVIDENCE.md)
+- [Reusable theme instruments](themes/THEME_ASSET_INFRASTRUCTURE_CATALOG.md)
+- [Theme ideas and recorded designs](themes/THEME_CATALOG.md)
+- [Comparing theme instruments](themes/THEME_INSTRUMENT_FOUNDRY.md)
+- [Theme runtime](themes/THEME_RUNTIME_ARCHITECTURE.md)
+- [Working on themes](themes/THEME_SYSTEM.md)
+- [Working on Cartridge Quest](themes/cartridge-quest/README.md)
+- [Cartridge Quest control deck](themes/cartridge-quest/hotbar-design-system.md)
+- [Cartridge Quest source references](themes/cartridge-quest/implementation-map.md)
+- [Cartridge Quest mini-player](themes/cartridge-quest/mini-player-design-system.md)
 
 ## Audio
 
-- [Pixelody Audio Release Gate](audio/AUDIO_RELEASE_GATE.md)
-- [Pixelody Audio System Overview](audio/AUDIO_SYSTEM_OVERVIEW.md)
-- [Audio Visualizer Foundation](audio/AUDIO_VISUALIZER_FOUNDATION.md)
+- [Checking audio before release](audio/AUDIO_RELEASE_GATE.md)
+- [Audio in Pixelody](audio/AUDIO_SYSTEM_OVERVIEW.md)
+- [Visualizer renderers](audio/AUDIO_VISUALIZER_FOUNDATION.md)
 - [Flow Shuffle development notes](audio/FLOW_SHUFFLE_DEVELOPMENT_PLAN.md)
-- [Windows-wide EQ](audio/GLOBAL_SYSTEM_AUDIO_EQ_PLAN.md)
-- [Browser Fan-Out Decision Record](audio/multi-output/MULTI_OUTPUT_BROWSER_FANOUT_DECISION.md)
-- [Multi-output speaker calibration design](audio/multi-output/MULTI_OUTPUT_CALIBRATION_DESIGN.md)
-- [Multi-output Calibration Roadmap](audio/multi-output/MULTI_OUTPUT_CALIBRATION_ROADMAP.md)
-- [Native Endpoint-Clock Discipline Prototype](audio/multi-output/MULTI_OUTPUT_NATIVE_CLOCK_DISCIPLINE_PROTOTYPE.md)
-- [Multi-Output Native Mixer Contract](audio/multi-output/MULTI_OUTPUT_NATIVE_MIXER_CONTRACT.md)
-- [Native Mixer Rig Input Mapping](audio/multi-output/MULTI_OUTPUT_NATIVE_MIXER_INPUT_MAPPING.md)
-- [Multi-Output Native Mixer Safety Policy](audio/multi-output/MULTI_OUTPUT_NATIVE_MIXER_SAFETY_POLICY.md)
-- [Native Mixer Profile, Calibration, And Diagnostics Reuse Mapping](audio/multi-output/MULTI_OUTPUT_NATIVE_REUSE_MAPPING.md)
-- [Native Mixer Status-State Gate](audio/multi-output/MULTI_OUTPUT_NATIVE_STATUS_GATE.md)
-- [Multi-Output Phase 5 Measurement Log](audio/multi-output/MULTI_OUTPUT_PHASE5_MEASUREMENT_LOG.md)
-- [Multi-Output Phase 6 Physical Validation](audio/multi-output/MULTI_OUTPUT_PHASE6_PHYSICAL_VALIDATION.md)
-- [Multi-Output Phase C Hardware Run Log](audio/multi-output/MULTI_OUTPUT_PHASEC_HARDWARE_RUN_LOG.md)
-- [Multi-Output Physical Validation Recorder](audio/multi-output/MULTI_OUTPUT_PHYSICAL_VALIDATION_RECORDER.md)
-- [Multi-Output Speaker Systems Notes](audio/multi-output/MULTI_OUTPUT_SPEAKER_SYSTEMS_NOTES.md)
+- [EQ for other Windows apps](audio/GLOBAL_SYSTEM_AUDIO_EQ_PLAN.md)
+- [Keeping browser fan-out experimental](audio/multi-output/MULTI_OUTPUT_BROWSER_FANOUT_DECISION.md)
+- [Calibrating a speaker rig](audio/multi-output/MULTI_OUTPUT_CALIBRATION_DESIGN.md)
+- [Calibration: recorded progress](audio/multi-output/MULTI_OUTPUT_CALIBRATION_ROADMAP.md)
+- [Testing endpoint-clock correction](audio/multi-output/MULTI_OUTPUT_NATIVE_CLOCK_DISCIPLINE_PROTOTYPE.md)
+- [Connecting a native multi-output mixer](audio/multi-output/MULTI_OUTPUT_NATIVE_MIXER_CONTRACT.md)
+- [Building native mixer input from a rig](audio/multi-output/MULTI_OUTPUT_NATIVE_MIXER_INPUT_MAPPING.md)
+- [Rules for an optional native mixer](audio/multi-output/MULTI_OUTPUT_NATIVE_MIXER_SAFETY_POLICY.md)
+- [Reusing profiles in the native mixer](audio/multi-output/MULTI_OUTPUT_NATIVE_REUSE_MAPPING.md)
+- [Native mixer status](audio/multi-output/MULTI_OUTPUT_NATIVE_STATUS_GATE.md)
+- [Measuring browser drift and overhead](audio/multi-output/MULTI_OUTPUT_PHASE5_MEASUREMENT_LOG.md)
+- [Thirty-minute physical output check](audio/multi-output/MULTI_OUTPUT_PHASE6_PHYSICAL_VALIDATION.md)
+- [Wired and Bluetooth hardware results](audio/multi-output/MULTI_OUTPUT_PHASEC_HARDWARE_RUN_LOG.md)
+- [Recording a physical rig test](audio/multi-output/MULTI_OUTPUT_PHYSICAL_VALIDATION_RECORDER.md)
+- [How speaker rigs work](audio/multi-output/MULTI_OUTPUT_SPEAKER_SYSTEMS_NOTES.md)
 - [Playing through a speaker rig](audio/multi-output/MULTI_OUTPUT_SPEAKER_SYSTEMS_PLAN.md)
-- [Speaker-system development notes](audio/multi-output/MULTI_OUTPUT_SPEAKER_SYSTEMS_ROADMAP.md)
-- [Windows System Audio Bridge Protocol](audio/system-audio/WINDOWS_SYSTEM_AUDIO_BRIDGE_PROTOCOL.md)
-- [Windows Virtual Audio Driver Research](audio/system-audio/WINDOWS_VIRTUAL_AUDIO_DRIVER_RESEARCH.md)
-- [Windows Virtual Audio Opportunity Audit](audio/system-audio/WINDOWS_VIRTUAL_AUDIO_OPPORTUNITY_AUDIT.md)
-- [Windows Virtual Audio Roadmap](audio/system-audio/WINDOWS_VIRTUAL_AUDIO_ROADMAP.md)
-- [Windows Virtual Audio VM And WDK Setup](audio/system-audio/WINDOWS_VIRTUAL_AUDIO_VM_WDK_SETUP.md)
+- [Speaker rigs: recorded progress](audio/multi-output/MULTI_OUTPUT_SPEAKER_SYSTEMS_ROADMAP.md)
+- [System-audio bridge protocol](audio/system-audio/WINDOWS_SYSTEM_AUDIO_BRIDGE_PROTOCOL.md)
+- [Research behind the virtual audio route](audio/system-audio/WINDOWS_VIRTUAL_AUDIO_DRIVER_RESEARCH.md)
+- [What a simpler Windows EQ route could do](audio/system-audio/WINDOWS_VIRTUAL_AUDIO_OPPORTUNITY_AUDIT.md)
+- [Windows-wide EQ: direction and progress](audio/system-audio/WINDOWS_VIRTUAL_AUDIO_ROADMAP.md)
+- [Preparing a VM for driver tests](audio/system-audio/WINDOWS_VIRTUAL_AUDIO_VM_WDK_SETUP.md)
 
 ## Networking and J.A.M.
 
-- [Device Hosting And Personal Server Plan](networking/ANDROID_PERSONAL_SERVER_PLAN.md)
-- [Local Network J.A.M. And Device Hosting Notes](networking/LOCAL_NETWORK_JAMS_AND_DEVICE_HOSTING.md)
-- [Pixelody Networking Backbone Checklist](networking/NETWORKING_BACKBONE_CHECKLIST.md)
-- [Pixelody Networking Capabilities Implementation Map](networking/NETWORKING_CAPABILITIES_IMPLEMENTATION_MAP.md)
-- [Networking development notes](networking/NETWORKING_DEVELOPMENT_ROADMAP.md)
+- [Hosting a personal library across devices](networking/ANDROID_PERSONAL_SERVER_PLAN.md)
+- [Personal hosting and J.A.M.](networking/LOCAL_NETWORK_JAMS_AND_DEVICE_HOSTING.md)
+- [Host and client contract reference](networking/NETWORKING_BACKBONE_CHECKLIST.md)
+- [Extending the network features](networking/NETWORKING_CAPABILITIES_IMPLEMENTATION_MAP.md)
+- [Networking: recorded progress](networking/NETWORKING_DEVELOPMENT_ROADMAP.md)
 
 ## Release engineering
 
-- [Pixelody Legal Release Checklist](release/LEGAL_RELEASE_CHECKLIST.md)
-- [Windows Integration Harness](release/WINDOWS_INTEGRATION_HARNESS.md)
-- [Pixelody Windows Release and Signing](release/WINDOWS_RELEASE_AND_SIGNING.md)
+- [Reviewing a public release](release/LEGAL_RELEASE_CHECKLIST.md)
+- [Running the Windows integration tests](release/WINDOWS_INTEGRATION_HARNESS.md)
+- [Building and signing Windows releases](release/WINDOWS_RELEASE_AND_SIGNING.md)
 
 ## Planning
 
@@ -77,12 +77,12 @@ Start with [Getting started](GETTING_STARTED.md) for the app, or the [website gu
 
 ## Brand
 
-- [Pixelody Mark](brand/README.md)
+- [The Pixelody mark](brand/README.md)
 
 ## Other
 
 - [Pixelody architecture](ARCHITECTURE.md)
 - [Getting started with Pixelody for Windows](GETTING_STARTED.md)
-- [Pixelody minimum specs (measured 2026-10-05)](MINIMUM_SPECS.md)
+- [Hardware and measured performance — October 5, 2026](MINIMUM_SPECS.md)
 - [Downloaded modules](OPTIONAL_MODULES.md)
-- [Release preparation](RELEASE_PREPARATION.md)
+- [Preparing a release](RELEASE_PREPARATION.md)

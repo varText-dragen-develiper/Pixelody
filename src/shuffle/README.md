@@ -1,6 +1,6 @@
-# Universal shuffle v2 reference
+# Universal shuffle API
 
-Policy `universal-shuffle-v2.2`, config 2, schema 3. The executable machine contract,
+This reference uses policy `universal-shuffle-v2.2`, config 2 and schema 3. The machine contract,
 JSON schemas and replay traces live in
 `docs/api-contract-fixtures/shuffle-universal-v2/`. That directory's manifest
 hashes every shared input. Schema and policy changes need compatibility review.
@@ -9,10 +9,10 @@ CommonJS: `require('./src/shuffle')` exports the scheduler. Browser scripts load
 `universal.js`, `learning.js`, then `scopes.js`; their globals are
 `PixelodyUniversalShuffle`, `PixelodyShuffleLearningV2`, `PixelodyShuffleScopesV2`.
 Legacy engine/planner `universalPolicy` exports resolve this same scheduler.
-Legacy track-ID functions remain migration compatibility; active platform
-adapters must use occurrence-aware universal calls.
+Legacy track-ID helpers support migration. Active adapters must use the
+occurrence-aware calls so duplicate playlist entries keep separate turns.
 
-## Activation transaction
+## Reserving and confirming playback
 
 1. Create a session with explicit stable `scopeId`, unique `sessionId`,
    `authorityId`, seed and source occurrences `{entryId,trackId,...}`. A library
@@ -41,7 +41,7 @@ commands must replay in order; rotate producer identity only at an explicit
 authority/producer checkpoint. Convenience calls still require serialized
 adapter mutation and activation guards.
 
-## Queue authority and control
+## Projecting and editing the queue
 
 `project(state,{horizon,context})` returns the authoritative future's entry IDs
 and actual receipts without modifying the live state. Existing pending
@@ -69,7 +69,7 @@ sorting, restarts, mode changes and ordinary queue edits. `scopes.js` retains
 32 scopes and refuses new scopes at capacity until explicit eviction. An
 eviction reports unfinished entitlement and does not claim completion.
 
-## Two queues
+## Natural advance and personal skips
 
 Balanced, Flow and Album keep two queues. A natural end (`naturalEnd: true`)
 plays the base queue; a personal Next (`naturalEnd: false`) plays the live
@@ -102,7 +102,7 @@ Entries may carry `sourceKey` (for example `playlist:<id>` or `album:<id>`)
 when a session links several lists. `options.airtime: 'even'` then gives each
 list a fair turn; the default `size` lets bigger lists play more.
 
-## Learning and privacy
+## Learning from listening
 
 Pass actual service/audio intervals to `learning.reduce`, with an independent
 boot clock ID, monotonic bounds, observed media bounds and true playing state.
@@ -144,6 +144,6 @@ into the session with their own `sourceKey`, so linked lists take turns
 (`options.airtime`: `size` or `even`); removing a list reconciles its entries
 out and keeps the song playing now.
 
-Core test/simulation results are local reference evidence. Platform adoption,
-Kotlin parity, filesystem durability, renderer scheduling, connected handoff,
-audible output, physical devices and human preference remain separate gates.
+Core tests and simulations check decisions under controlled inputs. Adapter
+behavior, Kotlin parity, durable saves, scheduling, connected transfer and real
+listening still need their own results.

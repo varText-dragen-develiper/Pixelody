@@ -1,6 +1,6 @@
-# Windows System Audio Bridge Protocol
+# System-audio bridge protocol
 
-This is the v1 control and status contract for `Pixelody.SystemAudio.Bridge.exe`. It is the source of truth for Electron, the bridge, diagnostic helper, logs, and future support bundles.
+Use this v1 contract for requests and status shared by Electron, `Pixelody.SystemAudio.Bridge.exe`, the diagnostic helper and reports.
 
 The bridge is a separate user-mode real-time process. `Pixelody.Wasapi.Helper.exe` remains short-lived diagnostics only. The contract does not authorize endpoint installation, default-device changes, registry writes, or audible audio until the relevant roadmap gates are complete.
 
@@ -16,7 +16,7 @@ The real bridge will be long-running and use an authenticated, per-user Windows 
 
 Pipe names are generated per launch and include an unguessable token. The parent process must enforce same-user access. The exact pipe name is not persisted or exposed to the renderer.
 
-## Route States
+## Route states
 
 Only these exact state values are valid:
 
@@ -41,13 +41,13 @@ State precedence is safety-first: `loop-risk-blocked`, `real-output-missing`, an
 
 ## Envelope
 
-Every request includes:
+Request envelope:
 
 ```json
 {"contract":1,"requestId":"uuid","command":"status","payload":{}}
 ```
 
-Every response includes:
+Response envelope:
 
 ```json
 {"contract":1,"requestId":"uuid","ok":true,"status":{}}
@@ -71,9 +71,9 @@ Every response includes:
 
 `start` is rejected unless both Pixelody virtual endpoints are present, the real output resolves to a distinct endpoint, and the bridge can open shared-mode capture/render clients. It must not fall back to the current default output.
 
-## Status Schema
+## Status payload
 
-The status payload always has this shape; unavailable data is `null`, never invented:
+Use `null` for unavailable measurements in this payload:
 
 ```json
 {
@@ -94,7 +94,7 @@ The status payload always has this shape; unavailable data is `null`, never inve
 
 The bridge records counters only. It must not write captured PCM, source metadata, track names, or audio-content-derived data to diagnostics.
 
-## Command Payloads
+## Command payloads
 
 `setOutput`:
 
@@ -116,7 +116,7 @@ The bridge records counters only. It must not write captured PCM, source metadat
 {"restoreToken":"opaque-token-recorded-before-route-change"}
 ```
 
-## Error Rules
+## Handling failures
 
 - Never render to an endpoint whose ID equals either Pixelody virtual endpoint ID.
 - Never infer a real output from a friendly name when an endpoint ID is required.
@@ -125,7 +125,7 @@ The bridge records counters only. It must not write captured PCM, source metadat
 - Do not use exclusive mode in the first bridge.
 - `bypass-suspected` is a warning state, not proof that a specific app is bypassing Pixelody.
 
-## Implementation Sequence
+## Current labs and remaining work
 
 1. The checked-in bridge supports read-only `protocol`, `status`, and endpoint `probe` responses.
 2. Phase 2 provides a separate-endpoint, neutral PCM pass-through laboratory behind `--dev-allow-pass-through`. It requires two explicit endpoint IDs, accepts only matching shared mix formats, blocks same-endpoint and Pixelody-virtual routes, and stops within 250 to 3000 ms.
@@ -133,4 +133,4 @@ The bridge records counters only. It must not write captured PCM, source metadat
 4. Phase 5 adds pipe transport, lifecycle, capture/render, watchdogs, and recovery without EQ.
 5. Phase 6 adds atomic tuning updates and neutral A/B bypass.
 
-No production installer or driver integration begins from this protocol alone. The current helper probe reports `bridge-missing` only when Windows is already routing into `Pixelody Virtual Output` and the bridge binary is absent; it does not infer driver installation from a friendly name alone.
+The helper reports `bridge-missing` only when Windows is routing into the virtual output and the bridge is absent. A matching friendly name alone doesn't establish installation. This protocol supplies no production install path.

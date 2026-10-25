@@ -1,67 +1,16 @@
-# Multi-Output Native Mixer Contract
+# Connecting a native multi-output mixer
 
-This contract defines the future native Windows mixer path for Pixelody grouped speaker rigs. It is a design/API contract, not an implemented native audio renderer.
+This is the proposed API for a Windows mixer that can render Pixelody to several real outputs. The contract doesn't provide a running renderer. Until implementation and physical checks pass, ordinary playback stays on Web Audio and browser fan-out stays experimental.
 
-Use this when browser fan-out is not enough and Pixelody needs release-quality grouped playback across multiple Windows outputs.
+The renderer owns intent, track/queue state, rig selection and controls. It builds requests from existing tuning and calibration data. The main process validates those requests and manages discovery, trust, process lifetime, polling and crash reporting. Neither should run a real-time endpoint render loop.
 
-Read with:
+The suggested `Pixelody.MultiOutput.Bridge.exe` would own WASAPI endpoints, a shared timeline, per-member DSP and route counters. A failure must stop grouped output, release the endpoints and return control to normal playback. It may share native DSP/probing code with System EQ, but grouped playback consumes Pixelody's music; System EQ consumes another app's shared-mode audio through virtual endpoints.
 
-- `docs/audio/multi-output/MULTI_OUTPUT_NATIVE_MIXER_SAFETY_POLICY.md` for the optional, signed, uninstallable, and non-invasive safety rules that gate any native implementation.
-- `docs/audio/multi-output/MULTI_OUTPUT_NATIVE_MIXER_INPUT_MAPPING.md` for the saved grouped-rig to native `configureRig` mapping.
-- `docs/audio/multi-output/MULTI_OUTPUT_NATIVE_REUSE_MAPPING.md` for output profile, spatial profile, calibration, and diagnostics reuse.
-- `docs/audio/multi-output/MULTI_OUTPUT_NATIVE_STATUS_GATE.md` for native route states and release-claim gating.
+Use the [input mapping](MULTI_OUTPUT_NATIVE_MIXER_INPUT_MAPPING.md), [profile mapping](MULTI_OUTPUT_NATIVE_REUSE_MAPPING.md), [safety rules](MULTI_OUTPUT_NATIVE_MIXER_SAFETY_POLICY.md) and [status definitions](MULTI_OUTPUT_NATIVE_STATUS_GATE.md) alongside this API. A measurement failure, excessive browser overhead or a need for more than two outputs is the reason to pursue this route.
 
-## Decision Boundary
+It mustn't require a driver for ordinary playback, or for native grouped playback if direct WASAPI rendering is sufficient. No silent installation, registry/default-device mutation, kernel EQ or grouped capture of protected/exclusive/ASIO/non-PCM external-app audio belongs in this contract. Processing and shared-mode resampling also preclude a bit-perfect claim.
 
-The native mixer is required if Phase 5/6 measurements show that browser fan-out cannot honestly provide stable two-output playback, acceptable codec overhead, reliable recovery, or support beyond the current two-output experimental cap.
-
-Until the native mixer is implemented and physically validated, Pixelody must keep normal Player Mode playback on the current renderer/Web Audio path and keep browser fan-out labeled experimental.
-
-## Ownership
-
-### Electron Renderer
-
-- Owns user intent, current track state, queue state, rig selection, member controls, and UI status.
-- Builds the mixer request from existing rig members, output profiles, spatial profiles, calibration snapshots, current track info, ReplayGain, volume, mute/solo, seek/play/pause, and diagnostics policy.
-- Does not run the release-quality real-time multi-output render loop.
-- Must keep single-output playback recoverable if native routing fails.
-
-### Electron Main Process
-
-- Owns helper/bridge discovery, process launch, process shutdown, request validation, IPC boundaries, status polling, and crash/restart reporting.
-- Must hide local paths from support-facing diagnostics.
-- Must reject unknown or malformed renderer commands.
-
-### Native Mixer Bridge
-
-Suggested process name: `Pixelody.MultiOutput.Bridge.exe`.
-
-- Owns real-time WASAPI rendering to multiple real Windows output endpoints.
-- Opens each selected endpoint independently.
-- Applies per-member gain, delay, polarity, EQ, spatial/balance/mono, headroom, and limiting.
-- Maintains one shared playback timeline from the app command stream.
-- Reports endpoint format, route state, latency, drift, underruns, overruns, glitches, and last error.
-- Must fail closed by stopping native grouped output and returning control to normal Pixelody playback.
-
-### Optional Shared Native Audio Core
-
-The multi-output bridge may share DSP, endpoint probing, route-state, and diagnostics code with future System EQ bridge work, but the contracts stay distinct:
-
-- Multi-output bridge: Pixelody playback to multiple real outputs.
-- System EQ bridge: external Windows/shared-mode audio through `Pixelody Virtual Output` / `Pixelody Virtual Monitor` to a real output.
-
-## Non-Goals
-
-- No driver required for normal Pixelody playback.
-- No driver required for the first native multi-output mixer if direct WASAPI endpoint rendering is enough.
-- No registry edits.
-- No default-device changes.
-- No silent install.
-- No kernel EQ.
-- No claim of bit-perfect output while Pixelody processing, Windows shared mode, resampling, or per-output tuning is active.
-- No support for protected, exclusive, ASIO, or non-PCM app audio in the grouped playback mixer contract.
-
-## Route States
+## Route states
 
 Use these states across renderer, main process, bridge, logs, and diagnostics:
 
@@ -82,9 +31,9 @@ Use these states across renderer, main process, bridge, logs, and diagnostics:
 | `recovering` | Bridge is stopping and returning Pixelody to primary-output playback. |
 | `error` | Bridge failed with a reportable error. |
 
-## Renderer To Bridge Commands
+## Requests
 
-All command payloads must include:
+Each request carries this envelope:
 
 ```json
 {
@@ -100,7 +49,7 @@ All command payloads must include:
 
 Reports bridge capability without opening render streams.
 
-Required response fields:
+Return:
 
 - bridge version.
 - signing/trust status.
@@ -171,7 +120,7 @@ Sends a source descriptor that the native bridge can open or receive through a f
 
 The first contract should prefer an app-managed PCM handoff or safe local source handle over raw path strings in diagnostics. If local paths are needed internally, they must never appear in support-facing status payloads.
 
-Required source facts:
+Include:
 
 - source id.
 - codec/format label.
@@ -185,7 +134,7 @@ Required source facts:
 
 Starts or resumes native grouped playback at a shared timeline position.
 
-Required fields:
+Include:
 
 - target position seconds.
 - playback rate.
@@ -239,9 +188,9 @@ Stops grouped rendering, releases endpoints, and reports whether Pixelody should
 
 Returns a full status snapshot.
 
-## Bridge Status Snapshot
+## Status snapshot
 
-The bridge must report path-hidden JSON shaped like:
+Status uses path-hidden JSON:
 
 ```json
 {
@@ -299,60 +248,16 @@ The bridge must report path-hidden JSON shaped like:
 }
 ```
 
-## DSP Requirements
+## Processing and timing
 
-The native mixer must preserve the same user-facing meaning as Pixelody Player Mode:
+Track EQ precedes member/output EQ. Keep ReplayGain caps, headroom before limiting, independent trim and the same mute/solo behavior as the renderer. Delay means intentionally added delay; polarity changes the samples without silently changing the saved setting. Balance and mono come from the bound spatial profile. Report any DSP mismatch.
 
-- Track EQ applies before output/member EQ.
-- ReplayGain remains capped.
-- Headroom precedes limiting.
-- Per-member gain trim happens independently.
-- Per-member mute/solo gates must match the renderer rig behavior.
-- Per-member delay offsets represent intentional delay added to that member.
-- Polarity flip inverts the member output without changing the saved member value unless commanded.
-- Balance and mono settings come from the member's bound spatial profile.
+Every endpoint follows one command timeline with member delay offsets. Report latency and drift per member. A follower compares its endpoint clock with QPC and uses bounded asynchronous resampling against a leader. The initial range is ±300 ppm, with no more than 20 ppm change per observation. Widening it needs physical validation.
 
-Any deliberate DSP mismatch between renderer and native bridge must be reported in diagnostics.
+Runtime correction, buffer-fill error and counters are transient. They mustn't overwrite acoustic `delayMs` or become calibration results. Frequent or audible correction makes the route `degraded` or `unstable`.
 
-## Timing Requirements
+## Before calling it ready
 
-- One shared playback command timeline controls every member.
-- Per-member delays are applied relative to the shared timeline.
-- Endpoint latency and drift estimates are reported per member.
-- Drift correction is internal to the bridge and must not mutate user delay settings.
-- Route status becomes `degraded` or `unstable` when correction becomes frequent or audible.
-- A follower route must estimate its endpoint clock against QPC, select one endpoint as the timeline leader, and use a bounded asynchronous-resampling ratio for transient correction. The initial prototype limit is +/-300 ppm with no more than 20 ppm of change per observation; a production renderer may only widen that range after physical validation.
-- Runtime clock correction, buffer-fill error, and correction counters are transient status facts. They are not calibration results and must never overwrite saved acoustic `delayMs` values.
+The [safety policy](MULTI_OUTPUT_NATIVE_MIXER_SAFETY_POLICY.md) requires an optional, trusted, removable component, duplicate-route blocking and recovery without lost user data. Keep local media/artwork/library paths and audio content out of diagnostics. Missing, unsigned or failed components must leave single-output playback usable. Bluetooth needs conservative warnings.
 
-## Safety Requirements
-
-- Native mixer must be optional.
-- Release native components must be signed and trusted; unsigned components are dev-only with an explicit unpackaged override.
-- Native grouped playback must be uninstallable without deleting user data or breaking normal playback.
-- Native grouped playback must not mutate Windows default output, install a service, write registry settings, or capture external app audio.
-- Single-output playback must work if the bridge is missing, unsigned, failed, or disabled.
-- Any bridge failure must fail closed and release endpoints.
-- Duplicate endpoint routes must be blocked before playback.
-- Unavailable members must not block normal primary playback.
-- Bluetooth routes must carry conservative warnings.
-- Diagnostics must not expose track paths, artwork paths, library paths, or raw local source URLs.
-- No audio content may be stored in diagnostics.
-
-## Implementation Gate
-
-Before coding the native bridge, the app should add stubbed status plumbing that can represent:
-
-- `bridge-missing`
-- `blocked-unsigned`
-- `ready`
-- `active`
-- `degraded`
-- `member-unavailable`
-- `duplicate-route-blocked`
-- `unstable`
-- `recovering`
-- `error`
-
-Those states must flow through the canonical status gate described in `docs/audio/multi-output/MULTI_OUTPUT_NATIVE_STATUS_GATE.md`; UI, diagnostics, J.A.M. snapshots, and support bundles should not invent separate native status vocabularies.
-
-Before release claims, physical Phase 6 validation must prove native grouped playback with real outputs, independent per-output tuning, route recovery, shared commands, and non-regression of normal Pixelody playback.
+Use one status reducer for the app, diagnostics, reports and J.A.M. snapshots. Before release, Phase 6 still needs real outputs, independent tuning, shared commands, route recovery and ordinary-playback regression checks. A process starting or accepting configuration isn't that result.

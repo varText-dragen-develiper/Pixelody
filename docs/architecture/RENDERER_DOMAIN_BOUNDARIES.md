@@ -1,8 +1,6 @@
-# Renderer Domain Boundaries
+# Renderer modules
 
-`src/renderer.js` remains the browser composition root: it binds the DOM, connects Electron bridge adapters, and coordinates cross-domain UI effects. Reusable state policy, deterministic transforms, and controller lifecycle now live under `src/renderer-domains/` and load before the composition root.
-
-The domain files are UMD-style modules so the same implementation runs as a classic Electron renderer script and as a CommonJS module in Node regression tests. They do not import one another. Cross-domain coordination occurs only in `renderer.js`, preventing circular dependencies and hidden controller order.
+`src/renderer.js` binds the DOM and coordinates the controllers in `src/renderer-domains/`. The controllers load first and use UMD exports so the same code can run as a classic renderer script or be required by Node tests. They don't import each other; coordination belongs in the composition root.
 
 | Domain | Owned behavior | Injected dependencies | Commands/results |
 | --- | --- | --- | --- |
@@ -15,18 +13,14 @@ The domain files are UMD-style modules so the same implementation runs as a clas
 | Appearance | Saved appearance, motion, and interface-sound normalization; deterministic color math | Defaults and persisted values | Normalized appearance models and palette values |
 | Audio | Tuning/parametric normalization, Web Audio graph construction, limiter/spatial wiring, DSP math | AudioContext, media element, band definitions and limits | Connected graph nodes and bounded tuning/spatial results |
 
-## Invariants
+## Where a change belongs
 
-- The main-process state store remains authoritative. The renderer state controller receives only narrow bridge methods and never receives filesystem primitives.
-- Legacy localStorage remains a rollback mirror; domain modules cannot read or write it directly.
-- Track paths remain in the private renderer-to-main J.A.M. snapshot only so the main process can stream local media. `src/server/` maps IDs and strips paths before any public response; `scripts/check-server.js` verifies this boundary with a Windows-path fixture.
-- The primary audio graph still contains one media-element source, simple and parametric EQ, master gain, spatial matrix, protective limiter, and one destination. Output reporting and the primary audio path are unchanged.
-- Theme choreography, accessibility attributes, DOM IDs, and mini-player message ordering remain composition-root responsibilities until a later UI component migration provides an equally explicit contract.
-- Every controller must remain independently require-able in Node. New domain logic belongs in its owner module and needs a module-level test before renderer wiring.
+Put reusable policy and deterministic transforms in the owning module, with a module test before wiring them to the renderer. Keep DOM choreography, accessibility attributes, IDs and mini-player message order in `renderer.js` until a component has an equally explicit owner.
 
-## Verification
+The state controller gets narrow bridge methods, never filesystem primitives. The main-process store owns durable data; controllers don't access legacy browser storage directly. A J.A.M. snapshot can contain paths privately on its way to the main process, but `src/server/` must strip them before any response. `check-server.js` includes a Windows-path fixture for that case.
 
-- `scripts/check-renderer-domains.js` executes every controller boundary, including state serialization, malformed import shapes, queue/session decisions, navigation history, diagnostics lifecycle, J.A.M. projection, appearance normalization, and a fake Web Audio graph.
-- `scripts/check-ui-bindings.js` guards DOM composition and the bounded startup reveal.
-- `scripts/check-state-store.js`, `scripts/check-audio.js`, `scripts/check-server.js`, and the theme/legal audits protect cross-process and cross-domain invariants.
-- The live Windows smoke test covers startup, durable library/queue/session restore, settings navigation, diagnostics, play/pause, J.A.M. default-off state, and mini-player synchronization.
+Audio still has one primary media source and a graph with simple/parametric EQ, gain, spatial processing, limiter and destination. Extracting a controller doesn't authorize a second clock or a route that bypasses processing.
+
+## Checking a change
+
+`scripts/check-renderer-domains.js` exercises the modules with controlled dependencies, including a fake audio graph. `check-ui-bindings.js` covers DOM composition/startup; state, audio and server checks cover the other boundaries. The Windows smoke scenario checks real startup, restore, navigation, diagnostics, playback commands, default-off J.A.M. and mini-player synchronization. Keep that runtime result separate from module-test coverage.

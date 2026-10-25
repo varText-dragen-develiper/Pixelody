@@ -1,6 +1,6 @@
-# Pixelody System Audio Bridge
+# System-audio bridge labs
 
-This is the future user-mode audio process for Pixelody System EQ. It is deliberately separate from `Pixelody.Wasapi.Helper.exe`: the helper stays short-lived and diagnostic; the bridge will own real-time capture, processing, rendering, watchdogs, and recovery.
+The planned System EQ process owns capture, processing, rendering, watchdog and recovery. `Pixelody.Wasapi.Helper.exe` remains a separate short-lived diagnostic tool. The executable here currently provides status and bounded developer labs.
 
 The current executable provides protocol/status plus explicitly requested,
 time-bounded development labs. It is not a resident real-time bridge, does not
@@ -14,9 +14,8 @@ present.
 dotnet build native/windows-system-audio-bridge/Pixelody.SystemAudio.Bridge.csproj -c Release
 ```
 
-The development executable is framework-dependent so it builds without fetching
-runtime packs. The future signed installer decides the final self-contained
-packaging strategy.
+The development executable is framework-dependent and doesn't fetch runtime
+packs. Self-contained packaging remains a decision for a later signed installer.
 
 ## Commands
 
@@ -29,9 +28,9 @@ Pixelody.SystemAudio.Bridge.exe --json --command clock-discipline-self-test --de
 
 Each returns the v1 bridge-shaped JSON status object. `probe` is read-only and lists active render endpoints with their exact IDs and shared mix formats. The definitive control/status contract is in `../../docs/audio/system-audio/WINDOWS_SYSTEM_AUDIO_BRIDGE_PROTOCOL.md`.
 
-## Dev Pass-Through Lab
+## Neutral pass-through lab
 
-The lab is the only command that opens audio streams. It stays disabled unless all of the following are supplied:
+Arm this bounded transfer explicitly with both endpoint IDs:
 
 ```powershell
 Pixelody.SystemAudio.Bridge.exe --json --command pass-through-lab --dev-allow-pass-through --capture-endpoint-id "{capture-endpoint-id}" --render-endpoint-id "{render-endpoint-id}" --duration-ms 1000
@@ -39,9 +38,9 @@ Pixelody.SystemAudio.Bridge.exe --json --command pass-through-lab --dev-allow-pa
 
 The two endpoint IDs must be explicitly copied from `probe`, must be different, must not be named `Pixelody Virtual ...`, and must report the same shared mix format. The bounded range is 250 to 3000 ms. The laboratory never changes the Windows default device, installs a component, writes the registry, selects a fallback device, uses exclusive mode, or keeps running after the request ends.
 
-It is neutral PCM pass-through only. It reports frame counters, capture discontinuities, capture waits, render backpressure, buffer sizes, endpoint formats, and an estimated latency. A result is `active` only when both input and output frame counters advanced during that explicit lab run. `active` here proves the laboratory transfer only; it is not a claim that Pixelody System EQ or a virtual driver route is active.
+It is neutral PCM pass-through only. It reports frame counters, capture discontinuities, capture waits, render backpressure, buffer sizes, endpoint formats, and an estimated latency. Here, `active` means the lab advanced both frame counters. It doesn't report a resident System EQ or virtual-driver route.
 
-## Dev Virtual-Route Lab
+## VM virtual-route lab
 
 This second bounded lab exists only for the VM after its test-signed endpoint
 package has passed the validation record. It is not a service and does not select
@@ -65,7 +64,7 @@ not been exercised against a Pixelody virtual endpoint. Until that record and
 the VM endpoint package exist, the guarded command must fail as
 `virtual-endpoint-missing` without opening audio streams.
 
-## Dev Endpoint-Clock Discipline Lab
+## Endpoint-clock lab
 
 The bridge also has a separately armed, time-bounded endpoint-clock monitor for
 the future multi-output mixer. It is not normal Pixelody playback, does not
@@ -92,7 +91,7 @@ bound, and PCM resampler without enumerating or opening any audio endpoint.
 The detailed design and limits are in
 `../../docs/audio/multi-output/MULTI_OUTPUT_NATIVE_CLOCK_DISCIPLINE_PROTOTYPE.md`.
 
-## Guardrails
+## Route restrictions
 
 - The production bridge will capture only `Pixelody Virtual Monitor`; this pre-driver lab captures Windows loopback from a manually chosen non-Pixelody endpoint.
 - It never renders to `Pixelody Virtual Output` and blocks either Pixelody virtual endpoint by name.

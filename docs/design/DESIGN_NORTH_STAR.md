@@ -1,75 +1,25 @@
-# Pixelody Design North Star
+# Designing Pixelody
 
-## One Sentence
+I want the music and album art to have room, the library to feel organized, and the sound controls to be there when someone wants them. Themes can change how the player works spatially, but finding and using it should still make sense.
 
-I want Pixelody to give music and album art room to matter, with a library that feels organised and sound controls close when you want them.
+## What needs to work
 
-## Fixed Product Principles
+The current track, artwork, playback state, browsing and audio controls come before decoration. Advanced tools need grouping, spacing and a clear way back. Keep edits, playlists, tuning, backgrounds and profiles local unless a feature explicitly says otherwise. Source format and engine/output behavior need separate labels: a lossless file doesn't establish bit-perfect Windows output.
 
-1. Music first. Track identity, album art, playback state, library navigation, and sound controls outrank decoration.
-2. Organized density. Pixelody can expose advanced tools, but uses grouping, spacing, collapsible panels, and progressive disclosure to remain calm.
-3. Honest audio. Show source format, bit depth, sample rate, codec, and processing clearly. Do not imply bit-perfect output when Windows shared mode may resample.
-4. Local ownership. Imported music, edits, playlists, tuning, backgrounds, and profiles remain local unless a future feature explicitly says otherwise.
-5. Precise craft. Alignment, mirrored corners, icon centering, hit targets, and state transitions should look intentional at a glance and under close inspection.
+Check alignment at normal use and close up. Icons need centered hit targets, corners should match, and a state change should look deliberate. The main player and mini-player need to agree about what's happening.
 
-## Visual Grammar
+## Making room for different themes
 
-- Product topology: library access, collection identity, browsing, now-playing,
-  queue, search, settings, technical inspection, and persistent transport are
-  required jobs, not fixed screen regions. The familiar rail/stage/inspector/player
-  arrangement is the safe baseline. A theme may relocate, resequence, merge, split,
-  layer, transform, or progressively reveal those jobs when reachability, state
-  truth, focus continuity, responsive behavior, and fallback remain sound.
-- Hero areas: personalized playlist background plus readable overlay, current collection identity, optional expandable metadata.
-- Typography: readable geometric sans for primary UI; pixel, mono, condensed, or display faces only for identity and metadata roles.
-- Icons: graphic, symmetrical, recognizable without text, and consistent between main and mini player.
-- Surfaces: use a small set of panel elevations. Avoid arbitrary boxes inside boxes.
-- Color: define base, surface, primary accent, secondary accent, text, muted text, line, and state colors. Preserve contrast.
-- Texture: dither, scanline, paper, glass, stars, cracks, and grids are theme accents, not universal overlays.
+Library access, collection identity, browsing, now playing, queue, search, settings, inspection and transport are required functions. They don't have to occupy the same rectangles in every theme. A layout can move, combine, split or layer them if focus, navigation history, responsive behavior and recovery remain sound.
 
-## Interaction Grammar
+Use a small number of surface levels. Readable sans faces suit primary controls; pixel, mono, condensed or display type can give identity and metadata their own character. Palette roles still need contrast: base, surfaces, accents, text, muted text, lines and state. Textures such as paper, glass, stars, scanlines and grids belong to the theme that needs them, rather than becoming a layer over every theme. Personal artwork and playlist backgrounds must stay legible.
 
-- Hover: slight lift, brightness, border response, or card shift. Never large layout movement.
-- Press: short compression or directional snap.
-- Selection: unmistakable through accent, edge, background, or marker; do not rely on color alone when practical.
-- Navigation: drawers and panels slide or reveal according to the active theme, but history-aware X and Escape behavior stays consistent.
-- Playback: active tracks, progress, waveform/EQ, and mini player share the same state language.
-- Accessibility: off motion disables animation and transition. Controls retain labels, titles, focusability, and sufficient size.
+Hover can lift or brighten a control without moving the layout around. Press and selection need a visible response, with more than color where practical. Drawers may move differently between themes, but X, Escape and back history should remain predictable. Motion off disables transitions and animation while leaving labels, focus and controls usable.
 
-## Theme Freedom
+Themes can change typography, licensed fonts, proportions, framing, textures, original/licensed art, interaction mechanics, mini-player layout and the overall order of information. They can't change what a control or saved value means, hide essential functions, break icon alignment, or require motion to explain the state.
 
-A theme may change:
+## Looking at the result
 
-- Palette and contrast strategy.
-- Typography roles and bundled licensed fonts.
-- Corner geometry, border systems, panel proportions, spacing density, and artwork framing.
-- Background textures and original or licensed decorative assets.
-- Hover, press, selection, panel, and track-change choreography.
-- Mini-player personality.
-- Whole-product spatial topology, section order, information flow, navigation
-  embodiment, responsive sequencing, and the relationship between main and mini
-  surfaces.
+At a glance, can someone find play, the current track, library, search, settings and info? During use, is text readable and feedback predictable? Up close, are edges, icons, spacing and overlaps right?
 
-A theme must not change:
-
-- Meaning of controls or saved data.
-- Core playback and library behavior.
-- Availability of settings, audio tuning, metadata, and navigation.
-- Transport icon alignment.
-- User-selected artwork legibility.
-- Reduced-motion behavior.
-- The availability, meaning, truth, and recoverability of required product jobs,
-  even when their locations and embodiments change radically.
-
-## Quality Test
-
-Before calling a visual change complete, inspect it at three distances:
-
-1. Glance: Can the user locate play, current track, library, search, settings, and info?
-2. Normal use: Is hierarchy clear, text readable, and interaction feedback predictable?
-3. Close inspection: Are edges symmetrical, icons centered, overlaps intentional, and spacing internally consistent?
-
-For a new serious reference-based theme, also ask: what consequential ordinary-use
-experience could not have emerged by styling or lightly rearranging the existing
-platform? The answer must be a proven unorthodox spine, not novelty language,
-decorative motion, or implementation complexity by itself.
+A reference-based theme should contribute something to ordinary use beyond a reskin or slight rearrangement. The difference needs to work in the app. An unusual animation or a complicated implementation doesn't establish that by itself.

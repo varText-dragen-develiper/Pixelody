@@ -1,8 +1,8 @@
-# Pixelody WASAPI Helper
+# WASAPI diagnostic helper
 
-Optional Windows-only diagnostics and development-probe helper for Pixelody.
+The optional helper reports Windows endpoint formats and periods that the browser cannot expose. It also has explicit bounded capture probes. Playback remains on Electron/Web Audio.
 
-## Policy
+## Scope
 
 - Diagnostics and explicit development probes only.
 - No driver.
@@ -14,7 +14,7 @@ Optional Windows-only diagnostics and development-probe helper for Pixelody.
 - Must be Authenticode-signed before the Electron app will run it by default.
 - Unsigned local diagnostics/probing can use the `dev-publish` helper in an unpackaged development run. The bounded loopback capture prototype still requires `PIXELODY_ALLOW_UNSIGNED_WASAPI_DEV=1`.
 
-The helper reports Windows render-endpoint facts that Chromium/Electron cannot expose directly, such as endpoint mix format and WASAPI device periods. It can also run a bounded development-only WASAPI loopback capture prototype. Pixelody still plays through the existing Electron/Web Audio path, and the prototype does not render processed audio back to the speaker route.
+The loopback probe captures only; it never sends processed audio back into the captured output.
 
 ## Build
 
@@ -57,7 +57,7 @@ Or use the workspace helper script:
 
 The helper is considered missing until the executable exists at the publish path above, or `PIXELODY_WASAPI_HELPER` points to an existing executable.
 
-## Contract
+## Invocation
 
 Pixelody invokes:
 
@@ -69,4 +69,4 @@ Pixelody.Wasapi.Helper.exe --json --loopback-prototype --dev-allow-loopback-prot
 
 The helper writes one JSON object to stdout and exits. It must not prompt, stay resident, write files, or mutate system audio state.
 
-The loopback prototype is intentionally capture-only. It proves that the default shared-mode render stream can be initialized and sampled, then reports packet/frame counts. Feedback prevention and processed render output are separate release gates.
+A successful capture reports initialized shared-mode packets/frames. Feedback-safe processed render still needs its own implementation and release checks.

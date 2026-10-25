@@ -1,15 +1,14 @@
 # Pixelody architecture
 
-Start here to find the part of the Windows app you need to change. This page
-shows what each part owns and links to the details, so you can follow a change
-without having to work out the whole application first.
+The Windows app owns the library, desktop playback and the service used by
+Android. This is the source map for finding the part you need to change.
 
 The Android companion is a separate repository,
 [pixelody-android](https://github.com/varText-dragen-develiper/pixelody-android).
 It talks to this application over the host API described under
 [Networking and J.A.M.](#networking-and-jam).
 
-## What Pixelody is
+## The player
 
 Pixelody is a local-first Windows desktop music player for lossless and common
 music files. It combines a well-organized library with careful graphic design,
@@ -22,10 +21,10 @@ name in user-facing text, documentation and API contracts.
 The Windows app is the library host. It owns the music library, the desktop
 audio engine and the host service the Android app connects to.
 
-## Design principles
+## Design choices
 
 The full statement is [docs/design/DESIGN_NORTH_STAR.md](design/DESIGN_NORTH_STAR.md).
-The parts that constrain code:
+For implementation, these are the main constraints:
 
 - Music and album art are the focus. Decoration supports information and never
   competes with it.
@@ -60,7 +59,7 @@ The parts that constrain code:
 | `scripts/` | Every automated check, plus build and release tooling. |
 | `docs/` | Design, architecture, audio, networking, release and theme documentation. |
 
-## Process and security boundary
+## Electron and file access
 
 Pixelody is an Electron application with a hardened renderer: context isolation
 on, sandbox on, no Node integration, a content security policy per window and a
@@ -173,11 +172,11 @@ not part of this repository.
   [WINDOWS_INTEGRATION_HARNESS.md](release/WINDOWS_INTEGRATION_HARNESS.md) and
   [LEGAL_RELEASE_CHECKLIST.md](release/LEGAL_RELEASE_CHECKLIST.md).
 
-## Contributing changes
+## Trying a change
 
 Try changes through the normal interface, including the mini-player and reduced
 motion when relevant. Keep asset credits current and include the checks you ran
 with a contribution. See [CONTRIBUTING.md](../CONTRIBUTING.md).
 
-Broader audits live in
+For playback, storage, rendering and hardware checks, use
 [BACKBONE_AUDIT_CHECKLIST.md](architecture/BACKBONE_AUDIT_CHECKLIST.md).

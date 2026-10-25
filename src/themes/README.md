@@ -1,27 +1,13 @@
-# Pixelody Theme Records
+# Theme records
 
-Read `../../docs/themes/THEME_SYSTEM.md` before editing themes.
+Read [the theme guide](../../docs/themes/THEME_SYSTEM.md) before changing registration or presentation code.
 
-## What This Directory Does
+`built-in-themes.json` maps implementations; `*.theme.json` records palette, assets, HUD, type and motion intent. `theme.schema.json` validates them and `template.theme.json` starts a new record. The starter list is an idea backlog.
 
-- `built-in-themes.json` maps every selectable runtime key to its manifest and implementation files.
-- `*.theme.json` records each theme's palette, assets, HUD, typography, and motion intent.
-- `theme.schema.json` defines the portable manifest format.
-- `template.theme.json` is the starting point for a new manifest.
-- `starter-themes.json` is a legacy idea backlog, not a list of implemented or promised themes.
+Studio, Obsession Mode and Cartridge Quest are offered in Settings. Studio is the rebuilt-shell fallback; the other two are separately allowed composition recipes. The remaining manifests preserve design work. Canvas's 27 baseline ports have stock module graphs but don't restore retired stylesheets or make all ports ordinary built-ins.
 
-Studio, Obsession Mode, and Cartridge Quest are available in Settings. Studio is the fallback layout. The other manifests remain reconstruction records and their implementation is preserved in the pre-reset imprint archive, not linked into the live shell. On Windows, parsing and storage for the bounded declarative `community-theme-template.pixelody-theme` format remain implemented, but Settings > Themes > My Themes and package application are deliberately unavailable during the reset. Pixelody does not discover arbitrary community folders, read built-in `*.theme.json` files as installable packages, accept assets/fonts/CSS/scripts/URLs, or load executable mods.
+The app doesn't read built-in manifests live. Checked runtime maps supply navigation and information assignments. Manifests may select registered mechanics or `information.profile` keys, never executable markup, scripts or state owners. Semantic `tokens` are schema-valid/tested but not wired live. See the [runtime reference](../../docs/themes/THEME_RUNTIME_ARCHITECTURE.md) and [navigation](../theme-runtime/navigation/contract.md)/[information](../theme-runtime/information/contract.md) contracts.
 
-Canvas has a separate 27-entry baseline port registry at `../theme-runtime/canvas-theme-ports.js`. It copies manifest-authored presentation traits into Canvas-owned recipes and gives every port a normalized stock composition with explicit module coordinates, spans, spacing, row scale, and playback split, while keeping Studio in the rebuilt-shell registry and every retired stylesheet detached. Obsession Mode and Cartridge Quest are separately listed under `compositionPresentations` and are selectable in Settings. Future creative additions are kept separately in `../../docs/themes/CANVAS_THEME_PORT_BACKLOG.md`.
+The bounded local-package parser/store remain implemented, but My Themes/application is hidden during the reset. Packages can't carry assets, fonts, CSS, scripts, URLs or executable mods, and built-in manifests aren't installable packages. Manifest asset paths stay relative.
 
-A manifest may optionally declare a `navigation` block to select how tracks/playlists are browsed. The registered mechanics are `linear-list` (the original scrolling row list and every theme's implicit default), `carousel`, `cover-flow`, `spectral-field`, `pass-deck`, and `memory-cascade`. Current non-default assignments are recorded in `built-in-themes.json`; Violet//Violent uses `memory-cascade`, while `pass-deck` remains tested infrastructure preserved from its rejected prototype rather than a current theme assignment. See `../theme-runtime/navigation/contract.md` for the full contract, including a step-by-step guide to building and shipping a new mechanic, and `../../docs/themes/THEME_RUNTIME_ARCHITECTURE.md` for the rollout history. The running app does not read built-in `*.theme.json` directly; those manifests remain documentation of intent cross-checked by `npm run check:themes`. Local `.pixelody-theme` packages pass through the separate hostile-input contract in `../theme-packages/contract.js` and may only select registered mechanics. If you add or reassign a mechanic, the built-in map and manifest have to agree or the check fails. Run `npm run check:linear-list` and whichever `check:<mechanic>` applies, plus `npm run check:navigation-platform`, `npm run check:themes`, and `npm run check:theme-packages` after touching the shared platform.
-
-A manifest may also optionally declare a `tokens` block (semantic palette names) — see `theme.schema.json` and `../theme-runtime/tokens.js`. Unlike `navigation`, nothing reads `tokens` at runtime yet; it's schema-valid and tested infrastructure, not a live feature.
-
-A manifest may optionally declare `information.profile` to select a registered, read-only information composition. The live profile modules and standard truth bundles are under `../theme-runtime/information/`; see its `contract.md`. As with navigation, the manifest is cross-checked against the current `themeInformationProfiles` runtime map because manifests are not read directly by the renderer yet. Profile keys select shipped code only: manifests cannot provide HTML, JavaScript, selectors, or state owners. Run `npm run check:theme-information` and `npm run check:themes` after adding or changing a profile.
-
-## Safety
-
-Manifest asset paths must be relative. Remote URLs and executable theme scripts are unsupported. This keeps future community themes portable and prevents visual packages from becoming arbitrary application code.
-
-Run `npm run check:themes` after any theme change.
+Run `check:themes` for theme changes; add `check:theme-information`, `check:navigation-platform`, the relevant mechanic check and `check:theme-packages` when their contracts are affected. New entries need the live admission rules, not just a manifest.

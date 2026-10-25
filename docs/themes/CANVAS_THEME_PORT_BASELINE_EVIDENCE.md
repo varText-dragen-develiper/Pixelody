@@ -1,10 +1,9 @@
-# Canvas theme port baseline evidence
+# Measurements used for Canvas ports
 
-## Decision
+## Translating the old layout
 
-The stock preset for every first-pass Canvas port starts from the theme's
-detached desktop host version. It does not invent a new dashboard arrangement.
-The archive's shared frame was:
+Each first-pass stock preset follows its detached desktop host layout. The
+shared archived frame used these dimensions:
 
 - workspace: `290px minmax(560px, 1fr) 292px`, ordered Library / Stage /
   Inspector;
@@ -22,10 +21,10 @@ signal field is a contained overlay inside the center Stage. The product-owned
 player remains whole in the bottom dock, so volume, Queue access, and mini-player
 behavior are not separated from transport.
 
-## Per-theme measurements
+## Archived dimensions by theme
 
-All source files below are the retired per-theme stylesheets.
-“Shared” means the theme did not override that part of `src/styles.css`.
+These are measurements from retired stylesheets. “Shared” means the theme
+inherited that part of `src/styles.css`.
 
 | Theme | Archived source styles | Workspace baseline | Player baseline |
 | --- | --- | --- | --- |
@@ -57,7 +56,7 @@ All source files below are the retired per-theme stylesheets.
 | Abyssal Press | `abyssal-press.css` | Shared side widths with 7px separators; 0 gap; 8px 8px 0 padding; height `calc(100vh - 174px)` | 112px; `minmax(220px,310px) minmax(330px,1fr) minmax(270px,340px)` |
 | Harmonic Registry | `harmonic-registry.css` | Shared columns; 0 gap; 0 8px padding | 88px; shared columns |
 
-## Deliberate translation limits
+## Where the translation differs
 
 - The detached CSS is evidence, not runtime code. These ports do not relink it.
 - Ghost Index and Violet//Violent each had a fourth theme-only player HUD. That

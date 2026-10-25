@@ -1,38 +1,9 @@
-# Cartridge Quest Notes
+# Working on Cartridge Quest
 
-Start here when working on Cartridge Quest. The linked notes cover its controls, layout and mini-player.
+Cartridge Quest treats the library like a cartridge collection, with a title-screen stage, hardware controls, pixel feedback and modest listening rewards. Playback, queue, settings and tuning still need to be easy to use. Motion preferences take precedence over decorative score effects.
 
-Cartridge Quest is Pixelody's original 8/16-bit console adventure skin. The theme should feel like a playable music cartridge: chunky controls, cabinet hardware, screen glow, pixel feedback, and score moments that reward listening without getting in the way of playback.
+Start with the [current theme guide](../THEME_SYSTEM.md): the selectable composition uses the live Canvas host. The [implementation map](implementation-map.md) also preserves older file/animation references; don't relink those retired sheets to repair the current recipe.
 
-## North Star
+The [hotbar guide](hotbar-design-system.md) covers the three control bays, and [mini-player guide](mini-player-design-system.md) covers window size, drag regions and responsive priorities. For behavior, inspect the renderer's score, shared commands, copy and transition code; mini synchronization uses `state.questStats` and `rewardSerial`.
 
-- Keep the first read as a console: screen, cartridge, rack, controller deck, and status counters.
-- Reward playback with visible but modest casino-style moments: flash, payout text, score roll, and soft upward drift.
-- Make effects feel physical and pixel-native. Prefer step timing, hard edges, tabular score counters, and deliberate jitter.
-- Preserve functional clarity. Imports, playback, queue, settings, mini-player, and tuning controls must remain easy to use.
-- Respect motion settings. Reduced motion and `data-motion="off"` should silence nonessential animation.
-
-## Fast Links
-
-- Implementation map: `docs/themes/cartridge-quest/implementation-map.md`
-- Hotbar design system: `docs/themes/cartridge-quest/hotbar-design-system.md`
-
-## Editing Checklist
-
-1. Read the architecture overview and theme docs indexed in `docs/README.md`.
-2. Check `src/themes/built-in-themes.json` and `src/themes/cartridge-quest.theme.json` before changing registration, assets, fonts, or theme metadata.
-3. For visual/layout edits, inspect `src/cartridge-quest.css` and the matching mini file, `src/mini-cartridge-quest.css`.
-4. For XP, payout, theme transitions, copy swaps, or playback state, inspect `src/renderer.js`.
-5. For mini-player sync, inspect `src/mini-player.html`, `src/mini-player.js`, and `src/mini-signal-orbit.css`.
-6. Check performance and reduced-motion overrides before declaring any animation visible.
-7. Validate with the active app if the change affects animation placement. CSS-only animation can look correct in isolation and still disappear in Pixelody's actual layout.
-
-## Known Risk Areas
-
-- Footer/player ratio and minimum-width drift from `hotbar-design-system.md`.
-- Global animation suppressors in `src/playback-performance.css`.
-- Reduced motion, `data-motion="off"`, and performance conserve mode.
-- CSS cascade order between theme CSS, playback performance CSS, and mini signal CSS.
-- XP state persistence under `localStorage` key `pixelody.cartridgeQuestStats`.
-- Mini-player reward sync via `rewardSerial`.
-- Theme copy changes in `applyThemeCopy()` that make the same DOM read as a console/RPG UI.
+Check the registry/manifest before asset or metadata changes. For a visual repair, inspect the active composition, shared performance layer and matching mini rules. Try it in the running app with long text, narrow width, motion off, reduced motion and conserve. Score state under `pixelody.cartridgeQuestStats` must survive while optional animation can stop.

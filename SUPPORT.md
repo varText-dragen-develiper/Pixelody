@@ -1,11 +1,9 @@
 # Getting help
 
-If something isn’t working in Pixelody for Windows, tell me through this repository’s [Issues](https://github.com/varText-dragen-develiper/Pixelody/issues). Start with [Getting started](docs/GETTING_STARTED.md), and include your app version or source commit.
+If Pixelody for Windows gives you trouble, [open an issue](https://github.com/varText-dragen-develiper/Pixelody/issues). Tell me what happened and how to get there, along with your app version, device and OS. If it only happens sometimes, or reopening changes it, include that too. For a phone/host problem, I need both versions and the kind of network they're on.
 
-Share listening ideas in [Pixelody Discussions](https://github.com/varText-dragen-develiper/Pixelody/discussions), or find the community through the [website](https://pixelody-web.pixelody101.workers.dev). I’ll take a look when I can, though I can’t promise a response time.
+You can also use [Discussions](https://github.com/varText-dragen-develiper/Pixelody/discussions) for ideas and questions. The [website](https://pixelody-web.pixelody101.workers.dev) has the community links, and [Getting started](docs/GETTING_STARTED.md) covers setup. I can't promise a response time.
 
-Tell me what you were trying to do, what you expected, and what happened. Include your device, OS, build, and steps I can follow so I can try it too. Let me know how often it happens and whether reopening helps. For phone/host problems, include both app versions and the network you’re using.
+Leave passwords, pairing tokens, private music and personal information out of public reports. Suspected security problems belong in a [private report](SECURITY.md).
 
-Keep credentials, pairing tokens, private music, and personal details out of reports and screenshots. Report security problems privately using [SECURITY.md](SECURITY.md).
-
-Use the platform's release page for download, signing, and installation details.
+The [release page](https://github.com/varText-dragen-develiper/Pixelody/releases) has download checksums, signing details and installation instructions.

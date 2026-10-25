@@ -1,8 +1,10 @@
-# Windows Integration Harness
+# Running the Windows integration tests
 
-Pixelody's Windows harness launches the real Electron application in both development/unpacked mode and an allowlisted portable application directory. It uses generated PCM tones and a separate temporary `userData` profile for each scenario; it never reads the normal Pixelody profile or the user's music library.
+The harness launches Electron from source or an allowlisted portable directory,
+using generated PCM and a temporary profile per scenario. It doesn't read the
+normal Pixelody library/profile.
 
-## Local prerequisites
+## Before running
 
 - Windows 10 or 11.
 - Node.js 22 or 24.
@@ -28,7 +30,7 @@ If `pnpm` is unavailable, the harness can also be run with Node directly:
 node scripts/check-windows-integration.js --mode=all
 ```
 
-## Scenarios and boundaries
+## What the scenarios cover
 
 Each launch has a 30-second harness deadline. The renderer must become usable and complete startup reveal within the asserted 3.2-second interaction budget; the separate 6.5-second reveal watchdog does not relax that assertion. The default matrix covers a fresh profile, playback/queue/repeat/shuffle/seek/volume controls, an actual mini-window command, full-process persistence, theme-package presentation boundaries, workspace persistence, invalid-output fallback, corrupt-current recovery, an authenticated localhost J.A.M. privacy check, and hostile-window Electron security probes. Unpackaged mode also exercises development workspace scenarios. J.A.M. must be stopped before and after the explicit privacy scenario. The scenario set in the runner is authoritative; retired theme experiments are separate from the default release matrix.
 
@@ -41,7 +43,7 @@ which the theme source checks reconcile with `built-in-themes.json`; archived
 
 The test bridge is fail-closed. It exists in the preload only when `PIXELODY_TEST_MODE=1`, while the main process additionally requires `--pixelody-integration-test`, an allowlisted scenario, an absolute isolated profile, and a report path inside that profile. There is no general script-evaluation IPC.
 
-The portable directory is test infrastructure, not the signed installer planned for roadmap item 6. Its app payload contains only `src`, the production dependency tree, the minimal package manifest, and a relative-path SHA-256 manifest. Licensed theme UI sounds are allowed; personal music, generated test tones, private theme assets, screenshots, repository notes, and host development data are rejected.
+The portable directory is a test artifact, not a signed installer. Its app payload contains only `src`, the production dependency tree, the minimal package manifest, and a relative-path SHA-256 manifest. Licensed theme UI sounds are allowed; personal music, generated test tones, private theme assets, screenshots, repository notes, and host development data are rejected.
 
 Portable executable naming and the default production-layout target are derived
 from `release/windows-identity.json`. `pnpm run check:release-integration` uses that
@@ -50,8 +52,8 @@ Both packaging routes share the source/content boundary policy. Passing runtime
 checks use generated fixtures and do not prove physical audio, perceptual quality,
 human accessibility, Authenticode, or installed lifecycle behavior.
 
-## Failure evidence
+## When a scenario fails
 
 Test profiles are deleted only after their resolved paths are proven to be owned `pixelody-integration-*` directories under the operating-system temporary directory. Evidence from a failing profile is copied first to `.artifacts/windows-integration/<mode>-<scenario>` as bounded JSONL, process output, a summary, and an optional screenshot. Before copying, the harness removes Windows paths, file URLs, bearer credentials, and the test root. CI uploads only that sanitized failure directory and the package's relative-path content manifest, with seven-day retention; it does not upload profiles, media, tokens, or the full application directory.
 
-The workflow runs the full repository audit set and both launch modes on Windows for Node.js 22 and 24. It uses the current Node-24-compatible major releases documented by the official action projects: `actions/checkout@v6`, `pnpm/action-setup@v6`, `actions/setup-node@v6`, and `actions/upload-artifact@v7`.
+The recorded workflow runs repository audits and both Windows launch modes with Node.js 22 and 24. Its action majors are `actions/checkout@v6`, `pnpm/action-setup@v6`, `actions/setup-node@v6`, and `actions/upload-artifact@v7`.

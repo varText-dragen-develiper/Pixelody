@@ -1311,8 +1311,8 @@
 
       addGroup('Arrange', [
         enabled(contextMenuButton('Move relative to…', 'Choose another pane and then choose its relationship', () => beginMove(node.id)), modulesIn(graph).length > 1),
-        enabled(contextMenuButton('Earlier', 'Move this pane one semantic position earlier', () => moveSelected(false)), siblingIndex > 0),
-        enabled(contextMenuButton('Later', 'Move this pane one semantic position later', () => moveSelected(true)), siblingIndex >= 0 && siblingIndex < siblings.length - 1),
+        enabled(contextMenuButton('Earlier', "Move this pane one position earlier", () => moveSelected(false)), siblingIndex > 0),
+        enabled(contextMenuButton('Later', "Move this pane one position later", () => moveSelected(true)), siblingIndex >= 0 && siblingIndex < siblings.length - 1),
         ['split', 'stack'].includes(parent?.type)
           ? contextMenuButton(`Remove from ${parent.type}`, `Dissolve this ${parent.type} relationship while keeping both panes`, recombineSelected)
           : null,
@@ -1729,7 +1729,7 @@
       if (interaction.slowFrames < 2 || interaction.conserve) return;
       interaction.conserve = true;
       documentObject.body.dataset.cwStudioDragConserve = 'true';
-      bridge.setStatus?.('Canvas Studio reduced drag detail to keep this gesture responsive. Placement remains exact.', 'warning');
+      bridge.setStatus?.("Canvas Studio reduced visual detail while dragging. Placement still uses the same grid.", 'warning');
     }
 
     function liftPane(event, interaction) {
@@ -3383,7 +3383,7 @@
       target.append(list);
       const note = element('p', 'cw-studio-note', missing.length
         ? `${missing.length} still unplaced. The canvas can be saved once every job has a home.`
-        : 'Every required job is reachable. This canvas can be saved.');
+        : "All required controls are available. This canvas can be saved.");
       target.append(note);
     }
 
@@ -3739,7 +3739,7 @@
       save.disabled = Boolean(missing.length) || !snapshot.dirty;
       if (missing.length) save.title = `Place ${missing.join(', ')} before saving.`;
       target.append(save);
-      target.append(button('Discard draft', 'Leave Composition Mode without a durable write', () => bridge.cancel(), 'cw-studio-button cw-studio-wide'));
+      target.append(button('Discard draft', "Discard the layout draft and leave Composition Mode", () => bridge.cancel(), 'cw-studio-button cw-studio-wide'));
       const leave = button('Return to Studio', 'Leave Canvas Studio and restore the Studio workspace', () => bridge.returnToLegacy?.(), 'cw-studio-button cw-studio-wide');
       leave.disabled = Boolean(snapshot.dirty);
       if (snapshot.dirty) leave.title = 'Save or discard this draft before returning to Studio.';

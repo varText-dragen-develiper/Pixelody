@@ -1,10 +1,10 @@
-# Pixelody Virtual Audio Driver Scaffold
+# Virtual-driver contract
 
-## Scope
+## What is present
 
-This is the design-only starting point for a future `PixelodyVirtualAudio.sys`.
-It is not a WDK project, driver binary, INF, catalog, installer, or install path.
-No source from Microsoft SysVAD has been copied into this repository.
+This scaffold describes the future `PixelodyVirtualAudio.sys`; it contains no
+WDK project, binary, valid package or install path. No Microsoft SysVAD source
+is included.
 
 The first driver has exactly two intended endpoints:
 
@@ -13,11 +13,11 @@ The first driver has exactly two intended endpoints:
 | Render | `Pixelody Virtual Output` | Windows shared-mode PCM target for apps. |
 | Capture | `Pixelody Virtual Monitor` | Paired capture source consumed by the user-mode bridge. |
 
-The machine-readable version of this contract is
+The same endpoint contract is recorded in
 `PixelodyVirtualAudio.scaffold.json`. It is checked by
 `../../scripts/check-virtual-audio-scaffold.js` so endpoint names cannot drift.
 
-## First Driver Limits
+## Initial format and scope
 
 - Stereo only: two channels.
 - 48,000 Hz only.
@@ -26,7 +26,7 @@ The machine-readable version of this contract is
 - No offload, Bluetooth, keyword detector, sample extras, or automatic default-device change.
 - No public installer, package staging, or Driver Store interaction.
 
-## Ownership Boundary
+## Kernel and bridge responsibilities
 
 Kernel ownership is deliberately small: expose the two endpoint identities,
 advertise the narrow PCM capability, move neutral PCM through a bounded virtual
@@ -40,7 +40,7 @@ an explicitly chosen real endpoint, measures drift and latency, reports route
 truth, and restores a safe state on failure. The bridge must refuse every route
 where the real output is either Pixelody virtual endpoint.
 
-## Virtual Cable Contract
+## Buffer and clock behavior
 
 The render endpoint's shared-mode Windows audio engine supplies PCM into the
 kernel virtual cable. The paired capture endpoint reads that same neutral PCM.
@@ -66,7 +66,7 @@ notifications, or the clock contract cannot be proven.
 - `build/`: VM-only build gate; there is no build project or command.
 - `upstream/`: SysVAD provenance, scope, and license notes.
 
-## Build Gate
+## Before a WDK build
 
 Do not build this scaffold on a normal workstation. WDK build, test signing,
 package staging, endpoint visibility checks, and recovery validation belong only

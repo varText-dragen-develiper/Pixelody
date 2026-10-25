@@ -1,8 +1,8 @@
-# Multi-Output Phase C Hardware Run Log
+# Wired and Bluetooth hardware results
 
 Status: pending real hardware evidence
 
-This is the evidence ledger for the final Multi-output Calibration Phase C item:
+This ledger holds the results needed for the remaining calibration check:
 
 ```text
 Complete the physical wired and Bluetooth validation matrix before making any release-quality synchronization claim.
@@ -17,7 +17,7 @@ human must still enter the real endpoint identity and audible observations.
 This file records only completed physical runs. Do not enter estimated values,
 synthetic diagnostics, or results copied from another hardware configuration.
 
-## Matrix Status
+## Runs still needed
 
 | Run | Required engine/status | Current evidence | Decision |
 | --- | --- | --- | --- |
@@ -29,7 +29,7 @@ date-stamped result below. A Bluetooth failure may be a valid completed matrix
 result, but it keeps Bluetooth grouped playback explicitly degraded or
 experimental and blocks any broad all-route synchronization claim.
 
-## Evidence Rules
+## Attachments for each run
 
 For each run, retain these artifacts outside the repository or attach them to
 the task in a path-hidden form:
@@ -138,7 +138,7 @@ Allowed product language after this result:
 Evidence references:
 ```
 
-## Phase C Decision Record
+## Decision after both runs
 
 Fill this only after both real run results above are complete.
 
@@ -159,12 +159,9 @@ Current decision: pending. No release-quality synchronization claim is allowed.
 
 Reviewed: 2026-07-20
 
-The wired+wired and wired+Bluetooth identity blocks, checkpoint tables, result
-summaries, and decision record are still blank. No path-hidden diagnostic
-artifacts or completed 30-minute hardware observations were available in this
-workspace for review. This is an evidence limitation, not a failed audio run:
-the matrix remains pending until an operator records real observations.
+At the July 20 review, both run records and the decision were blank, with no
+completed thirty-minute observations or sanitized diagnostic attachments. The
+result was pending. That records missing evidence, rather than an audio failure.
 
-Release-language decision after this audit: Pixelody may describe grouped
-browser playback as an experimental prototype only. It must not claim
-release-quality synchronization for wired or Bluetooth routes.
+The recorded decision allows experimental browser-prototype wording only. It
+doesn't support release-quality wired or Bluetooth synchronization claims.

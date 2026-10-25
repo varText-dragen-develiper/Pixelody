@@ -1,6 +1,6 @@
-# Electron Security Boundary
+# What each Electron window can do
 
-Pixelody’s privileged desktop windows load documents packaged with the app. The main window requests specific operations from the main process. Pixelody Mini has a smaller bridge with only the operations it needs.
+The renderer asks the main process for specific operations through a preload bridge. It doesn't get Node or general filesystem access. The mini-player has a smaller bridge because it only needs playback commands and window controls.
 
 ## Window capabilities
 
@@ -16,7 +16,7 @@ Unexpected top-level/frame navigation, redirects, popups, and webview attachment
 
 MusicBrainz metadata repair is the one main-process network request on behalf of the renderer (`metadata:musicbrainz-search`). The renderer sends only a title, artist, album and duration (validated and size-bounded in `src/electron-security.js`); the main process builds the URL itself from `src/musicbrainz.js`, refuses anything but `https://musicbrainz.org/ws/2/recording`, does not follow redirects, identifies Pixelody in the User-Agent, and spaces requests at least 1.1 s apart. The renderer CSP stays closed to the network.
 
-## IPC contract registry
+## Adding an IPC operation
 
 `src/electron-security.js` is the authoritative inventory for every `ipcMain.handle` and `ipcMain.on` channel. Each entry declares:
 
@@ -27,7 +27,7 @@ MusicBrainz metadata repair is the one main-process network request on behalf of
 
 The same module validates argument counts, plain JSON shape/depth/size, strings, enums, IDs, options, paths, URLs, native-helper requests, state/backups, and J.A.M. snapshots before a handler runs. Unknown channels have no registration path, and a registered channel without a contract causes startup/source-audit failure. Additions require a registry entry, a narrow preload method only in the owning window, and positive plus hostile regression cases.
 
-## Filesystem capability model
+## Granting access to a file
 
 The renderer does not receive arbitrary filesystem methods. The main process grants canonical paths only after one of these user or durable-state events:
 
@@ -44,8 +44,8 @@ The preload mirrors those grants so `fileUrl`, `exists`, `inspect`, and artwork 
 
 Both production documents default to `none`, allow scripts only from local packaged files, prohibit `unsafe-eval`, plugins, frames, forms, and base rewriting, and limit images/media/fonts/worklets to the schemes required by Pixelody. Loopback HTTP is allowed only for explicit localhost J.A.M. behavior. Existing theme swatches, generated artwork backgrounds, and progress geometry require `style-src 'unsafe-inline'`; this is a documented style-only exception and does not weaken `script-src`.
 
-## Verification
+## Checking the boundary
 
 `scripts/check-electron-security.js` proves registry/registration parity, exact mini capability count, CSP and BrowserWindow settings, URL/path/payload rejection, prototype/cycle rejection, and package inclusion. The integration `security` scenario then proves the actual unpackaged and packaged renderer sandbox flags, CSP eval/inline blocking, malformed payload rejection, unauthorized-window IPC denial, popup/navigation denial, and absence of privileged side effects.
 
-The implementation follows Electron's official [security checklist](https://www.electronjs.org/docs/latest/tutorial/security), [process sandboxing guidance](https://www.electronjs.org/docs/latest/tutorial/sandbox), [WebPreferences contract](https://www.electronjs.org/docs/latest/api/structures/web-preferences), and [`webContents` navigation/window controls](https://www.electronjs.org/docs/latest/api/web-contents/).
+The relevant Electron references are the official [security checklist](https://www.electronjs.org/docs/latest/tutorial/security), [process sandboxing guidance](https://www.electronjs.org/docs/latest/tutorial/sandbox), [WebPreferences contract](https://www.electronjs.org/docs/latest/api/structures/web-preferences), and [`webContents` navigation/window controls](https://www.electronjs.org/docs/latest/api/web-contents/).

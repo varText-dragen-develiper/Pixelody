@@ -1,19 +1,7 @@
-# Product-Owned Context Folio Contract
+# Context folio contract
 
-`context-folio.js` owns only presentation lifecycle: one active section, open/closed state, dialog semantics, focus containment, Escape/Close dismissal, and focus return to the initiating portal.
+`context-folio.js` manages the presentation of one open section: dialog state, focus containment, Escape/Close and return to the initiating portal. The host receives `onSectionChange(section)` and supplies the actual content/actions. Queue, metadata, audio, output, tuning, settings and library data remain with their existing owners.
 
-It does not own queue, metadata, audio, output, tuning, settings, systems, playback, or library state. The host receives `onSectionChange(section)` and mounts product-owned content and commands. A theme may style the surface and place the portals, but may not inject authoritative values or bypass host actions.
+Portals use stable lowercase keys and literal accessible names. Opening sets aria-expanded, exposes the dialog and moves focus inside; Tab stays within it. Escape/Close hides and inerts it, returning focus. Only one section is active. Narrow layouts can use a full-screen sheet without changing ownership.
 
-Required behavior:
-
-- portals use stable lowercase section keys and literal accessible labels;
-- at most one folio section is active;
-- opening sets `aria-expanded`, exposes the dialog, and moves focus inside;
-- Escape and Close hide/inert the surface and return focus to the initiating portal;
-- Tab remains within the open surface;
-- narrow layout may become a full-screen sheet without changing ownership;
-- failure leaves the ordinary product workflow reachable;
-- destroy removes listeners and leaves the surface hidden/inert;
-- non-active themes have no visible or stateful effect.
-
-The safe fallback is the existing product drawer, panel, dialog, or settings route for the requested job.
+Themes may style the folio and position portals, but can't inject factual values or bypass actions. Other themes must receive no residual state or visible HUD. Destroy removes listeners and leaves the surface hidden/inert. A failure returns the requested function to its ordinary drawer, panel, dialog or settings route.

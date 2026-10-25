@@ -587,12 +587,12 @@
       if (activating) return activating;
       activating = (async () => {
         workbench.hidden = studioEnabled;
-        setStatus('Loading the authoritative workspace and mounting first-party adapters…');
+        setStatus("Opening the saved workspace…");
         const begun = await desktop.reportWorkspaceStartup('begin', { watchdogMs: 5000 });
         if (!begun?.ok) throw new Error(begun?.error || 'Workspace startup receipt was rejected.');
         workspaceRevision = begun.state.revision;
         const loaded = await desktop.loadWorkspaceComposition();
-        if (!loaded?.ok || !loaded.state?.graph) throw new Error('Authoritative workspace could not be loaded.');
+        if (!loaded?.ok || !loaded.state?.graph) throw new Error("The saved workspace could not be loaded.");
         workspaceState = loaded.state;
         workspaceRevision = loaded.state.revision;
         if (experimentProfile && workspaceState.creatorDefaultGraph?.id !== `${experimentProfile.PROFILE_ID}-root`) throw new Error('The isolated composable-theme authority was not active.');
@@ -706,7 +706,7 @@
       const result = session?.restoreCreator();
       if (!result?.ok) return;
       applyGraph(result.snapshot.graph);
-      setStatus('Creator layout staged. Save to make it authoritative, or Cancel to discard it.', 'warning');
+      setStatus("Creator layout ready. Save to keep it or Cancel to discard it.", 'warning');
     }
 
     async function applyThemePreset(preset) {
@@ -761,7 +761,7 @@
       }
       saving = true;
       renderControls();
-      setStatus('Validating and committing the complete workspace…');
+      setStatus("Checking and saving the workspace…");
       let result;
       try {
         result = await desktop.saveWorkspaceComposition(snapshot.graph, { expectedRevision: workspaceRevision, activeThemeId: options.activeThemeId || 'dev-lab', reason: 'c8-production-host-save' });
@@ -795,7 +795,7 @@
       }
       const cancelled = session.cancel();
       applyGraph(cancelled.snapshot.graph);
-      setStatus('Draft discarded. Composition Mode exited without a durable write.', 'success');
+      setStatus("Draft discarded. The saved layout is unchanged.", 'success');
     }
 
     controls.mode.addEventListener('click', enterOrFinish);

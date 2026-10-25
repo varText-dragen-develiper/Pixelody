@@ -1,7 +1,8 @@
-# Networking development notes
+# Networking: recorded progress
 
-This is a summary of the local-network work recorded through September 2026,
-not a release test report. J.A.M. means Joined Audio Mesh.
+The local-network record through September 2026 covers Windows hosting, the
+Android client and single-host J.A.M. (Joined Audio Mesh). It doesn't test a
+later release.
 
 Windows can host its library for approved devices, with editable permissions,
 protected credentials, authenticated audio streaming and seeking. Android can
@@ -12,10 +13,10 @@ The recorded Android device checks covered pairing, playback, reconnection,
 missing media, audio focus, Bluetooth recovery, and session permissions. The
 J.A.M. revocation flow still needed its final Android capture and privacy check,
 and removal of the temporary test firewall rule had not been verified. Wired
-headphone disconnect was also untested. Those gaps remain gaps in that record.
+headphone disconnect was also untested. Those checks are still missing from that record.
 
-The next networking work includes push updates, longer interruption tests, and
-release validation across both apps. Offline caching, phone hosting, remote
+Further work includes push updates, longer interruption tests and validation
+of the two apps together. Offline caching, phone hosting, remote
 access and federated sessions need further implementation and testing.
 Synchronized multi-device audio is not established by ordinary library sharing.
 

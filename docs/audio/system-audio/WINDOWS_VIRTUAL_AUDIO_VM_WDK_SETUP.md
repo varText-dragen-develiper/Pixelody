@@ -1,10 +1,10 @@
-# Windows Virtual Audio VM And WDK Setup
+# Preparing a VM for driver tests
 
-This runbook defines the only approved development environment for the first `PixelodyVirtualAudio.sys` experiments. It is a preparation and recovery document, not an installer guide for a normal Pixelody user.
+Use a disposable VM or dedicated test computer for the first `PixelodyVirtualAudio.sys` experiments. These are developer preparation and recovery instructions; the component is not an ordinary Pixelody install.
 
 Do not run the test-signing, Driver Store, install, uninstall, or reboot commands in this document on a daily-use workstation. Do not install a driver from Pixelody. Do not use this document as a release or public-support procedure.
 
-## Scope And Decision
+## Test scope
 
 The first driver is a narrow, SysVAD-derived virtual audio endpoint with exactly these names:
 
@@ -14,7 +14,7 @@ The first driver is a narrow, SysVAD-derived virtual audio endpoint with exactly
 
 It is a development-only component for a disposable VM or dedicated test computer. Pixelody Player Mode remains independent of it. The bridge's current two-endpoint lab is useful before this step, but it does not install or require a driver.
 
-## Required Roles
+## Build machine and test target
 
 Use two separate roles. They may be two VMs, or a physical development machine plus a VM target.
 
@@ -25,7 +25,7 @@ Use two separate roles. They may be two VMs, or a physical development machine p
 
 Prefer a fresh Windows VM generation that matches the intended x64 target. Use a local virtual disk, a standard virtual audio device, a non-production local account, and a private or disabled network unless a debugger needs connectivity. Do not pass through the host's daily audio hardware or personal library.
 
-## VM Isolation And Snapshot Policy
+## Snapshots before testing
 
 Before any driver package reaches the VM:
 
@@ -37,7 +37,7 @@ Before any driver package reaches the VM:
 
 Never merge or delete the `Pre Driver` snapshot until install, uninstall, reboot, and recovery checks all pass. Revert the snapshot rather than attempting repeated force-removal when a package leaves an unexpected endpoint or default-output state.
 
-## Toolchain Prerequisites
+## Build tools
 
 Install these on the build/signing machine or on a dedicated build VM, not on the everyday Pixelody workstation:
 
@@ -48,11 +48,11 @@ Install these on the build/signing machine or on a dedicated build VM, not on th
 - `MSBuild`, `Inf2Cat`, `SignTool`, and `PnPUtil` available from their supported kit/Windows locations.
 - A test certificate and its private key held only by the development/signing role; the `.cer` public certificate is the only certificate material copied to the test VM.
 
-Use a matching SDK/WDK build number. Microsoft currently recommends the latest released WDK with its compatible Visual Studio release; its WDK download guidance also describes the C++ workload, WDK component, EWDK alternative, and kit-version matching. [Download the WDK](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk) and [build a driver with the WDK](https://learn.microsoft.com/en-us/windows-hardware/drivers/develop/building-a-driver) before choosing a version.
+Use a matching SDK/WDK build number. Check Microsoft's current compatibility guidance for Visual Studio, the C++ workload, WDK component, EWDK and matching kit versions. [Download the WDK](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk) and [build a driver with the WDK](https://learn.microsoft.com/en-us/windows-hardware/drivers/develop/building-a-driver) before choosing a version.
 
 The WDK NuGet route is not the default for this first SysVAD-derived skeleton. It may be evaluated later for build reproducibility, but do not mix toolchain acquisition models in the same first-driver experiment.
 
-## Test-Signing Boundary
+## Test signing stays in the VM
 
 Test-signing is for the test VM only. A test-signed package is never an end-user component and is never bundled with Pixelody.
 
@@ -65,9 +65,9 @@ Before enabling test mode in the VM:
 
 Only inside the disposable VM, from an elevated prompt, the future test operator may use the Microsoft-documented test-signing workflow and then reboot. Microsoft warns that boot configuration changes can make a computer inoperable; the expected Test Mode watermark after reboot is evidence that this is a test-only environment. [Loading test-signed code](https://learn.microsoft.com/en-us/windows-hardware/drivers/install/the-testsigning-boot-configuration-option) and [test-signing driver packages](https://learn.microsoft.com/en-us/windows-hardware/drivers/install/test-signing-driver-packages) are the authority for that future action.
 
-This runbook intentionally does not issue those commands. The assigned test operator must run them manually in the VM after reviewing the current Microsoft guidance and recording the snapshot name.
+Run any boot/test-signing changes manually inside the VM, after checking the current Microsoft guidance and recording the snapshot. No such command is executed by this guide.
 
-## Package Build And Signing Gate
+## Preparing an immutable package
 
 When a driver source scaffold is available, the build/signing role must produce a package directory containing only the intended architecture's:
 
@@ -90,7 +90,7 @@ Before transfer to the VM:
 
 Never copy a private certificate key to the test VM. Never use a production certificate, a release-signing service, a public installer, or the Electron app for this phase.
 
-## Pre-Install Checklist
+## Before staging
 
 All items must be true before staging a package:
 
@@ -104,7 +104,7 @@ All items must be true before staging a package:
 - [ ] No Windows default device is changed automatically or manually by this procedure.
 - [ ] A rollback action is selected: snapshot revert first, Driver Store uninstall second.
 
-## Future VM-Only Driver Store Procedure
+## Staging in the test VM
 
 This section is a future test operator procedure, valid only after a test-signed INF exists. It does not authorize running it today.
 
@@ -117,7 +117,7 @@ This section is a future test operator procedure, valid only after a test-signed
 
 `PnPUtil` is Windows' supported Driver Store management utility; Microsoft documents its add, enumerate, and delete-driver operations and current command examples. [PnPUtil reference](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/pnputil) and [PnPUtil examples](https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/pnputil-examples) are authoritative.
 
-## Endpoint And Recovery Checks
+## Checking endpoints and recovery
 
 After an install/reboot, the test operator must prove all of the following before routing any third-party app audio:
 
@@ -131,7 +131,7 @@ After an install/reboot, the test operator must prove all of the following befor
 
 At this phase, the endpoint can exist without audible global EQ. Do not call the feature active until the bridge captures the paired monitor, processes data, renders it to a distinct real output, and reports current route proof.
 
-## Post-Uninstall Checklist
+## Removing the test package
 
 Use the exact published INF recorded at staging time. Do not use `/force` as a routine recovery mechanism.
 
@@ -146,7 +146,7 @@ Use the exact published INF recorded at staging time. Do not use `/force` as a r
 
 Microsoft documents that permanently removing a driver package requires removal from the Driver Store and cautions against deleting a package when no replacement supports the device. [Driver package uninstall guidance](https://learn.microsoft.com/en-us/windows-hardware/drivers/install/using-device-manager-to-uninstall-devices-and-driver-packages)
 
-## Diagnostics And Evidence
+## Keeping the test record
 
 Keep only these artifacts:
 
@@ -158,13 +158,13 @@ Keep only these artifacts:
 
 Never collect or attach PCM buffers, loopback recordings, personal music paths, track metadata, album art, credentials, or private certificate keys. Support bundles must be counters and configuration facts only.
 
-## Explicit Non-Goals
+## What this setup does not perform
 
 - No WDK installation, test-signing activation, boot configuration change, certificate installation, driver package staging, or driver installation is performed by Pixelody or this document.
 - No driver source is imported by this setup phase.
 - No public installer, release signing claim, attestation/HLK decision, APO, system effect, automatic default-device switching, or per-app EQ is introduced here.
 - No test result on a VM is treated as a release-quality compatibility claim.
 
-## Exit Gate For The Next Task
+## Before implementing the driver
 
 Driver implementation requires this runbook, a disposable VM snapshot policy, a chosen compatible WDK/SDK build pair, and the signed-package/recovery gates above. The first SysVAD-derived scaffold still has no installation path.

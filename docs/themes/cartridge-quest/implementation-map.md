@@ -1,6 +1,6 @@
-# Cartridge Quest Implementation Map
+# Cartridge Quest source references
 
-This map records the earlier theme implementation. For the current selectable composition, start with `docs/themes/THEME_SYSTEM.md` and `src/theme-runtime/canvas-theme-ports.js`. Keep the older paths below as reference; they are not installation instructions.
+The paths below record the older implementation. Current selectable Cartridge Quest uses `src/theme-runtime/canvas-theme-ports.js`; follow `docs/themes/THEME_SYSTEM.md` before applying an old stylesheet change.
 
 ## Registration
 
@@ -28,9 +28,9 @@ All bundled Cartridge Quest art lives in `src/assets/themes/cartridge-quest/`.
 - `console-rack.svg`: registered panel frame asset.
 - `controller-panel.svg`: controller/deck visual asset available for refinement.
 
-No commercial artwork should be bundled. Keep any inspiration external or recreate it as original art.
+Keep asset rights recorded. Reference material isn't permission to bundle it.
 
-## Layout Zones
+## Layout source
 
 `src/cartridge-quest.css` owns the visual language:
 
@@ -45,7 +45,7 @@ No commercial artwork should be bundled. Keep any inspiration external or recrea
 - Player/footer: controller deck, playback buttons, timeline, `.quest-stats`.
 - Settings and drawers: theme action overlays and stage wipe.
 
-## Animation Systems
+## Animation references
 
 Primary theme animations live in `src/cartridge-quest.css`:
 
@@ -66,7 +66,7 @@ Mini-player equivalents live in:
 - `src/mini-cartridge-quest.css`
 - `src/mini-signal-orbit.css`
 
-## XP And Score Runtime
+## Listening counters
 
 `src/renderer.js` owns the score mechanic.
 
@@ -90,13 +90,9 @@ Important functions:
 - `startQuestStatsTicker()`
 - `stopQuestStatsTicker()`
 
-### Current Visible Payout Strategy
+### Showing a payout
 
-The visible payout is intentionally driven by JavaScript `requestAnimationFrame`, not just CSS keyframes.
-
-Reason: prior CSS-only attempts were not consistently visible in the live app due to stacking, layout, performance, and motion overrides. The working path anchors to `#questXpCounter`, creates floating payout elements near the actual XP counter, and manually animates pop, squash, waft, and fade over about three seconds.
-
-The implementation creates a reliable visible layer and keeps a cell-local path for context. This is the path to refine first when the user asks for flashier score text.
+Payouts use `requestAnimationFrame`, anchored to `#questXpCounter`, to pop and fade for about three seconds. Earlier CSS-only attempts could disappear under stacking, layout and performance/motion overrides. Refine the live anchored path rather than adding another hidden keyframe effect.
 
 ## Mini-Player
 
@@ -113,7 +109,7 @@ The implementation creates a reliable visible layer and keeps a cell-local path 
   - Mini stats.
   - `#miniQuestXp.mini-quest-rewarding`.
 
-## Theme Copy And Transitions
+## Labels and transitions
 
 `src/renderer.js` makes Cartridge Quest read as its own world:
 
@@ -129,7 +125,7 @@ The implementation creates a reliable visible layer and keeps a cell-local path 
 
 Cartridge Quest uses `background-size: contain` on `.playlist-hero` and `.systems-view`. User-selected collection backgrounds are injected by `renderer.js` as an inline `background-image`, so this theme CSS still controls sizing. Keep the contain-first behavior unless the user specifically asks for cinematic cropping; the theme should show most of the selected art instead of zooming into one corner.
 
-## Motion Constraints
+## Motion settings to check
 
 Always check these before declaring an effect broken:
 

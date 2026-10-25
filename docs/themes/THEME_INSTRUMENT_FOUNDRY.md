@@ -1,12 +1,12 @@
-# Theme Instrument Foundry
+# Comparing theme instruments
 
-Status: first working infrastructure slice, 2026-08-24. The Foundry is a standalone comparison and behavior surface. None of these instruments is assigned to a production theme or wired to authoritative Electron state.
+The August 24, 2026 Foundry is a standalone comparison page. Its instruments use fixtures; they aren't assigned to production themes or connected to live Electron state.
 
 Open `src/theme-instrument-foundry.html` through a local static server to compare the set. Every card is created through `src/theme-instruments/registry.js`, receives the same deterministic fixture from `src/theme-instruments/fixtures.js`, and implements `mount`, `update`, and `destroy`.
 
-## First specimen matrix
+## The fixture set
 
-| Catalog category | Specimen 1 | Specimen 2 | What is genuinely demonstrated |
+| Catalog category | Specimen 1 | Specimen 2 | Behavior shown |
 | --- | --- | --- | --- |
 | Visual material + atmosphere | Material Switchboard | Ambient Field | Interchangeable surface recipes; decorative orbit/rain/steam with motion and conserve substitutions |
 | Artwork + identity | Artwork Treatment Prism | Playlist Sigil Generator | Artwork-preserving treatment modes; deterministic playlist identity and literal catalog code |
@@ -19,13 +19,13 @@ Open `src/theme-instrument-foundry.html` through a local static server to compar
 
 Every descriptor declares a stable id, one of six categories, role, renderer, cost, jobs, read-only inputs, supported placements, fallback, accessibility behavior, and a lifecycle factory. Registration validates these fields, rejects duplicate keys, and probes the lifecycle. Unknown keys return no instance.
 
-The current dependency direction is deliberately narrow:
+The fixture reaches the instrument through this host path:
 
 `deterministic fixture -> host dispatch/reducer -> registered instrument -> foundry-owned stage`
 
 Production promotion must replace the fixture with the appropriate product-owned read-only bundle and keep mutations behind existing host callbacks. An instrument must not read app selectors, infer theme identity, own audio nodes, fetch assets, or duplicate playback state.
 
-## Global operating conditions
+## Comparison settings
 
 - Palette changes test separation between visual recipe and semantic content.
 - Motion offers full, reduced, and off conditions. Choreography becomes a named static receipt outside the full-motion balanced condition.
@@ -33,7 +33,7 @@ Production promotion must replace the fixture with the appropriate product-owned
 - Performance Conserve disables costly atmosphere animation, blur, and large card shadows.
 - Narrow layout changes composition without removing any functional control or literal state.
 
-## Evidence boundary
+## What these checks establish
 
 The deterministic audit proves descriptor validation, duplicate rejection, two entries in each category, immutable fixture reduction, lifecycle shape, local-only implementation, declared motion/performance styles, and safe unknown-key behavior.
 
@@ -45,4 +45,4 @@ Painted browser review can prove the standalone page renders, reflows, and respo
 - Playback-graph, output-route, or physical-device behavior.
 - Independent-human comfort, comprehension, or aesthetic selection.
 
-Promotion therefore remains a separate decision. A chosen instrument needs a credible theme consumer, a product-owned slot and truth bundle, painted Electron verification, accessibility evidence proportional to its interaction, and a plain fallback that survives unavailable assets and unsupported placements.
+Before putting one in a theme, identify its consumer, slot and read-only input, then check it in Electron and through the relevant accessibility interactions. Missing assets or unsupported placements still need a plain usable fallback.

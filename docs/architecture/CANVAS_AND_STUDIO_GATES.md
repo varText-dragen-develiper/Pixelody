@@ -1,12 +1,13 @@
 # Canvas and Studio runtime gates
 
-Read this before changing the Canvas flags in `src/main.js`,
-`STUDIO_REBUILD_MODE` in `src/renderer.js`, or the stylesheet and theme-picker
-markup in `src/index.html` / `src/mini-player.html`.
+Changes to Canvas flags, `STUDIO_REBUILD_MODE`, or the main/mini-player theme
+picker need to keep the production allowlist and saved Studio settings intact.
+The relevant files are `src/main.js`, `src/renderer.js`, `src/index.html` and
+`src/mini-player.html`.
 
-## Active authority
+## What ordinary builds can open
 
-The Studio foundation reset remains active. The live boundary is:
+Studio is still the rebuilt shell and fallback. Obsession Mode and Cartridge Quest use separately allowed composition recipes:
 
 - `src/themes/built-in-themes.json` keeps Studio in `themes` and the two
   released recipes in `compositionPresentations`.
@@ -32,10 +33,9 @@ The Studio foundation reset remains active. The live boundary is:
   Composition Mode draft blocks the switch rather than being
   discarded.
 
-Studio remains the fallback while Obsession Mode and Cartridge Quest are
-allowlisted as composition presentations.
+A missing or disallowed presentation returns to Studio.
 
-## Production presentations and development gates
+## Activating a presentation
 
 `src/main.js` computes three independent inputs:
 
@@ -64,7 +64,7 @@ for a separate portable library/profile. This changes only storage location;
 relative or empty paths are rejected. It allows release inspection without
 opening an existing installation's data.
 
-## Theme explorer
+## Development presentations
 
 October 3, 2026: Modules can import the free Cosmic Cinema and Neon Burst
 `theme-edition` test selectors. Apply sends an allowlisted request to this same
@@ -114,11 +114,10 @@ to its launcher and guards the isolation and exit rules.
 The theme explorer's restart entries start exactly these profiles, and a
 session opened from a launcher is isolated in the same way.
 
-Every launch writes `Pixelody-console-log.txt`. The `Pixelody Canvas gate:` line
-reports the runtime inputs and is the fastest way to distinguish a launcher or
-persisted-opt-in issue from a host failure.
+For a launch problem, check the `Pixelody Canvas gate:` line in
+`Pixelody-console-log.txt`. It records the inputs used to choose the profile.
 
-## Required checks
+## Before changing these routes
 
 The archived theme registry, picker, and styles must never leak back into the live
 shell. `scripts/check-theme-packages.js` must keep package

@@ -1,7 +1,7 @@
-# Speaker-system development notes
+# Speaker rigs: recorded progress
 
-The earlier work put the rig model, Audio Systems controls, browser prototype,
-calibration and diagnostics in place. Saved rigs use
+The recorded work established saved rigs, Audio Systems controls, the browser
+prototype, calibration and diagnostics. Saved rigs use
 `pixelody.speakerSystems` and `pixelody.activeSpeakerSystemId`; tuning and
 stereo-image profiles stay in `state.systems` and `state.spatialProfiles`.
 The controls included create, rename, delete, reorder and `Route + tune`, with
@@ -32,10 +32,9 @@ working. Normal playback shouldn't require a driver, service, registry change,
 default-device change or administrator prompt just because grouped playback
 exists.
 
-The full development checklist remains in Git history. For the feature itself,
-start with [the speaker-rig notes](MULTI_OUTPUT_SPEAKER_SYSTEMS_PLAN.md). The
+For the feature itself, start with [the speaker-rig notes](MULTI_OUTPUT_SPEAKER_SYSTEMS_PLAN.md). The
 [measurement log](MULTI_OUTPUT_PHASE5_MEASUREMENT_LOG.md),
 [browser decision](MULTI_OUTPUT_BROWSER_FANOUT_DECISION.md) and
 [native mixer contract](MULTI_OUTPUT_NATIVE_MIXER_CONTRACT.md) keep the more
-specific test and integration details. This is a summary of those checkpoints,
-not a new release or listening-test result.
+specific integration details. Those checkpoints are unchanged by this wording
+update; no new listening results are added here.

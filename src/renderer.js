@@ -1379,7 +1379,7 @@ function installCanvasStudioControl() {
     // repaints identically -- a choice accepted and silently discarded.
     portSelect.disabled = !live;
     portNote.textContent = !live
-      ? 'Open Canvas Studio first. Ports only paint while the canvas is active.'
+      ? "Open Canvas Studio before choosing a port."
       : port
         ? `${port.summary} Includes its stock module composition; later additions remain separate.`
         : 'Neutral Canvas material. Choose one of the 27 baseline archive ports.';
@@ -1483,8 +1483,8 @@ function installCanvasStudioControl() {
     button.textContent = on ? 'Leave Canvas Studio' : 'Open Canvas Studio';
     button.setAttribute('aria-pressed', String(on));
     note.textContent = on
-      ? 'Composition Mode opens with the canvas. Studio returns on leaving.'
-      : 'Opens a near-blank canvas and the rail that builds one. Development only.';
+      ? "Arrange the canvas in Composition Mode. Leaving returns to Studio."
+      : "Start with a nearly empty canvas and add panels. Development only.";
   };
   button.addEventListener('click', async () => {
     const wasActive = canvasStageActive();
@@ -2051,14 +2051,14 @@ function trackIntelligenceSummary(track = {}, stats = {}) {
   const rates = trackStatRates(track.id);
   const metadata = normalizeTrackSignalMetadata(track);
   const role = inferredTrackRole(track, stats);
-  if (!rates.starts && !metadata.userTags.length && !metadata.moodTags.length && !metadata.contextTags.length) return 'No local signal yet. Add tags or play the track to teach Pixelody where it belongs.';
+  if (!rates.starts && !metadata.userTags.length && !metadata.moodTags.length && !metadata.contextTags.length) return "There are no listening signals yet. Tags and actual playback give Flow something to use.";
   if (role === 'anchor') return 'You often finish this track. Flow Shuffle can use it to steady the session.';
-  if (role === 'bridge') return 'This track may connect different moods or genres, based on its tags and your listening.';
+  if (role === 'bridge') return "Its tags and your listening suggest a connection between different parts of the session.";
   if (role === 'discovery') return 'You haven’t played this much. Flow Shuffle may bring it back into rotation.';
-  if (role === 'peak') return 'Peak track: energy and behavior suggest this can lift a session when momentum is needed.';
-  if (role === 'comfort') return 'Comfort signal: low skip pressure and familiar behavior make this a safer pick.';
-  if (role === 'background') return 'Background role: useful when the session needs lower-friction listening.';
-  return 'Local signal profile is forming from metadata and listening behavior.';
+  if (role === 'peak') return "Its energy tags and your listening suggest it fits a more energetic part of the session.";
+  if (role === 'comfort') return "You tend to keep this one playing, so Flow treats it as a familiar choice.";
+  if (role === 'background') return "Your listening suggests this fits a quieter stretch.";
+  return "Flow is building a picture from the tags and how you listen.";
 }
 function updateTrackIntelligenceFields(track = currentTrack()) {
   if (!track) return;
@@ -2605,7 +2605,7 @@ function signalAuditEmptyTimelineText(totalCount = 0) {
   if (!totalCount) return 'No imports yet. Import or merge a Signal Journal report to see it here.';
   if (activeSignalAuditFilter === 'active') return 'No active imports match this filter. Undone imports may still appear under Undone or All.';
   if (activeSignalAuditFilter === 'undone') return 'No undone imports yet. Undo history will appear here after an import is rolled back.';
-  return 'No Signal import audits match the current filter.';
+  return "No imports match this filter.";
 }
 function setSignalAuditCopyAvailability(canCopy, message = '') {
   const button = $('#copySignalAuditTimeline');
@@ -3252,7 +3252,7 @@ function signalImportDetailRows(preview) {
   (preview.validation.brokenLinkExamples || []).forEach((text) => {
     addRow('BROKEN LINK', text);
   });
-  if (!rows.length) addRow('CLEAN', 'No combined, deduped, capped, or broken-link examples are needed for this import.');
+  if (!rows.length) addRow('CLEAN', "No merge conflicts or removed examples to show.");
   return rows;
 }
 function signalImportRecommendedMode(preview) {
@@ -3284,7 +3284,7 @@ function signalImportRecommendedMode(preview) {
     reasons.push(`${validationIssueCount} validation issue${validationIssueCount === 1 ? '' : 's'} found, so Merge is safer around sanitized data.`);
   } else {
     replaceScore += 2;
-    reasons.push('The incoming report validates cleanly.');
+    reasons.push("The report passed validation.");
   }
   if (brokenLinks) {
     mergeScore += Math.min(6, brokenLinks * 2);
@@ -3300,7 +3300,7 @@ function signalImportRecommendedMode(preview) {
   }
   if (!currentSignalItems && incomingSignalItems && !validationRisk) {
     replaceScore += 5;
-    reasons.push('There is no current local Signal learning, so Replace is low risk.');
+    reasons.push("There is no saved local learning for Replace to remove.");
   }
   if (overlap && !newerCurrentEvents && !validationRisk) {
     replaceScore += Math.min(4, Math.ceil(overlap / 4));
@@ -3315,7 +3315,7 @@ function signalImportRecommendedMode(preview) {
     reasons.push('There is no earlier snapshot to restore.');
   } else if (undoAvailable) {
     replaceScore += 1;
-    reasons.push('An undo snapshot is already available, which slightly lowers restore risk.');
+    reasons.push("An earlier snapshot is available to undo the import.");
   }
   const mode = replaceScore > mergeScore ? 'replace' : 'merge';
   const confidence = Math.min(96, Math.max(56, 56 + Math.abs(mergeScore - replaceScore) * 6));
@@ -4108,8 +4108,8 @@ function signalEventDetail(type, event, track) {
   if (type === 'track_skipped') return `${Math.round((event.percentCompleted || 0) * 100)}% heard; ${event.outcomeClass || 'skip'} saved for future picks.`;
   if (type === 'track_favorited') return event.favorite ? '+ affinity signal for this track.' : 'This favorite will have less influence on future picks.';
   if (type === 'track_queued') return 'Your queue choice was saved.';
-  if (type === 'shuffle_pick') return event.reasons?.[0] || 'Weighted local signal chose this track.';
-  return 'Local-only event added to Signal Journal.';
+  if (type === 'shuffle_pick') return event.reasons?.[0] || "This pick used local tags and listening history.";
+  return "Added to Signal Journal on this device.";
 }
 function recordSignalEvent(type, payload = {}) {
   if (!state.signalSettings.enabled) return null;
@@ -8281,7 +8281,7 @@ function browserMultiSinkPrototypeStatus(system = activeSpeakerSystem()) {
     includedMemberIds: includedMembers.map((member) => member.id),
     excludedMemberIds: excludedMembers.map((member) => member.id),
     excludedMemberLabels: excludedMembers.map((member) => member.label),
-    reason: reasons[0] || 'Guard checks passed; the experimental secondary route can be prepared.',
+    reason: reasons[0] || "Route checks passed. The experimental second output can be prepared.",
     reasons,
   };
 }
@@ -9658,12 +9658,12 @@ function speakerRigValidationEvidence(run) {
       completedComparableRuns: comparable.length,
       targetRuns: SPEAKER_RIG_VALIDATION_REQUIRED_REPEAT_RUNS,
       totalObservedMinutes: speakerRigValidationRound(comparable.reduce((sum, entry) => sum + speakerRigValidationAnalysis(entry).durationSeconds, 0) / 60),
-      interpretation: comparable.length >= SPEAKER_RIG_VALIDATION_REQUIRED_REPEAT_RUNS ? 'Repeat observations available; endpoint clocks and listener observations remain correlated, so this is not a formal statistical significance claim.' : 'More independent hardware runs are needed before comparing repeatability.',
+      interpretation: comparable.length >= SPEAKER_RIG_VALIDATION_REQUIRED_REPEAT_RUNS ? "Repeated runs are available, but shared clocks and listening conditions limit what the comparison establishes." : 'More independent hardware runs are needed before comparing repeatability.',
     },
     releaseLanguage: {
       allowed: ['experimental browser prototype'],
       prohibited: ['release-quality synchronization', 'all-route synchronization'],
-      decision: 'Recorder output is evidence for human review only. It cannot update a release claim or roadmap checkbox.',
+      decision: "Review the recorded run before marking a hardware check complete.",
     },
     privacy: { pathHidden: true, rawEndpointIdsStored: false, localMediaPathsStored: false },
   });
@@ -11956,7 +11956,7 @@ function acceptRigLevelMatch() {
   resetRigLevelMatchState({ resumeMusic: true });
   renderSpeakerSystems();
   updateDiagnostics();
-  showToast('Relative level match accepted. Only attenuation was applied.');
+  showToast("Level match saved. The louder output was turned down.");
 }
 function cancelRigLevelMatch(options = {}) {
   const system = activeSpeakerSystem();
@@ -12265,7 +12265,7 @@ function acceptRigArrivalMatch() {
   resetRigArrivalMatchState({ resumeMusic: true });
   renderSpeakerSystems();
   updateDiagnostics();
-  showToast('Arrival match accepted. Only a positive delay was applied.');
+  showToast("Timing saved as an added delay.");
 }
 function cancelRigArrivalMatch(options = {}) {
   const system = activeSpeakerSystem();
@@ -12519,7 +12519,7 @@ function respondToRigBassPolarity(response = '') {
   rigBassIntegrationState.polarityTrials.push({ at: new Date().toISOString(), candidatePolarities: candidates, response, selectedPolarity });
   rigBassIntegrationState.polaritySelected = true;
   rigBassIntegrationState.delaySelected = false;
-  showToast('Polarity preference recorded provisionally. Compare the low-band timing next.');
+  showToast("Polarity choice held for review. Compare bass timing next.");
   renderSpeakerSystems();
 }
 function respondToRigBassDelay(response = '') {
@@ -12531,7 +12531,7 @@ function respondToRigBassDelay(response = '') {
   rigBassIntegrationState.draftDelayMs = Number(clampNumber(selectedDelayMs, 0, 250, rigBassIntegrationState.draftDelayMs).toFixed(2));
   rigBassIntegrationState.delayTrials.push({ at: new Date().toISOString(), candidateDelaysMs: candidates, response, selectedDelayMs: rigBassIntegrationState.draftDelayMs });
   rigBassIntegrationState.delaySelected = true;
-  showToast('Low-band timing preference recorded provisionally. Confirm to apply it.');
+  showToast("Bass timing is ready. Confirm to apply it.");
   renderSpeakerSystems();
 }
 function acceptRigBassIntegration() {
@@ -12992,7 +12992,7 @@ function renderRigCalibrationEntry(system = activeSpeakerSystem()) {
           </div>
         </div>
         <div class="speaker-rig-preparation" data-preparation-state="${preparationLocked ? 'locked' : preparationComplete ? 'saved' : 'ready'}">
-          <span><small>LISTENING POSITION</small><b>${escapeHtml(preparationComplete ? calibration.listeningPosition.name : preparationLocked ? 'Confirm routes first' : 'Name the seat and record hardware')}</b><em>${escapeHtml(preparationComplete ? preparationTime : 'Physical controls stay outside Pixelody; capture their repeatable positions here.')}</em></span>
+          <span><small>LISTENING POSITION</small><b>${escapeHtml(preparationComplete ? calibration.listeningPosition.name : preparationLocked ? 'Confirm routes first' : 'Name the seat and record hardware')}</b><em>${escapeHtml(preparationComplete ? preparationTime : "Note the physical knob positions so you can use the same setup again.")}</em></span>
           <label class="speaker-rig-listening-position"><small>Seat</small><input type="text" maxlength="80" value="${escapeHtml(calibration.listeningPosition.name)}" placeholder="Desk chair" data-rig-preparation-field="listening-position" ${preparationLocked ? 'disabled' : ''}></label>
           <div class="speaker-rig-hardware-notes">${system.outputs.map((member) => {
             const note = calibration.physicalSetup.memberNotes[member.id] || {};
@@ -13005,7 +13005,7 @@ function renderRigCalibrationEntry(system = activeSpeakerSystem()) {
           <button class="quiet-button" type="button" data-rig-calibration-action="attach-microphone-evidence" ${latestMicrophoneEvidence.ok ? '' : 'disabled'}>Attach latest result</button>
         </div>
         <div class="speaker-rig-level-match" data-level-match-state="${levelMatchActive ? rigLevelMatchState.candidateReady ? 'candidate' : 'active' : savedLevelMatch.status}">
-          <span><small>RELATIVE LEVEL</small><b>${escapeHtml(levelMatchStatus)}</b><em>${escapeHtml(levelMatchActive ? `Signals are A then B in a shuffled physical order. Fine step: ${rigLevelMatchState.stepDb.toFixed(1)} dB.` : savedLevelMatch.status === 'accepted' ? `Saved with ${savedLevelMatch.trials.length} listening trial${savedLevelMatch.trials.length === 1 ? '' : 's'}.` : 'Midband pink-noise trials attenuate only the side judged louder.')}</em></span>
+          <span><small>RELATIVE LEVEL</small><b>${escapeHtml(levelMatchStatus)}</b><em>${escapeHtml(levelMatchActive ? `Signals are A then B in a shuffled physical order. Fine step: ${rigLevelMatchState.stepDb.toFixed(1)} dB.` : savedLevelMatch.status === 'accepted' ? `Saved with ${savedLevelMatch.trials.length} listening trial${savedLevelMatch.trials.length === 1 ? '' : 's'}.` : "Compare the noise bursts. Pixelody only turns down the louder side.")}</em></span>
           <div class="speaker-rig-level-actions">
             <button class="quiet-button" type="button" data-rig-calibration-action="start-level-match" ${levelMatchActive || !levelPreflight.ok ? 'disabled' : ''}>${savedLevelMatch.status === 'accepted' ? 'Run again' : 'Start level match'}</button>
             <button class="quiet-button" type="button" data-rig-calibration-action="level-a-louder" ${levelMatchActive && rigLevelMatchState.responseReady && !rigLevelMatchState.candidateReady ? '' : 'disabled'}>A louder</button>
@@ -13016,7 +13016,7 @@ function renderRigCalibrationEntry(system = activeSpeakerSystem()) {
           </div>
         </div>
         <div class="speaker-rig-arrival-match" data-arrival-match-state="${arrivalMatchActive ? rigArrivalMatchState.finalConfirmationPlayed ? 'candidate' : rigArrivalMatchState.candidateReady ? 'candidate' : 'active' : savedArrivalMatch.status}">
-          <span><small>ARRIVAL TIMING</small><b>${escapeHtml(arrivalMatchStatus)}</b><em>${escapeHtml(arrivalMatchActive ? rigArrivalMatchState.finalConfirmationPlayed ? 'The final simultaneous pulse pass has played. Save only if it now arrives together.' : rigArrivalMatchState.candidateReady ? 'Your candidate is ready. Play the final simultaneous pulse pass before saving.' : `Blinded A/B pulse sequences compare two positive delay candidates. Fine step: ${rigArrivalMatchState.stepMs.toFixed(1)} ms.` : savedArrivalMatch.status === 'accepted' ? `Saved with ${savedArrivalMatch.trials.length} blinded comparison${savedArrivalMatch.trials.length === 1 ? '' : 's'}.` : 'The second member is delayed only when you confirm a final by-ear result; no negative delay is used.')}</em></span>
+          <span><small>ARRIVAL TIMING</small><b>${escapeHtml(arrivalMatchStatus)}</b><em>${escapeHtml(arrivalMatchActive ? rigArrivalMatchState.finalConfirmationPlayed ? "The final pulses have played. Save if they sound aligned." : rigArrivalMatchState.candidateReady ? 'Your candidate is ready. Play the final simultaneous pulse pass before saving.' : `Blinded A/B pulse sequences compare two positive delay candidates. Fine step: ${rigArrivalMatchState.stepMs.toFixed(1)} ms.` : savedArrivalMatch.status === 'accepted' ? `Saved with ${savedArrivalMatch.trials.length} blinded comparison${savedArrivalMatch.trials.length === 1 ? '' : 's'}.` : 'The second member is delayed only when you confirm a final by-ear result; no negative delay is used.')}</em></span>
           <div class="speaker-rig-arrival-actions">
             <button class="quiet-button" type="button" data-rig-calibration-action="start-arrival-match" ${arrivalMatchActive || !arrivalPreflight.ok ? 'disabled' : ''}>${savedArrivalMatch.status === 'accepted' ? 'Run again' : 'Start arrival match'}</button>
             <button class="quiet-button" type="button" data-rig-calibration-action="arrival-a-tighter" ${arrivalMatchActive && rigArrivalMatchState.responseReady && !rigArrivalMatchState.candidateReady ? '' : 'disabled'}>A tighter</button>
@@ -13048,7 +13048,7 @@ function renderRigCalibrationEntry(system = activeSpeakerSystem()) {
           </div>
         </div>
         <div class="speaker-rig-music-verification" data-music-verification-state="${musicVerificationActive ? rigMusicVerificationState.observationComplete ? 'candidate' : 'active' : calibration.verification.result}">
-          <span><small>MUSIC VERIFICATION</small><b>${escapeHtml(verificationStatus)}</b><em>${escapeHtml(musicVerificationActive ? rigMusicVerificationState.observationComplete ? 'The listening check is complete. Record what you heard to save an honest result.' : 'Play familiar music with voice, transients, and bass if applicable. The timer only advances while music plays.' : savedVerification.status === 'accepted' || savedVerification.status === 'attention' ? `Last observation: ${calibration.verification.stabilitySeconds}s, ${calibration.verification.correctionCount} correction${calibration.verification.correctionCount === 1 ? '' : 's'}. A quick re-check observes 15 seconds after a reconnect or hardware change.` : 'After the listening stages, observe familiar music for 60 seconds and record what you hear.')}</em></span>
+          <span><small>MUSIC VERIFICATION</small><b>${escapeHtml(verificationStatus)}</b><em>${escapeHtml(musicVerificationActive ? rigMusicVerificationState.observationComplete ? "The listening check is complete. Record what you heard to save it." : 'Play familiar music with voice, transients, and bass if applicable. The timer only advances while music plays.' : savedVerification.status === 'accepted' || savedVerification.status === 'attention' ? `Last observation: ${calibration.verification.stabilitySeconds}s, ${calibration.verification.correctionCount} correction${calibration.verification.correctionCount === 1 ? '' : 's'}. A quick re-check observes 15 seconds after a reconnect or hardware change.` : 'After the listening stages, observe familiar music for 60 seconds and record what you hear.')}</em></span>
           <div class="speaker-rig-verification-actions">
             <button class="quiet-button" type="button" data-rig-calibration-action="start-music-verification" ${musicVerificationActive || !verificationPreflight.ok ? 'disabled' : ''}>Start 60 s check</button>
             <button class="quiet-button" type="button" data-rig-calibration-action="start-quick-check" ${musicVerificationActive || !verificationPreflight.ok || !['accepted', 'attention'].includes(savedVerification.status) ? 'disabled' : ''}>Quick re-check</button>
@@ -13574,7 +13574,7 @@ function headphoneDacProfileLibrary() {
       eqMode: 'simple',
       tuning: normalizeTuning({ bass: 0, presence: 0, treble: 0 }),
       spatial: spatialDefault(),
-      note: 'Flat system path for transparent DACs, audio interfaces, and already-balanced speakers.',
+      note: "Flat tuning for an output you already like.",
     },
     {
       id: 'usb-headphones',
@@ -13583,7 +13583,7 @@ function headphoneDacProfileLibrary() {
       eqMode: 'advanced',
       tuning: normalizeTuning({ bass: 1, presence: 0.5, treble: 0.5, parametric: parametricProfileBands([{ index: 0, frequency: 75, q: 0.75, gain: 0.8 }]) }),
       spatial: spatialDefault(),
-      note: 'A gentle lift for neutral USB headphones or DAC/amp headphone outputs without heavy coloration.',
+      note: "A small lift for neutral headphones or a DAC/amp output.",
     },
     {
       id: 'bright-headphones',
@@ -13610,7 +13610,7 @@ function headphoneDacProfileLibrary() {
       eqMode: 'simple',
       tuning: normalizeTuning({ bass: -0.5, presence: 1.5, treble: 0.5 }),
       spatial: spatialDefault(),
-      note: 'Conservative clarity for Bluetooth routes where codecs, latency, and device DSP may already be active.',
+      note: "A small clarity adjustment for Bluetooth, where the device may already apply its own processing.",
     },
     {
       id: 'display-audio-safe',
@@ -13637,7 +13637,7 @@ function headphoneDacProfileLibrary() {
       eqMode: 'advanced',
       tuning: normalizeTuning({ bass: -1, presence: -0.8, treble: -2, parametric: parametricProfileBands([{ index: 3, frequency: 3600, q: 0.9, gain: -0.8 }, { index: 4, frequency: 9000, q: 0.85, gain: -1.2 }]) }),
       spatial: spatialDefault(),
-      note: 'A softer late-session profile for reduced edge and lower fatigue at modest volume.',
+      note: "A softer high end for listening at modest volume.",
     },
   ];
 }
@@ -13745,7 +13745,7 @@ function normalizeNativeMixerStatus(value = {}) {
     state,
     claim: {
       releaseReady: false,
-      reason: sanitizeRigDiagnosticString(claim.reason || source.reason || 'No native grouped playback claim is available.', 'nativeMixer.claim.reason').slice(0, 360),
+      reason: sanitizeRigDiagnosticString(claim.reason || source.reason || "Native grouped playback has not been verified.", 'nativeMixer.claim.reason').slice(0, 360),
       allowedLanguage: (Array.isArray(claim.allowedLanguage) ? claim.allowedLanguage : []).map((item) => safeTextValue(item)).filter(Boolean).slice(0, 6),
     },
     component: {
@@ -14781,7 +14781,7 @@ async function runMicCalibration() {
     await new Promise((resolve) => setTimeout(resolve, (finalTrialOffset + scheduled.sequenceDurationSeconds + 0.8) * 1000));
     const captureSnapshot = await capture.snapshot();
     cleanupMicCalibration();
-    setText('#micLatencyStatus', 'Captured sweeps. Analysing off the renderer thread…');
+    setText('#micLatencyStatus', "Sweeps captured. Analyzing the recording…");
     const measured = await summarizeMicCorrelationTrials(captureSnapshot.samples, captureSnapshot, scheduled.trials);
     const acousticMs = Number.isFinite(measured.acousticMs) ? Number(measured.acousticMs.toFixed(2)) : null;
     const softwareMs = latencyState.report?.estimate?.expectedMs ?? null;
@@ -16300,7 +16300,7 @@ function emptyDailyMix() {
     trackIds: [],
     savedPlaylistId: '',
     explanationReceipt: {
-      summary: 'Import local music to generate a Rediscovery mix. Daily Curated never fills the gap with cloud catalog tracks.',
+      summary: "Import music to build a Rediscovery mix from your library.",
       source: 'local-library',
       signals: ['Local library availability'],
       trackCount: 0,
@@ -16394,7 +16394,7 @@ function dailyCuratedCollection() {
   return {
     id: DAILY_CURATED_COLLECTION_ID,
     name: "Today's Listen",
-    description: 'One ready path through music you own. Press play; it stays in this order until tomorrow.',
+    description: "A daily mix from your library, kept in this order until tomorrow.",
     trackIds: mix.trackIds,
     virtual: true,
     dailyMix: true,
@@ -16652,7 +16652,7 @@ function renderHero() {
   $('#collectionType').textContent = collectionType.toUpperCase();
   $('#playlistMeta').textContent = `${count} track${count === 1 ? '' : 's'} · ${playlist.collectionType || (playlist.virtual ? 'Smart collection' : 'Local playlist')}`;
   const descriptions = { all: 'All the music in your library.', favorites: 'The tracks you’ve marked as favorites.', recent: 'What you’ve listened to recently.' };
-  $('#playlistDescription').textContent = playlist.description || descriptions[playlist.id] || (playlist.collectionType === 'Album' ? 'Every track from this album, gathered automatically.' : playlist.collectionType === 'Artist' ? 'Every track by this artist in your local library.' : 'A personal collection tuned your way.');
+  $('#playlistDescription').textContent = playlist.description || descriptions[playlist.id] || (playlist.collectionType === 'Album' ? 'Every track from this album, gathered automatically.' : playlist.collectionType === 'Artist' ? 'Every track by this artist in your local library.' : "Your saved collection.");
   const hero = $('#playlistHero'); const cover = $('#playlistCover');
   const artwork = collectionArtworkFor(playlist);
   hero.dataset.dailyCurated = String(isDailyMix);
@@ -16720,10 +16720,10 @@ function renderDailyCuratedPanel() {
   setText('#dailyCuratedPromise', mix.pending
     ? "Preparing today's listen. You can keep using Pixelody; it will appear here in a moment."
     : stateLabel === 'empty'
-    ? 'Bring in music once and Daily Curated will prepare a simple listening path from your own library.'
+    ? "Import music and Daily Curated can make a daily mix from it."
     : 'A daily mix from your library. It stays the same until tomorrow.');
   setText('#dailyCuratedLeadTitle', leadTrack?.title || (mix.pending ? "Preparing today's listen" : mix.trackIds.length ? "Today's tracks are unavailable" : 'Waiting for local music'));
-  setText('#dailyCuratedLeadMeta', leadTrack ? `${leadTrack.artist || 'Unknown artist'}${leadTrack.album ? ` · ${leadTrack.album}` : ''}` : mix.trackIds.length ? 'The missing tracks stay recorded instead of being silently replaced.' : "Import music and tomorrow's path takes care of itself.");
+  setText('#dailyCuratedLeadMeta', leadTrack ? `${leadTrack.artist || 'Unknown artist'}${leadTrack.album ? ` · ${leadTrack.album}` : ''}` : mix.trackIds.length ? 'The missing tracks stay recorded instead of being silently replaced.' : "Import music to give tomorrow's mix something to use.");
   setText('#dailyCuratedTrackCount', unavailable ? `${availableTracks.length} of ${mix.trackIds.length}` : String(availableTracks.length));
   setText('#dailyCuratedDuration', dailyMixDurationText(receipt.totalDurationSeconds));
   setText('#dailyCuratedUnheard', String(unheard));
@@ -19035,7 +19035,7 @@ function updateTrackEditorDiscoveryCues(track) {
   if ($('#trackDiscoverySummary')) {
     $('#trackDiscoverySummary').textContent = gaps.size
       ? `${gaps.size} detail${gaps.size === 1 ? '' : 's'} need attention. Search, fill, buy, then import.`
-      : 'Everything important is filled in. Discovery links stay ready.';
+      : "The checked details are filled in. You can still use the discovery links.";
   }
   if ($('#trackDiscoveryCallout')) $('#trackDiscoveryCallout').classList.toggle('complete', gaps.size === 0);
 }
@@ -20965,7 +20965,7 @@ $('#speakerSystemMembers').addEventListener('click', (event) => {
 $('#speakerSystemPrototypeEnable').onchange = (event) => {
   const enabled = Boolean(event.target.checked);
   if (enabled) {
-    const accepted = confirm('Enable the experimental browser dual-output prototype flag? Pixelody will keep normal single-output playback active until Windows audio routing is implemented.');
+    const accepted = confirm("Enable experimental two-output playback? It can drift or fail to route. You can return to Primary only from Audio Systems.");
     if (!accepted) {
       event.target.checked = false;
       return;

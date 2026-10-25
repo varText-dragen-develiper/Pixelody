@@ -1,10 +1,11 @@
-# Multi-Output Phase 5 Measurement Log
+# Measuring browser drift and overhead
 
-This log is for deciding whether Pixelody's experimental browser multi-sink prototype is stable enough to keep using while a native WASAPI mixer decision is pending.
+Use these runs to compare the two-output browser prototype with ordinary
+playback and decide whether it remains useful as an experiment. Record the
+actual hardware results; this procedure doesn't supply them. Release checks
+also need `docs/audio/AUDIO_RELEASE_GATE.md` and the Phase 6 matrix.
 
-The procedure documents how to measure drift. It is not, by itself, a release pass. Release readiness still requires the full `docs/audio/AUDIO_RELEASE_GATE.md` and Phase 6 matrix.
-
-## Shared Rules
+## For all runs
 
 - Use a local lossless or high-quality long track, album, or playlist that can run for at least 35 minutes without a source change.
 - Use the experimental browser dual-output prototype only after the guard reports armed.
@@ -66,7 +67,7 @@ Use this for the roadmap item: `Compare browser prototype drift after 30 minutes
 
 ### Suggested Decision Thresholds
 
-These thresholds guide the browser/native decision. They are intentionally conservative.
+Use these judgments when comparing the browser and native options.
 
 - **Good wired+wired result:** Both physical outputs remain audible for 30 minutes, route stability is mostly `stable`, no repeated seek corrections, no media decode/load errors, and audible timing does not smear vocals, drums, or transients.
 - **Borderline wired+wired result:** Route stability alternates between `stable` and `correcting`, rate nudges are occasional, no repeated large seek corrections, and the user can still tolerate the timing.
@@ -103,7 +104,8 @@ Notes:
 
 Use this for the roadmap item: `Compare browser prototype drift after 30 minutes on wired + Bluetooth`.
 
-This run is intentionally stricter about notes and caveats than the wired+wired run. Bluetooth endpoints can add variable buffering, codec delay, operating-system handoff latency, radio interference, headset power-management behavior, and reconnect events that Pixelody cannot fully control from the browser prototype.
+For Bluetooth, also record buffering, codec/mode, interference, power behavior
+and reconnects. Those can change latency outside the browser's control.
 
 ### Hardware Setup
 
@@ -156,7 +158,7 @@ This run is intentionally stricter about notes and caveats than the wired+wired 
 
 ### Suggested Decision Thresholds
 
-These thresholds guide the browser/native decision and the user-facing Bluetooth warning language. They are intentionally conservative.
+Use these judgments to record both usability and the Bluetooth caveat.
 
 - **Good wired+Bluetooth result:** Both physical outputs remain audible for 30 minutes, the Bluetooth route does not reconnect or switch modes, route stability is mostly `stable` or occasional `correcting`, no repeated seek corrections happen, and the Bluetooth delay is tolerable after manual/member delay adjustment.
 - **Borderline wired+Bluetooth result:** The route stays audible, but stability frequently alternates between `stable` and `correcting`, rate nudges are common, audible alignment is only acceptable for casual room-fill use, or Bluetooth buffering makes the route feel less precise than wired+wired.
@@ -197,7 +199,9 @@ Notes:
 
 Use this for the roadmap item: `Compare browser prototype CPU and decode overhead on FLAC/WAV/MP3`.
 
-This run compares normal single-output playback against the browser multi-sink prototype. The goal is to learn whether duplicate media elements and per-output Web Audio graphs create enough CPU, memory, decode, or responsiveness overhead that browser fan-out should remain experimental-only or be replaced by a native mixer for release-quality grouped playback.
+Compare the same files with one output and with the browser prototype. Watch
+CPU, memory, decode/load errors and responsiveness: extra elements and graphs
+may cost enough to favor a native mixer.
 
 ### Test Sources
 
@@ -248,7 +252,7 @@ Run each codec twice: once in normal single-output playback and once with the br
 
 ### Suggested Decision Thresholds
 
-These thresholds guide the browser/native decision. They are intentionally conservative because grouped playback must not make normal music playback feel fragile.
+Judge overhead against normal listening and browsing on the same machine.
 
 - **Good overhead result:** Prototype CPU and memory stay close to the single-output baseline for FLAC/WAV/MP3, no decode/load errors appear, the UI remains responsive, and drift correction does not increase under codec load.
 - **Borderline overhead result:** Prototype overhead is clearly higher but tolerable for a two-output experimental feature, with no audio dropouts, no repeated decode/load errors, and no severe UI stutter.
@@ -286,9 +290,10 @@ Decision: good / borderline / bad
 Notes:
 ```
 
-## Roadmap Use
+## Recording completion
 
-Checking the Phase 5 drift and codec-overhead items means these measurement workflows exist and are ready to run. It does not mean Pixelody has passed the physical release gate until real completed run summaries are recorded.
+Earlier Phase 5 completion marks refer to the workflows being written. The
+physical gate stays open until actual run summaries are recorded.
 
 For the final calibration Phase C gate, copy the actual wired and Bluetooth run
 summaries into `MULTI_OUTPUT_PHASEC_HARDWARE_RUN_LOG.md`. That ledger is the

@@ -1,6 +1,6 @@
-# Pixelody minimum specs (measured 2026-10-05)
+# Hardware and measured performance — October 5, 2026
 
-## Hardware recommendations
+## Suggested hardware
 
 | | Minimum | Recommended |
 | --- | --- | --- |
@@ -12,7 +12,7 @@
 | Library size | Up to a few thousand tracks smoothly | 10,000+ tracks |
 | Android | Android 8.0 (API 26) or newer | Android 10 or newer |
 
-## What was measured
+## Container measurements
 
 Electron 43.4.1 (the shipped runtime), Studio (the theme tested in this run), in a Linux container with software rendering (GPU off, so a worst case for graphics). Generated libraries of 500, 2,000 and 10,000 tracks, with real playback through the Web Audio EQ graph (output muted). CPU limited with taskset; slower CPUs emulated with Chromium's CPU throttle (2.5x and 4x slower renderer). RAM was measured, not capped.
 
@@ -27,9 +27,9 @@ Electron 43.4.1 (the shipped runtime), Studio (the theme tested in this run), in
 
 - Playback with the EQ graph on stayed at 60 fps and used 10-20% of one full-speed core; the audio path never stuttered even on one throttled core (worst single frame 217 ms at 1 core, 4x slower, 10k tracks).
 - The Canvas profile (the heavier foreground stage layout) cost the same as Studio at 500 and 2,000 tracks.
-- Weak spot: dragging the scrollbar or very fast scrolling a long list on one slow core. Rows are already virtualized (about 90 in the DOM), so this is software-rendering paint cost; a real GPU removes most of it.
+- Fast scrolling on one slow core was the weak spot. About 90 virtualized rows were in the DOM; software painting contributed to the cost. These numbers alone don't establish what a particular GPU will improve.
 
-## Not covered
+## Limits of that run
 
 - Real Windows, a real GPU, real audio output and the other Canvas themes (only Studio plus the Canvas foreground profile were run).
 - A hard RAM cap (no cgroups in the container). 4 GB is the minimum because the app uses about 0.5-0.7 GB and Windows 10 itself needs 2-3 GB.
@@ -44,8 +44,10 @@ First `Spec budget` run, 2,000 tracks, software graphics, playback through the E
 | Windows (x64) | 2 / 8 GB | 10.3 s | 64 / 64 | 172 ms | 805 MB (resident set) |
 | macOS (Apple Silicon) | 5 / 14 GB | 4.1 s | 48 / 60 | 66 ms | 839 MB (resident set) |
 
-The Windows runner is a real 2-core, 8 GB Windows machine, so the 2-core minimum holds on Windows itself. Resident set counts shared pages once per process, so it reads higher than the PSS figures above.
+The hosted Windows result used 2 cores and 8 GB RAM. It supports that tested
+configuration, rather than every machine with two cores. Resident-set totals
+count shared pages per process, so they read higher than the PSS table.
 
-## Keeping it honest
+## Repeating the budget check
 
 `scripts/check-spec-budget.js` launches the app with a 2,000-track library, plays through the EQ graph and fails if startup, memory or playback break the budget. The `Spec budget` workflow runs it on Windows, macOS and Linux runners and writes the numbers to the run summary. Frame rate and scroll are reported but not enforced, because hosted runners use software graphics.

@@ -1,55 +1,19 @@
-# Windows-wide EQ
+# EQ for other Windows apps
 
-I want someone to tune their speaker setup once and choose where to use it.
-Inside Pixelody, the existing Web Audio path can apply track and output EQ,
-ReplayGain, balance, mono and limiting. Processing sound from a browser, game or
-another music app is a different problem: that audio has to pass through a
-Windows component that Pixelody can actually process.
+Pixelody can already tune its own music. Applying that tuning to a browser or game needs a Windows route that actually carries the other app's audio. Selecting a profile in Pixelody doesn't create that route.
 
-The development plan settled on a virtual output as the direction for System
-Tuning Mode. Other apps would send shared-mode audio to `Pixelody Virtual Output`,
-then a native bridge would process it and send it to a separate real output or
-speaker rig. That requires a trusted, signed endpoint component and adds latency
-and support work. The UI selection and missing/detected endpoint reporting were
-foundations for it, not a working Windows-wide EQ release.
+The plan chose a virtual output: shared-mode apps would play into `Pixelody Virtual Output`, a monitor/capture side would feed the native bridge, and processing would send it to a separate real output or rig. It could reuse output profiles, member trim, balance, mono, polarity, delay and calibration data where the engine supports them.
 
-The WASAPI loopback prototype was useful for capture diagnostics and checking
-the EQ payload. It wasn't a safe shortcut to the same result: playing processed
-audio back into the output being captured could duplicate the original or feed
-it back through the loop. Processed render remained blocked. A Windows APO or
-system effect was another option, left for later because of its installation,
-signing and compatibility work.
+At the recorded checkpoint, mode selection, status, native capability probing, endpoint reporting, loopback capture and non-audible EQ analysis were development foundations. Signed endpoint installation and an audible processed bridge were still missing. This October 24 wording update adds no new route test.
 
-## What the interface needs to tell you
+## Why loopback alone isn't enough
 
-Playback EQ affects music inside Pixelody. System EQ can affect other apps only
-when a supported native route is active. The status needs to say when that route
-is off, missing a component, ready but not enabled, unavailable or unsupported.
-It also needs to distinguish `In-app only`, `System shared-mode active` and
-`Bypassed by exclusive app`.
+Capturing an output and playing processed audio back into it can duplicate the original or feed it around the loop. The prototype therefore blocked processed same-output render. An APO/system effect was another possibility, left for later because of signing, installation and compatibility work.
 
-Exclusive playback, protected audio, ASIO and direct-device paths may bypass
-shared-mode processing. A selected profile or an active-looking switch doesn't
-establish that those apps are being tuned. Diagnostics need the real output,
-engine, sample rate, latency estimate, bypass caveat and applied profile.
+A real route needs feedback prevention, a watchdog, a clean off switch and uninstall/restore behavior. Test it with built-in audio, USB DAC, HDMI/DisplayPort, Bluetooth and different sample rates. Ordinary Pixelody playback must remain available without installing a helper, driver, service or registry change.
 
-The intent is to reuse the output, speaker-member, spatial and calibration data
-already used by Player Mode, including trim, balance, mono, polarity and delay.
-The engine decides which of those settings it can apply on its route.
+## What the status should mean
 
-## Work that remained
+Show whether the route is off, missing a component, ready, unavailable or unsupported. Distinguish `In-app only`, `System shared-mode active` and `Bypassed by exclusive app`. ASIO, protected audio, direct-device and exclusive paths may bypass shared-mode processing.
 
-The earlier plan recorded saved mode selection, UI status and native capability
-probing. Loopback capture, non-audible EQ analysis and virtual-endpoint reporting
-were partial development work. Signed endpoint installation and a processed
-render bridge were still missing.
-
-Shipping it also needed feedback prevention, latency and bypass reporting, a
-clean off switch, uninstall support and physical checks across built-in audio,
-USB DAC, HDMI/DisplayPort, Bluetooth and sample-rate combinations. Normal
-Pixelody playback must remain available without an unsigned helper, driver,
-service, registry change or background process.
-
-The [virtual-audio roadmap](system-audio/WINDOWS_VIRTUAL_AUDIO_ROADMAP.md) has the
-route and component details. Earlier implementation checklists remain in Git
-history; this October 22 summary does not establish new system-route results.
+Diagnostics need the actual engine, real output, sample rate, estimated latency, profile and bypass limits. An active-looking switch is only useful if those facts support it. [The virtual-audio roadmap](system-audio/WINDOWS_VIRTUAL_AUDIO_ROADMAP.md) covers the components.

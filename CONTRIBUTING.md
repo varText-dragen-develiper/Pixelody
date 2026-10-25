@@ -1,7 +1,8 @@
 # Contributing to Pixelody
 
-Found a problem, have an idea, or want to work on a fix? I’d appreciate the help,
-whether it’s a bug report, a guide update, a design idea, or a pull request.
+Bug reports, documentation, design ideas and fixes are all welcome. If you're
+changing something substantial, open an issue first so we can work out what it
+needs before you spend a lot of time on it.
 
 ## Contributor License Agreement
 
@@ -18,7 +19,7 @@ contribution needs a signed Contributor License Agreement (CLA).
 - If you contribute work created for an employer or client, you are responsible
   for getting their permission first.
 
-## What belongs in a contribution
+## Before sending it
 
 - Original work, or work compatible with GPL-3.0-only.
 - No copied commercial code, artwork, screenshots, music, fonts, sounds, trade
@@ -31,4 +32,4 @@ The names and logos "Pixelody" are covered by TRADEMARKS.md, not by your
 contribution grant. Report security problems privately as described in
 SECURITY.md, not in a public issue.
 
-I review contributions and decide what ships.
+I'll review the change and decide what to include.

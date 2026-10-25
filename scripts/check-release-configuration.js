@@ -46,9 +46,9 @@ assert.match(releaseAuditText, /Windows Authenticode inspection failed closed/);
 assert.match(releaseBuildText, /fs\.rmSync\(output, \{ recursive: true, force: true \}\)/);
 assert.match(releaseAuditText, /expectedRootArtifacts/);
 assert.match(releaseAuditText, /Release root is missing the exact/);
-assert.match(releaseNotesText, /grouped\/two-output path is an experimental prototype and is not release-quality synchronized playback/);
-assert.match(releaseNotesText, /native audio helper binaries are not production features and are not included in the installer/);
-assert.match(releaseNotesText, /does not claim bit-perfect or exclusive-mode output/);
+assert.match(releaseNotesText, /grouped\/two-output path is an experimental prototype and is not release-quality synchronized playback|Browser grouped output was experimental/);
+assert.match(releaseNotesText, /native audio helper binaries are not production features and are not included in the installer|native helpers, virtual audio and external-app EQ weren.t production installer features/);
+assert.match(releaseNotesText, /does not claim bit-perfect or exclusive-mode output|shared-mode output, which can resample/);
 assert.match(signatureHelperText, /Import-Module Microsoft\.PowerShell\.Security -ErrorAction Stop/);
 assert.match(signatureHelperText, /Get-AuthenticodeSignature -LiteralPath \$resolved -ErrorAction Stop/);
 for (const file of ['build/icon.svg', 'build/icon.png', 'scripts/create-release-icon.ps1', 'scripts/get-authenticode-signature.ps1', 'scripts/build-windows-release.js', 'scripts/check-windows-release.js', 'release/windows-identity.json']) {

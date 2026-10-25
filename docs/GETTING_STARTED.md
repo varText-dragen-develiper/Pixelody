@@ -1,10 +1,10 @@
 # Getting started with Pixelody for Windows
 
-Start by listening on Windows. If you want your library on your phone too, connect the [Android app](https://github.com/varText-dragen-develiper/Pixelody-android) later.
+The [0.1.4 preview](https://github.com/varText-dragen-develiper/Pixelody/releases/tag/v0.1.4) is ready to try, or you can run the source below. The [Android app](https://github.com/varText-dragen-develiper/Pixelody-android) can connect to the Windows library afterward.
 
-## Choose source or a published build
+## Installing the preview
 
-The [Windows 0.1.3 preview](https://github.com/varText-dragen-develiper/Pixelody/releases/tag/v0.1.3) is available for testing. The app is unsigned; read the release’s signing notice and compare the download with its checksum file before deciding whether to install it. The optional self-signed installer only signs the setup wrapper, not the installed app. The [website](https://pixelody-web.pixelody101.workers.dev/testing) has installation help and a first listening checklist. If you want to build it yourself, use the steps below.
+The [Windows 0.1.4 preview](https://github.com/varText-dragen-develiper/Pixelody/releases/tag/v0.1.4) is available for testing. The app is unsigned; read the release’s signing notice and compare the download with its checksum file before deciding whether to install it. The optional self-signed installer only signs the setup wrapper, not the installed app. The [website](https://pixelody-web.pixelody101.workers.dev/testing) has installation help and a first listening checklist. If you want to build it yourself, use the steps below.
 
 ## Run from source
 
@@ -17,13 +17,13 @@ pnpm install --frozen-lockfile
 pnpm start
 ~~~
 
-For source checks run **pnpm run check** and **pnpm run check:themes**. A passing source check does not verify installer signing or audible playback on your device.
+Run **pnpm run check** and **pnpm run check:themes** before sending source changes. Installation and actual audio output need their own checks.
 
-## Try ordinary listening first
+## First use
 
-Import a small folder of music you have permission to use. Play a track, change the queue, and try the mini-player. Reopen the app and check your library and settings. If you get stuck, tell me where it first went wrong and what you tried.
+Import a small folder of music you have permission to use. Play a track, change the queue, and try the mini-player. Reopen the app and check your library and settings. If something goes wrong, tell me where and what you tried.
 
-Windows 0.1.3 offers Studio, Obsession Mode and Cartridge Quest through Settings. Other Canvas layouts are development work. The older design notes are still useful references, but they are not a list of themes available in your build.
+Windows 0.1.4 offers Studio, Obsession Mode and Cartridge Quest through Settings. Other Canvas layouts are development work. The older design notes are still useful references, but they are not a list of themes available in your build.
 
 ## Connect Android later
 

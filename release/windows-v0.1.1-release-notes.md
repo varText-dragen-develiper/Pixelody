@@ -1,42 +1,14 @@
-# Pixelody for Windows 0.1.1
+# Windows 0.1.1 — historical release draft
 
-Pixelody for Windows is the primary local-library host and desktop playback engine for Pixelody. This release is a 64-bit per-user Windows installer for user-owned music libraries.
+This draft never identified a verified signed artifact. Use the repository's current release page for downloads. The following fields remain incomplete for this historical candidate:
 
-## Download
+- Intended file: Pixelody-Setup-0.1.1-x64.exe, per-user Windows 10/11 x64.
+- Install: %LOCALAPPDATA%\Programs\pixelody-lossless-player; data: %APPDATA%\Pixelody.
+- Size and SHA-256: PENDING SIGNED ARTIFACT.
+- Publisher: PENDING AUTHENTICODE VERIFICATION.
 
-- File: `Pixelody-Setup-0.1.1-x64.exe`
-- Platform: 64-bit Windows 10 or Windows 11
-- Installer type: per-user `.exe`; administrator elevation is not required
-- Installed application: `%LOCALAPPDATA%\Programs\pixelody-lossless-player`
-- Durable user data: `%APPDATA%\Pixelody`
-- Download size: `PENDING SIGNED ARTIFACT`
-- SHA-256: `PENDING SIGNED ARTIFACT`
-- Publisher: `PENDING AUTHENTICODE VERIFICATION`
+The draft described local imports, library/metadata tools, playlists, tuning, artwork, backups, mini-player, Flow Shuffle, Daily Curated Rediscovery and optional local hosting. It bundled no music. Windows playback used Chromium/Web Audio and shared-mode output, which can resample. Codec support depended on Electron 43; AIFF/ALAC could vary. Tagged/manual BPM, key and energy weren't automatically acoustic-analysis results, and listening didn't wait for analysis.
 
-This historical draft does not identify a verified release artifact.
+At that draft's checkpoint Studio was the only active built-in. Community package application was hidden. Browser grouped output was experimental, while native helpers, virtual audio and external-app EQ weren't production installer features. These historical limits don't describe later theme availability.
 
-## What Pixelody does
-
-Pixelody imports and plays music files selected by the user. Music, artwork, playlists, edits, tuning, listening intelligence, and settings remain local unless the user explicitly enables a local J.A.M. host session. No music is bundled with the installer.
-
-The Windows app owns the main library, playback, queue, metadata editing, per-track and per-output tuning, themes, backups, mini player, Flow Shuffle, Daily Curated Rediscovery, and the opt-in local J.A.M. host used by the Android companion.
-
-## Audio and metadata truth
-
-Pixelody plays through Chromium and Web Audio into the selected Windows shared-mode output. Windows may resample to the device format. Pixelody does not claim bit-perfect or exclusive-mode output.
-
-Flow Shuffle can use BPM, musical key, energy, diversity, history, and queue intent. BPM/key/energy values are tagged or manually edited metadata unless a specific local analysis profile says otherwise. Normal playback never waits for acoustic analysis.
-
-## Known boundaries
-
-- Codec support depends on the Chromium decoder shipped with Electron 43. AIFF and ALAC/M4A support can vary; unsupported files must fail visibly and recoverably.
-- Studio is the only active built-in theme during the foundation reset. Earlier theme studies remain development material. Local community-theme import/application is unavailable in the current presentation surface. Automated checks do not establish independent perceptual, comfort, touchpad, or assistive-technology acceptance.
-- The browser-based grouped/two-output path is an experimental prototype and is not release-quality synchronized playback.
-- Windows-wide/System EQ, external-app audio processing, a Pixelody virtual-audio endpoint, and native audio helper binaries are not production features and are not included in the installer.
-- Pixelody does not install a driver, service, firewall rule, protocol handler, file association, or background helper.
-- Uninstall removes the application, shortcuts, and installer registration while preserving `%APPDATA%\Pixelody` so a later reinstall can recover the library and settings.
-- A valid Authenticode signature proves publisher and artifact integrity. Microsoft SmartScreen reputation is separate and a newly established publisher may still receive a reputation warning.
-
-## Verification status
-
-This file is release copy, not evidence. The installation and signing checks in this draft were incomplete.
+The installer wasn't intended to add a driver, service, firewall rule, protocol handler, file association or background helper. Uninstall retained the Pixelody data directory for reinstall. Source checks didn't establish installer lifecycle, accessibility, touchpad comfort or listener acceptance. Valid signing and SmartScreen reputation were separate requirements, and the signing/install checks in this draft were incomplete.

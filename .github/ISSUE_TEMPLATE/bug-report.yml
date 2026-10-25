@@ -6,14 +6,14 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for trying Pixelody. Tell me where it went wrong and what you tried.
+        Tell me what happened and how to reproduce it.
         Do not post music files, passwords, pairing tokens, private paths or personal screenshots.
         Report security concerns using SECURITY.md instead of this public form.
   - type: input
     id: version
     attributes:
       label: App version and where you got it
-      description: Include the release link or source commit, and preview/debug/stable status.
+      description: A release link or source commit helps identify the build.
     validations:
       required: true
   - type: input
@@ -27,7 +27,7 @@ body:
     id: steps
     attributes:
       label: Steps to reproduce
-      description: Start from opening the app, then walk me through what you did.
+      description: Include the steps leading up to the problem.
     validations:
       required: true
   - type: textarea

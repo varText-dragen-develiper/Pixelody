@@ -1,7 +1,7 @@
 {
   "name": "pixelody-lossless-player",
   "productName": "Pixelody",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "packageManager": "pnpm@11.9.0",
   "engines": {
     "node": "^22.0.0 || ^24.0.0"
@@ -13,7 +13,7 @@
     "url": "https://github.com/varText-dragen-develiper/pixelody.git"
   },
   "author": "Pixelody",
-  "description": "Pixelody is a high-resolution desktop music player with per-track and per-system tuning.",
+  "description": "Music playback, library tools and separate track/output tuning for Windows.",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",

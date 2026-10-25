@@ -1,21 +1,7 @@
-# Windows Local Theme Packages
+# Local theme-package validation
 
-This directory owns the hostile-input boundary for locally imported declarative
-themes. The first format is deliberately a bounded JSON `.pixelody-theme` file.
-It contains no archive extraction, executable code, arbitrary CSS, remote URLs,
-fonts, or assets. Those capabilities remain future work.
+V1 imports bounded JSON `.pixelody-theme` files. It accepts declarative selections of reviewed product recipes, without archives, executable code, arbitrary CSS, remote URLs, fonts or assets.
 
-The dependency direction remains:
+`contract.js` validates/normalizes bytes without file access. `store.js` installs atomically under userData and returns path-free descriptors. The renderer neither reads the package file nor receives its source path. Registered capabilities and normalized descriptors sit between application state and presentation.
 
-`authoritative state -> registered capabilities -> normalized package descriptor -> product-owned presentation`
-
-`contract.js` validates and normalizes bytes without filesystem authority.
-`store.js` performs atomic, versioned installation under Pixelody `userData` and
-returns path-free descriptors to the renderer. The renderer never receives the
-source path or reads package files directly.
-
-The separate Modules importer now also accepts two first-party `theme-edition`
-test descriptors (Cosmic Cinema and Neon Burst). These select allowlisted recipes
-already shipped with the Windows development Canvas host; they are not V1 local
-theme packages and do not restore My Themes or the built-in registry. See
-the private development notes for testing and compatibility.
+The separate Modules importer accepts Cosmic Cinema and Neon Burst `theme-edition` test selectors for allowlisted development Canvas recipes. They aren't V1 packages and don't restore My Themes or built-in registration. Follow [the theme guide](../../docs/themes/THEME_SYSTEM.md) for current availability.

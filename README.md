@@ -1,19 +1,19 @@
 # Pixelody
 
-Pixelody is a music player for Windows. Organize albums and playlists, adjust the sound for individual tracks and outputs, and keep playback close with the mini-player. Pair [Pixelody for Android](https://github.com/varText-dragen-develiper/Pixelody-android) to browse and control your Windows library.
+I'm building Pixelody as a place to listen, organize a collection, and get the player looking and sounding how you want. It runs on Windows, with an [Android app](https://github.com/varText-dragen-develiper/Pixelody-android) for phone playback and connecting to your Windows library.
 
-The idea is to bring library tools, playback, and sound adjustments together. A change for one recording belongs with that track; a correction for your speakers belongs with the output. Metadata, artwork, playlists, and saved settings help keep the collection useful as it grows.
+There are separate sound settings for a recording and for the speakers you're using, alongside playlists, artwork, metadata tools and a mini-player. I want those things to fit into ordinary listening, without having to keep moving between different tools.
 
 This repository is the open-source edition of the Windows app. It is licensed under the GNU General Public License v3.0 only (see [LICENSE](LICENSE) and [NOTICE](NOTICE)). If you fork or redistribute it, read the name and logo guidance in [TRADEMARKS.md](TRADEMARKS.md).
 
-## Start here
+## Download or build it
 
 - [Getting started](docs/GETTING_STARTED.md): requirements, source build and first listening session.
-- [Windows releases](https://github.com/varText-dragen-develiper/Pixelody/releases): build files and their release notes. The Windows 0.1.3 testing preview is available under `v0.1.3`. Read its signing and installation notes before trying it.
+- [Windows releases](https://github.com/varText-dragen-develiper/Pixelody/releases): build files and their release notes. The Windows 0.1.4 testing preview is available under `v0.1.4`. Read its signing and installation notes before trying it.
 - [Support](SUPPORT.md) and [shared discussions](https://github.com/varText-dragen-develiper/Pixelody/discussions): report problems or share listening ideas.
 - [Release preparation](docs/RELEASE_PREPARATION.md): what still needs verification before distributing a binary.
 
-## What it does
+## In the player
 
 - Plays FLAC, WAV, MP3, AAC/M4A, OGG and Opus. What works depends on Chromium's decoders, and AIFF/ALAC support can vary.
 - Processes audio in 32-bit floating point, with three EQ bands per track and per output, ReplayGain, and output switching on the selected device.
@@ -23,7 +23,7 @@ This repository is the open-source edition of the Windows app. It is licensed un
 - Installs optional modules, downloaded from the Pixelody website, from Settings (see [docs/OPTIONAL_MODULES.md](docs/OPTIONAL_MODULES.md)).
 - Hosts the library for the Android companion over your local network.
 
-Not available yet: bit-perfect exclusive WASAPI output (Windows shared mode may resample to the device's configured format), and a native playback engine beyond the browser audio stack.
+Playback currently uses the browser audio stack. Windows shared mode may resample to the device's configured format; exclusive, bit-perfect WASAPI playback and a native replacement engine aren't available.
 
 ## Build and run
 
@@ -40,7 +40,7 @@ Packaging for Windows (and the macOS and Linux builder configs) is described in 
 
 ## Contributing and security
 
-Want to help with a fix? Thanks for taking a look. Start with [CONTRIBUTING.md](CONTRIBUTING.md), including the Contributor License Agreement. Report security problems privately using [SECURITY.md](SECURITY.md).
+For fixes and other contributions, read [CONTRIBUTING.md](CONTRIBUTING.md), including the CLA. Send security reports [privately](SECURITY.md).
 
 ## Third-party assets
 

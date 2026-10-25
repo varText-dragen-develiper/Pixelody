@@ -1,15 +1,8 @@
-# Windows Virtual Audio Driver Research
+# Research behind the virtual audio route
 
-Pixelody's chosen Windows-wide System EQ route is a virtual endpoint:
+The recorded direction for Windows-wide EQ is a small virtual endpoint paired with a user-mode bridge. Other apps send shared-mode audio to `Pixelody Virtual Output`; `Pixelody Virtual Monitor` exposes it to `Pixelody.SystemAudio.Bridge.exe`, which processes it and renders to a separate real output. Same-output loopback render stays blocked because it can duplicate or feed back the original sound. APO/system-effect work is deferred.
 
-1. External apps render to `Pixelody Virtual Output`.
-2. Pixelody captures that virtual endpoint stream.
-3. Pixelody applies the existing output-system EQ, spatial, headroom, limiter, and diagnostics model in user mode.
-4. Pixelody renders the processed stream to the selected real Windows output.
-
-APO/system-effect work stays deferred. Loopback capture stays useful for diagnostics, but same-output loopback render is intentionally blocked because it would duplicate or feed back the original Windows audio.
-
-## Source Trail
+## References used
 
 - Microsoft SysVAD sample: https://github.com/microsoft/Windows-driver-samples/tree/main/audio/sysvad
 - Microsoft WDM audio driver roadmap: https://learn.microsoft.com/en-us/windows-hardware/drivers/audio/roadmap-for-developing-wdm-audio-drivers
@@ -21,259 +14,30 @@ APO/system-effect work stays deferred. Loopback capture stays useful for diagnos
 - VB-CABLE public product notes: https://vb-audio.com/Cable/
 - Virtual Audio Cable public manual: https://vac.muzychenko.net/en/manual/features.htm
 
-No third-party virtual audio driver was installed during this research. Installing arbitrary audio drivers on the development machine is too invasive for discovery work and can destabilize Windows audio.
+No third-party driver was installed for this research. Product descriptions here are references from that review, not a fresh compatibility assessment.
 
-## What Other Virtual Cable Drivers Expose Publicly
+## What the samples and cable products contribute
 
-Commercial virtual cable products generally expose a paired endpoint model:
+VB-CABLE's paired render/capture model makes the route easy to picture. VAC's format, channel, pin, period, clock and recovery controls show how much sits behind that simple connection. Pixelody still needs explicit negotiation, multi-client behavior, clocking, underrun/overrun handling, no-signal diagnosis and trusted installation.
 
-- A playback/render endpoint that apps send audio into.
-- A recording/capture endpoint that another app can read from.
-- Optional control-panel settings for cable count, channel count, format limits, buffer/period sizing, clock correction, stream state, and diagnostics.
+Microsoft's SysVAD provides the WDM/WaveRT starting architecture: `CAdapterCommon` for shared adapter state, `CMiniportTopologySYSVAD` for topology/properties, and stream objects for buffers, events, position, mute/volume and peaks. It is a sample with fake/test behavior, not a finished driver. A first fork should remove extra endpoints, APO examples, offload, Bluetooth and keyword-detection pieces.
 
-VB-CABLE describes its device as a Windows audio driver where audio entering the cable input is forwarded to the cable output, with broad compatibility across MME, KS, DirectX, and WASAPI. VAC documents the long tail of features needed once a virtual cable becomes serious: multiple cables, pin instance counts, event periods, Kernel Streaming support, WaveRT notification/packet mode, format conversion, mixing, volume, clock correction, channel remapping, default-device behavior, logs, and support bundles.
+## Keeping the kernel part small
 
-Pixelody should not copy product behavior blindly. The useful lesson is that virtual audio looks simple to the user but needs explicit handling for:
+`PixelodyVirtualAudio.sys` should expose one render and one capture endpoint, transport PCM, maintain coherent clocks/positions and support required WaveRT notifications and basic properties. EQ, limiting, spatial processing, conversion, routing and diagnostics belong in the bridge. It mustn't route real speakers or change the default output from kernel mode.
 
-- format negotiation,
-- clock drift,
-- multi-client behavior,
-- buffer underrun/overrun,
-- Windows default-device changes,
-- restart/uninstall behavior,
-- diagnostics for "no signal" versus "wrong endpoint",
-- user trust around signed installers.
+The Electron app controls the route; it doesn't carry the real-time stream. Start with stereo, a 48 kHz mix and float user-mode processing. Fixed-point 16/24/32-bit formats can be added where needed. Wider rates/layouts and channel remapping come later. System EQ applies processing and isn't a bit-perfect route.
 
-## Microsoft Baseline: SysVAD
+A virtual endpoint has no DAC clock. The driver needs coherent render/capture positions; the bridge needs bounded buffering, separate underrun/overrun counters and correction between virtual and real clocks. The prototype target was a 10 ms nominal period and 40–80 ms safety buffer. Lower latency needs measurements, not a smaller default chosen for its label.
 
-SysVAD is the strongest starting point because it is the Microsoft virtual audio device sample. It demonstrates a virtual WDM audio driver with WaveRT render devices and multiple endpoints. The sample's README explicitly frames it as a virtual audio driver rather than hardware-backed adapter, with miniport/topology classes and APO examples.
+## Problems to test explicitly
 
-Important sample concepts for Pixelody:
+Distinguish no app signal, wrong capture endpoint, doubled audio and a feedback route. Test unplug, output switch, Bluetooth reconnect, rate/channel mismatch, hidden/disabled endpoints and a bridge crash while the virtual output is selected. Exclusive, ASIO, protected and direct-device paths may bypass it. Stop/uninstall must leave a clear way back to the prior real output.
 
-- `CAdapterCommon`: shared adapter/virtual hardware state.
-- `CMiniportTopologySYSVAD`: topology/property handling.
-- WaveRT miniport stream objects: stream lifecycle, buffer allocation, notification events, position tracking, mute/volume/peak-meter state.
-- APO examples: useful later, but not the first global EQ path.
-- INF packaging: driver package includes `.sys`, APO DLLs when used, `.cat`, and INF files.
+Normal playback remains independent. Never silently install the component or switch defaults, and never enable render into either virtual endpoint. Keep the prior real route, watchdog state and restore action available.
 
-SysVAD is not product-ready as-is. It is a teaching sample with fake devices and test behavior. Pixelody should fork the architecture, strip it down, and build one narrow virtual cable first.
+## From scaffold to a usable component
 
-## Proposed Pixelody Driver Shape
+The research called for a narrow source scaffold, then WDK builds and test-signed endpoint validation in a disposable VM. After endpoint capture works, a bridge can first prove neutral pass-through and only then integrate `systemEqNativePayload`, headroom, gain, limiting and spatial controls. UI should expose install/use/output/restore/diagnostics rather than raw driver controls.
 
-### Kernel Driver
-
-Name: `PixelodyVirtualAudio.sys`
-
-Expose:
-
-- Render endpoint: `Pixelody Virtual Output`
-- Capture endpoint: `Pixelody Virtual Monitor`
-
-Responsibilities:
-
-- Present Windows with a normal shared-mode render endpoint.
-- Accept PCM audio from external apps.
-- Expose the received audio to a paired capture endpoint for the Pixelody bridge.
-- Maintain stream position, clock, packet/event notifications, and basic volume/mute/peak properties.
-- Avoid DSP in kernel mode except trivial copy/format-safe operations.
-- Keep kernel code small, deterministic, and defensive.
-
-Non-responsibilities:
-
-- Do not implement EQ in kernel mode.
-- Do not route to real speakers in kernel mode.
-- Do not change the user's default output silently.
-- Do not run a background service unless System EQ is enabled.
-
-### User-Mode Bridge
-
-Name: `Pixelody.SystemAudio.Bridge.exe`
-
-Responsibilities:
-
-- Capture from `Pixelody Virtual Output`/monitor endpoint.
-- Apply Pixelody's system/output tuning model.
-- Render processed samples to the selected real endpoint.
-- Report latency, sample rate, clock drift, underruns, overruns, and bypass caveats.
-- Provide a clean off switch.
-- Exit when not needed.
-
-This keeps the dangerous part narrow and puts EQ, limiter, diagnostics, and routing in user mode where failures are less catastrophic.
-
-## Core Audio Pipeline
-
-First full prototype:
-
-```text
-External app
-  -> Windows shared-mode audio engine
-  -> Pixelody Virtual Output render endpoint
-  -> Pixelody virtual cable buffer
-  -> Pixelody Virtual Monitor capture endpoint
-  -> Pixelody.SystemAudio.Bridge.exe
-  -> Pixelody EQ/headroom/limiter
-  -> WASAPI render client
-  -> Real output device
-```
-
-The renderer app should remain the control surface. The bridge should be the real-time audio process. The Electron renderer should not carry the global audio stream.
-
-## Format Strategy
-
-Start conservative:
-
-- Stereo only.
-- 48 kHz default mix format.
-- 32-bit float in user-mode processing.
-- Accept 16/24/32-bit PCM only if the driver must expose fixed-point formats.
-- Avoid "bit-perfect" claims for System EQ.
-
-Expand later:
-
-- 44.1/48/96/192 kHz.
-- 1/2/6/8 channel layouts.
-- Channel remapping.
-- Per-app or per-mode format policies.
-
-Reasons:
-
-- VAC's public manual calls out format selection, format conversion, multichannel limits, and channel scattering/gathering as real product issues.
-- VB-CABLE's Hi-Fi cable notes call out matching sample rates for bit-perfect style routing.
-- Pixelody's value is safe correction, not pretending global Windows audio is bit-perfect.
-
-## Clocking And Buffering
-
-The virtual endpoint has no physical hardware clock. That means Pixelody must define timing carefully.
-
-Driver:
-
-- Maintain a monotonic audio clock for the virtual cable.
-- Implement WaveRT packet/notification behavior correctly.
-- Track render write position and capture read position.
-- Report coherent position for the paired endpoints.
-
-Bridge:
-
-- Use event-driven WASAPI where possible.
-- Keep a bounded jitter buffer between capture and render.
-- Track underruns and overruns separately.
-- Apply drift correction if virtual capture rate and real output render rate diverge.
-- Prefer tiny resampling/drift smoothing over glitchy hard drops once the stream is live.
-
-First target:
-
-- 10 ms nominal endpoint period.
-- 40-80 ms total safety buffer while prototyping.
-- Lower latency only after reliability is proven.
-
-## Failure Modes To Design Out Early
-
-- No signal because Windows is still outputting to real speakers instead of `Pixelody Virtual Output`.
-- No signal because the bridge is listening to the wrong endpoint.
-- Doubled audio because the real output is still receiving original app audio.
-- Feedback because the bridge renders back into the virtual endpoint.
-- Device switch mid-stream.
-- Real output unplug/replug.
-- Bluetooth route latency and reconnection.
-- Sample rate mismatch.
-- Channel count mismatch.
-- App uses exclusive mode, ASIO, protected path, or direct hardware route.
-- Bridge crash while virtual endpoint remains default output.
-- Driver install succeeds but endpoint is hidden, disabled, or not default.
-- Driver uninstall leaves default output pointing at a removed endpoint.
-- Windows Update or driver signing policy blocks loading.
-
-## Safety Rules For Pixelody
-
-- Never install the driver silently.
-- Never require the driver for normal Pixelody playback.
-- Always show whether external audio is actually routed through Pixelody.
-- Always keep a "restore Windows output" action.
-- Detect and block render-to-virtual-endpoint loops.
-- Keep the previous real output device id and restore it when System EQ turns off.
-- Do not enable System EQ if the selected real output equals the virtual endpoint.
-- Keep a watchdog: if the bridge dies, warn and offer to restore output.
-- Make uninstall remove the endpoint and restore normal routing.
-
-## Packaging And Signing
-
-Windows kernel audio drivers are normal kernel drivers for signing purposes, even if they are virtual. Microsoft documentation says virtual drivers follow the same requirements as actual hardware drivers. Modern public release requires Microsoft signing through the Hardware Dev Center path. Development can use test signing, but that requires a controlled test machine and may require boot configuration changes.
-
-Release package will need:
-
-- `.sys` kernel driver.
-- INF file.
-- Catalog file.
-- Signed installer or app-managed optional component installer.
-- Clean uninstall path.
-- Driver Store staging.
-- Hardware Lab Kit or attestation path decision.
-
-Development should happen on a VM or second test machine first, not on the user's main workstation.
-
-## Build Plan
-
-### Phase 0: Research Scaffold
-
-- Keep current native helper detection.
-- Add `virtualEndpoint` state reporting.
-- Keep same-output loopback blocked.
-- Document target architecture.
-
-### Phase 1: SysVAD Fork
-
-- Create `native/windows-virtual-audio/`.
-- Bring in the minimum SysVAD-derived driver structure.
-- Rename devices/classes to Pixelody.
-- Strip Bluetooth, keyword detector, sample APOs, offload examples, and nonessential endpoints.
-- Build a single render/capture virtual cable.
-
-### Phase 2: Test-Signed Local Driver
-
-- Build with WDK.
-- Install only on a VM/test machine with test signing enabled.
-- Verify endpoint appears in Windows Sound settings.
-- Verify apps can render to `Pixelody Virtual Output`.
-- Verify WASAPI capture from the paired monitor endpoint receives signal.
-- Verify uninstall removes endpoints and restores output.
-
-### Phase 3: User-Mode Bridge
-
-- Extend current C# helper or create a separate bridge process.
-- Capture virtual monitor endpoint.
-- Render to selected real endpoint.
-- Implement pass-through first, no EQ.
-- Add underrun/overrun/latency counters.
-- Add loop-prevention and endpoint identity checks.
-
-### Phase 4: EQ Integration
-
-- Reuse `systemEqNativePayload`.
-- Port the native EQ processor into the bridge's real-time path.
-- Add headroom, master gain, limiter, balance/mono.
-- Match in-app simple/parametric behavior closely enough for diagnostics.
-
-### Phase 5: Product UX
-
-- Replace dev controls with:
-  - Install System EQ component.
-  - Use for Windows audio.
-  - Real output target.
-  - Restore normal Windows audio.
-  - Diagnostics.
-- Keep loopback/dev capture under an advanced diagnostics fold.
-
-### Phase 6: Signing/Release
-
-- Decide attestation versus full HLK/WHCP route.
-- Get organization signing setup.
-- Build installer/uninstaller.
-- Validate on built-in audio, USB DAC, HDMI/DisplayPort, Bluetooth, and sample-rate changes.
-
-## Immediate Next Engineering Tasks
-
-1. Create `native/windows-virtual-audio/README.md` with the intended driver contract.
-2. Decide whether to vendor a narrow SysVAD fork or add it as a separate upstream-tracked source import.
-3. Add an app status state: "System EQ component not installed" distinct from "native helper missing".
-4. Design the bridge process protocol before driver code: commands, status JSON, endpoint ids, tuning payload, watchdog heartbeat.
-5. Build in a VM/test-machine workflow before any local installation path exists.
+Public distribution needs the appropriate Microsoft signing path, INF/catalog/driver package, Driver Store installation, signed bridge/installer and clean removal. These are requirements recorded by the plan, not completed release work. Follow the current Microsoft references when choosing a toolchain or signing channel. Use [the VM runbook](WINDOWS_VIRTUAL_AUDIO_VM_WDK_SETUP.md) and [the roadmap](WINDOWS_VIRTUAL_AUDIO_ROADMAP.md); ordinary Pixelody must never install this scaffold.

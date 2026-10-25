@@ -1,27 +1,25 @@
-# SysVAD Provenance and Scope
+# SysVAD reference and provenance
 
-## Upstream Reference
+## Upstream source
 
-Pixelody uses the Microsoft Windows Driver Samples SysVAD directory as an
-architectural reference only:
+The Microsoft SysVAD directory is an architectural reference:
 
 - Source: https://github.com/microsoft/Windows-driver-samples/tree/main/audio/sysvad
 - Repository license: https://github.com/microsoft/Windows-driver-samples/blob/main/LICENSE
 - License named by the repository: Microsoft Public License (MS-PL).
 
-No SysVAD source files, binaries, INF files, or generated artifacts have been
-copied into this repository. This note is not an upstream revision pin. Before
-any source is imported, record the exact commit, retain the applicable notices,
-and review the then-current license and support implications.
+No SysVAD source, binaries, INFs or generated files are included. Before importing
+anything, pin the exact revision, retain its notices and review the applicable
+license/support terms. The moving main-branch URL is a reference, not a source pin.
 
-## What Pixelody May Study
+## Relevant sample structures
 
 - WaveRT adapter and miniport organization.
 - Narrow endpoint topology and advertised PCM format patterns.
 - Stream position, clock, buffer, and event-notification mechanics.
 - Driver package and validation patterns for a VM-only test workflow.
 
-## What the First Pixelody Driver Excludes
+## Excluded from the first driver
 
 - SysVAD APO/sample DSP paths.
 - Offload, Bluetooth, USB, keyword detector, tone generator, and sample-device paths.

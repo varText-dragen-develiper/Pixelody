@@ -1,32 +1,21 @@
-# Release preparation
+# Preparing a release
 
-The public source is available under GPL-3.0-only, and the Windows 0.1.2 testing preview is published under `v0.1.2`. Use its release notes for the exact files, signing status and installation steps. A testing preview is not a stable-release announcement.
+The Windows 0.1.4 testing preview is on the [release page](https://github.com/varText-dragen-develiper/Pixelody/releases/tag/v0.1.4). Its notes describe those files. New source changes don't update an installer that's already there.
 
-Before publishing the next build, leave enough detail for someone else to check it:
+A release needs an identifiable build: source tag or commit, app version, filename, architecture, minimum requirements, SHA-256, and signing identity. Include compatible phone/host versions where they matter. Put the download, checksum and instructions together so someone can tell what they're installing.
 
-- source commit/tag, app version, exact filename and architecture;
-- build/check results, artifact SHA-256 and signing/update identity;
-- minimum requirements and Windows/Android host compatibility;
-- clean installation, update, restart and preservation of user data;
-- actual audible playback and supported device routes;
-- known issues, recovery instructions, support and third-party asset notices.
+Check a clean install and an update over existing data, then reopen the app and try actual playback on the routes being supported. Record the exact artifact and what was tested. Source tests can't establish a working install, audible output or signing; a phone test doesn't establish the same result on a different device. Leave known problems and recovery steps in the release notes, with links to support and asset notices.
 
-Keep source checks, device checks, physical audio, signing and release approval as separate evidence. Publish the platform-specific artifact, checksum, instructions and accurate release notes together after those applicable gates pass.
+The optional shop currently uses a no-charge RevenueCat Test Store fixture. It doesn't provide a production paid unlock. J.A.M. queue and playback controls don't establish synchronized sound across devices.
 
-Optional shop modules currently use a no-charge RevenueCat Test Store fixture. Do not describe this as a paid feature unlock or production checkout. J.A.M. shared queue/control does not establish tightly synchronized sound across devices.
+## Release notes
 
-## Release-note template
+Include these details when publishing:
 
-Version and channel:
-Source commit/tag:
-Platform/architecture and minimum requirements:
-Compatible host/app versions:
-Artifact filename and SHA-256:
-Signing/publisher and update behavior:
-What works in this build:
-Checks performed on this exact artifact:
-Known issues and recovery:
-Installation/update instructions:
-Support:
+- Version, channel and source tag/commit.
+- Filename, SHA-256, platform, architecture and minimum requirements.
+- Signing identity, update behavior and compatible host/app versions.
+- Changes people will notice and checks performed on this artifact.
+- Known issues, installation/recovery steps and support links.
 
-Replace every field with evidence. Keep a draft unpublished if a required field or gate is unresolved.
+If a required check is unresolved, keep the release as a draft.

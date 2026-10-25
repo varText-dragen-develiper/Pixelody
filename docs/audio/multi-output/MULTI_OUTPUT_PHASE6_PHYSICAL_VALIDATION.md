@@ -1,8 +1,8 @@
-# Multi-Output Phase 6 Physical Validation
+# Thirty-minute physical output check
 
-This document records the release-gate workflow for proving that two physical outputs can play the same track without obvious drift for at least 30 minutes.
-
-It is not a pass record by itself. The Phase 6 roadmap checkbox may be marked complete only after a real hardware run is completed and summarized here or in an attached run log.
+Run this on two real outputs and record what you hear for thirty minutes. The
+workflow below is still a pending test, not a completed run. Mark the gate only
+after its observations and diagnostics are recorded.
 
 The paired wired and Bluetooth evidence ledger for the Multi-output Calibration
 Phase C gate is `MULTI_OUTPUT_PHASEC_HARDWARE_RUN_LOG.md`. It starts pending and
@@ -19,7 +19,7 @@ Two physical outputs can play the same track without obvious drift for at least 
 
 This gate can be tested with the current browser multi-sink prototype or a future native mixer route, but the result must say which engine was used.
 
-## Required Setup
+## Before starting
 
 - Two real, independently addressable Windows output endpoints.
 - One grouped speaker rig with exactly those two endpoints active.
@@ -32,7 +32,7 @@ This gate can be tested with the current browser multi-sink prototype or a futur
 - `Copy diagnostics` captured at 30 minutes before stopping.
 - `Copy diagnostics` captured after stopping or recovery.
 
-## Test Matrix For This Gate
+## Output combinations
 
 At minimum, complete one wired + wired run before checking this gate.
 
@@ -77,9 +77,9 @@ Bluetooth can be documented as degraded or caveated, but a clean wired + wired r
 | T+25:00 |  | yes/no |  |  |  |  |  |
 | T+30:00 |  | yes/no |  |  |  |  | diagnostics copied |
 
-## Pass Criteria
+## Accepting a run
 
-This gate may pass only if all are true:
+A passing run needs all of the following:
 
 - Both physical outputs are audible at `T+00:01`.
 - Both physical outputs remain audible through `T+30:00`.
@@ -90,7 +90,7 @@ This gate may pass only if all are true:
 - Diagnostics remain path-hidden.
 - The run summary is recorded with date, engine, endpoints, track/source format, rig name, and verdict.
 
-## Fail Criteria
+## Stopping or rejecting a run
 
 This gate fails if any are true:
 
@@ -103,7 +103,7 @@ This gate fails if any are true:
 - Diagnostics expose private track paths or source paths.
 - The run cannot be reproduced or lacks enough detail to identify hardware and engine.
 
-## Required Run Summary
+## Record the result
 
 Fill this in after a real hardware run:
 
@@ -135,7 +135,7 @@ Decision: pass / fail / retry required
 Notes:
 ```
 
-## Current Result
+## Recorded status
 
 ```text
 Status: pending physical run

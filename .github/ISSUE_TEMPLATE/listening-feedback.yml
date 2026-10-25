@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for giving it a try. Tell me what you were trying to do and where it got awkward.
+        Tell me what you were trying to do and where it got awkward.
         Please leave private library details out of this public report.
   - type: input
     id: build
@@ -30,4 +30,4 @@ body:
     id: improvement
     attributes:
       label: What would make this easier?
-      description: Suggestions are welcome. Please keep private library details out of public reports.
+      description: Describe the change you would want.

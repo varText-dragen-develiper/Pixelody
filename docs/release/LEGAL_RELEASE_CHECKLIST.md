@@ -1,11 +1,8 @@
-# Pixelody Legal Release Checklist
+# Reviewing a public release
 
-This is a fail-closed engineering and operations checklist, not legal advice.
-Use it before any public build, demo package, website, video, app-store
-submission, creator upload, or marketplace transaction. A box may be checked
-only with evidence for that exact release and surface.
+Use this engineering/operations checklist for the exact build, website, demo or listing being published. It records required review, not a legal opinion or proof that every box is already complete. Keep policy versions, package hashes, test results and the actual reviewer/date with the release.
 
-## Legal identity and effective documents
+## Publisher and documents
 
 - [ ] The actual publisher/contracting entity, public business identity, and
   governing jurisdiction have been selected and reviewed.
@@ -22,9 +19,9 @@ only with evidence for that exact release and surface.
 - [ ] Counsel has reviewed the effective documents for the actual launch
   countries. Templates and strategy documents do not pass this gate.
 
-## Product Framing
+## Product descriptions
 
-- Present Pixelody as a local-first desktop music player for user-owned files, metadata, playlists, tuning, themes, and personal artwork.
+- Describe the actual Windows/Android listening, library, sound, theme and artwork features, with networking as an explicit option.
 - Avoid claiming affiliation with streaming services, labels, game studios, social platforms, museums, or asset creators.
 - Avoid comparative slogans that name or target another music service in public-facing copy. Use plain category language: "local music library player" or "personal music workstation."
 - Do not imply bit-perfect output until an exclusive native output path exists.
@@ -43,7 +40,7 @@ only with evidence for that exact release and surface.
 - Embedded artwork and custom artwork should be treated as user-controlled local data.
 - Backups should contain only the user's local library metadata and Pixelody settings, not externally fetched commercial media.
 
-## Network And Sharing
+## Hosting and sharing
 
 - Networking must be opt-in and visibly active.
 - Frame future sharing as personal library access across trusted devices, not general music distribution.
@@ -90,8 +87,8 @@ only with evidence for that exact release and surface.
 
 ## Contributions
 
-- [ ] Every accepted external commit has the required DCO sign-off after the
-  root license is active.
+- [ ] Every accepted external contribution has the required signed CLA under
+  CONTRIBUTING.md; record any other applicable sign-off separately.
 - [ ] The contributor confirms authority, provenance, employer permission where
   relevant, and public indefinite retention of the contribution record.
 - [ ] Contributors are told accepted changes can appear in public source and in
@@ -121,7 +118,7 @@ only with evidence for that exact release and surface.
 - [ ] Children are excluded from account/seller/buyer flows unless a separately
   reviewed child-privacy and parental-consent program is implemented.
 
-## Release Gate
+## Before publishing
 
 - [ ] Every applicable item above is closed or the feature/release stays off.
 - Run `npm run check`.

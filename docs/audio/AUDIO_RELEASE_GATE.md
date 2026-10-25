@@ -1,40 +1,21 @@
-# Pixelody Audio Release Gate
+# Checking audio before release
 
-Before releasing a build, check ordinary listening on supported Windows systems. If an advanced feature fails, the player should explain what happened and let the listener recover. Normal playback must not depend on system-wide drivers, registry edits, background services or exclusive-mode output.
+Use `npm run check:audio` for the graph and command structure, then listen on the outputs being supported. The source check can't tell you whether a DAC actually played the processed signal.
 
-Automated structural guard: `npm run check:audio`. It does not replace the physical output and codec matrices below.
+The current path has one graph per renderer session, visible route/creation/resume failures, capped combined EQ and ReplayGain, headroom and limiting. Main transport, hero, mini-player, media keys, queue, repeat, shuffle and restore share playback state. A clean restart should keep music, playlists, artwork, theme and tuning while clearing transient cache.
 
-## Required For Release
+## Physical checks
 
-- [x] Local playback works through Chromium-supported formats.
-- [x] Output selection has visible success, fallback, and error status.
-- [x] The Web Audio graph is created once per renderer session and reports creation/resume failures.
-- [x] Per-track and per-output EQ combine through a capped, headroom-managed gain stage.
-- [x] ReplayGain remains capped and is followed by protective limiting.
-- [x] Source format, Web Audio engine rate, and Windows shared-output caveat are shown honestly.
-- [x] Main player, hero play, mini-player commands, media keys, queue, shuffle, repeat, and restore paths stay on the same playback state.
-- [x] Runtime clean restart preserves user music, playlists, artwork, theme, and tuning while clearing transient cache state.
-- [ ] Physical output matrix must be manually verified: System Default, built-in speakers, Bluetooth, HDMI/DisplayPort, USB DAC, unplug/replug, pause/resume, seek, and active playback.
-- [ ] Unsupported and partially supported codecs need a manual decode-error pass with AIFF, ALAC/M4A, OGG, Opus, unusual WAV, and unusual FLAC files.
+Try System Default, built-in speakers, USB DAC, Bluetooth and HDMI/DisplayPort. Switch outputs while playing and paused, unplug/reconnect, seek and let tracks advance. Compare source format, engine rate and Windows shared-mode output reporting.
 
-## High-Fidelity Layer
+Try normal supported files and failures involving AIFF, ALAC/M4A, OGG, Opus and unusual WAV/FLAC. Check audible track/output EQ, ReplayGain, bypass, balance, mono, volume and limiting. A decode or route failure needs a useful way to recover without losing the library.
 
-- [x] Output-specific correction profiles are persistent.
-- [x] System presets provide conservative broad correction.
-- [x] Guided calibration wizard previews candidate profiles without saving until confirmed.
-- [x] Guided calibration uses the current track, a repeated clip window, output-specific preview state, replay control, saved-profile provenance, and lossy-format restraint.
-- [x] EQ slider persistence is debounced to reduce playback-time stutter while tuning.
-- [x] Parametric EQ with frequency and Q controls.
-- [x] Importable/exportable tuning profiles.
-- [x] Headphone and DAC profile library.
-- [x] Left/right balance and mono mode.
-- [ ] Multi-output speaker systems require independent per-output EQ, gain, delay, diagnostics, and physical sync validation before release.
+The tuning tools include saved output profiles, conservative presets, parametric frequency/Q controls, profile import/export, headphone/DAC profiles and a calibration wizard. The wizard previews the current track in a repeatable clip, lets someone replay it, records profile provenance and saves only after confirmation. Slider writes are debounced. Verify those behaviors in the artifact being released.
 
-## Optional Advanced Layer
+## Additional audio routes
 
-- [x] Channel and speaker test tones.
-- [x] Browser-safe DAC/device diagnostics for selected output, sink support, engine state, device count, test-tone route, and native-helper gate.
-- [~] Microphone-assisted acoustic speaker/latency calibration routes chirps through the selected output and falls back from stale mic IDs; physical-device validation and deeper room EQ remain.
-- [~] Reliable software/output-path and microphone acoustic latency profiler; physical-device validation remains.
-- [~] Native Windows audio helper bridge and diagnostics source, only if it remains signed, optional, and non-invasive; signed bundle and hardware validation remain.
-- [~] Windows-wide System Tuning Mode for external app audio requires a signed optional native route, visible bypass/exclusive-mode caveats, latency reporting, a clean off switch, and hardware validation before any release claim; native capability probe, dev loopback prototype, app EQ payload handoff, and non-audible captured-sample EQ analysis exist.
+Speaker/channel tones and browser-safe endpoint diagnostics exist. Microphone chirps use the selected output and recover from stale microphone IDs, but physical latency/calibration results need device evidence. Deeper room EQ isn't established by those tools.
+
+Grouped playback still needs independent per-output tuning and thirty-minute physical sync/recovery tests. An optional native helper needs signing, packaging and hardware checks. Windows-wide System Tuning also needs a safe processed route, bypass/latency reporting and an off switch; capability probes, loopback capture, EQ payloads and non-audible analysis don't clear that requirement.
+
+Normal playback must remain usable without system-wide drivers, services, registry changes or exclusive output. Keep the result tied to the build and hardware you actually checked.

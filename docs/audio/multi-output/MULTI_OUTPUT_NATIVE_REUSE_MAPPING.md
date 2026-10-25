@@ -1,50 +1,16 @@
-# Native Mixer Profile, Calibration, And Diagnostics Reuse Mapping
+# Reusing profiles in the native mixer
 
-The planned native mixer should reuse Pixelody’s output profiles, spatial profiles, calibration snapshots and diagnostics. This guide shows where those connections belong.
+The mixer request should use the same output/spatial profiles, member calibration and reports as Player Mode and browser fan-out. Creating native-only copies would leave two sets of settings to keep in step.
 
-It is a contract for future implementation. It does not implement native grouped playback.
+Saved tuning comes from `state.systems`, spatial settings from `state.spatialProfiles`, and measurements from `state.speakerSystems[].outputs[].calibration`. Reports already come through `activeSpeakerSystemDiagnostics()` and `groupedCalibrationReport()`. The bridge receives a normalized request, never direct browser-storage access.
 
-Read with:
-
-- `docs/audio/multi-output/MULTI_OUTPUT_NATIVE_MIXER_CONTRACT.md`
-- `docs/audio/multi-output/MULTI_OUTPUT_NATIVE_MIXER_INPUT_MAPPING.md`
-- `docs/audio/multi-output/MULTI_OUTPUT_NATIVE_MIXER_SAFETY_POLICY.md`
-
-## Principle
-
-The native mixer must not invent parallel profile, calibration, or diagnostics systems. It should consume derived payloads from the same data Pixelody already uses for Player Mode and browser fan-out.
-
-The saved sources of truth are:
-
-- `state.systems`: per-output tuning profiles.
-- `state.spatialProfiles`: per-output stereo image profiles.
-- `state.speakerSystems[].outputs[].calibration`: per-member software and microphone calibration snapshots.
-- `activeSpeakerSystemDiagnostics()`: grouped rig diagnostics source.
-- `groupedCalibrationReport()`: user-copyable grouped calibration source.
-
-## Profile Binding
-
-Each rig member already carries a profile binding:
-
-```json
-{
-  "systemProfileId": "default-or-output-id"
-}
-```
-
-Native input must resolve profiles with the same fallback currently used by the renderer:
+## Resolving a profile
 
 ```text
 profileId = member.systemProfileId || member.deviceId || "default"
 outputProfile = normalizeTuning(state.systems[profileId] || tuningDefault())
 spatialProfile = normalizeSpatial(state.spatialProfiles[profileId] || spatialDefault())
 ```
-
-The native bridge receives derived tuning payloads, not direct access to `localStorage`.
-
-## Output Profile Reuse
-
-Output profiles must preserve the same meaning as Player Mode:
 
 | Existing concept | Native use |
 | --- | --- |
@@ -56,9 +22,7 @@ Output profiles must preserve the same meaning as Player Mode:
 | Limiter/protection | Keep enabled when Player Mode would protect the route. |
 | EQ mode | Preserve as diagnostics and native DSP selection metadata. |
 
-Native payloads should avoid renderer-only UI detail. They should carry normalized DSP intent.
-
-Suggested member tuning shape:
+Send DSP values rather than UI state. One possible tuning payload is:
 
 ```json
 {
@@ -82,20 +46,7 @@ Suggested member tuning shape:
 }
 ```
 
-## Spatial Profile Reuse
-
-Spatial profiles remain per-output/member profile data:
-
-| Existing concept | Native use |
-| --- | --- |
-| Left/right balance | Apply as per-channel gain before final output. |
-| Mono mode | Sum or route channels according to the saved spatial profile. |
-| Stereo width/crossfeed-style settings, if present | Implement only when native DSP can match Player Mode; otherwise report mismatch. |
-| Profile id | Include in status and diagnostics so the UI can explain which profile is active. |
-
-The bridge must report any unsupported spatial option as a native DSP mismatch warning instead of silently ignoring it.
-
-Suggested member spatial shape:
+Balance and mono follow the bound spatial profile. Implement any width/crossfeed option only where native processing can match it; otherwise report the mismatch. Include the profile ID so status can say which settings were actually applied.
 
 ```json
 {
@@ -106,28 +57,9 @@ Suggested member spatial shape:
 }
 ```
 
-## Calibration Reuse
+## Measurements remain separate from corrections
 
-Calibration remains member-attached. Native grouped playback must consume existing snapshots before asking users to recalibrate.
-
-Per-member native input should carry:
-
-- software latency snapshot.
-- microphone acoustic snapshot.
-- calibration confidence.
-- route-match state.
-- caveats such as software-only timing, room sensitivity, Bluetooth buffering, and route-questionable reports.
-
-Native bridge rules:
-
-- Treat `member.delayMs` as the intentional user/member delay.
-- Treat calibration estimates as measurement facts, not saved delay.
-- Do not mutate `member.delayMs` from drift correction.
-- Prefer route-matched microphone estimates for listener-position reporting.
-- Use software estimates for route/engine latency comparisons when helpful.
-- Report missing, stale, or route-questionable calibration clearly.
-
-Suggested calibration shape:
+Carry existing software and microphone snapshots, confidence, route match and caveats. A matched microphone result is useful at the listening position; software timing describes the route/engine. Missing, stale or mismatched reports need to remain visible. Neither measured latency nor runtime drift replaces the listener's intentional `member.delayMs`.
 
 ```json
 {
@@ -150,34 +82,9 @@ Suggested calibration shape:
 }
 ```
 
-## Diagnostics Reuse
+## Adding status to existing reports
 
-Native grouped playback must extend the existing grouped rig diagnostics rather than creating a separate support story.
-
-Existing diagnostics already expose:
-
-- active rig identity.
-- route availability.
-- duplicate-route risk.
-- browser prototype state.
-- per-member profile ids.
-- trim, delay, mute/solo, polarity.
-- calibration confidence.
-- media/load status for browser secondaries.
-- path-hidden privacy marker.
-
-Native diagnostics should add:
-
-- native bridge availability and trust state.
-- native route state.
-- active native member count.
-- per-member native endpoint state.
-- sample rate, channel count, period, latency, drift ppm.
-- underrun, overrun, glitch, and recovery counters.
-- native DSP mismatch warnings.
-- native last error, sanitized.
-
-All shared diagnostics must keep:
+Keep browser diagnostics and add bridge availability/trust, native route/member state, endpoint format/period/latency/drift, underrun/overrun/glitch/recovery counters, DSP mismatches and sanitized errors. Preserve the path-hidden marker:
 
 ```json
 {
@@ -187,10 +94,6 @@ All shared diagnostics must keep:
   }
 }
 ```
-
-## Native Status Merge
-
-The future renderer should merge native status into grouped rig diagnostics like this:
 
 ```json
 {
@@ -210,50 +113,10 @@ The future renderer should merge native status into grouped rig diagnostics like
 }
 ```
 
-Do not replace browser prototype diagnostics. Browser and native status should coexist until native grouped playback has a release-ready claim.
+The implemented `normalizeNativeMixerStatus()` reducer and main-process query merge into `groupedRigDiagnosticsSnapshot()`, `groupedCalibrationReport()` and `activeSpeakerSystemDiagnostics()`. The latter also feeds local J.A.M. audio-profile metadata.
 
-### Current implementation
+At this checkpoint the bridge was a bounded lab component. Reports could show missing, unsigned, incompatible, error or appropriate ready/not-required status; they didn't manufacture an active grouped route. The endpoint-clock lab could add a transient `runtimeClock` observation. Raw endpoint IDs, executable/media paths and that transient clock state stay outside saved rigs and shared payloads. The rig self-test checks sanitation and the separation from saved acoustic delay.
 
-The renderer now has one `normalizeNativeMixerStatus()` reducer and a path-hidden main-process status query. Its result is merged into `groupedRigDiagnosticsSnapshot()`, `groupedCalibrationReport()`, and `activeSpeakerSystemDiagnostics()`; the last of those already feeds the local J.A.M. audio-profile snapshot.
+J.A.M. may carry rig identity, route state, member count, profile IDs, confidence and warnings. That metadata doesn't establish synchronized remote audio. Block or degrade unnormalizable profiles, unsupported spatial options, questionable calibration, missing sanitation, unexpected returned profile IDs and DSP-version mismatch.
 
-The current native bridge reports only an optional bounded-lab component. Consequently the reducer reports `bridge-missing`, `blocked-unsigned`, `blocked-incompatible`, `error`, or `not-required`/`ready` as appropriate; it does not manufacture an `active` grouped route. The optional development endpoint-clock lab can supply a transient `runtimeClock` observation with leader/follower rate estimates and follower correction facts. Raw endpoint IDs, executable paths, and local media paths stay outside the renderer-facing payload.
-
-`runtimeClock` is deliberately not persisted with the rig. Saved member `delayMs` remains the listener/acoustic alignment control and calibration receipt evidence; runtime ppm, ratio, buffer-fill error, and correction state are diagnostic facts only. The rig self-test verifies this separation and path sanitation.
-
-## J.A.M. Snapshot Reuse
-
-The local J.A.M. audio-profile snapshot may include native grouped rig metadata only if it stays path-hidden and does not claim remote synchronized playback. It may report:
-
-- active rig id/name.
-- native route state.
-- member count.
-- profile ids.
-- calibration confidence.
-- warnings.
-
-It must not expose local track paths, raw endpoint ids, or native component paths.
-
-## Failure And Mismatch Rules
-
-Native reuse is blocked or degraded when:
-
-- a member profile id is missing and fallback profile cannot normalize.
-- a spatial option cannot be represented natively.
-- calibration is route-questionable.
-- diagnostics sanitation is unavailable.
-- the bridge reports a different active profile id than the renderer requested.
-- the native DSP payload version does not match the app's expected version.
-
-The UI/diagnostics should call these `degraded`, `unsupported`, or `mismatch` states. Do not silently pretend parity with Player Mode.
-
-## Implementation Notes
-
-When native bridge plumbing is added, prefer one renderer-side builder that emits:
-
-- `members[]` from `docs/audio/multi-output/MULTI_OUTPUT_NATIVE_MIXER_INPUT_MAPPING.md`.
-- `profiles.output[profileId]` from normalized `state.systems`.
-- `profiles.spatial[profileId]` from normalized `state.spatialProfiles`.
-- `calibration` from each member.
-- `diagnosticsPolicy` with path-hidden sanitation requirements.
-
-The bridge should return native counters and status. The renderer remains responsible for merging those counters into Pixelody's existing grouped rig diagnostics and user-copyable reports.
+Use one builder for members, normalized output/spatial profiles, member calibration and diagnostics policy. The bridge returns counters; the renderer merges them into existing reports. See [rig input](MULTI_OUTPUT_NATIVE_MIXER_INPUT_MAPPING.md), [the API](MULTI_OUTPUT_NATIVE_MIXER_CONTRACT.md) and [safety](MULTI_OUTPUT_NATIVE_MIXER_SAFETY_POLICY.md).

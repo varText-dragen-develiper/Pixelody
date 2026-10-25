@@ -1,14 +1,13 @@
 # Bringing a music collection into Pixelody
 
-The original direction was discussed on July 1, 2026. This is a summary of that
-plan and its later implementation notes, not a claim that the whole migration
-system is available.
+The July 1, 2026 plan asked how to bring an existing collection into Pixelody.
+Some later import/discovery work is recorded below; the larger concierge is
+still a proposal.
 
-I don't want getting started to mean figuring out folder structures, metadata,
-artwork and export tools before someone can listen. Someone might arrive with
-years of playlists and favorite artists, even if they haven't put the music
-files on that device yet. Bringing that collection along should help them keep
-what mattered about it.
+Someone can have years of playlists and favorite artists without having the
+files on the device they install Pixelody on. I want bringing that collection
+over to be practical, rather than asking them to sort out folders, tags and
+export tools before they can start.
 
 The proposed Library Concierge would start with what they already use and what
 they want to bring over: local folders, a drive, a backup or a playlist export.
@@ -41,12 +40,11 @@ possible sources. Each integration still needs its own permission, attribution,
 rate-limit, retention and commercial-use checks. An external connection should
 be optional and removable, with the listener able to see what stays stored.
 
-## Finding something to listen to
+## Finding music in and beyond the library
 
-There's a lot to do with the collection itself: forgotten favorites, unplayed
-albums, deep cuts from an artist someone likes, or music that has been buried in
-the library. Local metadata, favorites and listening history can support those
-without pretending Pixelody has a licensed streaming catalog.
+Local history and metadata can bring back forgotten favorites, unplayed albums
+and overlooked tracks. That can be useful alongside artist/store discovery
+without implying a licensed streaming catalog.
 
 The implementation notes recorded MusicBrainz, Bandcamp and Discogs link-outs in
 the track editor, with cleanup/discovery actions for incomplete metadata. Wanted

@@ -1,38 +1,10 @@
-# Cartridge Quest Mini-Player Design System
+# Cartridge Quest mini-player
 
-## Window Contract
-
-- Default size: `500 x 200` (`5:2`), large enough to show the complete player without resizing.
-- Resize range: `340-820px` wide and `148-460px` tall.
-- The outer window edge owns native resizing.
-- The top 24px hardware strip owns window dragging, excluding the restore/close bay.
-- Artwork, metadata, progress, stats, and transport are always `no-drag` content.
-
-## Placement Ratio
-
-At the default size, the usable row is divided into three bays:
+The default window is 500×200 (5:2), with a 340–820px width and 148–460px height range. Native resizing belongs to the outer edge. Only the top 24px hardware strip drags the window; exclude restore/close, and keep artwork, metadata, progress, stats and transport no-drag.
 
 | Bay | Width | Responsibility |
 | --- | --- | --- |
-| Cartridge | 86px | Active artwork, cartridge label, and playback signal |
-| Save label | Flexible, 170px minimum | Quality, title, artist, progress, time, all four Quest stats |
-| Transport | 118px | Previous, play/pause, next in a dedicated hardware deck |
 
-The transport bay is fixed because its controls must never shrink beneath their hit targets. Metadata absorbs width changes first.
+Transport stays fixed so its targets don't shrink; metadata absorbs width changes. Play/previous/next, restore and close remain interactive, with title and progress visible at every supported size. Below 430px, stats reflow to two columns. Below 170px height, artist and stats yield before progress/controls. More width restores four stats and larger artwork without oversized transport.
 
-## Responsive Priority
-
-1. Previous, play/pause, next, restore, and close always remain interactive.
-2. Title and progress remain visible at every supported size.
-3. Artist and all four Quest stats appear when height permits.
-4. Under 430px wide, stats reflow to two columns before transport or title compresses.
-5. Under 170px tall, artist and Quest stats yield before progress or controls.
-6. Expanded widths restore four stats in one row and increase artwork without enlarging transport excessively.
-
-## Theme Rules
-
-- Decorative glow, signal layers, LEDs, and corner marks must remain absolutely positioned and cannot become grid items.
-- Only `.mini-drag-strip` may use `-webkit-app-region: drag`.
-- Every button and control bay explicitly uses `no-drag` and `pointer-events: auto`.
-- Corner marks communicate resizing but remain pointer-transparent so Electron receives native edge input.
-- Reduced motion and performance-conserve behavior remain unchanged.
+Glow, signals, lamps and corner marks are absolute decoration, never new grid items or hit areas. Controls explicitly keep no-drag and pointer-events:auto; corner marks remain transparent to native edge resizing. Preserve reduced-motion and conserve behavior.

@@ -1,14 +1,14 @@
-# Audio Visualizer Foundation
+# Visualizer renderers
 
-## Status
+## The current bench
 
-This is a reusable renderer inventory and specimen bench. It is intentionally **not assigned to any built-in or community theme** and is not connected to live playback yet. Theme placement, theme-specific palette/geometry, and which visualizer belongs to which product surface remain later design decisions.
+The sixteen canvas renderers in `src/audio-visualizers/` can be compared at `src/visualizer-lab.html`. This checkpoint covers that bench, before assignment to themes or connection to live playback. Placement and theme-specific palettes still need design work.
 
-The current foundation contains sixteen code-native canvas renderers under `src/audio-visualizers/` and a standalone comparison page at `src/visualizer-lab.html`. It adds no external artwork or licensed dependency.
+They draw in code, with no external artwork or added licensed dependency.
 
-## Non-negotiable boundary
+## Reading the signal
 
-The playback graph owns sound. A visualizer owns pixels.
+A renderer reads a signal frame and draws it. It must leave playback alone.
 
 - A visualizer must never create an `AudioContext` or call `createMediaElementSource()`.
 - Later live integration must take one product-owned analyser tap from the existing processed graph. It must not attach the media element to a second graph.
@@ -30,7 +30,7 @@ The playback graph owns sound. A visualizer owns pixels.
 
 Renderers consume only this frame. The deterministic demo generator exists for repeatable QA; it is not presented as genuine audio analysis.
 
-## Lifecycle and scheduling
+## Mounting and updating
 
 `runtime.js` supplies one scheduler for all mounted instances:
 
@@ -64,11 +64,11 @@ Full motion targets 60 fps for low/medium renderers and 30 fps for high-cost ren
 | `harmonic-pendulums` | Band-weighted damped pendulum mechanics | Medium | strip, panel, hero |
 | `spectral-loom` | Interlaced waveform and spectrum threads | Medium | panel, hero, background |
 
-## Theme integration later
+## Adding one to a theme
 
 A theme may eventually choose a renderer, placement recipe, palette adapter, and detail tier, but those mappings belong in a product-owned registry rather than inside renderer code or a declarative community package. Theme selection must preserve a safe no-visualizer fallback. The mini player should receive a separate mount decision; it must not inherit a large main-stage renderer automatically.
 
-Before any live mapping is accepted, prove:
+Before connecting a renderer to live playback, check:
 
 - the analyser tap sees the intended processed signal without changing it;
 - output selection, EQ, limiting, calibration, imports, and playback remain unchanged;
@@ -78,7 +78,7 @@ Before any live mapping is accepted, prove:
 - narrow, strip, square, hero, and mini placements remain legible where claimed;
 - painted Windows runtime and physical playback evidence are recorded separately from deterministic lab evidence.
 
-## Developer bench
+## Trying the bench
 
 Open `src/visualizer-lab.html` in a browser or local static server. The bench exposes five deterministic signal characters, three motion states, two performance budgets, and four neutral specimen palettes. It does not need a music file and does not touch the app audio graph.
 

@@ -1,24 +1,10 @@
-# Native Mixer Rig Input Mapping
+# Building native mixer input from a rig
 
-Use this mapping when connecting the saved grouped-speaker rig to the planned native mixer’s `configureRig` input. It describes the interface to build; native grouped playback is not implemented by this document.
+Derive `configureRig` from the saved rig already normalized by `normalizeSpeakerSystems()` and `normalizeSpeakerMember()` in `src/renderer.js`. Don't create a second native-rig store. `state.speakerSystems`, `state.activeSpeakerSystemId` and their `pixelody.*` keys remain the saved model; native command/status fields are transient.
 
-Read with:
+This is the mapping for the planned [mixer API](MULTI_OUTPUT_NATIVE_MIXER_CONTRACT.md), subject to its [safety rules](MULTI_OUTPUT_NATIVE_MIXER_SAFETY_POLICY.md).
 
-- `docs/audio/multi-output/MULTI_OUTPUT_NATIVE_MIXER_CONTRACT.md`
-- `docs/audio/multi-output/MULTI_OUTPUT_NATIVE_MIXER_SAFETY_POLICY.md`
-
-## Source Of Truth
-
-The renderer already normalizes grouped speaker rigs through `normalizeSpeakerSystems()` and `normalizeSpeakerMember()` in `src/renderer.js`.
-
-The native mixer must consume that normalized model instead of introducing a separate saved native-rig schema. Native-specific fields may appear in transient command/status payloads, but persisted rig ownership stays with:
-
-- `state.speakerSystems`
-- `state.activeSpeakerSystemId`
-- `pixelody.speakerSystems`
-- `pixelody.activeSpeakerSystemId`
-
-## Rig Mapping
+## Rig fields
 
 | Saved rig field | Native `configureRig` field | Rule |
 | --- | --- | --- |
@@ -29,7 +15,7 @@ The native mixer must consume that normalized model instead of introducing a sep
 | `system.outputs` | `members` | Normalize before mapping, then filter through safety gates. |
 | `system.updatedAt` | `rigUpdatedAt` | Helps bridge reject stale reconfigure/status echoes. |
 
-## Member Mapping
+## Member fields
 
 | Saved member field | Native member field | Rule |
 | --- | --- | --- |
@@ -50,9 +36,9 @@ The native mixer must consume that normalized model instead of introducing a sep
 | `member.calibration.software` | `calibration.software` | Compact software latency snapshot. |
 | `member.calibration.microphone` | `calibration.microphone` | Compact acoustic timing snapshot. |
 
-## Derived Native Fields
+## Values calculated for a request
 
-These fields are not persisted as part of the saved rig. The renderer/main process derives them when building native mixer input:
+Calculate these when building a request; don't save them with the rig:
 
 | Derived field | Source | Rule |
 | --- | --- | --- |
@@ -64,24 +50,13 @@ These fields are not persisted as part of the saved rig. The renderer/main proce
 | `profileId` | `systemProfileId || deviceId || default` | Used for tuning/spatial lookup. |
 | `calibrationConfidence` | member calibration confidence helper | Diagnostics only; does not replace raw calibration snapshots. |
 
-## Active Member Selection
+## Choosing audible members
 
-Native input must use the same audible-member rules as the browser prototype:
+Start with normalized `system.outputs`. Exclude disabled or unavailable members from playback, keeping unavailable ones in diagnostics. If any remaining member is soloed, exclude the others, then exclude muted members. At least two independent available routes must remain. Duplicate endpoints or a failed trust/safety check block arming.
 
-1. Start from normalized `system.outputs`.
-2. Remove disabled members.
-3. Remove unavailable members for active native playback, but keep them in diagnostics.
-4. If any remaining member is soloed, keep only soloed members.
-5. Remove muted members.
-6. Block if fewer than two active members remain.
-7. Block if active members resolve to the same endpoint or unsafe duplicate route.
-8. Block if the native safety policy rejects the bridge/component state.
+A saved rig can contain more outputs than a bridge supports. Respect `probe.maxRecommendedOutputs` by capping the active request or refusing it. Never delete saved members to fit a temporary capability limit.
 
-The saved rig may store more members than the initial native bridge supports. The native bridge should report `maxRecommendedOutputs` from `probe`; the renderer must cap active members or block arming according to that capability.
-
-## Native `configureRig` Shape
-
-The future renderer-to-main/native payload should be assembled from the saved rig like this:
+## Request example
 
 ```json
 {
@@ -134,42 +109,10 @@ The future renderer-to-main/native payload should be assembled from the saved ri
 }
 ```
 
-## Calibration Mapping
+## Timing and privacy
 
-Do not flatten calibration down to one latency number too early.
+Carry both software and microphone snapshots. Software estimates describe the route; microphone estimates describe acoustic arrival. A route-matched microphone result is preferred for listening-position reporting, then a matched software result, otherwise `null`. Downgrade questionable confidence and set `routeMatch` false for a known mismatch. Drift correction never writes saved `delayMs`.
 
-The native bridge should receive both snapshots when available:
+Labels/profile IDs can travel with the request. Raw endpoint IDs remain internal or become hashes in shared diagnostics. Track paths, artwork paths, library folders and `file://` URLs stay out of support payloads; shared snapshots carry `privacy.pathHidden: true`.
 
-- `software`: fastest route/software estimate, useful for internal route latency comparison.
-- `microphone`: acoustic arrival estimate, useful for listener-position delay suggestions.
-
-The renderer may also derive:
-
-- `preferredEstimateMs`: microphone estimate if route-matched, otherwise software estimate if route-matched, otherwise null.
-- `confidence`: highest usable confidence, with route-questionable reports downgraded in diagnostics.
-- `routeMatch`: false if either selected calibration snapshot is known to belong to a different route.
-
-Native drift correction must not mutate saved `delayMs`. Calibration estimates and drift estimates are separate facts.
-
-## Sanitization
-
-The native input/status path must keep local-source privacy rules:
-
-- Saved rig labels and profile ids may be included.
-- Raw track paths, artwork paths, library folders, and `file://` URLs must not appear in support-facing payloads.
-- Native endpoint ids may be redacted or hashed in diagnostics while raw ids stay internal to the bridge.
-- All shared snapshots must include `privacy.pathHidden: true`.
-
-## Implementation Notes
-
-When this becomes code, prefer adding one renderer-side builder that converts `activeSpeakerSystem()` into a native `configureRig` request. That builder should reuse existing helpers for:
-
-- normalized rig/member data.
-- member availability.
-- duplicate route risk.
-- mute/solo active member selection.
-- output profile and spatial profile lookup.
-- calibration confidence and caveats.
-- diagnostics sanitation.
-
-Do not add a second persisted native rig store. The saved grouped speaker rig is the model; native input is a derived command payload.
+Use one builder from `activeSpeakerSystem()`, reusing availability, duplicate checks, mute/solo, profile lookup, calibration and sanitation helpers. The request is a projection of the existing rig.
