@@ -4,7 +4,7 @@ Pixelody can already tune its own music. Applying that tuning to a browser or ga
 
 The plan chose a virtual output: shared-mode apps would play into `Pixelody Virtual Output`, a monitor/capture side would feed the native bridge, and processing would send it to a separate real output or rig. It could reuse output profiles, member trim, balance, mono, polarity, delay and calibration data where the engine supports them.
 
-At the recorded checkpoint, mode selection, status, native capability probing, endpoint reporting, loopback capture and non-audible EQ analysis were development foundations. Signed endpoint installation and an audible processed bridge were still missing. This October 24 wording update adds no new route test.
+At the recorded checkpoint, mode selection, status, native capability probing, endpoint reporting, loopback capture and non-audible EQ analysis were development foundations. Signed endpoint installation and an audible processed bridge were still missing.
 
 ## Why loopback alone isn't enough
 

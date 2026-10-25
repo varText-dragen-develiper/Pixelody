@@ -2,7 +2,7 @@
 
 A grouped speaker rig saves several Windows outputs and their individual controls. It might combine desk speakers and towers, USB and HDMI, or headphones and speakers. Independent tuning requires independent endpoints; two systems plugged into one analog connection look like one output to Pixelody.
 
-These notes summarize the accumulated implementation rather than replaying each development step. The original chronology remains in Git history. Grouped Pixelody playback is separate from Windows-wide System Tuning and from J.A.M. network sessions.
+Grouped Pixelody playback is separate from Windows-wide System Tuning and from J.A.M. network sessions.
 
 ## Saved members and routes
 

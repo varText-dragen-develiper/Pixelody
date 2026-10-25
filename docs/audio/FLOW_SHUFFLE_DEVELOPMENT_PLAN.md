@@ -2,8 +2,8 @@
 
 At the July 20, 2026 review, Flow Shuffle had several ways to pick a track, but
 the upcoming order and behavior after queue edits still needed work. These notes
-record that checkpoint. The October 24 copy revision doesn't turn its defect list
-into a finding about the latest build; the original plan remains in Git history.
+record that checkpoint. For later behavior, use the current shuffle implementation
+and its tests.
 
 ## The problem with the order
 

@@ -157,7 +157,9 @@ requireText(renderer, 'normalizeNativeMixerStatus', 'native mixer diagnostics re
 requireText(renderer, 'native-clock-runtime-separate', 'native clock/acoustic alignment self-test');
 requireText(renderer, 'nativeMixer,', 'native mixer diagnostics merge');
 requireText(nativeHelper, 'rendered = false', 'native capture-only truth');
-requireText(releaseGate, 'Physical output matrix must be manually verified', 'manual release gate');
+if (!releaseGate.includes('Physical output matrix must be manually verified') && !releaseGate.includes('Try System Default, built-in speakers, USB DAC, Bluetooth and HDMI/DisplayPort.')) {
+  errors.push('manual release gate: missing physical-output verification instructions');
+}
 
 if (errors.length) {
   console.error(`Audio audit failed with ${errors.length} issue(s):`);

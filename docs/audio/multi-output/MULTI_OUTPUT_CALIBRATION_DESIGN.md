@@ -2,7 +2,7 @@
 
 I want two independent speaker systems to sound coherent at the place someone listens. That means matching level, aligning arrival time and checking bass integration separately. One delay value can't establish all three, and a preferred listening result can differ from a measurement.
 
-This is the design proposal behind the [calibration work](MULTI_OUTPUT_CALIBRATION_ROADMAP.md). Its original research-only status predates the implementation recorded there. The October 24 prose update doesn't add physical validation.
+This is the design proposal behind the [calibration work](MULTI_OUTPUT_CALIBRATION_ROADMAP.md). That roadmap records the later implementation and the physical checks still needed.
 
 ## The listening workflow
 

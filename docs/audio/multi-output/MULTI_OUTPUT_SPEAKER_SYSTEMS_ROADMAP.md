@@ -36,5 +36,4 @@ For the feature itself, start with [the speaker-rig notes](MULTI_OUTPUT_SPEAKER_
 [measurement log](MULTI_OUTPUT_PHASE5_MEASUREMENT_LOG.md),
 [browser decision](MULTI_OUTPUT_BROWSER_FANOUT_DECISION.md) and
 [native mixer contract](MULTI_OUTPUT_NATIVE_MIXER_CONTRACT.md) keep the more
-specific integration details. Those checkpoints are unchanged by this wording
-update; no new listening results are added here.
+specific integration details and recorded validation limits.
