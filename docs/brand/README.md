@@ -29,13 +29,13 @@ On Android, Settings & Themes → Logo color follows the effective theme/palette
 
 ## Windows icon updates
 
-The running icon uses generated mark pixels; installer/executable resources retain their baked colors. Matching shortcuts can be updated, but unrelated shortcuts and native-helper identity stay untouched. The helper matches target/app ID/arguments, backs originals up under `brand-icons/shortcut-backups`, and revalidates cached matches. Separate profiles use stable profile-derived taskbar IDs and require exact profile arguments, so a preview doesn't modify the owner's shortcut.
+On Windows, Electron updates the main and mini window icons and supplies their taskbar relaunch details through `setAppDetails`. Per-color ICO files wrap the generated mark's PNG pixels under the profile's `brand-icons` directory. The executable and installer keep their baked icon.
 
-Per-color ICO files live under the profile's `brand-icons`. Relaunch/icon properties are set before the AppUserModel.ID refresh; separate calls avoid Electron's combined-call ordering. Requests serialize and cache only successful acknowledgments. After a settled change, the worker follows Chromium's association/item refresh pattern for matching links and exits with the app. The Shell can briefly redraw.
+Matching shortcuts are updated through Electron's `readShortcutLink` and `writeShortcutLink`. The target, app ID and arguments must match this installation. Separate profiles require the exact profile argument and use a stable profile-derived taskbar ID, so a preview doesn't modify the owner's links. Originals are backed up once under `brand-icons/shortcut-backups`; launch targets and arguments are preserved.
 
-Animated changes save window properties, temporarily suppress relaunch-icon resolution with PreventPinning and use live setIcon frames. They restore canonical identity/pinning and final shortcut color on completion, or roll back on failure/cancel. There are 66 eased frames over about 1.1 seconds, with a 150ms removal pause at the initial taskbar refresh. Startup, unchanged colors, reduced motion and disabled reactions use the immediate path. Matching-shortcut notifications finish a successful native animation; immediate/fallback updates use a full refresh.
+Window color transitions use `setIcon` for 66 eased frames over about 1.1 seconds, followed by the exact final icon and relaunch details. Startup, unchanged colors, reduced motion and disabled reactions use the immediate path. Animation failure falls back to the final icon. Superseded changes stop, and failed publication can be retried.
 
-Recorded tests covered Studio/Cartridge Quest/Obsession transitions after the removal pause and a Search-launch regression, plus manual colors and disabled-motion updates in an isolated profile. Those are dated implementation observations, not a check of every Windows Shell configuration. The refresh reference is [Chromium's shortcut implementation](https://raw.githubusercontent.com/chromium/chromium/main/chrome/browser/profiles/profile_shortcut_manager_win.cc).
+Icon updates no longer launch PowerShell or compile C# at runtime. They don't change pinning policy, remove taskbar groups or force a global Shell cache refresh. Windows can cache the grouped taskbar, pinned, Start or Search icon, so those surfaces may retain an earlier color until the Shell refreshes them. Window animation is retained; grouped taskbar animation isn't guaranteed.
 
 ## Regenerating assets
 

@@ -23,22 +23,22 @@ jobs:
 
     steps:
       - name: Check out source
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
         with:
           version: 11.9.0
 
       - name: Install Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: ${{ matrix.node }}
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
 
       - name: Install locked dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Run syntax, state, domain, and UI audits
         run: pnpm run check
@@ -130,7 +130,7 @@ jobs:
 
       - name: Upload sanitized smoke failure evidence
         if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: pixelody-smoke-failure-${{ matrix.os }}-node-${{ matrix.node }}
           path: .artifacts/smoke-failures
@@ -139,7 +139,7 @@ jobs:
 
       - name: Upload sanitized Windows failure evidence
         if: failure() && runner.os == 'Windows'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: pixelody-windows-failure-node-${{ matrix.node }}
           path: .artifacts/windows-integration
@@ -148,7 +148,7 @@ jobs:
 
       - name: Upload package content manifest
         if: always() && runner.os == 'Windows'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: pixelody-package-manifest-node-${{ matrix.node }}
           path: .artifacts/ci-evidence/package-contents.json
@@ -157,7 +157,7 @@ jobs:
 
       - name: Upload unsigned release audit manifest
         if: always() && runner.os == 'Windows' && matrix.node == 22
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: pixelody-unsigned-release-manifest
           path: .artifacts/windows-release/unsigned/release-manifest.json
@@ -166,7 +166,7 @@ jobs:
 
       - name: Upload sanitized installer lifecycle evidence
         if: always() && runner.os == 'Windows' && matrix.node == 22
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: pixelody-installer-lifecycle-evidence
           path: |
@@ -184,22 +184,22 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Check out source
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
         with:
           version: 11.9.0
 
       - name: Install Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 22
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
 
       - name: Install locked dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Enlarge the Windows desktop for sized scenarios
         run: .\scripts\set-windows-ci-desktop.ps1
@@ -220,7 +220,7 @@ jobs:
 
       - name: Upload sanitized development scenario evidence
         if: steps.canvas_studio.outcome == 'failure'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: pixelody-canvas-development-failure
           path: .artifacts/windows-integration
@@ -236,16 +236,16 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
         with:
           version: 11.9.0
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 22
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile --ignore-scripts
       - run: pnpm run check
       - name: Build, sign, timestamp, and verify
         run: pnpm run release:windows:signed
@@ -276,7 +276,7 @@ jobs:
           PIXELODY_DISPOSABLE_WINDOWS: '1'
         run: .\scripts\test-windows-release-surface.ps1 -Phase Verify -EvidenceDirectory .artifacts\signed-lifecycle-evidence -ConfirmDisposableEnvironment
       - name: Upload intended distribution artifacts only
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: pixelody-windows-signed-${{ github.ref_name }}
           path: |
@@ -288,7 +288,7 @@ jobs:
           retention-days: 14
 
       - name: Upload sanitized signed lifecycle evidence separately
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: pixelody-windows-signed-lifecycle-${{ github.ref_name }}
           path: |
@@ -307,19 +307,19 @@ jobs:
       contents: read
       actions: read
     steps:
-      - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
         with:
           version: 11.9.0
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 22
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile --ignore-scripts
       - run: pnpm run release:windows:upgrade-fixture
       - name: Download the exact signed artifact from the signing job
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: pixelody-windows-signed-${{ github.ref_name }}
           path: .artifacts/windows-release/signed
@@ -346,7 +346,7 @@ jobs:
         run: .\scripts\test-windows-release-surface.ps1 -Phase Verify -EvidenceDirectory .artifacts\clean-current-lifecycle-evidence -ConfirmDisposableEnvironment
       - name: Upload sanitized clean-current evidence
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: pixelody-clean-current-lifecycle-evidence
           path: |

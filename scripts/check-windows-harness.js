@@ -41,8 +41,15 @@ assert.match(harness, /sanitizeText/, 'Failure evidence must be sanitized before
 assert.match(harness, /runSingle\('security'/, 'Both launch modes must run hostile-window security probes.');
 assert.match(packager, /allowedTopLevel/, 'Packaged app content must be allowlisted.');
 assert.match(packager, /personalMediaIncluded: false/, 'Package manifest must declare the verified personal-media boundary.');
-for (const required of ['ubuntu-latest', 'macos-latest', 'windows-latest', 'node: [22, 24]', 'timeout-minutes:', 'pnpm run check:security', 'pnpm run check:smoke', 'pnpm run check:integration:all', 'release:windows:upgrade-fixture', 'test-windows-installer-lifecycle.ps1', 'test-windows-release-surface.ps1', 'actions/upload-artifact@v7']) {
+for (const required of ['ubuntu-latest', 'macos-latest', 'windows-latest', 'node: [22, 24]', 'timeout-minutes:', 'pnpm run check:security', 'pnpm run check:smoke', 'pnpm run check:integration:all', 'release:windows:upgrade-fixture', 'test-windows-installer-lifecycle.ps1', 'test-windows-release-surface.ps1']) {
   assert.ok(workflow.includes(required), `CI workflow is missing: ${required}`);
+}
+for (const file of ['windows-integration.yml', 'spec-budget.yml']) {
+  const text = read(`.github/workflows/${file}`);
+  const actions = [...text.matchAll(/uses:\s*([^\s#]+)/g)].map(match => match[1]);
+  assert.ok(actions.length >= 3, `${file} must retain its CI setup actions.`);
+  for (const action of actions) assert.match(action, /^[\w.-]+\/[\w.-]+@[a-f0-9]{40}$/, `${file} must pin each external action to a full commit.`);
+  assert.match(text, /pnpm install --frozen-lockfile --ignore-scripts/, `${file} must disable dependency lifecycle scripts during bootstrap.`);
 }
 for (const required of ['PIXELODY_DISPOSABLE_WINDOWS', 'Assert-Child $fixtureRoot', 'Assert-Child $signedRoot', 'ExpectedPublisherSubject', 'Assert-SignedArtifact', 'TimeStamperCertificate', 'Assert-InstalledLaunch', 'MainWindowHandle', 'installPrefix', 'uninstallRemovedShortcuts', 'uninstallRemovedMetadata', 'uninstallPreservedUserData']) {
   assert.ok(lifecycle.includes(required), `Installer lifecycle guard is missing: ${required}`);

@@ -20,6 +20,9 @@ function sourceIncluded(relative, instrumented = false) {
 
 function builderFiles(instrumented) {
   return ['package.json', 'release/windows-identity.json', 'src/**/*',
+    // Undici's runtime is required; documentation and build scripts are not.
+    '!node_modules/undici/docs{,/**/*}',
+    '!node_modules/undici/scripts{,/**/*}',
     ...[...excludedSegments].map((name) => `!src/**/${name}{,/**/*}`),
     '!src/**/*.{md,map,log,jsonl}', ...developmentPages.map((name) => `!${name}`),
     ...(instrumented ? [] : probes.map((name) => `!${name}`))];
@@ -60,8 +63,7 @@ function inspectAppFile(relative, bytes, { instrumented = false } = {}) {
     if (!sourceIncluded(lower, instrumented)) throw new Error(`Development/private source in package: ${relative}`);
     const licenseNotice = /^src\/assets\/.*\/(?:license|ofl|info)-[^/]+\.txt$/.test(lower);
     if (lower === 'src/module-shop/listening-notes.pixelody-module') require('../src/module-shop/contract').parsePackage(bytes, 'desktop');
-    const nativeTaskbarWorker = ['src/windows-shell-icons.ps1', 'src/windows-live-icon.ps1'].includes(lower);
-    if (!nativeTaskbarWorker && lower !== 'src/module-shop/listening-notes.pixelody-module' && !sourceExtensions.has(path.extname(lower)) && !licenseNotice && !(licensedSound && audioExtensions.has(path.extname(lower)))) throw new Error(`Unclassified source file: ${relative}`);
+    if (lower !== 'src/module-shop/listening-notes.pixelody-module' && !sourceExtensions.has(path.extname(lower)) && !licenseNotice && !(licensedSound && audioExtensions.has(path.extname(lower)))) throw new Error(`Unclassified source file: ${relative}`);
   } else if (!lower.startsWith('node_modules/') && !['package.json', 'release/windows-identity.json', 'package-contents.json'].includes(lower)) {
     throw new Error(`Unclassified application file: ${relative}`);
   }

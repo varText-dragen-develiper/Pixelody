@@ -1037,3 +1037,26 @@ body[data-motion="off"] .logo-color-option:hover { transform: none; }
 @media (max-width: 560px) { .logo-color-grid { grid-template-columns: repeat(3, 1fr); } }
 
 .dev-lab-mechanics[hidden] { display: none !important; }
+
+/* The production picker owns its layout; archived theme-browser CSS is detached. */
+.theme-setting .theme-option { color:var(--text); background:var(--surface2); border:1px solid var(--line); border-radius:6px; }
+.theme-setting > .studio-rebuild-notice { display:grid; gap:6px; margin:16px 0; }
+.theme-setting > .studio-rebuild-notice > small { font-size:9px; color:var(--gold); }
+.theme-setting > .studio-rebuild-notice > strong { font-size:18px; line-height:1.3; }
+.theme-setting > .studio-rebuild-notice > span { font-size:12px; line-height:1.5; }
+#themeSetting { display:grid; grid-template-columns:minmax(0,1fr); gap:8px; }
+#themeSetting .theme-option { position:relative; display:grid; grid-template-columns:48px minmax(0,1fr); grid-template-rows:auto auto; align-content:center; align-items:center; gap:4px 12px; width:100%; min-width:0; min-height:88px; padding:12px; text-align:left; white-space:normal; scroll-margin-block:8px; }
+#themeSetting .theme-option > b { grid-column:2; font-size:13px; line-height:1.35; overflow-wrap:anywhere; }
+#themeSetting .theme-option > small { grid-column:2; font-size:11px; line-height:1.45; font-weight:400; overflow-wrap:anywhere; }
+#themeSetting .theme-preview { display:block; grid-column:1; grid-row:1 / 3; width:48px; height:48px; border:1px solid currentColor; border-radius:6px; }
+#themeSetting .obsession-preview { background:linear-gradient(145deg,#650c20,#0c0308 65%); }
+#themeSetting .cartridge-quest-preview { background:linear-gradient(135deg,#aaa7a3 35%,#7b68c9 35% 65%,#10162a 65%); }
+#themeSetting .theme-option:focus-visible { outline:2px solid currentColor; outline-offset:-4px; }
+#desktopThemeStatus { margin:12px 0; color:var(--text); font-size:12px; line-height:1.5; }
+.settings-drawer:has(.theme-setting:not(.hidden)) { scroll-padding-block:90px 72px; }
+@media(max-height:540px) {
+  /* On a short viewport the tabs and reset control yield room to the choices. */
+  .settings-drawer:has(.theme-setting:not(.hidden)) > .settings-nav,
+  .settings-drawer:has(.theme-setting:not(.hidden)) > .reset-appearance { position:static; }
+  .settings-drawer:has(.theme-setting:not(.hidden)) { scroll-padding-block:16px; }
+}

@@ -910,7 +910,7 @@ function rememberCanvasThemeGraph() {
   }
 }
 async function selectDesktopPresentation(key) {
-  if (!canvasThemePortDomain.RELEASE_KEYS.includes(key) || !canvasRuntimeReady() || desktopPresentationChanging) return;
+  if (!canvasThemePortDomain.RELEASE_KEYS.includes(key) || !canvasRuntimeReady() || desktopPresentationChanging) return false;
   desktopPresentationChanging = true;
   try {
     if (!canvasStageActive()) {
@@ -925,9 +925,29 @@ async function selectDesktopPresentation(key) {
     }
     const select = $('#canvasThemePortSelect');
     if (select) select.value = key;
-    await applyDesktopPortSelection?.();
+    const applied = await applyDesktopPortSelection?.();
     syncDesktopPresentationNavigation();
+    return applied === true;
   } finally { desktopPresentationChanging = false; }
+}
+
+function setDesktopThemeStatus(message) {
+  const status = $('#desktopThemeStatus');
+  if (!status) return;
+  status.textContent = message;
+  status.hidden = !message;
+  if (message) status.scrollIntoView?.({ block: 'nearest' });
+}
+
+async function applyDesktopPresentationFromSettings(key) {
+  setDesktopThemeStatus('');
+  try {
+    if (await selectDesktopPresentation(key)) closeSettings();
+  } catch (error) {
+    const message = error.message || 'The theme could not be applied.';
+    setDesktopThemeStatus(message);
+    showToast(message);
+  }
 }
 
 function installDesktopPresentations() {
@@ -943,16 +963,18 @@ function installDesktopPresentations() {
     button.append(preview, name, summary);
     button.addEventListener('click', async () => {
       button.disabled = true;
-      try { await selectDesktopPresentation(key); closeSettings(); }
-      catch (error) { showToast(error.message || 'The theme could not be applied.'); }
+      try { await applyDesktopPresentationFromSettings(key); }
       finally { button.disabled = false; }
     });
     grid.append(button);
   });
+  const status = document.createElement('p');
+  status.id = 'desktopThemeStatus'; status.hidden = true; status.setAttribute('role', 'status');
+  grid.after(status);
   const editLayout = document.createElement('button');
   editLayout.id = 'desktopEditLayoutButton'; editLayout.type = 'button'; editLayout.className = 'quiet-button'; editLayout.textContent = 'Edit current layout';
   editLayout.addEventListener('click', async () => { closeSettings(); await waitForPaint(); $('.cw-studio-launcher')?.click(); });
-  grid.after(editLayout);
+  status.after(editLayout);
   const nav = document.createElement('nav');
   nav.className = 'desktop-panel-navigation'; nav.setAttribute('aria-label', 'Listening panels');
   [['library','Library'],['tracks','Tracks'],['information','Track info'],['queue','Queue']].forEach(([key,label]) => {
@@ -1039,6 +1061,7 @@ function syncDesktopPresentationNavigation() {
     const selected = button.dataset.desktopTheme === port?.key;
     button.classList.toggle('active', selected); button.setAttribute('aria-pressed', String(selected));
   });
+  document.querySelector('[data-theme-option="studio"]')?.setAttribute('aria-pressed', String(!active && appearance.theme === 'studio'));
 }
 
 function activePresentationKey() {
@@ -1389,7 +1412,10 @@ function installCanvasStudioControl() {
     const nextKey = canvasThemePortDomain.normalizeKey(portSelect.value);
     const nextPort = canvasThemePortDomain.get(nextKey);
     const previousSnapshot = productionWorkspaceHost?.snapshot?.().session;
-    if (previousSnapshot?.dirty) { paintPort(); showToast('Save or discard your composition before switching themes.'); return; }
+    if (previousSnapshot?.dirty) {
+      const message = 'Save or discard your composition before switching themes.';
+      paintPort(); setDesktopThemeStatus(message); showToast(message); return false;
+    }
     rememberCanvasThemeGraph();
     portSelect.disabled = true;
     // The same themed loading screen as any theme change, with the new port's
@@ -1435,8 +1461,9 @@ function installCanvasStudioControl() {
           portSelect.disabled = false;
           paintPort();
           if (loadVisible) { loadSettled = true; hideThemeLoadScreen(); document.body.classList.remove('theme-switching'); }
-          showToast(presetResult?.error || 'Finish or discard the current Canvas draft before switching themes.');
-          return;
+          const message = presetResult?.error || 'Finish or discard the current Canvas draft before switching themes.';
+          setDesktopThemeStatus(message); showToast(message);
+          return false;
         }
       }
       appearance.canvasThemePort = nextKey;
@@ -1450,6 +1477,8 @@ function installCanvasStudioControl() {
       scheduleDurableStatePersist(0, 'settings-change');
       paintPort();
       await finishLoad();
+      setDesktopThemeStatus('');
+      return true;
     } finally {
       if (loadVisible && !loadSettled) { hideThemeLoadScreen(); document.body.classList.remove('theme-switching'); }
       portSelect.disabled = !canvasStageActive();
@@ -21077,12 +21106,16 @@ async function selectThemeFromSettings(theme) {
     return;
   }
   if (theme === 'studio' && canvasStageActive()) {
-    if (productionWorkspaceHost?.snapshot?.().session?.dirty) { showToast('Save or discard your composition before leaving this theme.'); return; }
+    if (productionWorkspaceHost?.snapshot?.().session?.dirty) {
+      const message = 'Save or discard your composition before leaving this theme.';
+      setDesktopThemeStatus(message); showToast(message); return;
+    }
     rememberCanvasThemeGraph();
     canvasOptIn = false; canvasLaunchDismissed = true;
     setLocalStorageItem(CANVAS_OPT_IN_KEY, 'off');
     disableCanvasStageStyles();
   }
+  setDesktopThemeStatus('');
   const settingsOverlay = $('#settingsOverlay');
   if (settingsOverlay && !settingsOverlay.classList.contains('hidden')) {
     closeSettings();

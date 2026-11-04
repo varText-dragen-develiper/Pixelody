@@ -29,3 +29,51 @@ for (const entry of registry.compositionPresentations) {
   }
 }
 console.log('Desktop presentation recipes, graph validity, and production assets passed.');
+
+// Exercise the real Settings coordinator: a refused/failed atomic port switch
+// must leave the picker open instead of appearing to accept the selection.
+const vm = require('node:vm');
+const renderer = fs.readFileSync(path.join(root, 'src/renderer.js'), 'utf8');
+const selectionFunctions = renderer.slice(renderer.indexOf('async function selectDesktopPresentation('), renderer.indexOf('function installDesktopPresentations('));
+function pickerContext(apply) {
+  const status = { textContent: '', hidden: true };
+  const select = { value: 'obsession' };
+  const context = {
+    canvasThemePortDomain: ports, canvasRuntimeReady: () => true, canvasStageActive: () => true,
+    desktopPresentationChanging: false, appearance: { canvasThemePort: 'obsession' },
+    $: selector => selector === '#desktopThemeStatus' ? status : select,
+    applyDesktopPortSelection: apply, syncDesktopPresentationNavigation: () => {},
+    closeSettings: () => { context.closed++; }, showToast: message => { context.toast = message; }, closed: 0,
+  };
+  vm.createContext(context); vm.runInContext(selectionFunctions, context);
+  return { context, status, select };
+}
+(async () => {
+  const refused = pickerContext(async () => false);
+  await refused.context.applyDesktopPresentationFromSettings('cartridge-quest');
+  assert.equal(refused.context.closed, 0);
+  assert.equal(refused.context.appearance.canvasThemePort, 'obsession');
+  assert.equal(refused.context.desktopPresentationChanging, false);
+
+  const failed = pickerContext(async () => { throw new Error('Workspace commit refused.'); });
+  await failed.context.applyDesktopPresentationFromSettings('cartridge-quest');
+  assert.equal(failed.context.closed, 0);
+  assert.equal(failed.status.hidden, false);
+  assert.equal(failed.status.textContent, 'Workspace commit refused.');
+  assert.equal(failed.context.desktopPresentationChanging, false);
+
+  let finish;
+  const pending = pickerContext(() => new Promise(resolve => { finish = resolve; }));
+  const first = pending.context.applyDesktopPresentationFromSettings('cartridge-quest');
+  await pending.context.applyDesktopPresentationFromSettings('obsession');
+  assert.equal(pending.context.closed, 0);
+  finish(true); await first;
+  assert.equal(pending.context.closed, 1);
+  assert.equal(pending.context.desktopPresentationChanging, false);
+
+  const unavailable = pickerContext(async () => true);
+  unavailable.context.canvasRuntimeReady = () => false;
+  await unavailable.context.applyDesktopPresentationFromSettings('cartridge-quest');
+  assert.equal(unavailable.context.closed, 0);
+  console.log('Desktop theme selection: rejection, commit failure, in-flight switching and unavailable authority passed.');
+})().catch(error => { console.error(error); process.exitCode = 1; });

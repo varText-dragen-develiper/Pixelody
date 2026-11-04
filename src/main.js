@@ -1,4 +1,6 @@
 const { app, BrowserWindow, dialog, ipcMain, Menu, nativeImage, screen, session, shell } = require('electron');
+// Electron 43 still embeds an older Undici; keep app HTTP calls on the patched module.
+const { fetch } = require('undici');
 const path = require('path');
 const moduleShop = require('./module-shop/window').createModuleShop({ app, BrowserWindow, dialog, applyEdition: async (recipe) => {
   if (!isDevelopment || !composableThemeExperimentEnabled || singularityProbeMode || !mainWindow || mainWindow.isDestroyed()) throw new Error('Theme editions require a Windows Canvas development session.');
@@ -36,10 +38,7 @@ const desktopThemePorts = require('./theme-runtime/canvas-theme-ports');
 const brandMark = require('./brand-mark');
 const musicBrainz = require('./musicbrainz');
 const { createBrandIconAnimator } = require('./brand-icon-transition');
-const { createWindowsLiveIconController } = require('./windows-live-icon');
 const { applyWindowsTaskbarIcon, taskbarIdentityForProfile } = require('./windows-taskbar-icon');
-const { refreshWindowsShellIcons, shutdownWindowsShellIcons } = require('./windows-shell-icons');
-app.once('will-quit', shutdownWindowsShellIcons);
 const profileDirectoryArgument = process.argv.find(argument => argument.startsWith('--pixelody-profile-directory='))?.slice('--pixelody-profile-directory='.length);
 if (profileDirectoryArgument !== undefined && !path.isAbsolute(profileDirectoryArgument)) throw new Error('Profile directory must be an absolute path.');
 const profileDirectoryPath = profileDirectoryArgument ? path.resolve(profileDirectoryArgument) : '';
@@ -82,13 +81,10 @@ const brandIconAnimator = createBrandIconAnimator({
   getBaseImage: () => nativeImage.createFromPath(brandIconPath(brandMark.DEFAULT_LOGO_COLOR)),
   windows: () => [mainWindow, miniWindow],
 });
-const liveIconController = createWindowsLiveIconController({ app, appId: taskbarIdentityForProfile(releaseIdentity, profileDirectoryPath) });
-app.once('will-quit', () => liveIconController.shutdown());
-app.whenReady().then(() => liveIconController.prepare()).catch(error => console.warn('Pixelody native icon animation unavailable:', error.message));
 let brandIconSequence = Promise.resolve();
 let brandIconGeneration = 0;
 
-async function applyBrandIcon(win, shortcutPaths = new Set()) {
+async function applyBrandIcon(win) {
   const image = brandIconImage();
   if (image.isEmpty()) return false;
   if (process.platform === 'darwin') {
@@ -99,7 +95,7 @@ async function applyBrandIcon(win, shortcutPaths = new Set()) {
   win.setIcon(image);
   if (process.platform === 'win32') {
     const color = activeThemeMarkAccent || brandMark.logoColorHex(activeLogoColor);
-    await applyWindowsTaskbarIcon({ win, image, app, identity: releaseIdentity, color, profileDirectory: profileDirectoryPath, shell, onShortcut: shortcut => shortcutPaths.add(shortcut) });
+    await applyWindowsTaskbarIcon({ win, image, app, identity: releaseIdentity, color, profileDirectory: profileDirectoryPath, shell });
   }
   return true;
 }
@@ -867,48 +863,16 @@ registerHandle('app:set-brand-icon', (event, logoColor, themeAccent = '', transi
     if (generation !== brandIconGeneration) return { ok: false, applied: false, superseded: true };
     activeLogoColor = brandMark.normalizeLogoColor(logoColor);
     activeThemeMarkAccent = /^#[0-9a-f]{6}$/i.test(themeAccent) ? themeAccent.toLowerCase() : '';
-    let entered = false;
-    const enrolled = new Set();
-    const ensureLiveWindows = async () => {
-      if (process.platform !== 'win32') return;
-      const windows = [mainWindow, miniWindow].filter(win => win && !win.isDestroyed() && !enrolled.has(win.id));
-      if (!windows.length) return;
-      await liveIconController.begin(windows);
-      entered = true;
-      for (const win of windows) {
-        if (win.isDestroyed()) continue;
-        enrolled.add(win.id);
-      }
-      // Refresh the whole group once, including an open mini-player. Removing
-      // and readding each window individually would leave the old group cached.
-      try {
-        for (const win of windows) if (!win.isDestroyed()) win.setSkipTaskbar(true);
-        // Allow Explorer to consume the group removal before adding it again.
-        await new Promise(resolve => setTimeout(resolve, 150));
-      } finally {
-        for (const win of windows) if (!win.isDestroyed()) win.setSkipTaskbar(false);
-      }
-    };
-    try {
-      const animation = await brandIconAnimator.apply({ image: brandIconImage(), color: activeThemeMarkAccent || brandMark.logoColorHex(activeLogoColor), effect: transition, onStart: ensureLiveWindows, onFrame: ensureLiveWindows, isCurrent: () => generation === brandIconGeneration }).catch(error => {
-        console.warn('Pixelody icon transition skipped:', error.message);
-        return { frames: 0, effect: 'none' };
-      });
-      if (animation.cancelled) return { ok: false, applied: false, superseded: true };
-      const shortcutPaths = new Set();
-      const applied = (await Promise.all([mainWindow, miniWindow].map(win => applyBrandIcon(win, shortcutPaths)))).some(Boolean);
-      const usedLiveWindow = entered;
-      if (entered) {
-        await liveIconController.commit(); entered = false;
-      }
-      // A live transition already changes back to the canonical window identity.
-      // Notify its shortcuts without another broad cache invalidation. Startup
-      // and immediate/fallback updates retain the established full refresh.
-      if (process.platform === 'win32' && applied) await refreshWindowsShellIcons({ app, shortcuts: [...shortcutPaths], notifyAssociations: !usedLiveWindow });
-      return { ok: true, logoColor: activeLogoColor, themeAccent: activeThemeMarkAccent, applied, animation };
-    } finally {
-      if (entered) await liveIconController.rollback();
-    }
+    // Electron owns window icons and final relaunch/shortcut publication. Do not
+    // compile code, change pin policy, hide taskbar groups or invalidate global
+    // Shell caches for an appearance change. Explorer may cache a group's icon.
+    const animation = await brandIconAnimator.apply({ image: brandIconImage(), color: activeThemeMarkAccent || brandMark.logoColorHex(activeLogoColor), effect: transition, isCurrent: () => generation === brandIconGeneration }).catch(error => {
+      console.warn('Pixelody icon transition skipped:', error.message);
+      return { frames: 0, effect: 'none' };
+    });
+    if (animation.cancelled || generation !== brandIconGeneration) return { ok: false, applied: false, superseded: true };
+    const applied = (await Promise.all([mainWindow, miniWindow].map(win => applyBrandIcon(win)))).some(Boolean);
+    return { ok: true, logoColor: activeLogoColor, themeAccent: activeThemeMarkAccent, applied, animation };
   };
   const result = brandIconSequence.then(update, update);
   brandIconSequence = result.catch(() => {});

@@ -23,7 +23,7 @@ assert.deepEqual(packageJson.repository, {
   type: 'git',
   url: 'https://github.com/varText-dragen-develiper/pixelody.git',
 });
-assert.equal(packageJson.devDependencies.electron, '43.4.1');
+assert.equal(packageJson.devDependencies.electron, '43.8.3');
 assert.equal(packageJson.devDependencies['electron-builder'], '26.11.1');
 assert.equal(packageJson.devDependencies['@electron/asar'], '3.4.1');
 assert.match(configText, /asar: true/);
@@ -37,7 +37,7 @@ assert.match(configText, /packElevateHelper: false/);
 assert.match(configText, /deleteAppDataOnUninstall: false/);
 assert.match(mainText, /!integrationTestMode\) app\.setAppUserModelId\(taskbarIdentityForProfile\(releaseIdentity, profileDirectoryPath\)\)/);
 assert.ok(mainText.indexOf('const profileDirectoryPath =') < mainText.indexOf('app.setAppUserModelId('), 'Profile identity must be initialized before Windows uses it.');
-assert.ok(mainText.indexOf('const profileDirectoryPath =') < mainText.indexOf('const liveIconController ='), 'The native animation controller needs an initialized profile identity.');
+assert.doesNotMatch(mainText, /createWindowsLiveIconController|liveIconController/, 'Window icons use Electron without a runtime compiler worker.');
 assert.equal(require('../src/windows-taskbar-icon').taskbarIdentityForProfile(identity), identity.appUserModelId, 'Normal installation identity must remain unchanged.');
 assert.match(mainText, /releaseIdentity\.userDataDirectoryName/);
 assert.match(releaseAuditText, /'pwsh\.exe'/);
