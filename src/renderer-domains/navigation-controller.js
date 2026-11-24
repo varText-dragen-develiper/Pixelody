@@ -1,3 +1,8 @@
+/*
+ * Back follows the surfaces the listener opened, including panels layered over
+ * other panels. Closing Help over Settings should return to Settings. Keep that
+ * history here; individual buttons should not invent their own idea of Back.
+ */
 (function pixelodyNavigationControllerFactory(root, factory) {
   const api = factory();
   if (typeof module === 'object' && module.exports) module.exports = api;

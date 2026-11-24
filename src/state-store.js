@@ -1,3 +1,8 @@
+/*
+ * Saved data belongs here, outside the renderer's lifetime. Writes go through a
+ * temporary file, with a previous copy available for recovery. Keep write failures
+ * visible to callers: updating the screen is not the same thing as saving it.
+ */
 const fs = require('node:fs');
 const fsp = require('node:fs/promises');
 const path = require('node:path');

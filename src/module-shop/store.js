@@ -1,3 +1,8 @@
+/*
+ * Module packages are validated data, not a way to install arbitrary code.
+ * Keep package parsing on both import and read-back: a file already in the store
+ * still needs checking before the app trusts its contents.
+ */
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');

@@ -1,3 +1,8 @@
+/*
+ * The main process owns windows, file access and the host service. Renderers ask
+ * for specific operations through IPC; they do not get a general filesystem API.
+ * When adding a command here, check its preload entry and security validation too.
+ */
 const { app, BrowserWindow, dialog, ipcMain, Menu, nativeImage, screen, session, shell } = require('electron');
 // Electron 43 still embeds an older Undici; keep app HTTP calls on the patched module.
 const { fetch } = require('undici');

@@ -1,3 +1,8 @@
+/*
+ * This service exposes the desktop library to trusted clients. The default is
+ * local access; LAN access and pairing are explicit choices. Follow authentication
+ * and path validation through each route before returning files or state.
+ */
 const crypto = require('crypto');
 const flowShuffleContract = require('../flow-shuffle-contract');
 const fs = require('fs');

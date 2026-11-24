@@ -82,6 +82,7 @@ For setup, use [Getting started](GETTING_STARTED.md) or the [website guides](htt
 ## Other
 
 - [Pixelody architecture](ARCHITECTURE.md)
+- [Finding your way around the code](CODE_TOUR.md)
 - [Getting started with Pixelody for Windows](GETTING_STARTED.md)
 - [Hardware and measured performance — October 5, 2026](MINIMUM_SPECS.md)
 - [Downloaded modules](OPTIONAL_MODULES.md)

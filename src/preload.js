@@ -1,3 +1,8 @@
+/*
+ * This is the main window's small, explicit bridge into Electron. Paths come
+ * from approved state or a native picker, not from whatever the page asks to open.
+ * Keep the checks in the main process as well: this bridge is not the whole boundary.
+ */
 const { contextBridge, ipcRenderer, webUtils } = require('electron');
 
 // The main process adds this renderer-only sentinel after its two independent launch gates succeed.

@@ -1,3 +1,8 @@
+/*
+ * Audio settings need the same normalization wherever they are edited or restored.
+ * Keep the units straight: stored dB values and linear gain are not interchangeable.
+ * The UI can format a number; it should not quietly give it a different meaning.
+ */
 (function pixelodyAudioControllerFactory(root, factory) {
   const api = factory();
   if (typeof module === 'object' && module.exports) module.exports = api;

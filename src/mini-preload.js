@@ -1,3 +1,8 @@
+/*
+ * The mini player has its own IPC surface. Keep it limited to the controls that
+ * window actually needs; copying the main window's bridge here grants more than
+ * an always-on-top transport should have.
+ */
 const { contextBridge, ipcRenderer } = require('electron');
 
 // The main process adds this renderer-only sentinel after its two independent launch gates succeed.

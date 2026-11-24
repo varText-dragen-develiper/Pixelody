@@ -4,6 +4,18 @@ Bug reports, documentation, design ideas and fixes are all welcome. If you're
 changing something substantial, open an issue first so we can work out what it
 needs before you spend a lot of time on it.
 
+## Working on a change
+
+Start with the [code tour](docs/CODE_TOUR.md). From the repository root, install with `pnpm install`, then run `pnpm start`. Run `pnpm run check` and `pnpm run check:themes` before sending a relevant change. The other `check:*` scripts in `package.json` cover narrower areas.
+
+Use a separate profile for tests that alter a library or settings. For a layout fix, try long track names, a smaller window, large text and motion off. For playback, check the main window and mini player, then reopen the app to see what survived. Passing source checks does not replace those listening and restore checks.
+
+## Describing the change
+
+A useful title names the problem: “Keep queue order after reopening” tells us more than “Update source.” In the description, explain what happened before, what happens now and what you checked. Include a remaining failure if there is one; finding it later is not an improvement.
+
+Comments should explain a constraint or a surprising choice. There is no need to narrate an assignment or repeat the function name in a sentence. If the reason matters to the next person changing it, write that down.
+
 ## Contributor License Agreement
 
 Pixelody is released under GPL-3.0-only. The owner also ships official free and

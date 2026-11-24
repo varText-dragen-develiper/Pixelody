@@ -1,3 +1,8 @@
+/*
+ * This file wires the page to the domain controllers. Start in renderer-domains
+ * for queue rules, navigation history, persistence or audio calculations, then
+ * come back here to follow the DOM bindings. There is already enough happening here.
+ */
 const audio = document.querySelector('#audio');
 const $ = (selector) => document.querySelector(selector);
 const setText = (selector, value) => { const element = $(selector); if (element) element.textContent = value; };

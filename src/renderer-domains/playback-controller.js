@@ -1,3 +1,8 @@
+/*
+ * Queue and session rules live here without depending on a particular layout.
+ * The renderer supplies the playback hooks. Keep track selection and ordering
+ * separate from drawing the queue, so a theme change cannot change what plays next.
+ */
 (function pixelodyPlaybackControllerFactory(root, factory) {
   const api = factory();
   if (typeof module === 'object' && module.exports) module.exports = api;

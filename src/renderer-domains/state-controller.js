@@ -1,3 +1,8 @@
+/*
+ * Renderer saves share a write chain so a slower, older write cannot finish
+ * last and overwrite a newer edit. Keep callers on that chain rather than adding
+ * a second route to persistence.
+ */
 (function pixelodyStateControllerFactory(root, factory) {
   const api = factory();
   if (typeof module === 'object' && module.exports) module.exports = api;

@@ -2,6 +2,7 @@
 
 The Windows app owns the library, desktop playback and the service used by
 Android. This is the source map for finding the part you need to change.
+For a shorter route through an ordinary fix, start with the [code tour](CODE_TOUR.md).
 
 The Android companion is a separate repository,
 [pixelody-android](https://github.com/varText-dragen-develiper/pixelody-android).
@@ -53,7 +54,7 @@ For implementation, these are the main constraints:
 | `src/themes/` | The theme source map (`built-in-themes.json`), per-theme design manifests and the manifest schema. |
 | `src/theme-packages/` | Parser and store for local theme packages. |
 | `src/audio-visualizers/`, `src/theme-instruments/` | Shared signal-frame visualizers and the instrument registry themes draw from. |
-| `src/workspace-composition/` | Draggable, snap-to-grid workspace composition used by the development-only Canvas profile. |
+| `src/workspace-composition/` | Workspace geometry, placement and presentation recipes, also used by the development-only Canvas profile. |
 | `src/module-shop/` | The optional-module importer and shop window. See [Modules](#modules). |
 | `native/` | Native Windows helpers: a WASAPI helper, the system-audio bridge process and a source-only virtual-audio scaffold. |
 | `scripts/` | Every automated check, plus build and release tooling. |
